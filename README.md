@@ -1,0 +1,2 @@
+# HSRwikiFlutter
+flutterver of HSRwiki
