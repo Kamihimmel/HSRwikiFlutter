@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -62,8 +64,32 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  List<Map<String, String>> _data = [];
+  @override
+  void initState() {
+    super.initState();
+    _getData();
+  }
+
+  Future<void> _getData() async {
+    final response = await http.get(Uri.parse('https://hsrwikidata.yunlu18.net/lib/characterlist.json'));
+    final Map<String, dynamic> jsonData = json.decode(response.body);
+
+    setState(() {
+      _data = (jsonData['data'] as List<dynamic>)
+          .map((e) => {
+                'name': e['ENname'] as String,
+                'imageUrl': e['imageurl'] as String,
+              })
+          .toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final crossAxisCount = screenWidth < 600 ? 4 : 8;
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -96,6 +122,41 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: crossAxisCount,
+                childAspectRatio: (374 / 508),
+                children: _data
+                    .map((e) => Card(
+                          child: Stack(
+                            children: [
+                              Image.network(
+                                e['imageUrl']!,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                  color: Colors.black54,
+                                  child: Text(
+                                    e['name']!,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ))
+                    .toList(),
+              ),
+            ),
             const Text(
               'You have pushed the button this many times:',
             ),
