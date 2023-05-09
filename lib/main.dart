@@ -96,24 +96,34 @@ class _MyHomePageState extends State<MyHomePage> {
                 'wtype': e['wtype'] as String,
               })
           .toList();
+      _filteredData = List.from(_data);
     });
   }
 
   //show control bool
   bool lightningOn = false;
+  bool iceOn = false;
   bool showall = true;
+
+  List<Map<String, String>> _filteredData = [];
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
     final crossAxisCount = screenWidth < 600 ? 4 : 8;
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+
+    if (lightningOn || iceOn) {
+      _filteredData = [];
+      if (lightningOn) {
+        _filteredData.addAll(_data.where((item) => item['etype'] == 'lightning').toList());
+      }
+      if (iceOn) {
+        _filteredData.addAll(_data.where((item) => item['etype'] == 'ice').toList());
+      }
+    } else {
+      _filteredData = List.from(_data);
+    }
 
     return Scaffold(
       drawer: SafeArea(
@@ -222,82 +232,95 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: FilterChip(
+                    selectedColor: Colors.lightBlue.withOpacity(0.5),
+                    backgroundColor: Colors.lightBlue[100]!.withOpacity(0.1),
+                    label: Image.network(
+                      etoimage['ice']!,
+                      width: 30,
+                    ),
+                    selected: iceOn,
+                    onSelected: (bool value) {
+                      setState(() {
+                        iceOn = value;
+                      });
+                    },
+                  ),
+                ),
               ],
             ),
             Expanded(
               child: GridView.count(
                 crossAxisCount: crossAxisCount,
                 childAspectRatio: (374 / 508),
-                children: _data.asMap().entries.map((e) {
+                children: _filteredData.asMap().entries.map((e) {
                   final int index = e.key;
                   final Map<String, String> data = e.value;
 
-                  if (data['etype']! != "lightning" && lightningOn) {
-                    return const SizedBox.shrink();
-                  } else {
-                    return InkWell(
-                      onTap: () {},
-                      onHover: (value) {
-                        if (value) {
-                          setState(() {});
-                        }
-                      },
-                      hoverColor: etocolor[data['etype']!],
-                      child: Card(
-                        color: Colors.grey.withOpacity(0.1),
-                        child: Stack(
-                          children: [
-                            Image.network(
-                              data['imageUrl']!,
-                              fit: BoxFit.cover,
-                              width: double.infinity,
+                  return InkWell(
+                    onTap: () {},
+                    onHover: (value) {
+                      if (value) {
+                        setState(() {});
+                      }
+                    },
+                    hoverColor: etocolor[data['etype']!],
+                    child: Card(
+                      color: Colors.grey.withOpacity(0.1),
+                      child: Stack(
+                        children: [
+                          Image.network(
+                            data['imageUrl']!,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                              color: Colors.black54,
+                              child: Text(
+                                ('lang'.tr() == 'en') ? data['enname']! : (('lang'.tr() == 'cn') ? data['cnname']! : data['janame']!),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
                             ),
-                            Positioned(
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                                color: Colors.black54,
-                                child: Text(
-                                  ('lang'.tr() == 'en') ? data['enname']! : (('lang'.tr() == 'cn') ? data['cnname']! : data['janame']!),
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
+                          ),
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Column(
+                                children: [
+                                  ConstrainedBox(
+                                    constraints: BoxConstraints(maxWidth: 50),
+                                    child: Image.network(
+                                      etoimage[data['etype']!]!,
+                                      width: screenWidth / 20,
+                                    ),
                                   ),
-                                ),
+                                  ConstrainedBox(
+                                    constraints: BoxConstraints(maxWidth: 50),
+                                    child: Image.network(
+                                      wtoimage[data['wtype']!]!,
+                                      width: screenWidth / 20,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            Positioned(
-                              top: 0,
-                              right: 0,
-                              child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Column(
-                                  children: [
-                                    ConstrainedBox(
-                                      constraints: BoxConstraints(maxWidth: 50),
-                                      child: Image.network(
-                                        etoimage[data['etype']!]!,
-                                        width: screenWidth / 20,
-                                      ),
-                                    ),
-                                    ConstrainedBox(
-                                      constraints: BoxConstraints(maxWidth: 50),
-                                      child: Image.network(
-                                        wtoimage[data['wtype']!]!,
-                                        width: screenWidth / 20,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    );
-                  }
+                    ),
+                  );
                 }).toList(),
               ),
             ),
