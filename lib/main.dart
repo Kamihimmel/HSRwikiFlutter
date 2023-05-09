@@ -1,9 +1,20 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-void main() {
-  runApp(const MyApp());
+import 'info.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+  runApp(EasyLocalization(
+      supportedLocales: const [Locale('en'), Locale.fromSubtags(languageCode: 'zh', countryCode: 'CN'), Locale('ja')],
+      path: 'langs', // <-- change the path of the translation files
+      fallbackLocale: const Locale('en'),
+      useFallbackTranslations: true,
+      useOnlyLangCode: true,
+      child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -13,21 +24,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
       debugShowCheckedModeBanner: false,
       title: 'Honkai Starrail wiki',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+        useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Honkai Starrail wiki'),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        useMaterial3: true,
+      ),
+      themeMode: ThemeMode.dark,
+      home: const MyHomePage(title: ' Honkai Starrail wiki'),
     );
   }
 }
@@ -78,12 +88,20 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _data = (jsonData['data'] as List<dynamic>)
           .map((e) => {
-                'name': e['ENname'] as String,
+                'enname': e['ENname'] as String,
+                'cnname': e['CNname'] as String,
+                'janame': e['JAname'] as String,
                 'imageUrl': e['imageurl'] as String,
+                'etype': e['etype'] as String,
+                'wtype': e['wtype'] as String,
               })
           .toList();
     });
   }
+
+  //show control bool
+  bool lightningOn = false;
+  bool showall = true;
 
   @override
   Widget build(BuildContext context) {
@@ -96,73 +114,198 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+
     return Scaffold(
+      drawer: SafeArea(
+        bottom: false,
+        child: Drawer(
+          // Add a ListView to the drawer. This ensures the user can scroll
+          // through the options in the drawer if there isn't enough vertical
+          // space to fit everything.
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: Column(
+              //     children: [
+              //       CircleAvatar(
+              //         radius: 43,
+              //         backgroundColor: Theme.of(context).colorScheme.secondary,
+              //         child: CircleAvatar(
+              //           radius: 40,
+              //           backgroundImage: charactertoinfo[currentcharacter]['iconimage'],
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
+                child: Divider(
+                  thickness: 1,
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(22, 0, 22, 5),
+                child: Text(
+                  "language".tr(),
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ),
+
+              ListTile(
+                leading: const Icon(Icons.language),
+                title: const Text('English'),
+                onTap: () {
+                  setState(() {
+                    EasyLocalization.of(context)?.setLocale(const Locale('en'));
+                  });
+                  // Update the state of the app.
+                  // ...
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.language),
+                title: const Text('简体中文'),
+                onTap: () {
+                  // Update the state of the app.
+                  EasyLocalization.of(context)?.setLocale(const Locale.fromSubtags(languageCode: 'zh', countryCode: 'CN'));
+                  // ...
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.language),
+                title: const Text('日本語'),
+                onTap: () {
+                  // Update the state of the app.
+                  EasyLocalization.of(context)?.setLocale(const Locale('ja'));
+                  // ...
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text("title".tr() + " Honkai Starrail Wiki"),
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: Column(
           // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
+
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: FilterChip(
+                    selectedColor: Colors.purple.withOpacity(0.5),
+                    backgroundColor: Colors.purple[100]!.withOpacity(0.1),
+                    label: Image.network(
+                      etoimage['lightning']!,
+                      width: 30,
+                    ),
+                    selected: lightningOn,
+                    onSelected: (bool value) {
+                      setState(() {
+                        lightningOn = value;
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
             Expanded(
               child: GridView.count(
                 crossAxisCount: crossAxisCount,
                 childAspectRatio: (374 / 508),
-                children: _data
-                    .map((e) => Card(
-                          child: Stack(
-                            children: [
-                              Image.network(
-                                e['imageUrl']!,
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                left: 0,
-                                right: 0,
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                                  color: Colors.black54,
-                                  child: Text(
-                                    e['name']!,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                    ),
+                children: _data.asMap().entries.map((e) {
+                  final int index = e.key;
+                  final Map<String, String> data = e.value;
+
+                  if (data['etype']! != "lightning" && lightningOn) {
+                    return const SizedBox.shrink();
+                  } else {
+                    return InkWell(
+                      onTap: () {},
+                      onHover: (value) {
+                        if (value) {
+                          setState(() {});
+                        }
+                      },
+                      hoverColor: etocolor[data['etype']!],
+                      child: Card(
+                        color: Colors.grey.withOpacity(0.1),
+                        child: Stack(
+                          children: [
+                            Image.network(
+                              data['imageUrl']!,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                color: Colors.black54,
+                                child: Text(
+                                  ('lang'.tr() == 'en') ? data['enname']! : (('lang'.tr() == 'cn') ? data['cnname']! : data['janame']!),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                        ))
-                    .toList(),
+                            ),
+                            Positioned(
+                              top: 0,
+                              right: 0,
+                              child: Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Column(
+                                  children: [
+                                    ConstrainedBox(
+                                      constraints: BoxConstraints(maxWidth: 50),
+                                      child: Image.network(
+                                        etoimage[data['etype']!]!,
+                                        width: screenWidth / 20,
+                                      ),
+                                    ),
+                                    ConstrainedBox(
+                                      constraints: BoxConstraints(maxWidth: 50),
+                                      child: Image.network(
+                                        wtoimage[data['wtype']!]!,
+                                        width: screenWidth / 20,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                }).toList(),
               ),
             ),
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                'Provided by yunlu18.net',
+              ),
             ),
           ],
         ),
