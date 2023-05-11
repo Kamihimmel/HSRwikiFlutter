@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import 'characterdetail.dart';
 import 'info.dart';
 
 void main() async {
@@ -84,6 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _getData() async {
     final response = await http.get(Uri.parse('https://hsrwikidata.yunlu18.net/lib/characterlist.json'));
     final Map<String, dynamic> jsonData = json.decode(response.body);
+    print(jsonData);
 
     setState(() {
       _data = (jsonData['data'] as List<dynamic>)
@@ -94,6 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 'imageUrl': e['imageurl'] as String,
                 'etype': e['etype'] as String,
                 'wtype': e['wtype'] as String,
+                'infoUrl': e['infourl'] as String,
               })
           .toList();
       _filteredData = List.from(_data);
@@ -129,29 +132,10 @@ class _MyHomePageState extends State<MyHomePage> {
       drawer: SafeArea(
         bottom: false,
         child: Drawer(
-          // Add a ListView to the drawer. This ensures the user can scroll
-          // through the options in the drawer if there isn't enough vertical
-          // space to fit everything.
           child: ListView(
             // Important: Remove any padding from the ListView.
             padding: EdgeInsets.zero,
             children: <Widget>[
-              // Padding(
-              //   padding: const EdgeInsets.all(8.0),
-              //   child: Column(
-              //     children: [
-              //       CircleAvatar(
-              //         radius: 43,
-              //         backgroundColor: Theme.of(context).colorScheme.secondary,
-              //         child: CircleAvatar(
-              //           radius: 40,
-              //           backgroundImage: charactertoinfo[currentcharacter]['iconimage'],
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
-
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
                 child: Divider(
@@ -166,7 +150,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
               ),
-
               ListTile(
                 leading: const Icon(Icons.language),
                 title: const Text('English'),
@@ -260,7 +243,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   final Map<String, String> data = e.value;
 
                   return InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChracterDetailPage(),
+                          settings: RouteSettings(
+                            arguments: data,
+                          ),
+                        ),
+                      );
+                    },
                     onHover: (value) {
                       if (value) {
                         setState(() {});
@@ -271,10 +264,13 @@ class _MyHomePageState extends State<MyHomePage> {
                       color: Colors.grey.withOpacity(0.1),
                       child: Stack(
                         children: [
-                          Image.network(
-                            data['imageUrl']!,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
+                          Hero(
+                            tag: data['imageUrl']!,
+                            child: Image.network(
+                              data['imageUrl']!,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            ),
                           ),
                           Positioned(
                             bottom: 0,
@@ -302,7 +298,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ConstrainedBox(
                                     constraints: BoxConstraints(maxWidth: 50),
                                     child: Image.network(
-                                      etoimage[data['etype']!]!,
+                                      etoimage[data['etype']!] ?? 'none',
                                       width: screenWidth / 20,
                                     ),
                                   ),
