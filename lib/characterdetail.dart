@@ -8,36 +8,42 @@ import 'dart:async';
 
 import 'info.dart';
 
-Future fetchCharacterList(String infourl) async {
-  final response = await http.get(Uri.parse(infourl));
-  // print(response.body);
-  var parseBody = jsonDecode(response.body);
-
-  if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    // then parse the JSON.
-    return parseBody;
-  } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load');
-  }
-}
-
 class ChracterDetailPage extends StatefulWidget {
-  ChracterDetailPage({Key? key}) : super(key: key);
+  final String jsonUrl;
+  ChracterDetailPage({required this.jsonUrl});
 
   @override
   State<ChracterDetailPage> createState() => _ChracterDetailPageState();
 }
 
 class _ChracterDetailPageState extends State<ChracterDetailPage> {
+  Map<String, dynamic>? characterData;
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
+
+    _getData(widget.jsonUrl);
   }
 
   final ScrollController _scrollController = ScrollController();
+  late Map<String, dynamic> levelData;
+  late int attributeCount;
+  late double _currentSliderValue;
+
+  Future<void> _getData(String url) async {
+    final response = await http.get(Uri.parse(url));
+    final Map<String, dynamic> jsonData = json.decode(response.body);
+    characterData = jsonData;
+    levelData = characterData!['leveldata'];
+    _currentSliderValue = levelData.length - 1.0;
+    attributeCount = levelData.length;
+    print(characterData);
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,18 +58,10 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
           children: [
             Stack(
               children: [
-                FutureBuilder(
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState != ConnectionState.done || snapshot.hasData == null || snapshot.data == null) {
-                      //print('project snapshot data is: ${snapshot.data}');
-                      return Center(
-                        child: Container(
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-                    } else {
-                      return Container(
-                        decoration: BoxDecoration(image: DecorationImage(image: NetworkImage(snapshot.data['imagelargeurl']), fit: BoxFit.fitHeight)),
+                isLoading
+                    ? CircularProgressIndicator()
+                    : Container(
+                        decoration: BoxDecoration(image: DecorationImage(image: NetworkImage(characterData!['imagelargeurl']), fit: BoxFit.fitHeight)),
                         child: ResponsiveGridRow(
                           children: [
                             ResponsiveGridCol(
@@ -79,7 +77,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                     ),
                                     Container(
                                       child: Text(
-                                        snapshot.data['CNname'],
+                                        characterData!['CNname'],
                                         style: const TextStyle(
                                           //fontWeight: FontWeight.bold,
                                           color: Colors.white,
@@ -96,10 +94,10 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                           child: Row(
                                             children: [
                                               Image.network(
-                                                etoimage[snapshot.data['etype']!]!,
+                                                etoimage[characterData!['etype']!]!,
                                               ),
                                               Text(
-                                                snapshot.data['etype'],
+                                                characterData!['etype'],
                                                 style: const TextStyle(
                                                   //fontWeight: FontWeight.bold,
                                                   color: Colors.white,
@@ -115,11 +113,11 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                           child: Row(
                                             children: [
                                               Image.network(
-                                                wtoimage[snapshot.data['wtype']!]!,
+                                                wtoimage[characterData!['wtype']!]!,
                                                 height: 80,
                                               ),
                                               Text(
-                                                snapshot.data['wtype'],
+                                                characterData!['wtype'],
                                                 style: const TextStyle(
                                                   //fontWeight: FontWeight.bold,
                                                   color: Colors.white,
@@ -129,6 +127,107 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                 ),
                                               ).tr(),
                                             ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Text(
+                                          "LV:${levelData.keys.elementAt(_currentSliderValue.toInt())}",
+                                          style: const TextStyle(
+                                            //fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold,
+                                            height: 1.1,
+                                          ),
+                                        ),
+                                        Slider(
+                                          value: _currentSliderValue,
+                                          min: 0,
+                                          max: (attributeCount - 1).toDouble(),
+                                          divisions: attributeCount - 1,
+                                          onChanged: (double value) {
+                                            setState(() {
+                                              _currentSliderValue = value;
+                                            });
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Text(
+                                          "HP:${levelData.values.elementAt(_currentSliderValue.toInt())['hp']}",
+                                          style: const TextStyle(
+                                            //fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold,
+                                            height: 1.1,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Text(
+                                          "ATK:${levelData.values.elementAt(_currentSliderValue.toInt())['atk']}",
+                                          style: const TextStyle(
+                                            //fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold,
+                                            height: 1.1,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Text(
+                                          "DEF:${levelData.values.elementAt(_currentSliderValue.toInt())['def']}",
+                                          style: const TextStyle(
+                                            //fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold,
+                                            height: 1.1,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Text(
+                                          "Basic speed:${characterData!['dspeed']}",
+                                          style: const TextStyle(
+                                            //fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold,
+                                            height: 1.1,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Text(
+                                          "Basic Taunt:${characterData!['dtaunt']}",
+                                          style: const TextStyle(
+                                            //fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold,
+                                            height: 1.1,
                                           ),
                                         ),
                                       ],
@@ -179,11 +278,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                             ),
                           ],
                         ),
-                      );
-                    }
-                  },
-                  future: fetchCharacterList(namedata['infoUrl']!),
-                ),
+                      ),
                 Hero(
                   tag: namedata['imageUrl']!,
                   child: Container(
