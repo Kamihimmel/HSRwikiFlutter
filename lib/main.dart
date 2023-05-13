@@ -96,6 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 'imageUrl': e['imageurl'] as String,
                 'etype': e['etype'] as String,
                 'wtype': e['wtype'] as String,
+                'rarity': e['rarity'] as String,
                 'infoUrl': e['infourl'] as String,
               })
           .toList();
@@ -130,16 +131,70 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final crossAxisCount = screenWidth < 600 ? 4 : 8;
 
-    if (filterLightningOn || filterIceOn) {
-      _filteredData = [];
+    _filteredData = List.from(_data);
+    List<Map<String, String>> tempData = [];
+
+    if (filterStar4On || filterStar5On) {
+      if (filterStar4On) {
+        tempData.addAll(_filteredData.where((item) => item['rarity'] == '4').toList());
+      }
+      if (filterStar5On) {
+        tempData.addAll(_filteredData.where((item) => item['rarity'] == '5').toList());
+      }
+      _filteredData = List.from(tempData);
+      tempData = [];
+    }
+
+    if (filterFireOn || filterLightningOn || filterIceOn || filterWindOn || filterPhysicalOn || filterQuantumOn || filterImaginaryOn) {
+      if (filterFireOn) {
+        tempData.addAll(_filteredData.where((item) => item['etype'] == 'fire').toList());
+      }
       if (filterLightningOn) {
-        _filteredData.addAll(_data.where((item) => item['etype'] == 'lightning').toList());
+        tempData.addAll(_filteredData.where((item) => item['etype'] == 'lightning').toList());
+      }
+      if (filterWindOn) {
+        tempData.addAll(_filteredData.where((item) => item['etype'] == 'wind').toList());
       }
       if (filterIceOn) {
-        _filteredData.addAll(_data.where((item) => item['etype'] == 'ice').toList());
+        tempData.addAll(_filteredData.where((item) => item['etype'] == 'ice').toList());
       }
-    } else {
-      _filteredData = List.from(_data);
+      if (filterPhysicalOn) {
+        tempData.addAll(_filteredData.where((item) => item['etype'] == 'physical').toList());
+      }
+      if (filterQuantumOn) {
+        tempData.addAll(_filteredData.where((item) => item['etype'] == 'quantum').toList());
+      }
+      if (filterImaginaryOn) {
+        tempData.addAll(_filteredData.where((item) => item['etype'] == 'imaginary').toList());
+      }
+      _filteredData = List.from(tempData);
+      tempData = [];
+    }
+
+    if (filterDestructionOn || filterEruditionOn || filterHarmonyOn || filterThehuntOn || filterNihilityOn || filterAbundanceOn || filterPreservationOn) {
+      if (filterDestructionOn) {
+        tempData.addAll(_filteredData.where((item) => item['wtype'] == 'destruction').toList());
+      }
+      if (filterEruditionOn) {
+        tempData.addAll(_filteredData.where((item) => item['wtype'] == 'erudition').toList());
+      }
+      if (filterHarmonyOn) {
+        tempData.addAll(_filteredData.where((item) => item['wtype'] == 'harmony').toList());
+      }
+      if (filterThehuntOn) {
+        tempData.addAll(_filteredData.where((item) => item['wtype'] == 'thehunt').toList());
+      }
+      if (filterNihilityOn) {
+        tempData.addAll(_filteredData.where((item) => item['wtype'] == 'nihility').toList());
+      }
+      if (filterAbundanceOn) {
+        tempData.addAll(_filteredData.where((item) => item['wtype'] == 'abundance').toList());
+      }
+      if (filterPreservationOn) {
+        tempData.addAll(_filteredData.where((item) => item['wtype'] == 'preservation').toList());
+      }
+      _filteredData = List.from(tempData);
+      tempData = [];
     }
 
     return Scaffold(
