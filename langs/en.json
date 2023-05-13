@@ -3,5 +3,11 @@
     "lang": "en",
     "language": "Language",
     "quantum": "Quantum",
-    "thehunt": "The Hunt"
+    "thehunt": "The Hunt",
+    "Basic": "Basic",
+    "ATK": "ATK",
+    "HP": "HP",
+    "DEF": "DEF",
+    "Speed": "Speed",
+    "Taunt": "Taunt"
 }
