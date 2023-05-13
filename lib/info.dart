@@ -5,7 +5,7 @@ const etocolor = {
   'ice': Colors.lightBlue,
   'lightning': Colors.purple,
   'imaginary': Colors.yellow,
-  'quantum': Colors.blue,
+  'quantum': Colors.indigo,
   'wind': Colors.green,
   'physical': Colors.grey,
 };
