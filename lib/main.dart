@@ -554,7 +554,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ChracterDetailPage(),
+                          builder: (context) => ChracterDetailPage(jsonUrl: data['infoUrl']!),
                           settings: RouteSettings(
                             arguments: data,
                           ),
