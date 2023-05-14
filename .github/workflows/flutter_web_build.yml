@@ -24,24 +24,10 @@ jobs:
       - name: Build Flutter Web
         run: flutter build web --web-renderer canvaskit
 
-      - name: Clone GitHub Pages repository
-        uses: actions/checkout@v2
-        with:
-          repository: never1andwxy/HSRwiki_WEB
-          ref: gh-pages
-          path: gh-pages
-
-      - name: Copy Flutter Web build
-        run: |
-          cp -R build/web/* gh-pages/
-
-      - name: Commit and push to GitHub Pages repository
+      - name: Deploy to Git Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.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 }}
-        run: |
-          cd gh-pages
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add -A
-          git commit -m "Deploy Flutter Web"
-          git push
+          publish_dir: ./build/web
+          repository: never1andwxy/HSRwiki_WEB
+          ref: gh-pages
