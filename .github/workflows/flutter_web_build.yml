@@ -26,10 +26,9 @@ jobs:
 
       - name: Deploy to Git Pages
         uses: peaceiris/actions-gh-pages@v2
-        env:
-          PERSONAL_TOKEN: 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
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          PERSONAL_TOKEN: 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
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build/web
           external_repository: never1andwxy/HSRwiki_WEB
           publish_branch: gh-pages
