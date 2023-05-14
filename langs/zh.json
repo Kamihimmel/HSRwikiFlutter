@@ -3,5 +3,11 @@
     "lang": "cn",
     "language": "语言",
     "quantum": "量子",
-    "thehunt": "巡猎"
+    "thehunt": "巡猎",
+    "Basic": "基础",
+    "ATK": "攻击力",
+    "HP": "生命值",
+    "DEF": "防御力",
+    "Speed": "速度",
+    "Taunt": "嘲讽"
 }

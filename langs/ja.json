@@ -3,5 +3,11 @@
     "lang": "ja",
     "language": "言語",
     "quantum": "量子",
-    "thehunt": "巡狩"
+    "thehunt": "巡狩",
+    "Basic": "基礎",
+    "ATK": "攻撃力",
+    "HP": "HP",
+    "DEF": "防御力",
+    "Speed": "速度",
+    "Taunt": "挑発"
 }

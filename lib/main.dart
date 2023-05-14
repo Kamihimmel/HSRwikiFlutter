@@ -129,7 +129,11 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    final crossAxisCount = screenWidth < 600 ? 4 : 8;
+    final crossAxisCount = screenWidth < 600
+        ? 4
+        : screenWidth < 1000
+            ? 6
+            : 8;
 
     _filteredData = List.from(_data);
     List<Map<String, String>> tempData = [];
@@ -263,40 +267,48 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           // Column is also a layout widget. It takes a list of children and
 
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: screenWidth > 1300 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
           children: <Widget>[
-            Row(children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: FilterChip(
-                  selectedColor: Colors.amber.withOpacity(0.5),
-                  backgroundColor: Colors.amber[100]!.withOpacity(0.1),
-                  label: const Text("★5"),
-                  selected: filterStar5On,
-                  onSelected: (bool value) {
-                    setState(() {
-                      filterStar5On = value;
-                    });
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: FilterChip(
-                  selectedColor: Colors.deepPurpleAccent.withOpacity(0.5),
-                  backgroundColor: Colors.deepPurpleAccent[100]!.withOpacity(0.1),
-                  label: const Text("★4"),
-                  selected: filterStar4On,
-                  onSelected: (bool value) {
-                    setState(() {
-                      filterStar4On = value;
-                    });
-                  },
-                ),
-              ),
-            ]),
-            Row(
+            Wrap(
+              alignment: WrapAlignment.center,
               children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: FilterChip(
+                    selectedColor: Colors.amber.withOpacity(0.5),
+                    backgroundColor: Colors.amber[100]!.withOpacity(0.1),
+                    label: const Icon(
+                      Icons.star_border_rounded,
+                      size: 30,
+                      color: Colors.amber,
+                    ),
+                    selected: filterStar5On,
+                    onSelected: (bool value) {
+                      setState(() {
+                        filterStar5On = value;
+                      });
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: FilterChip(
+                    selectedColor: Colors.deepPurpleAccent.withOpacity(0.5),
+                    backgroundColor: Colors.deepPurpleAccent[100]!.withOpacity(0.1),
+                    label: const Icon(
+                      Icons.star_border_rounded,
+                      size: 30,
+                      color: Colors.deepPurpleAccent,
+                    ),
+                    selected: filterStar4On,
+                    onSelected: (bool value) {
+                      setState(() {
+                        filterStar4On = value;
+                      });
+                    },
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: FilterChip(
@@ -416,10 +428,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                   ),
                 ),
-              ],
-            ),
-            Row(
-              children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: FilterChip(
@@ -549,78 +557,80 @@ class _MyHomePageState extends State<MyHomePage> {
                   final int index = e.key;
                   final Map<String, String> data = e.value;
 
-                  return InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChracterDetailPage(jsonUrl: data['infoUrl']!),
-                          settings: RouteSettings(
-                            arguments: data,
-                          ),
-                        ),
-                      );
-                    },
-                    onHover: (value) {
-                      if (value) {
-                        setState(() {});
-                      }
-                    },
-                    hoverColor: etocolor[data['etype']!],
-                    child: Card(
-                      color: Colors.grey.withOpacity(0.1),
-                      child: Stack(
-                        children: [
-                          Hero(
-                            tag: data['imageUrl']!,
-                            child: Image.network(
-                              data['imageUrl']!,
-                              fit: BoxFit.cover,
-                              width: double.infinity,
+                  return Material(
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChracterDetailPage(jsonUrl: data['infoUrl']!),
+                            settings: RouteSettings(
+                              arguments: data,
                             ),
                           ),
-                          Positioned(
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                              color: Colors.black54,
-                              child: Text(
-                                ('lang'.tr() == 'en') ? data['enname']! : (('lang'.tr() == 'cn') ? data['cnname']! : data['janame']!),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
+                        );
+                      },
+                      onHover: (value) {
+                        if (value) {
+                          setState(() {});
+                        }
+                      },
+                      hoverColor: etocolor[data['etype']!],
+                      child: Card(
+                        color: Colors.grey.withOpacity(0.1),
+                        child: Stack(
+                          children: [
+                            Hero(
+                              tag: data['imageUrl']!,
+                              child: Image.network(
+                                data['imageUrl']!,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                color: Colors.black54,
+                                child: Text(
+                                  ('lang'.tr() == 'en') ? data['enname']! : (('lang'.tr() == 'cn') ? data['cnname']! : data['janame']!),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            right: 0,
-                            child: Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Column(
-                                children: [
-                                  ConstrainedBox(
-                                    constraints: BoxConstraints(maxWidth: 50),
-                                    child: Image.network(
-                                      etoimage[data['etype']!] ?? 'none',
-                                      width: screenWidth / 20,
+                            Positioned(
+                              top: 0,
+                              right: 0,
+                              child: Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Column(
+                                  children: [
+                                    ConstrainedBox(
+                                      constraints: BoxConstraints(maxWidth: 50),
+                                      child: Image.network(
+                                        etoimage[data['etype']!] ?? 'none',
+                                        width: screenWidth / 20,
+                                      ),
                                     ),
-                                  ),
-                                  ConstrainedBox(
-                                    constraints: BoxConstraints(maxWidth: 50),
-                                    child: Image.network(
-                                      wtoimage[data['wtype']!]!,
-                                      width: screenWidth / 20,
+                                    ConstrainedBox(
+                                      constraints: BoxConstraints(maxWidth: 50),
+                                      child: Image.network(
+                                        wtoimage[data['wtype']!]!,
+                                        width: screenWidth / 20,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   );

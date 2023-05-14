@@ -29,3 +29,11 @@ const wtoimage = {
   'abundance': "https://hsrwikidata.yunlu18.net/images/icons/abundance.webp",
   'preservation': "https://hsrwikidata.yunlu18.net/images/icons/preservation.webp",
 };
+
+const stattoimage = {
+  'hp': AssetImage('images/IconMaxHP.png'),
+  'atk': AssetImage('images/IconAttack.png'),
+  'def': AssetImage('images/IconDefence.png'),
+  'speed': AssetImage('images/IconSpeed.png'),
+  'taunt': AssetImage('images/IconBuffTaunt.png'),
+};

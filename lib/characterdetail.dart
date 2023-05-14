@@ -28,7 +28,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
   }
 
   final ScrollController _scrollController = ScrollController();
-  late Map<String, dynamic> levelData;
+  late List<dynamic> levelData;
   late int attributeCount;
   late double _currentSliderValue;
 
@@ -48,6 +48,20 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> namedata = ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final columnwidth = screenWidth > 1440
+        ? screenWidth / 4
+        : screenWidth > 905
+            ? screenWidth / 2
+            : screenWidth;
+
+    ResponsiveGridBreakpoints.value = ResponsiveGridBreakpoints(
+      xs: 600,
+      sm: 905,
+      md: 1440,
+      lg: 1440,
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -66,179 +80,304 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                           children: [
                             ResponsiveGridCol(
                               lg: 3,
-                              xs: 12,
                               md: 6,
+                              xs: 12,
+                              sm: 12,
                               child: Container(
-                                color: Colors.black.withOpacity(0.5),
+                                height: screenWidth > 905 ? screenHeight - 100 : null,
+                                color: Colors.black.withOpacity(0.1),
                                 child: Column(
                                   children: [
                                     const SizedBox(
-                                      height: 110,
+                                      height: 100,
                                     ),
-                                    Container(
-                                      child: Text(
-                                        characterData!['CNname'],
-                                        style: const TextStyle(
-                                          //fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                          fontSize: 40,
-                                          fontWeight: FontWeight.bold,
-                                          height: 1.1,
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Flexible(
+                                          child: Padding(
+                                            padding: const EdgeInsets.fromLTRB(10, 10, 5, 0),
+                                            child: Container(
+                                              color: etocolor[namedata['etype']!]?.withOpacity(0.6),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Image.network(
+                                                    etoimage[characterData!['etype']!]!,
+                                                    height: 50,
+                                                  ),
+                                                  Text(
+                                                    characterData!['etype'],
+                                                    style: const TextStyle(
+                                                      //fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                      fontSize: 25,
+                                                      fontWeight: FontWeight.bold,
+                                                      height: 1,
+                                                    ),
+                                                  ).tr(),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: Padding(
+                                            padding: const EdgeInsets.fromLTRB(5, 10, 10, 0),
+                                            child: Container(
+                                              color: etocolor[namedata['etype']!]?.withOpacity(0.6),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Image.network(
+                                                    wtoimage[characterData!['wtype']!]!,
+                                                    height: 50,
+                                                  ),
+                                                  Text(
+                                                    characterData!['wtype'],
+                                                    style: const TextStyle(
+                                                      //fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                      fontSize: 25,
+                                                      fontWeight: FontWeight.bold,
+                                                      height: 1,
+                                                    ),
+                                                  ).tr(),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Container(
+                                        color: etocolor[namedata['etype']!]?.withOpacity(0.6),
+                                        child: Column(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  SizedBox(
+                                                    width: 100,
+                                                    child: Text(
+                                                      "LV:${levelData[_currentSliderValue.toInt()]['level']}",
+                                                      style: const TextStyle(
+                                                        //fontWeight: FontWeight.bold,
+                                                        color: Colors.white,
+                                                        fontSize: 30,
+                                                        fontWeight: FontWeight.bold,
+                                                        height: 1.1,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: Slider(
+                                                      value: _currentSliderValue,
+                                                      min: 0,
+                                                      max: (attributeCount - 1).toDouble(),
+                                                      divisions: attributeCount - 1,
+                                                      activeColor: etocolor[namedata['etype']!],
+                                                      inactiveColor: etocolor[namedata['etype']!]?.withOpacity(0.5),
+                                                      onChanged: (double value) {
+                                                        setState(() {
+                                                          _currentSliderValue = value;
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      ImageIcon(stattoimage['hp']),
+                                                      Text(
+                                                        "HP".tr(),
+                                                        style: const TextStyle(
+                                                          //fontWeight: FontWeight.bold,
+                                                          color: Colors.white,
+                                                          fontSize: 30,
+                                                          fontWeight: FontWeight.bold,
+                                                          height: 1.1,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Text(
+                                                    levelData[_currentSliderValue.toInt()]['hp'].toString(),
+                                                    style: const TextStyle(
+                                                      //fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                      fontSize: 30,
+                                                      fontWeight: FontWeight.bold,
+                                                      height: 1.1,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      ImageIcon(stattoimage['atk']),
+                                                      Text(
+                                                        "ATK".tr(),
+                                                        style: const TextStyle(
+                                                          //fontWeight: FontWeight.bold,
+                                                          color: Colors.white,
+                                                          fontSize: 30,
+                                                          fontWeight: FontWeight.bold,
+                                                          height: 1.1,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Text(
+                                                    levelData[_currentSliderValue.toInt()]['atk'].toString(),
+                                                    style: const TextStyle(
+                                                      //fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                      fontSize: 30,
+                                                      fontWeight: FontWeight.bold,
+                                                      height: 1.1,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      ImageIcon(stattoimage['def']),
+                                                      Text(
+                                                        "DEF".tr(),
+                                                        style: const TextStyle(
+                                                          //fontWeight: FontWeight.bold,
+                                                          color: Colors.white,
+                                                          fontSize: 30,
+                                                          fontWeight: FontWeight.bold,
+                                                          height: 1.1,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Text(
+                                                    levelData[_currentSliderValue.toInt()]['def'].toString(),
+                                                    style: const TextStyle(
+                                                      //fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                      fontSize: 30,
+                                                      fontWeight: FontWeight.bold,
+                                                      height: 1.1,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      ImageIcon(stattoimage['speed']),
+                                                      Text(
+                                                        "${"Basic".tr()}${"Speed".tr()}",
+                                                        style: const TextStyle(
+                                                          //fontWeight: FontWeight.bold,
+                                                          color: Colors.white,
+                                                          fontSize: 30,
+                                                          fontWeight: FontWeight.bold,
+                                                          height: 1.1,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Text(
+                                                    characterData!['dspeed'].toString(),
+                                                    style: const TextStyle(
+                                                      //fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                      fontSize: 30,
+                                                      fontWeight: FontWeight.bold,
+                                                      height: 1.1,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.fromLTRB(30, 5, 30, 10),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      ImageIcon(
+                                                        stattoimage['taunt'],
+                                                        size: 25,
+                                                      ),
+                                                      Text(
+                                                        "${"Basic".tr()}${"Taunt".tr()}",
+                                                        style: const TextStyle(
+                                                          //fontWeight: FontWeight.bold,
+                                                          color: Colors.white,
+                                                          fontSize: 30,
+                                                          fontWeight: FontWeight.bold,
+                                                          height: 1.1,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Text(
+                                                    characterData!['dtaunt'].toString(),
+                                                    style: const TextStyle(
+                                                      //fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                      fontSize: 30,
+                                                      fontWeight: FontWeight.bold,
+                                                      height: 1.1,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                      children: [
-                                        Container(
-                                          child: Row(
-                                            children: [
-                                              Image.network(
-                                                etoimage[characterData!['etype']!]!,
-                                              ),
-                                              Text(
-                                                characterData!['etype'],
-                                                style: const TextStyle(
-                                                  //fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                  fontSize: 30,
-                                                  fontWeight: FontWeight.bold,
-                                                  height: 1.1,
-                                                ),
-                                              ).tr(),
-                                            ],
-                                          ),
-                                        ),
-                                        Container(
-                                          child: Row(
-                                            children: [
-                                              Image.network(
-                                                wtoimage[characterData!['wtype']!]!,
-                                                height: 80,
-                                              ),
-                                              Text(
-                                                characterData!['wtype'],
-                                                style: const TextStyle(
-                                                  //fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                  fontSize: 30,
-                                                  fontWeight: FontWeight.bold,
-                                                  height: 1.1,
-                                                ),
-                                              ).tr(),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                      children: [
-                                        Text(
-                                          "LV:${levelData.keys.elementAt(_currentSliderValue.toInt())}",
-                                          style: const TextStyle(
-                                            //fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.bold,
-                                            height: 1.1,
-                                          ),
-                                        ),
-                                        Slider(
-                                          value: _currentSliderValue,
-                                          min: 0,
-                                          max: (attributeCount - 1).toDouble(),
-                                          divisions: attributeCount - 1,
-                                          onChanged: (double value) {
-                                            setState(() {
-                                              _currentSliderValue = value;
-                                            });
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                      children: [
-                                        Text(
-                                          "HP:${levelData.values.elementAt(_currentSliderValue.toInt())['hp']}",
-                                          style: const TextStyle(
-                                            //fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.bold,
-                                            height: 1.1,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                      children: [
-                                        Text(
-                                          "ATK:${levelData.values.elementAt(_currentSliderValue.toInt())['atk']}",
-                                          style: const TextStyle(
-                                            //fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.bold,
-                                            height: 1.1,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                      children: [
-                                        Text(
-                                          "DEF:${levelData.values.elementAt(_currentSliderValue.toInt())['def']}",
-                                          style: const TextStyle(
-                                            //fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.bold,
-                                            height: 1.1,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                      children: [
-                                        Text(
-                                          "Basic speed:${characterData!['dspeed']}",
-                                          style: const TextStyle(
-                                            //fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.bold,
-                                            height: 1.1,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                      children: [
-                                        Text(
-                                          "Basic Taunt:${characterData!['dtaunt']}",
-                                          style: const TextStyle(
-                                            //fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.bold,
-                                            height: 1.1,
-                                          ),
-                                        ),
-                                      ],
                                     ),
                                   ],
                                 ),
                               ),
                             ),
                             ResponsiveGridCol(
-                              xs: 6,
-                              md: 3,
+                              lg: 3,
+                              md: 6,
+                              xs: 12,
+                              sm: 12,
                               child: Container(
                                 height: 200,
                                 alignment: Alignment(0, 0),
@@ -247,8 +386,10 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                               ),
                             ),
                             ResponsiveGridCol(
-                              xs: 6,
-                              md: 3,
+                              lg: 3,
+                              md: 6,
+                              xs: 12,
+                              sm: 12,
                               child: Container(
                                 height: 100,
                                 alignment: Alignment(0, 0),
@@ -257,8 +398,10 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                               ),
                             ),
                             ResponsiveGridCol(
-                              xs: 6,
-                              md: 3,
+                              lg: 3,
+                              md: 6,
+                              xs: 12,
+                              sm: 12,
                               child: Container(
                                 height: 100,
                                 alignment: Alignment(0, 0),
@@ -266,31 +409,38 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                 child: Text("xs : 6 \r\nmd : 3"),
                               ),
                             ),
-                            ResponsiveGridCol(
-                              xs: 6,
-                              md: 3,
-                              child: Container(
-                                height: 100,
-                                alignment: Alignment(0, 0),
-                                color: Colors.blue.withOpacity(0.5),
-                                child: Text("xs : 6 \r\nmd : 3"),
-                              ),
-                            ),
                           ],
                         ),
                       ),
-                Hero(
-                  tag: namedata['imageUrl']!,
-                  child: Container(
-                    width: 320,
-                    height: 100,
-                    color: etocolor[namedata['etype']!]?.withOpacity(0.6),
-                    child: Image.network(
-                      namedata['imageUrl']!,
-                      alignment: const Alignment(-1, -0.5),
-                      fit: BoxFit.none,
+                Stack(
+                  children: [
+                    Hero(
+                      tag: namedata['imageUrl']!,
+                      child: Container(
+                        width: columnwidth,
+                        height: 100,
+                        color: etocolor[namedata['etype']!]?.withOpacity(0.6),
+                        child: Image.network(
+                          namedata['imageUrl']!,
+                          alignment: const Alignment(1, -0.5),
+                          fit: BoxFit.none,
+                        ),
+                      ),
                     ),
-                  ),
+                    Padding(
+                      padding: const EdgeInsets.all(25.0),
+                      child: Text(
+                        ('lang'.tr() == 'en') ? namedata['enname']! : (('lang'.tr() == 'cn') ? namedata['cnname']! : namedata['janame']!),
+                        style: const TextStyle(
+                          //fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 50,
+                          fontWeight: FontWeight.bold,
+                          height: 1,
+                        ),
+                      ),
+                    )
+                  ],
                 ),
               ],
             ),
