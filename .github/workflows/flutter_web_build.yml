@@ -24,7 +24,7 @@ jobs:
       - name: Build Flutter Web
         run: flutter build web --web-renderer canvaskit
 
-- name: Clone GitHub Pages repository
+      - name: Clone GitHub Pages repository
         uses: actions/checkout@v2
         with:
           repository: never1andwxy/HSRwiki_WEB
