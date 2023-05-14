@@ -36,6 +36,7 @@ jobs:
           cp -R build/web/* gh-pages/
 
       - name: Commit and push to GitHub Pages repository
+        github_token: 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
         run: |
           cd gh-pages
           git config user.name "GitHub Actions"
