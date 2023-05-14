@@ -1,12 +1,10 @@
-name: Flutter Web Build
-
 on:
   push:
     branches:
       - main
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,18 +14,27 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: stable
 
-      - name: Install dependencies
-        run: flutter pub get
+      - name: Build Flutter Web
+        run: flutter build web --release
 
-      - name: Build web
-        run: flutter build web --web-renderer canvaskit
-
-      - name: Deploy to Git Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Clone GitHub Pages repository
+        uses: actions/checkout@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build/web
           repository: never1andwxy/HSRwiki_WEB
-          branch: gh-pages
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Copy Flutter Web build
+        run: |
+          cp -R build/web/* gh-pages/
+
+      - name: Commit and push to GitHub Pages repository
+        run: |
+          cd gh-pages
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add -A
+          git commit -m "Deploy Flutter Web"
+          git push
