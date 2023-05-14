@@ -31,11 +31,9 @@ jobs:
           ref: gh-pages
           path: gh-pages
 
-                - name: Copy Flutter Web build
+      - name: Copy Flutter Web build
         run: |
           cp -R build/web/* gh-pages/
-
-  
 
       - name: Add SSH key
         uses: webfactory/ssh-agent@v0.5.2
