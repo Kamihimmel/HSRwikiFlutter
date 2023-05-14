@@ -1,34 +1,39 @@
-on:
-  push:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Use Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "16"
+#     steps:
+#       - name: Use Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: "16"
 
-      - name: Checkout repository
-        uses: actions/checkout@v3
+#       - name: Checkout repository
+#         uses: actions/checkout@v3
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
+#       - name: Set up Flutter
+#         uses: subosito/flutter-action@v2
+#         with:
+#           channel: 'stable'
 
-      - name: Build Flutter Web
-        run: flutter build web --web-renderer canvaskit
+#       - name: Build Flutter Web
+#         run: flutter build web --web-renderer canvaskit
 
-      - name: Deploy to Git Pages
-        uses: peaceiris/actions-gh-pages@v2
-        with:
-          PERSONAL_TOKEN: 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
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build/web
-          external_repository: never1andwxy/HSRwiki_WEB
-          publish_branch: gh-pages
+#       - name: Upload Deploy Key
+#         uses: actions/upload-artifact@v2
+#         with:
+#           name: deploy-key
+#           path: .github/workflows/id_rsa
+
+#       - name: Deploy to Git Pages
+#         uses: peaceiris/actions-gh-pages@v2
+#         with:
+#           deploy_key: ${{ secrets.DEPLOY_KEY }}
+#           publish_dir: ./build/web
+#           external_repository: never1andwxy/HSRwiki_WEB
+#           publish_branch: gh-pages
