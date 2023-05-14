@@ -640,7 +640,7 @@ class _MyHomePageState extends State<MyHomePage> {
             const Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
-                'Provided by yunlu18.net ',
+                'Provided by yunlu18.net',
               ),
             ),
           ],
