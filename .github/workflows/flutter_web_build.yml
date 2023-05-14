@@ -24,16 +24,27 @@ jobs:
       - name: Build Flutter Web
         run: flutter build web --web-renderer canvaskit
 
-      - name: Upload Deploy Key
-        uses: actions/upload-artifact@v2
+- name: Clone GitHub Pages repository
+        uses: actions/checkout@v2
         with:
-          name: deploy-key
-          path: .github/workflows/id_rsa
+          repository: never1andwxy/HSRwiki_WEB
+          ref: gh-pages
+          path: gh-pages
 
-      - name: Deploy to Git Pages
-        uses: peaceiris/actions-gh-pages@v2
+                - name: Copy Flutter Web build
+        run: |
+          cp -R build/web/* gh-pages/
+
+  
+
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.2
         with:
-          deploy_key: ${{ secrets.DEPLOY_KEY }}
-          publish_dir: ./build/web
-          external_repository: never1andwxy/HSRwiki_WEB
-          publish_branch: gh-pages
+          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: Commit and push to GitHub Pages repository
+        run: |
+          cd gh-pages
+          git add -A
+          git commit -m "Deploy Flutter Web"
+          git push
