@@ -24,16 +24,12 @@ jobs:
       - name: Build Flutter Web
         run: flutter build web --web-renderer canvaskit
 
-      - name: Upload Deploy Key
-        uses: actions/upload-artifact@v2
-        with:
-          name: deploy-key
-          path: .github/workflows/id_rsa
-
       - name: Deploy to Git Pages
         uses: peaceiris/actions-gh-pages@v2
+        env:
+          PERSONAL_TOKEN: ${{ secrets.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 }}
         with:
-          deploy_key: ${{ secrets.DEPLOY_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build/web
           external_repository: never1andwxy/HSRwiki_WEB
           publish_branch: gh-pages
