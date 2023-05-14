@@ -43,3 +43,5 @@ jobs:
           git add -A
           git commit -m "Deploy Flutter Web"
           git push
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
