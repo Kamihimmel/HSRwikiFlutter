@@ -29,5 +29,5 @@ jobs:
         with:
           github_token: ${{ secrets.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 }}
           publish_dir: ./build/web
-          repository: never1andwxy/HSRwiki_WEB
-          ref: gh-pages
+          external_repository: never1andwxy/HSRwiki_WEB
+          publish_branch: gh-pages
