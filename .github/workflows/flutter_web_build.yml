@@ -35,13 +35,14 @@ jobs:
         run: |
           cp -R build/web/* gh-pages/
 
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.2
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+          
       - name: Commit and push to GitHub Pages repository
         run: |
           cd gh-pages
-          git config user.name "GithubAction"
-          git config user.email "actions@github.com"
           git add -A
           git commit -m "Deploy Flutter Web"
           git push
-        env:
-          GH_PAT: ${{ secrets.GH_PAT }}
