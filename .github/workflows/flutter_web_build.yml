@@ -27,6 +27,7 @@ jobs:
       - name: Clone GitHub Pages repository
         uses: actions/checkout@v2
         with:
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
           repository: never1andwxy/HSRwiki_WEB
           ref: gh-pages
           path: gh-pages
