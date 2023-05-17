@@ -36,4 +36,5 @@ const stattoimage = {
   'def': AssetImage('images/IconDefence.png'),
   'speed': AssetImage('images/IconSpeed.png'),
   'taunt': AssetImage('images/IconBuffTaunt.png'),
+  'energylimit': AssetImage('images/IconEnergyLimit.png'),
 };

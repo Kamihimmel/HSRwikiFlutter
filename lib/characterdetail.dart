@@ -29,15 +29,19 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
 
   final ScrollController _scrollController = ScrollController();
   late List<dynamic> levelData;
+  late List<dynamic> skillData;
   late int attributeCount;
   late double _currentSliderValue;
+  late List<double> levelnumbers;
 
   Future<void> _getData(String url) async {
     final response = await http.get(Uri.parse(url));
     final Map<String, dynamic> jsonData = json.decode(response.body);
     characterData = jsonData;
     levelData = characterData!['leveldata'];
+    skillData = characterData!['skilldata'];
     _currentSliderValue = levelData.length - 1.0;
+    levelnumbers = List.generate(skillData.length, (index) => 8);
     attributeCount = levelData.length;
     print(characterData);
     setState(() {
@@ -329,7 +333,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.fromLTRB(30, 5, 30, 10),
+                                              padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
                                               child: Row(
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
@@ -365,6 +369,43 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                 ],
                                               ),
                                             ),
+                                            Padding(
+                                              padding: const EdgeInsets.fromLTRB(30, 5, 30, 10),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      ImageIcon(
+                                                        stattoimage['energylimit'],
+                                                        size: 25,
+                                                      ),
+                                                      Text(
+                                                        "${"Basic".tr()}${"Energy Limit".tr()}",
+                                                        style: const TextStyle(
+                                                          //fontWeight: FontWeight.bold,
+                                                          color: Colors.white,
+                                                          fontSize: 30,
+                                                          fontWeight: FontWeight.bold,
+                                                          height: 1.1,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Text(
+                                                    characterData!['maxenergy'].toString(),
+                                                    style: const TextStyle(
+                                                      //fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                      fontSize: 30,
+                                                      fontWeight: FontWeight.bold,
+                                                      height: 1.1,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -379,10 +420,121 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                               xs: 12,
                               sm: 12,
                               child: Container(
-                                height: 200,
-                                alignment: Alignment(0, 0),
-                                color: Colors.green.withOpacity(0.5),
-                                child: Text("xs : 6 \r\nmd : 3"),
+                                height: screenWidth > 905 ? screenHeight - 100 : null,
+                                color: Colors.green.withOpacity(0.1),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(children: [
+                                    Text(
+                                      "Skill".tr(),
+                                      style: const TextStyle(
+                                        //fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.bold,
+                                        height: 1.1,
+                                      ),
+                                    ),
+                                    Column(
+                                      children: List.generate(skillData.length, (index) {
+                                        final data = skillData[index];
+                                        String fixedtext = "";
+
+                                        String detailtext = ('lang'.tr() == 'en') ? data['DescriptionEN']! : (('lang'.tr() == 'cn') ? data['DescriptionCN']! : data['DescriptionJA']!);
+                                        if (data['maxlevel'] > 0) {
+                                          List<dynamic> multiplierData = data['levelmultiplier']!;
+
+                                          int multicount = multiplierData.length;
+
+                                          for (var i = multicount; i >= 1; i--) {
+                                            Map<String, dynamic> currentleveldata = multiplierData[i - 1];
+                                            String levelnum = (levelnumbers[index].toStringAsFixed(0));
+
+                                            fixedtext = detailtext.replaceAll("[$i]", (currentleveldata[levelnum]).toString());
+                                          }
+                                        } else {
+                                          fixedtext = detailtext;
+                                        }
+
+                                        return Container(
+                                          width: double.infinity,
+                                          margin: EdgeInsets.all(10),
+                                          color: etocolor[namedata['etype']!]?.withOpacity(0.6),
+                                          child: Row(
+                                            children: [
+                                              Image.network(
+                                                data['imageurl']!,
+                                                width: 100,
+                                              ),
+                                              Expanded(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Column(
+                                                    children: [
+                                                      Text(
+                                                        ('lang'.tr() == 'en') ? data['ENname']! : (('lang'.tr() == 'cn') ? data['CNname']! : data['JAname']!),
+                                                        style: const TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: 20,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        fixedtext,
+                                                        style: const TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 15,
+                                                        ),
+                                                        maxLines: 10,
+                                                      ),
+                                                      if (data['maxlevel']! > 0)
+                                                        Padding(
+                                                          padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                          child: Row(
+                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                            children: [
+                                                              SizedBox(
+                                                                width: 100,
+                                                                child: Text(
+                                                                  "LV:${levelnumbers[index].toInt()}",
+                                                                  style: const TextStyle(
+                                                                    //fontWeight: FontWeight.bold,
+                                                                    color: Colors.white,
+                                                                    fontSize: 30,
+                                                                    fontWeight: FontWeight.bold,
+                                                                    height: 1.1,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Expanded(
+                                                                child: Slider(
+                                                                  value: levelnumbers[index],
+                                                                  min: 1,
+                                                                  max: (data['maxlevel']).toDouble(),
+                                                                  divisions: data['maxlevel'] - 1,
+                                                                  activeColor: etocolor[namedata['etype']!],
+                                                                  inactiveColor: etocolor[namedata['etype']!]?.withOpacity(0.5),
+                                                                  onChanged: (double value) {
+                                                                    setState(() {
+                                                                      levelnumbers[index] = value;
+                                                                    });
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }),
+                                    )
+                                  ]),
+                                ),
                               ),
                             ),
                             ResponsiveGridCol(
