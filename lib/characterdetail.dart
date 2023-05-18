@@ -440,7 +440,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                         final data = skillData[index];
                                         String fixedtext = "";
 
-                                        String detailtext = ('lang'.tr() == 'en') ? data['DescriptionEN']! : (('lang'.tr() == 'cn') ? data['DescriptionCN']! : data['DescriptionJA']!);
+                                        String detailtext = ('lang'.tr() == 'en') ? data['DescriptionEN']! : (('lang'.tr() == 'cn') ? data['DescriptionCN']! : data['DescriptionJP']!);
                                         if (data['maxlevel'] > 0) {
                                           List<dynamic> multiplierData = data['levelmultiplier']!;
 
@@ -456,80 +456,225 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                           fixedtext = detailtext;
                                         }
 
-                                        return Container(
-                                          width: double.infinity,
-                                          margin: EdgeInsets.all(10),
-                                          color: etocolor[namedata['etype']!]?.withOpacity(0.6),
-                                          child: Row(
-                                            children: [
-                                              Image.network(
-                                                data['imageurl']!,
-                                                width: 100,
-                                              ),
-                                              Expanded(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(8.0),
-                                                  child: Column(
+                                        return Stack(
+                                          children: [
+                                            Column(
+                                              children: [
+                                                Container(
+                                                  width: double.infinity,
+                                                  margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                                                  color: etocolor[namedata['etype']!]?.withOpacity(0.6),
+                                                  child: Row(
                                                     children: [
-                                                      Text(
-                                                        ('lang'.tr() == 'en') ? data['ENname']! : (('lang'.tr() == 'cn') ? data['CNname']! : data['JAname']!),
-                                                        style: const TextStyle(
-                                                          color: Colors.white,
-                                                          fontWeight: FontWeight.bold,
-                                                          fontSize: 20,
-                                                        ),
+                                                      Image.network(
+                                                        data['imageurl']!,
+                                                        width: 100,
                                                       ),
-                                                      Text(
-                                                        fixedtext,
-                                                        style: const TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 15,
-                                                        ),
-                                                        maxLines: 10,
-                                                      ),
-                                                      if (data['maxlevel']! > 0)
-                                                        Padding(
-                                                          padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                          child: Row(
-                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      Expanded(
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.all(8.0),
+                                                          child: Column(
                                                             children: [
-                                                              SizedBox(
-                                                                width: 100,
-                                                                child: Text(
-                                                                  "LV:${levelnumbers[index].toInt()}",
-                                                                  style: const TextStyle(
-                                                                    //fontWeight: FontWeight.bold,
-                                                                    color: Colors.white,
-                                                                    fontSize: 30,
-                                                                    fontWeight: FontWeight.bold,
-                                                                    height: 1.1,
+                                                              Text(
+                                                                ('lang'.tr() == 'en') ? data['ENname']! : (('lang'.tr() == 'cn') ? data['CNname']! : data['JAname']!),
+                                                                style: const TextStyle(
+                                                                  color: Colors.white,
+                                                                  fontWeight: FontWeight.bold,
+                                                                  fontSize: 20,
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                fixedtext,
+                                                                style: const TextStyle(
+                                                                  color: Colors.white,
+                                                                  fontSize: 15,
+                                                                ),
+                                                                maxLines: 10,
+                                                              ),
+                                                              if (data['maxlevel']! > 0)
+                                                                Padding(
+                                                                  padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                                  child: Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        child: Text(
+                                                                          "LV:${levelnumbers[index].toInt()}",
+                                                                          style: const TextStyle(
+                                                                            //fontWeight: FontWeight.bold,
+                                                                            color: Colors.white,
+                                                                            fontSize: 20,
+                                                                            fontWeight: FontWeight.bold,
+                                                                            height: 1.1,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      Expanded(
+                                                                        child: Slider(
+                                                                          value: levelnumbers[index],
+                                                                          min: 1,
+                                                                          max: (data['maxlevel']).toDouble(),
+                                                                          divisions: data['maxlevel'] - 1,
+                                                                          activeColor: etocolor[namedata['etype']!],
+                                                                          inactiveColor: etocolor[namedata['etype']!]?.withOpacity(0.5),
+                                                                          onChanged: (double value) {
+                                                                            setState(() {
+                                                                              levelnumbers[index] = value;
+                                                                            });
+                                                                          },
+                                                                        ),
+                                                                      ),
+                                                                    ],
                                                                   ),
                                                                 ),
-                                                              ),
-                                                              Expanded(
-                                                                child: Slider(
-                                                                  value: levelnumbers[index],
-                                                                  min: 1,
-                                                                  max: (data['maxlevel']).toDouble(),
-                                                                  divisions: data['maxlevel'] - 1,
-                                                                  activeColor: etocolor[namedata['etype']!],
-                                                                  inactiveColor: etocolor[namedata['etype']!]?.withOpacity(0.5),
-                                                                  onChanged: (double value) {
-                                                                    setState(() {
-                                                                      levelnumbers[index] = value;
-                                                                    });
-                                                                  },
-                                                                ),
-                                                              ),
                                                             ],
                                                           ),
                                                         ),
+                                                      ),
                                                     ],
                                                   ),
                                                 ),
+                                                if (data['effect'] != null)
+                                                  Container(
+                                                    width: double.infinity,
+                                                    margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                                    color: Colors.black.withOpacity(0.8),
+                                                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: List.generate(data['effect'].length, (index2) {
+                                                        Map<String, dynamic> leveldata2 = (data['levelmultiplier']![(data['effect'][index2]['multiplier']) - 1]);
+                                                        String levelnum2 = (levelnumbers[index].toStringAsFixed(0));
+                                                        String levelmulti = leveldata2[levelnum2].toString();
+
+                                                        return SingleChildScrollView(
+                                                          scrollDirection: Axis.horizontal,
+                                                          child: Scrollbar(
+                                                            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                                                              Row(
+                                                                children: [
+                                                                  Container(
+                                                                      margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
+                                                                      padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
+                                                                      decoration: BoxDecoration(
+                                                                        color: Colors.amber,
+                                                                        borderRadius: BorderRadius.circular(5),
+                                                                      ),
+                                                                      child: Text(data['effect'][index2]['type'],
+                                                                          style: const TextStyle(
+                                                                            //fontWeight: FontWeight.bold,
+                                                                            color: Colors.black,
+                                                                            fontSize: 15,
+                                                                            fontWeight: FontWeight.bold,
+                                                                            height: 1.1,
+                                                                          )).tr()),
+                                                                  if (data['effect'][index2]['multipliertarget'] != null)
+                                                                    Container(
+                                                                        margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
+                                                                        padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
+                                                                        decoration: BoxDecoration(
+                                                                          color: Colors.redAccent,
+                                                                          borderRadius: BorderRadius.circular(5),
+                                                                        ),
+                                                                        child: Text('${(data['effect'][index2]['multipliertarget'] as String).tr()}$levelmulti%',
+                                                                            style: const TextStyle(
+                                                                              //fontWeight: FontWeight.bold,
+                                                                              color: Colors.black,
+                                                                              fontSize: 15,
+                                                                              fontWeight: FontWeight.bold,
+                                                                              height: 1.1,
+                                                                            ))),
+                                                                  if (data['effect'][index2]['addtarget'] != null)
+                                                                    Container(
+                                                                        margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
+                                                                        padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
+                                                                        decoration: BoxDecoration(
+                                                                          color: Colors.greenAccent,
+                                                                          borderRadius: BorderRadius.circular(5),
+                                                                        ),
+                                                                        child: Text('${(data['effect'][index2]['addtarget'] as String).tr()}$levelmulti%',
+                                                                            style: const TextStyle(
+                                                                              //fontWeight: FontWeight.bold,
+                                                                              color: Colors.black,
+                                                                              fontSize: 15,
+                                                                              fontWeight: FontWeight.bold,
+                                                                              height: 1.1,
+                                                                            ))),
+                                                                ],
+                                                              ),
+                                                              Row(
+                                                                  children: List.generate(data['effect'][index2]['tag'].length, (index3) {
+                                                                List<dynamic> taglist = data['effect'][index2]['tag'];
+
+                                                                return Container(
+                                                                    margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
+                                                                    padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
+                                                                    decoration: BoxDecoration(
+                                                                      color: Colors.white,
+                                                                      borderRadius: BorderRadius.circular(5),
+                                                                    ),
+                                                                    child: Text(taglist[index3],
+                                                                        style: const TextStyle(
+                                                                          //fontWeight: FontWeight.bold,
+                                                                          color: Colors.black,
+                                                                          fontSize: 15,
+                                                                          fontWeight: FontWeight.bold,
+                                                                          height: 1.1,
+                                                                        )).tr());
+                                                              })),
+                                                            ]),
+                                                          ),
+                                                        );
+                                                      }),
+                                                    ),
+                                                  ),
+                                                const SizedBox(
+                                                  height: 10,
+                                                ),
+                                              ],
+                                            ),
+                                            Container(
+                                              width: 110,
+                                              decoration: BoxDecoration(
+                                                color: etocolor[namedata['etype']!]?.withOpacity(1),
+                                                borderRadius: BorderRadius.circular(2),
                                               ),
-                                            ],
-                                          ),
+                                              child: Center(
+                                                child: Text(data['stype']!,
+                                                    style: const TextStyle(
+                                                      //fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                      fontSize: 20,
+                                                      fontWeight: FontWeight.bold,
+                                                      height: 1.1,
+                                                    )).tr(),
+                                              ),
+                                            ),
+                                            if (data['energy'] != null)
+                                              Positioned(
+                                                top: 0,
+                                                right: 0,
+                                                child: Container(
+                                                  width: 110,
+                                                  decoration: BoxDecoration(
+                                                    color: etocolor[namedata['etype']!]?.withOpacity(1),
+                                                    borderRadius: BorderRadius.circular(2),
+                                                  ),
+                                                  child: Center(
+                                                    child: Text('EP' + data['energy']!.toString(),
+                                                        style: const TextStyle(
+                                                          //fontWeight: FontWeight.bold,
+                                                          color: Colors.white,
+
+                                                          fontSize: 20,
+                                                          fontWeight: FontWeight.bold,
+                                                          height: 1.1,
+                                                        )).tr(),
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
                                         );
                                       }),
                                     )

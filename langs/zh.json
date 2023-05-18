@@ -9,5 +9,21 @@
     "HP": "生命值",
     "DEF": "防御力",
     "Speed": "速度",
-    "Taunt": "嘲讽"
+    "Taunt": "嘲讽",
+    "Energy Limit": "能量上限",
+    "basicattack": "普攻",
+    "skill": "战技",
+    "ult": "终结技",
+    "talent": "天赋",
+    "technique": "秘技",
+    "dmg": "伤害",
+    "buff": "增益",
+    "atk": "攻击力",
+    "singleatk": "单体攻击",
+    "quantumatk": "量子元素攻击",
+    "alldmg": "伤害加成",
+    "self": "自身",
+    "normalatk": "普攻伤害",
+    "skillatk": "战技伤害",
+    "ultatk": "终结技伤害"
 }

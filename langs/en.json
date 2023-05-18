@@ -9,5 +9,21 @@
     "HP": "HP",
     "DEF": "DEF",
     "Speed": "Speed",
-    "Taunt": "Taunt"
+    "Taunt": "Taunt",
+    "Energy Limit": "Energy Limit",
+    "basicattack": "Basic ATK",
+    "skill": "Skill",
+    "ult": "Ultimate",
+    "talent": "Talent",
+    "technique": "Technique",
+    "dmg": "Damage",
+    "buff": "Buff",
+    "atk": "ATK",
+    "singleatk": "Single Atk",
+    "quantumatk": "Quantum Atk",
+    "alldmg": "Damage Bonus",
+    "self": "Self",
+    "normalatk": "Normal Atk DMG",
+    "skillatk": "Skill Atk DMG",
+    "ultatk": "Ultimate Atk DMG"
 }

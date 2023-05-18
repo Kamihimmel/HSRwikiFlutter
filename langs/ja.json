@@ -9,5 +9,21 @@
     "HP": "HP",
     "DEF": "防御力",
     "Speed": "速度",
-    "Taunt": "挑発"
+    "Taunt": "挑発",
+    "Energy Limit": "上限EP",
+    "basicattack": "通常攻撃",
+    "skill": "戦闘スキル",
+    "ult": "必殺技",
+    "talent": "天賦",
+    "technique": "秘技",
+    "dmg": "ダメージ",
+    "buff": "バフ",
+    "atk": "攻撃力",
+    "singleatk": "単体攻撃",
+    "quantumatk": "量子元素攻撃",
+    "alldmg": "ダメージボーナス",
+    "self": "自身",
+    "normalatk": "通常攻撃ダメージ",
+    "skillatk": "スキルダメージ",
+    "ultatk": "必殺技ダメージ"
 }
