@@ -25,5 +25,11 @@
     "self": "Self",
     "normalatk": "Normal Atk DMG",
     "skillatk": "Skill Atk DMG",
-    "ultatk": "Ultimate Atk DMG"
+    "ultatk": "Ultimate Atk DMG",
+    "def": "DEF",
+    "taunt": "Taunt",
+    "critdmg": "Taunt",
+    "actionf": "Action Forward",
+    "quantumpen": "Quantum Penetration",
+    "trace": "Trace"
 }

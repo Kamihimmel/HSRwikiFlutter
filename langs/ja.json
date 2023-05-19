@@ -25,5 +25,11 @@
     "self": "自身",
     "normalatk": "通常攻撃ダメージ",
     "skillatk": "スキルダメージ",
-    "ultatk": "必殺技ダメージ"
+    "ultatk": "必殺技ダメージ",
+    "def": "防御力",
+    "taunt": "挑発",
+    "critdmg": "会心ダメージ",
+    "actionf": "行動順",
+    "quantumpen": "量子属性耐性貫通",
+    "trace": "軌跡"
 }

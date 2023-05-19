@@ -25,5 +25,11 @@
     "self": "自身",
     "normalatk": "普攻伤害",
     "skillatk": "战技伤害",
-    "ultatk": "终结技伤害"
+    "ultatk": "终结技伤害",
+    "def": "防御力",
+    "taunt": "嘲讽",
+    "critdmg": "暴击伤害",
+    "actionf": "行动提前",
+    "quantumpen": "量子抗性穿透",
+    "trace": "行迹"
 }
