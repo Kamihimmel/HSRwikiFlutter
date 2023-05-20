@@ -31,5 +31,9 @@
     "critdmg": "会心ダメージ",
     "actionf": "行動順",
     "quantumpen": "量子属性耐性貫通",
-    "trace": "軌跡"
+    "trace": "軌跡",
+    "eidolon": "星魂",
+    "critrate": "会心率",
+    "energy": "EP",
+    "additionalatk": "付加攻撃ダメージ"
 }

@@ -31,5 +31,9 @@
     "critdmg": "Taunt",
     "actionf": "Action Forward",
     "quantumpen": "Quantum Penetration",
-    "trace": "Trace"
+    "trace": "Trace",
+    "eidolon": "Eidolon",
+    "critrate": "Crit Rate",
+    "energy": "Energy",
+    "additionalatk": "Additional Atk DMG"
 }

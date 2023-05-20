@@ -31,5 +31,9 @@
     "critdmg": "暴击伤害",
     "actionf": "行动提前",
     "quantumpen": "量子抗性穿透",
-    "trace": "行迹"
+    "trace": "行迹",
+    "eidolon": "星魂",
+    "critrate": "暴击率",
+    "energy": "能量",
+    "additionalatk": "附加攻击伤害"
 }
