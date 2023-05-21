@@ -272,7 +272,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text("title".tr() + " Honkai Starrail Wiki"),
+        title: Text("${"title".tr()} Honkai Starrail Wiki"),
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
@@ -625,14 +625,14 @@ class _MyHomePageState extends State<MyHomePage> {
                                 child: Column(
                                   children: [
                                     ConstrainedBox(
-                                      constraints: BoxConstraints(maxWidth: 50),
+                                      constraints: const BoxConstraints(maxWidth: 50),
                                       child: Image.network(
                                         etoimage[data['etype']!] ?? 'none',
                                         width: screenWidth / 20,
                                       ),
                                     ),
                                     ConstrainedBox(
-                                      constraints: BoxConstraints(maxWidth: 50),
+                                      constraints: const BoxConstraints(maxWidth: 50),
                                       child: Image.network(
                                         wtoimage[data['wtype']!]!,
                                         width: screenWidth / 20,

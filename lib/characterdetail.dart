@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_grid/responsive_grid.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 
@@ -10,7 +9,7 @@ import 'info.dart';
 
 class ChracterDetailPage extends StatefulWidget {
   final String jsonUrl;
-  ChracterDetailPage({required this.jsonUrl});
+  const ChracterDetailPage({super.key, required this.jsonUrl});
 
   @override
   State<ChracterDetailPage> createState() => _ChracterDetailPageState();
@@ -83,7 +82,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
             Stack(
               children: [
                 isLoading
-                    ? CircularProgressIndicator()
+                    ? const CircularProgressIndicator()
                     : Container(
                         decoration: BoxDecoration(image: DecorationImage(image: NetworkImage(characterData!['imagelargeurl']), fit: BoxFit.fitHeight)),
                         child: ResponsiveGridRow(
@@ -670,7 +669,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                       borderRadius: BorderRadius.circular(2),
                                                     ),
                                                     child: Center(
-                                                      child: Text('EP' + data['energy']!.toString(),
+                                                      child: Text('EP${data['energy']!}',
                                                           style: const TextStyle(
                                                             //fontWeight: FontWeight.bold,
                                                             color: Colors.white,
@@ -886,7 +885,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                         borderRadius: BorderRadius.circular(2),
                                                       ),
                                                       child: Center(
-                                                        child: Text('EP' + data['energy']!.toString(),
+                                                        child: Text('EP${data['energy']!}',
                                                             style: const TextStyle(
                                                               //fontWeight: FontWeight.bold,
                                                               color: Colors.white,
@@ -1302,7 +1301,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                       borderRadius: BorderRadius.circular(2),
                                                     ),
                                                     child: Center(
-                                                      child: Text('EP' + data['energy']!.toString(),
+                                                      child: Text('EP${data['energy']!}',
                                                           style: const TextStyle(
                                                             //fontWeight: FontWeight.bold,
                                                             color: Colors.white,
