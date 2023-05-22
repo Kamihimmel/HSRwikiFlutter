@@ -452,12 +452,13 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                             List<dynamic> multiplierData = data['levelmultiplier']!;
 
                                             int multicount = multiplierData.length;
+                                            fixedtext = detailtext;
 
                                             for (var i = multicount; i >= 1; i--) {
                                               Map<String, dynamic> currentleveldata = multiplierData[i - 1];
                                               String levelnum = (levelnumbers[index].toStringAsFixed(0));
 
-                                              fixedtext = detailtext.replaceAll("[$i]", (currentleveldata[levelnum]).toString());
+                                              fixedtext = fixedtext.replaceAll("[$i]", (currentleveldata[levelnum]).toString());
                                             }
                                           } else {
                                             fixedtext = detailtext;
@@ -551,9 +552,15 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                         mainAxisAlignment: MainAxisAlignment.center,
                                                         crossAxisAlignment: CrossAxisAlignment.start,
                                                         children: List.generate(data['effect'].length, (index2) {
-                                                          Map<String, dynamic> leveldata2 = (data['levelmultiplier']![(data['effect'][index2]['multiplier']) - 1]);
-                                                          String levelnum2 = (levelnumbers[index].toStringAsFixed(0));
-                                                          String levelmulti = leveldata2[levelnum2].toString();
+                                                          String levelmulti = "";
+
+                                                          if (data['levelmultiplier'] != null) {
+                                                            Map<String, dynamic> leveldata2 = (data['levelmultiplier']![(data['effect'][index2]['multiplier']) - 1]);
+                                                            String levelnum2 = (levelnumbers[index].toStringAsFixed(0));
+                                                            levelmulti = leveldata2[levelnum2].toString();
+                                                          } else {
+                                                            levelmulti = data['effect'][index2]['multiplier'].toString();
+                                                          }
 
                                                           return SingleChildScrollView(
                                                             scrollDirection: Axis.horizontal,

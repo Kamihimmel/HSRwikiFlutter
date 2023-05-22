@@ -38,4 +38,6 @@ const stattoimage = {
   'taunt': AssetImage('images/IconBuffTaunt.png'),
   'critdmg': AssetImage('images/IconCriticalDamage.png'),
   'energylimit': AssetImage('images/IconEnergyLimit.png'),
+  'winddmg': AssetImage('images/IconWindAddedRatio.png'),
+  'effectres': AssetImage('images/IconStatusResistance.png'),
 };

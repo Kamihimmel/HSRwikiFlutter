@@ -68,5 +68,6 @@
     "energy": "能量",
     "additionalatk": "附加攻击伤害",
     "effectres": "效果抵抗",
-    "skillpointre":"战技点恢复"
+    "skillpointre": "战技点恢复",
+    "speed": "速度"
 }
