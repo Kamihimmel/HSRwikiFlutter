@@ -39,6 +39,7 @@ dependencies:
   easy_localization: ^3.0.1
   url_launcher: ^6.1.11
   responsive_grid: ^2.2.0
+  url_strategy: ^0.2.0
 
 dev_dependencies:
   flutter_test:

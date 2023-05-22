@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:url_strategy/url_strategy.dart';
 
 import 'characterdetail.dart';
 import 'info.dart';
@@ -11,6 +12,7 @@ import 'info.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
+  setPathUrlStrategy();
   runApp(EasyLocalization(
       supportedLocales: const [Locale('en'), Locale.fromSubtags(languageCode: 'zh', countryCode: 'CN'), Locale('ja')],
       path: 'langs', // <-- change the path of the translation files
@@ -283,284 +285,286 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: screenWidth > 1300 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
           children: <Widget>[
-            Wrap(
-              alignment: WrapAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FilterChip(
-                    selectedColor: Colors.amber.withOpacity(0.5),
-                    backgroundColor: Colors.amber[100]!.withOpacity(0.1),
-                    label: const Icon(
-                      Icons.star_border_rounded,
-                      size: 30,
-                      color: Colors.amber,
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FilterChip(
+                      selectedColor: Colors.amber.withOpacity(0.5),
+                      backgroundColor: Colors.amber[100]!.withOpacity(0.1),
+                      label: const Icon(
+                        Icons.star_border_rounded,
+                        size: 30,
+                        color: Colors.amber,
+                      ),
+                      selected: filterStar5On,
+                      onSelected: (bool value) {
+                        setState(() {
+                          filterStar5On = value;
+                        });
+                      },
                     ),
-                    selected: filterStar5On,
-                    onSelected: (bool value) {
-                      setState(() {
-                        filterStar5On = value;
-                      });
-                    },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FilterChip(
-                    selectedColor: Colors.deepPurpleAccent.withOpacity(0.5),
-                    backgroundColor: Colors.deepPurpleAccent[100]!.withOpacity(0.1),
-                    label: const Icon(
-                      Icons.star_border_rounded,
-                      size: 30,
-                      color: Colors.deepPurpleAccent,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FilterChip(
+                      selectedColor: Colors.deepPurpleAccent.withOpacity(0.5),
+                      backgroundColor: Colors.deepPurpleAccent[100]!.withOpacity(0.1),
+                      label: const Icon(
+                        Icons.star_border_rounded,
+                        size: 30,
+                        color: Colors.deepPurpleAccent,
+                      ),
+                      selected: filterStar4On,
+                      onSelected: (bool value) {
+                        setState(() {
+                          filterStar4On = value;
+                        });
+                      },
                     ),
-                    selected: filterStar4On,
-                    onSelected: (bool value) {
-                      setState(() {
-                        filterStar4On = value;
-                      });
-                    },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FilterChip(
-                    selectedColor: Colors.purple.withOpacity(0.5),
-                    backgroundColor: Colors.purple[100]!.withOpacity(0.1),
-                    label: Image.network(
-                      etoimage['lightning']!,
-                      width: 30,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FilterChip(
+                      selectedColor: Colors.purple.withOpacity(0.5),
+                      backgroundColor: Colors.purple[100]!.withOpacity(0.1),
+                      label: Image.network(
+                        etoimage['lightning']!,
+                        width: 30,
+                      ),
+                      selected: filterLightningOn,
+                      onSelected: (bool value) {
+                        setState(() {
+                          filterLightningOn = value;
+                        });
+                      },
                     ),
-                    selected: filterLightningOn,
-                    onSelected: (bool value) {
-                      setState(() {
-                        filterLightningOn = value;
-                      });
-                    },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FilterChip(
-                    selectedColor: Colors.lightBlue.withOpacity(0.5),
-                    backgroundColor: Colors.lightBlue[100]!.withOpacity(0.1),
-                    label: Image.network(
-                      etoimage['ice']!,
-                      width: 30,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FilterChip(
+                      selectedColor: Colors.lightBlue.withOpacity(0.5),
+                      backgroundColor: Colors.lightBlue[100]!.withOpacity(0.1),
+                      label: Image.network(
+                        etoimage['ice']!,
+                        width: 30,
+                      ),
+                      selected: filterIceOn,
+                      onSelected: (bool value) {
+                        setState(() {
+                          filterIceOn = value;
+                        });
+                      },
                     ),
-                    selected: filterIceOn,
-                    onSelected: (bool value) {
-                      setState(() {
-                        filterIceOn = value;
-                      });
-                    },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FilterChip(
-                    selectedColor: Colors.red.withOpacity(0.5),
-                    backgroundColor: Colors.red[100]!.withOpacity(0.1),
-                    label: Image.network(
-                      etoimage['fire']!,
-                      width: 30,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FilterChip(
+                      selectedColor: Colors.red.withOpacity(0.5),
+                      backgroundColor: Colors.red[100]!.withOpacity(0.1),
+                      label: Image.network(
+                        etoimage['fire']!,
+                        width: 30,
+                      ),
+                      selected: filterFireOn,
+                      onSelected: (bool value) {
+                        setState(() {
+                          filterFireOn = value;
+                        });
+                      },
                     ),
-                    selected: filterFireOn,
-                    onSelected: (bool value) {
-                      setState(() {
-                        filterFireOn = value;
-                      });
-                    },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FilterChip(
-                    selectedColor: Colors.yellow.withOpacity(0.5),
-                    backgroundColor: Colors.yellow[100]!.withOpacity(0.1),
-                    label: Image.network(
-                      etoimage['imaginary']!,
-                      width: 30,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FilterChip(
+                      selectedColor: Colors.yellow.withOpacity(0.5),
+                      backgroundColor: Colors.yellow[100]!.withOpacity(0.1),
+                      label: Image.network(
+                        etoimage['imaginary']!,
+                        width: 30,
+                      ),
+                      selected: filterImaginaryOn,
+                      onSelected: (bool value) {
+                        setState(() {
+                          filterImaginaryOn = value;
+                        });
+                      },
                     ),
-                    selected: filterImaginaryOn,
-                    onSelected: (bool value) {
-                      setState(() {
-                        filterImaginaryOn = value;
-                      });
-                    },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FilterChip(
-                    selectedColor: Colors.indigo.withOpacity(0.5),
-                    backgroundColor: Colors.indigo[100]!.withOpacity(0.1),
-                    label: Image.network(
-                      etoimage['quantum']!,
-                      width: 30,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FilterChip(
+                      selectedColor: Colors.indigo.withOpacity(0.5),
+                      backgroundColor: Colors.indigo[100]!.withOpacity(0.1),
+                      label: Image.network(
+                        etoimage['quantum']!,
+                        width: 30,
+                      ),
+                      selected: filterQuantumOn,
+                      onSelected: (bool value) {
+                        setState(() {
+                          filterQuantumOn = value;
+                        });
+                      },
                     ),
-                    selected: filterQuantumOn,
-                    onSelected: (bool value) {
-                      setState(() {
-                        filterQuantumOn = value;
-                      });
-                    },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FilterChip(
-                    selectedColor: Colors.green.withOpacity(0.5),
-                    backgroundColor: Colors.green[100]!.withOpacity(0.1),
-                    label: Image.network(
-                      etoimage['wind']!,
-                      width: 30,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FilterChip(
+                      selectedColor: Colors.green.withOpacity(0.5),
+                      backgroundColor: Colors.green[100]!.withOpacity(0.1),
+                      label: Image.network(
+                        etoimage['wind']!,
+                        width: 30,
+                      ),
+                      selected: filterWindOn,
+                      onSelected: (bool value) {
+                        setState(() {
+                          filterWindOn = value;
+                        });
+                      },
                     ),
-                    selected: filterWindOn,
-                    onSelected: (bool value) {
-                      setState(() {
-                        filterWindOn = value;
-                      });
-                    },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FilterChip(
-                    selectedColor: Colors.grey.withOpacity(0.5),
-                    backgroundColor: Colors.grey[100]!.withOpacity(0.1),
-                    label: Image.network(
-                      etoimage['physical']!,
-                      width: 30,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FilterChip(
+                      selectedColor: Colors.grey.withOpacity(0.5),
+                      backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                      label: Image.network(
+                        etoimage['physical']!,
+                        width: 30,
+                      ),
+                      selected: filterPhysicalOn,
+                      onSelected: (bool value) {
+                        setState(() {
+                          filterPhysicalOn = value;
+                        });
+                      },
                     ),
-                    selected: filterPhysicalOn,
-                    onSelected: (bool value) {
-                      setState(() {
-                        filterPhysicalOn = value;
-                      });
-                    },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FilterChip(
-                    selectedColor: Colors.grey.withOpacity(0.5),
-                    backgroundColor: Colors.grey[100]!.withOpacity(0.1),
-                    label: Image.network(
-                      wtoimage['destruction']!,
-                      width: 30,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FilterChip(
+                      selectedColor: Colors.grey.withOpacity(0.5),
+                      backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                      label: Image.network(
+                        wtoimage['destruction']!,
+                        width: 30,
+                      ),
+                      selected: filterDestructionOn,
+                      onSelected: (bool value) {
+                        setState(() {
+                          filterDestructionOn = value;
+                        });
+                      },
                     ),
-                    selected: filterDestructionOn,
-                    onSelected: (bool value) {
-                      setState(() {
-                        filterDestructionOn = value;
-                      });
-                    },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FilterChip(
-                    selectedColor: Colors.grey.withOpacity(0.5),
-                    backgroundColor: Colors.grey[100]!.withOpacity(0.1),
-                    label: Image.network(
-                      wtoimage['erudition']!,
-                      width: 30,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FilterChip(
+                      selectedColor: Colors.grey.withOpacity(0.5),
+                      backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                      label: Image.network(
+                        wtoimage['erudition']!,
+                        width: 30,
+                      ),
+                      selected: filterEruditionOn,
+                      onSelected: (bool value) {
+                        setState(() {
+                          filterEruditionOn = value;
+                        });
+                      },
                     ),
-                    selected: filterEruditionOn,
-                    onSelected: (bool value) {
-                      setState(() {
-                        filterEruditionOn = value;
-                      });
-                    },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FilterChip(
-                    selectedColor: Colors.grey.withOpacity(0.5),
-                    backgroundColor: Colors.grey[100]!.withOpacity(0.1),
-                    label: Image.network(
-                      wtoimage['harmony']!,
-                      width: 30,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FilterChip(
+                      selectedColor: Colors.grey.withOpacity(0.5),
+                      backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                      label: Image.network(
+                        wtoimage['harmony']!,
+                        width: 30,
+                      ),
+                      selected: filterHarmonyOn,
+                      onSelected: (bool value) {
+                        setState(() {
+                          filterHarmonyOn = value;
+                        });
+                      },
                     ),
-                    selected: filterHarmonyOn,
-                    onSelected: (bool value) {
-                      setState(() {
-                        filterHarmonyOn = value;
-                      });
-                    },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FilterChip(
-                    selectedColor: Colors.grey.withOpacity(0.5),
-                    backgroundColor: Colors.grey[100]!.withOpacity(0.1),
-                    label: Image.network(
-                      wtoimage['thehunt']!,
-                      width: 30,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FilterChip(
+                      selectedColor: Colors.grey.withOpacity(0.5),
+                      backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                      label: Image.network(
+                        wtoimage['thehunt']!,
+                        width: 30,
+                      ),
+                      selected: filterThehuntOn,
+                      onSelected: (bool value) {
+                        setState(() {
+                          filterThehuntOn = value;
+                        });
+                      },
                     ),
-                    selected: filterThehuntOn,
-                    onSelected: (bool value) {
-                      setState(() {
-                        filterThehuntOn = value;
-                      });
-                    },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FilterChip(
-                    selectedColor: Colors.grey.withOpacity(0.5),
-                    backgroundColor: Colors.grey[100]!.withOpacity(0.1),
-                    label: Image.network(
-                      wtoimage['nihility']!,
-                      width: 30,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FilterChip(
+                      selectedColor: Colors.grey.withOpacity(0.5),
+                      backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                      label: Image.network(
+                        wtoimage['nihility']!,
+                        width: 30,
+                      ),
+                      selected: filterNihilityOn,
+                      onSelected: (bool value) {
+                        setState(() {
+                          filterNihilityOn = value;
+                        });
+                      },
                     ),
-                    selected: filterNihilityOn,
-                    onSelected: (bool value) {
-                      setState(() {
-                        filterNihilityOn = value;
-                      });
-                    },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FilterChip(
-                    selectedColor: Colors.grey.withOpacity(0.5),
-                    backgroundColor: Colors.grey[100]!.withOpacity(0.1),
-                    label: Image.network(
-                      wtoimage['abundance']!,
-                      width: 30,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FilterChip(
+                      selectedColor: Colors.grey.withOpacity(0.5),
+                      backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                      label: Image.network(
+                        wtoimage['abundance']!,
+                        width: 30,
+                      ),
+                      selected: filterAbundanceOn,
+                      onSelected: (bool value) {
+                        setState(() {
+                          filterAbundanceOn = value;
+                        });
+                      },
                     ),
-                    selected: filterAbundanceOn,
-                    onSelected: (bool value) {
-                      setState(() {
-                        filterAbundanceOn = value;
-                      });
-                    },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FilterChip(
-                    selectedColor: Colors.grey.withOpacity(0.5),
-                    backgroundColor: Colors.grey[100]!.withOpacity(0.1),
-                    label: Image.network(
-                      wtoimage['preservation']!,
-                      width: 30,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FilterChip(
+                      selectedColor: Colors.grey.withOpacity(0.5),
+                      backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                      label: Image.network(
+                        wtoimage['preservation']!,
+                        width: 30,
+                      ),
+                      selected: filterPreservationOn,
+                      onSelected: (bool value) {
+                        setState(() {
+                          filterPreservationOn = value;
+                        });
+                      },
                     ),
-                    selected: filterPreservationOn,
-                    onSelected: (bool value) {
-                      setState(() {
-                        filterPreservationOn = value;
-                      });
-                    },
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             Expanded(
               child: GridView.count(
