@@ -72,9 +72,17 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
       lg: 1440,
     );
 
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(seconds: 1),
       constraints: const BoxConstraints.expand(),
-      decoration: isLoading ? null : BoxDecoration(image: DecorationImage(image: NetworkImage(characterData!['imagelargeurl']), fit: BoxFit.fitHeight)),
+      decoration: isLoading
+          ? null
+          : BoxDecoration(
+              color: const Color.fromRGBO(42, 41, 48, 1),
+              image: DecorationImage(
+                image: NetworkImage(characterData!['imagelargeurl']),
+                fit: BoxFit.fitHeight,
+              )),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
