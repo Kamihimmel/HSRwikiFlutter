@@ -69,5 +69,6 @@
     "additionalatk": "Additional Atk DMG",
     "effectres": "Effect RES",
     "skillpointre": "Skill Point Recovering",
-    "speed": "speed"
+    "speed": "speed",
+    "shield": "Shield"
 }

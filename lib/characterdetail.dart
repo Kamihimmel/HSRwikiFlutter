@@ -568,7 +568,12 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                             if (data['levelmultiplier'] != null) {
                                                               Map<String, dynamic> leveldata2 = (data['levelmultiplier']![(data['effect'][index2]['multiplier']) - 1]);
                                                               String levelnum2 = (levelnumbers[index].toStringAsFixed(0));
-                                                              levelmulti = leveldata2[levelnum2].toString();
+
+                                                              if (leveldata2['default'] == null) {
+                                                                levelmulti = leveldata2[levelnum2].toString();
+                                                              } else {
+                                                                levelmulti = leveldata2['default'].toString();
+                                                              }
                                                             } else {
                                                               levelmulti = data['effect'][index2]['multiplier'].toString();
                                                             }
@@ -620,10 +625,11 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                             margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                             padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                             decoration: BoxDecoration(
-                                                                              color: Colors.redAccent,
+                                                                              color: (data['effect'][index2]['type'] == 'dmg') ? Colors.redAccent : Colors.blueAccent,
                                                                               borderRadius: BorderRadius.circular(5),
                                                                             ),
-                                                                            child: Text('${(data['effect'][index2]['multipliertarget'] as String).tr()}$levelmulti%',
+                                                                            child: Text(
+                                                                                '${(data['effect'][index2]['multipliertarget'] as String).tr()}$levelmulti${((data['effect'][index2]['multipliertarget']) != '') ? "%" : ""}',
                                                                                 style: const TextStyle(
                                                                                   //fontWeight: FontWeight.bold,
                                                                                   color: Colors.black,

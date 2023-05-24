@@ -69,5 +69,6 @@
     "additionalatk": "付加攻撃ダメージ",
     "effectres": "効果抵抗",
     "skillpointre": "SP回復",
-    "speed": "速度"
+    "speed": "速度",
+    "shield": "バリア"
 }
