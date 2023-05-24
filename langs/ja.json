@@ -34,6 +34,7 @@
     "purge debuff": "デバフ解除",
     "atk": "攻撃力",
     "singleatk": "単体攻撃",
+    "bounce": "バウンド",
     "fireatk": "炎属性攻撃",
     "iceatk": "氷属性攻撃",
     "lightningatk": "雷属性攻撃",
@@ -52,6 +53,8 @@
     "self": "自身",
     "singleally": "味方単体",
     "allally": "味方全体",
+    "allenemy":"敵全体",
+    "wbenemy":"弱点撃破敵",
     "normalatk": "通常攻撃ダメージ",
     "normalatkcr": "通常攻撃会心率",
     "skillatk": "スキルダメージ",
@@ -59,7 +62,8 @@
     "def": "防御力",
     "taunt": "挑発",
     "critdmg": "会心ダメージ",
-    "actionf": "行動順",
+    "actionf": "行動順早まる",
+    "actiond": "行动順遅延",
     "actioni": "直ちに行動",
     "quantumpen": "量子属性耐性貫通",
     "trace": "軌跡",
@@ -69,5 +73,7 @@
     "additionalatk": "付加攻撃ダメージ",
     "effectres": "効果抵抗",
     "skillpointre": "SP回復",
-    "speed": "速度"
+    "speed": "速度",
+    "imprison":"禁錮",
+    "dmgreceive":"被ダメージ"
 }

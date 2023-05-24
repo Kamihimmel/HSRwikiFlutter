@@ -34,6 +34,7 @@
     "purge debuff": "Purge Debuff",
     "atk": "ATK",
     "singleatk": "Single Atk",
+    "bounce": "Bounce",
     "fireatk": "Fire Atk",
     "iceatk": "Ice Atk",
     "lightningatk": "Lightning Atk",
@@ -52,6 +53,8 @@
     "self": "Self",
     "singleally": "Single Ally",
     "allally": "All Ally",
+    "allenemy":"All Enemy",
+    "wbenemy":"Weakness Break Enemy",
     "normalatk": "Normal Atk DMG",
     "normalatkcr": "Normal Atk Crit Rate",
     "skillatk": "Skill Atk DMG",
@@ -60,6 +63,7 @@
     "taunt": "Taunt",
     "critdmg": "Crit DMG",
     "actionf": "Action Forward",
+    "actiond": "Action Delay",
     "actioni": "Immediate Action",
     "quantumpen": "Quantum Penetration",
     "trace": "Trace",
@@ -68,6 +72,8 @@
     "energy": "Energy",
     "additionalatk": "Additional Atk DMG",
     "effectres": "Effect RES",
-    "skillpointre": "Skill Point Recovering",
-    "speed": "speed"
+    "skillpointre": "SP Recovering",
+    "speed": "speed",
+    "imprison":"imprison",
+    "dmgreceive":"dmgreceive"
 }

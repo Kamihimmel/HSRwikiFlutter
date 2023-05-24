@@ -34,6 +34,7 @@
     "purge debuff": "解除减益",
     "atk": "攻击力",
     "singleatk": "单体攻击",
+    "bounce": "弹射",
     "fireatk": "火属性攻击",
     "iceatk": "冰属性攻击",
     "lightningatk": "雷属性攻击",
@@ -52,6 +53,8 @@
     "self": "自身",
     "singleally": "我方单体",
     "allally": "我方全体",
+    "allenemy":"敌方全体",
+    "wbenemy":"弱点击破敌方",
     "normalatk": "普攻伤害",
     "normalatkcr": "普攻暴击率",
     "skillatk": "战技伤害",
@@ -60,6 +63,7 @@
     "taunt": "嘲讽",
     "critdmg": "暴击伤害",
     "actionf": "行动提前",
+    "actiond": "行动延后",
     "actioni": "立即行动",
     "quantumpen": "量子抗性穿透",
     "trace": "行迹",
@@ -69,5 +73,7 @@
     "additionalatk": "附加攻击伤害",
     "effectres": "效果抵抗",
     "skillpointre": "战技点恢复",
-    "speed": "速度"
+    "speed": "速度",
+    "imprison":"禁锢",
+    "dmgreceive":"受到伤害"
 }
