@@ -58,7 +58,7 @@
     "ultatk": "Ultimate Atk DMG",
     "def": "DEF",
     "taunt": "Taunt",
-    "critdmg": "Taunt",
+    "critdmg": "Crit DMG",
     "actionf": "Action Forward",
     "actioni": "Immediate Action",
     "quantumpen": "Quantum Penetration",
