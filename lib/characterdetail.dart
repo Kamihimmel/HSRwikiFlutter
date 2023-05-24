@@ -469,7 +469,11 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                 Map<String, dynamic> currentleveldata = multiplierData[i - 1];
                                                 String levelnum = (levelnumbers[index].toStringAsFixed(0));
 
-                                                fixedtext = fixedtext.replaceAll("[$i]", (currentleveldata[levelnum]).toString());
+                                                if (currentleveldata['default'] == null) {
+                                                  fixedtext = fixedtext.replaceAll("[$i]", (currentleveldata[levelnum]).toString());
+                                                } else {
+                                                  fixedtext = fixedtext.replaceAll("[$i]", (currentleveldata['default']).toString());
+                                                }
                                               }
                                             } else {
                                               fixedtext = detailtext;
@@ -625,7 +629,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                             margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                             padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                             decoration: BoxDecoration(
-                                                                              color: (data['effect'][index2]['type'] == 'dmg') ? Colors.redAccent : Colors.blueAccent,
+                                                                              color: typetocolor[(data['effect'][index2]['type'])],
                                                                               borderRadius: BorderRadius.circular(5),
                                                                             ),
                                                                             child: Text(
@@ -842,7 +846,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                               margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                               padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                               decoration: BoxDecoration(
-                                                                                color: Colors.redAccent,
+                                                                                color: typetocolor[(data['effect'][index2]['type'])],
                                                                                 borderRadius: BorderRadius.circular(5),
                                                                               ),
                                                                               child: Text('${(data['effect'][index2]['multipliertarget'] as String).tr()}${data['effect'][index2]['multiplier']}%',
@@ -861,7 +865,8 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                                 color: Colors.greenAccent,
                                                                                 borderRadius: BorderRadius.circular(5),
                                                                               ),
-                                                                              child: Text('${(data['effect'][index2]['addtarget'] as String).tr()}${data['effect'][index2]['multiplier']}%',
+                                                                              child: Text(
+                                                                                  '${(data['effect'][index2]['addtarget'] as String).tr()}${data['effect'][index2]['multiplier']}${((data['effect'][index2]['addtarget']) != 'energy') ? "%" : ""}',
                                                                                   style: const TextStyle(
                                                                                     //fontWeight: FontWeight.bold,
                                                                                     color: Colors.black,

@@ -40,4 +40,7 @@ const stattoimage = {
   'energylimit': AssetImage('images/IconEnergyLimit.png'),
   'winddmg': AssetImage('images/IconWindAddedRatio.png'),
   'effectres': AssetImage('images/IconStatusResistance.png'),
+  'imaginarydmg': AssetImage('images/IconImaginaryAddedRatio.png'),
 };
+
+var typetocolor = {'dmg': Colors.redAccent, 'debuff': Colors.grey[400], 'shield': Colors.blueAccent, 'heal': Colors.lime};

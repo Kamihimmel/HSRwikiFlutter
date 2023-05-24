@@ -76,5 +76,7 @@
     "shield": "Shield",
     "skillpointre": "SP Recovering",
     "imprison": "imprison",
-    "dmgreceive": "dmgreceive"
+    "dmgreceive": "dmgreceive",
+    "frozen": "Frozen",
+    "aoe": "AoE"
 }

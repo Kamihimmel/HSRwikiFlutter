@@ -76,5 +76,7 @@
     "speed": "速度",
     "shield": "バリア",
     "imprison": "禁錮",
-    "dmgreceive": "被ダメージ"
+    "dmgreceive": "被ダメージ",
+    "frozen": "凍結",
+    "aoe": "全体攻撃"
 }

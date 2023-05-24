@@ -76,5 +76,7 @@
     "speed": "速度",
     "shield": "护盾",
     "imprison": "禁锢",
-    "dmgreceive": "受到伤害"
+    "dmgreceive": "受到伤害",
+    "frozen": "冻结",
+    "aoe": "群体攻击"
 }
