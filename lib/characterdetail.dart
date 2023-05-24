@@ -594,6 +594,27 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                                 fontWeight: FontWeight.bold,
                                                                                 height: 1.1,
                                                                               )).tr()),
+                                                                      if (data['effect'][index2]['referencetarget'] != null)
+                                                                        Container(
+                                                                            margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
+                                                                            padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
+                                                                            decoration: BoxDecoration(
+                                                                              color: Colors.amber,
+                                                                              borderRadius: BorderRadius.circular(5),
+                                                                            ),
+                                                                            child: Text(
+                                                                                ('lang'.tr() == 'en')
+                                                                                    ? data['effect'][index2]['referencetargetEN']!
+                                                                                    : (('lang'.tr() == 'cn')
+                                                                                        ? data['effect'][index2]['referencetargetCN']!
+                                                                                        : data['effect'][index2]['referencetargetJP']!),
+                                                                                style: const TextStyle(
+                                                                                  //fontWeight: FontWeight.bold,
+                                                                                  color: Colors.black,
+                                                                                  fontSize: 15,
+                                                                                  fontWeight: FontWeight.bold,
+                                                                                  height: 1.1,
+                                                                                ))),
                                                                       if (data['effect'][index2]['multipliertarget'] != null)
                                                                         Container(
                                                                             margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
