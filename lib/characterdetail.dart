@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_grid/responsive_grid.dart';
@@ -105,7 +106,6 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                 sm: 12,
                                 child: Container(
                                   height: screenWidth > 905 ? screenHeight - 100 : null,
-                                  color: Colors.black.withOpacity(0.1),
                                   child: Column(
                                     children: [
                                       const SizedBox(
@@ -118,25 +118,41 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                             child: Padding(
                                               padding: const EdgeInsets.fromLTRB(10, 10, 5, 0),
                                               child: Container(
-                                                color: etocolor[namedata['etype']!]?.withOpacity(0.6),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    Image.network(
-                                                      etoimage[characterData!['etype']!]!,
-                                                      height: 50,
+                                                clipBehavior: Clip.hardEdge,
+                                                decoration: const BoxDecoration(
+                                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                                ),
+                                                child: BackdropFilter(
+                                                  filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                                      border: Border.all(color: Colors.white.withOpacity(0.13)),
+                                                      gradient: LinearGradient(
+                                                          begin: Alignment.topLeft,
+                                                          end: Alignment.bottomRight,
+                                                          colors: [etocolor[namedata['etype']!]?.withOpacity(0.35) as Color, etocolor[namedata['etype']!]?.withOpacity(0.5) as Color]),
                                                     ),
-                                                    Text(
-                                                      characterData!['etype'],
-                                                      style: const TextStyle(
-                                                        //fontWeight: FontWeight.bold,
-                                                        color: Colors.white,
-                                                        fontSize: 25,
-                                                        fontWeight: FontWeight.bold,
-                                                        height: 1,
-                                                      ),
-                                                    ).tr(),
-                                                  ],
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      children: [
+                                                        Image.network(
+                                                          etoimage[characterData!['etype']!]!,
+                                                          height: 50,
+                                                        ),
+                                                        Text(
+                                                          characterData!['etype'],
+                                                          style: const TextStyle(
+                                                            //fontWeight: FontWeight.bold,
+                                                            color: Colors.white,
+                                                            fontSize: 25,
+                                                            fontWeight: FontWeight.bold,
+                                                            height: 1,
+                                                          ),
+                                                        ).tr(),
+                                                      ],
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                             ),
@@ -145,25 +161,41 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                             child: Padding(
                                               padding: const EdgeInsets.fromLTRB(5, 10, 10, 0),
                                               child: Container(
-                                                color: etocolor[namedata['etype']!]?.withOpacity(0.6),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    Image.network(
-                                                      wtoimage[characterData!['wtype']!]!,
-                                                      height: 50,
+                                                clipBehavior: Clip.hardEdge,
+                                                decoration: const BoxDecoration(
+                                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                                ),
+                                                child: BackdropFilter(
+                                                  filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                                      border: Border.all(color: Colors.white.withOpacity(0.13)),
+                                                      gradient: LinearGradient(
+                                                          begin: Alignment.topLeft,
+                                                          end: Alignment.bottomRight,
+                                                          colors: [etocolor[namedata['etype']!]?.withOpacity(0.35) as Color, etocolor[namedata['etype']!]?.withOpacity(0.5) as Color]),
                                                     ),
-                                                    Text(
-                                                      characterData!['wtype'],
-                                                      style: const TextStyle(
-                                                        //fontWeight: FontWeight.bold,
-                                                        color: Colors.white,
-                                                        fontSize: 25,
-                                                        fontWeight: FontWeight.bold,
-                                                        height: 1,
-                                                      ),
-                                                    ).tr(),
-                                                  ],
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      children: [
+                                                        Image.network(
+                                                          wtoimage[characterData!['wtype']!]!,
+                                                          height: 50,
+                                                        ),
+                                                        Text(
+                                                          characterData!['wtype'],
+                                                          style: const TextStyle(
+                                                            //fontWeight: FontWeight.bold,
+                                                            color: Colors.white,
+                                                            fontSize: 25,
+                                                            fontWeight: FontWeight.bold,
+                                                            height: 1,
+                                                          ),
+                                                        ).tr(),
+                                                      ],
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                             ),
@@ -173,56 +205,82 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                       Padding(
                                         padding: const EdgeInsets.all(10.0),
                                         child: Container(
-                                          color: etocolor[namedata['etype']!]?.withOpacity(0.6),
-                                          child: Column(
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    SizedBox(
-                                                      width: 100,
-                                                      child: Text(
-                                                        "LV:${levelData[_currentSliderValue.toInt()]['level']}",
-                                                        style: const TextStyle(
-                                                          //fontWeight: FontWeight.bold,
-                                                          color: Colors.white,
-                                                          fontSize: 30,
-                                                          fontWeight: FontWeight.bold,
-                                                          height: 1.1,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      child: Slider(
-                                                        value: _currentSliderValue,
-                                                        min: 0,
-                                                        max: (attributeCount - 1).toDouble(),
-                                                        divisions: attributeCount - 1,
-                                                        activeColor: etocolor[namedata['etype']!],
-                                                        inactiveColor: etocolor[namedata['etype']!]?.withOpacity(0.5),
-                                                        onChanged: (double value) {
-                                                          setState(() {
-                                                            _currentSliderValue = value;
-                                                          });
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
+                                          clipBehavior: Clip.hardEdge,
+                                          decoration: const BoxDecoration(
+                                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                                          ),
+                                          child: BackdropFilter(
+                                            filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                                border: Border.all(color: Colors.white.withOpacity(0.13)),
+                                                gradient: LinearGradient(
+                                                    begin: Alignment.topLeft,
+                                                    end: Alignment.bottomRight,
+                                                    colors: [etocolor[namedata['etype']!]?.withOpacity(0.35) as Color, etocolor[namedata['etype']!]?.withOpacity(0.5) as Color]),
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                              child: Column(
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: [
-                                                        ImageIcon(stattoimage['hp']),
+                                                        SizedBox(
+                                                          width: 100,
+                                                          child: Text(
+                                                            "LV:${levelData[_currentSliderValue.toInt()]['level']}",
+                                                            style: const TextStyle(
+                                                              //fontWeight: FontWeight.bold,
+                                                              color: Colors.white,
+                                                              fontSize: 30,
+                                                              fontWeight: FontWeight.bold,
+                                                              height: 1.1,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                          child: Slider(
+                                                            value: _currentSliderValue,
+                                                            min: 0,
+                                                            max: (attributeCount - 1).toDouble(),
+                                                            divisions: attributeCount - 1,
+                                                            activeColor: etocolor[namedata['etype']!],
+                                                            inactiveColor: etocolor[namedata['etype']!]?.withOpacity(0.5),
+                                                            onChanged: (double value) {
+                                                              setState(() {
+                                                                _currentSliderValue = value;
+                                                              });
+                                                            },
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            ImageIcon(stattoimage['hp']),
+                                                            Text(
+                                                              "HP".tr(),
+                                                              style: const TextStyle(
+                                                                //fontWeight: FontWeight.bold,
+                                                                color: Colors.white,
+                                                                fontSize: 30,
+                                                                fontWeight: FontWeight.bold,
+                                                                height: 1.1,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
                                                         Text(
-                                                          "HP".tr(),
+                                                          levelData[_currentSliderValue.toInt()]['hp'].toString(),
                                                           style: const TextStyle(
                                                             //fontWeight: FontWeight.bold,
                                                             color: Colors.white,
@@ -233,30 +291,30 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                         ),
                                                       ],
                                                     ),
-                                                    Text(
-                                                      levelData[_currentSliderValue.toInt()]['hp'].toString(),
-                                                      style: const TextStyle(
-                                                        //fontWeight: FontWeight.bold,
-                                                        color: Colors.white,
-                                                        fontSize: 30,
-                                                        fontWeight: FontWeight.bold,
-                                                        height: 1.1,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: [
-                                                        ImageIcon(stattoimage['atk']),
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            ImageIcon(stattoimage['atk']),
+                                                            Text(
+                                                              "ATK".tr(),
+                                                              style: const TextStyle(
+                                                                //fontWeight: FontWeight.bold,
+                                                                color: Colors.white,
+                                                                fontSize: 30,
+                                                                fontWeight: FontWeight.bold,
+                                                                height: 1.1,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
                                                         Text(
-                                                          "ATK".tr(),
+                                                          levelData[_currentSliderValue.toInt()]['atk'].toString(),
                                                           style: const TextStyle(
                                                             //fontWeight: FontWeight.bold,
                                                             color: Colors.white,
@@ -267,30 +325,30 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                         ),
                                                       ],
                                                     ),
-                                                    Text(
-                                                      levelData[_currentSliderValue.toInt()]['atk'].toString(),
-                                                      style: const TextStyle(
-                                                        //fontWeight: FontWeight.bold,
-                                                        color: Colors.white,
-                                                        fontSize: 30,
-                                                        fontWeight: FontWeight.bold,
-                                                        height: 1.1,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: [
-                                                        ImageIcon(stattoimage['def']),
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            ImageIcon(stattoimage['def']),
+                                                            Text(
+                                                              "DEF".tr(),
+                                                              style: const TextStyle(
+                                                                //fontWeight: FontWeight.bold,
+                                                                color: Colors.white,
+                                                                fontSize: 30,
+                                                                fontWeight: FontWeight.bold,
+                                                                height: 1.1,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
                                                         Text(
-                                                          "DEF".tr(),
+                                                          levelData[_currentSliderValue.toInt()]['def'].toString(),
                                                           style: const TextStyle(
                                                             //fontWeight: FontWeight.bold,
                                                             color: Colors.white,
@@ -301,30 +359,30 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                         ),
                                                       ],
                                                     ),
-                                                    Text(
-                                                      levelData[_currentSliderValue.toInt()]['def'].toString(),
-                                                      style: const TextStyle(
-                                                        //fontWeight: FontWeight.bold,
-                                                        color: Colors.white,
-                                                        fontSize: 30,
-                                                        fontWeight: FontWeight.bold,
-                                                        height: 1.1,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: [
-                                                        ImageIcon(stattoimage['speed']),
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            ImageIcon(stattoimage['speed']),
+                                                            Text(
+                                                              "${"Basic".tr()}${"Speed".tr()}",
+                                                              style: const TextStyle(
+                                                                //fontWeight: FontWeight.bold,
+                                                                color: Colors.white,
+                                                                fontSize: 30,
+                                                                fontWeight: FontWeight.bold,
+                                                                height: 1.1,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
                                                         Text(
-                                                          "${"Basic".tr()}${"Speed".tr()}",
+                                                          characterData!['dspeed'].toString(),
                                                           style: const TextStyle(
                                                             //fontWeight: FontWeight.bold,
                                                             color: Colors.white,
@@ -335,33 +393,33 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                         ),
                                                       ],
                                                     ),
-                                                    Text(
-                                                      characterData!['dspeed'].toString(),
-                                                      style: const TextStyle(
-                                                        //fontWeight: FontWeight.bold,
-                                                        color: Colors.white,
-                                                        fontSize: 30,
-                                                        fontWeight: FontWeight.bold,
-                                                        height: 1.1,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: [
-                                                        ImageIcon(
-                                                          stattoimage['taunt'],
-                                                          size: 25,
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            ImageIcon(
+                                                              stattoimage['taunt'],
+                                                              size: 25,
+                                                            ),
+                                                            Text(
+                                                              "${"Basic".tr()}${"Taunt".tr()}",
+                                                              style: const TextStyle(
+                                                                //fontWeight: FontWeight.bold,
+                                                                color: Colors.white,
+                                                                fontSize: 30,
+                                                                fontWeight: FontWeight.bold,
+                                                                height: 1.1,
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
                                                         Text(
-                                                          "${"Basic".tr()}${"Taunt".tr()}",
+                                                          characterData!['dtaunt'].toString(),
                                                           style: const TextStyle(
                                                             //fontWeight: FontWeight.bold,
                                                             color: Colors.white,
@@ -372,33 +430,33 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                         ),
                                                       ],
                                                     ),
-                                                    Text(
-                                                      characterData!['dtaunt'].toString(),
-                                                      style: const TextStyle(
-                                                        //fontWeight: FontWeight.bold,
-                                                        color: Colors.white,
-                                                        fontSize: 30,
-                                                        fontWeight: FontWeight.bold,
-                                                        height: 1.1,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.fromLTRB(30, 5, 30, 10),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(30, 5, 30, 10),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: [
-                                                        ImageIcon(
-                                                          stattoimage['energylimit'],
-                                                          size: 25,
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            ImageIcon(
+                                                              stattoimage['energylimit'],
+                                                              size: 25,
+                                                            ),
+                                                            Text(
+                                                              "${"Basic".tr()}${"Energy Limit".tr()}",
+                                                              style: const TextStyle(
+                                                                //fontWeight: FontWeight.bold,
+                                                                color: Colors.white,
+                                                                fontSize: 30,
+                                                                fontWeight: FontWeight.bold,
+                                                                height: 1.1,
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
                                                         Text(
-                                                          "${"Basic".tr()}${"Energy Limit".tr()}",
+                                                          characterData!['maxenergy'].toString(),
                                                           style: const TextStyle(
                                                             //fontWeight: FontWeight.bold,
                                                             color: Colors.white,
@@ -409,20 +467,10 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                         ),
                                                       ],
                                                     ),
-                                                    Text(
-                                                      characterData!['maxenergy'].toString(),
-                                                      style: const TextStyle(
-                                                        //fontWeight: FontWeight.bold,
-                                                        color: Colors.white,
-                                                        fontSize: 30,
-                                                        fontWeight: FontWeight.bold,
-                                                        height: 1.1,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -438,7 +486,6 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                 sm: 12,
                                 child: Container(
                                   height: screenWidth > 905 ? screenHeight - 100 : null,
-                                  color: Colors.green.withOpacity(0.1),
                                   child: SingleChildScrollView(
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
@@ -486,83 +533,107 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                     Container(
                                                       width: double.infinity,
                                                       margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                                                      color: etocolor[namedata['etype']!]?.withOpacity(0.6),
-                                                      child: Row(
-                                                        children: [
-                                                          Image.network(
-                                                            data['imageurl']!,
-                                                            width: 100,
+                                                      clipBehavior: Clip.hardEdge,
+                                                      decoration: const BoxDecoration(
+                                                        borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+                                                      ),
+                                                      child: BackdropFilter(
+                                                        filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                                                        child: Container(
+                                                          decoration: BoxDecoration(
+                                                            borderRadius: (data['effect'] != null)
+                                                                ? const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
+                                                                : const BorderRadius.all(Radius.circular(15)),
+                                                            border: Border.all(color: Colors.white.withOpacity(0.13)),
+                                                            gradient: LinearGradient(
+                                                                begin: Alignment.topLeft,
+                                                                end: Alignment.bottomRight,
+                                                                colors: [etocolor[namedata['etype']!]?.withOpacity(0.35) as Color, Colors.black.withOpacity(0.5) as Color]),
                                                           ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding: const EdgeInsets.all(8.0),
-                                                              child: Column(
-                                                                children: [
-                                                                  Text(
-                                                                    ('lang'.tr() == 'en') ? data['ENname']! : (('lang'.tr() == 'cn') ? data['CNname']! : data['JAname']!),
-                                                                    style: const TextStyle(
-                                                                      color: Colors.white,
-                                                                      fontWeight: FontWeight.bold,
-                                                                      fontSize: 20,
-                                                                    ),
-                                                                  ),
-                                                                  Text(
-                                                                    fixedtext,
-                                                                    style: const TextStyle(
-                                                                      color: Colors.white,
-                                                                      fontSize: 15,
-                                                                    ),
-                                                                    maxLines: 10,
-                                                                  ),
-                                                                  if (data['maxlevel']! > 0)
-                                                                    Padding(
-                                                                      padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                                                      child: Row(
-                                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                        children: [
-                                                                          SizedBox(
-                                                                            child: Text(
-                                                                              "LV:${levelnumbers[index].toInt()}",
-                                                                              style: const TextStyle(
-                                                                                //fontWeight: FontWeight.bold,
-                                                                                color: Colors.white,
-                                                                                fontSize: 20,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                height: 1.1,
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          Expanded(
-                                                                            child: Slider(
-                                                                              value: levelnumbers[index],
-                                                                              min: 1,
-                                                                              max: (data['maxlevel']).toDouble(),
-                                                                              divisions: data['maxlevel'] - 1,
-                                                                              activeColor: etocolor[namedata['etype']!],
-                                                                              inactiveColor: etocolor[namedata['etype']!]?.withOpacity(0.5),
-                                                                              onChanged: (double value) {
-                                                                                setState(() {
-                                                                                  levelnumbers[index] = value;
-                                                                                });
-                                                                              },
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                ],
+                                                          child: Row(
+                                                            children: [
+                                                              Container(
+                                                                margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                                                                child: Image.network(
+                                                                  data['imageurl']!,
+                                                                  width: 100,
+                                                                ),
                                                               ),
-                                                            ),
+                                                              Expanded(
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets.all(8.0),
+                                                                  child: Column(
+                                                                    children: [
+                                                                      Text(
+                                                                        ('lang'.tr() == 'en') ? data['ENname']! : (('lang'.tr() == 'cn') ? data['CNname']! : data['JAname']!),
+                                                                        style: const TextStyle(
+                                                                          color: Colors.white,
+                                                                          fontWeight: FontWeight.bold,
+                                                                          fontSize: 20,
+                                                                        ),
+                                                                      ),
+                                                                      Text(
+                                                                        fixedtext,
+                                                                        style: const TextStyle(
+                                                                          color: Colors.white,
+                                                                          fontSize: 15,
+                                                                        ),
+                                                                        maxLines: 10,
+                                                                      ),
+                                                                      if (data['maxlevel']! > 0)
+                                                                        Padding(
+                                                                          padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                                          child: Row(
+                                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              SizedBox(
+                                                                                child: Text(
+                                                                                  "LV:${levelnumbers[index].toInt()}",
+                                                                                  style: const TextStyle(
+                                                                                    //fontWeight: FontWeight.bold,
+                                                                                    color: Colors.white,
+                                                                                    fontSize: 20,
+                                                                                    fontWeight: FontWeight.bold,
+                                                                                    height: 1.1,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              Expanded(
+                                                                                child: Slider(
+                                                                                  value: levelnumbers[index],
+                                                                                  min: 1,
+                                                                                  max: (data['maxlevel']).toDouble(),
+                                                                                  divisions: data['maxlevel'] - 1,
+                                                                                  activeColor: etocolor[namedata['etype']!],
+                                                                                  inactiveColor: etocolor[namedata['etype']!]?.withOpacity(0.5),
+                                                                                  onChanged: (double value) {
+                                                                                    setState(() {
+                                                                                      levelnumbers[index] = value;
+                                                                                    });
+                                                                                  },
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
                                                           ),
-                                                        ],
+                                                        ),
                                                       ),
                                                     ),
                                                     if (data['effect'] != null)
                                                       Container(
                                                         width: double.infinity,
                                                         margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                                        color: Colors.black.withOpacity(0.8),
                                                         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.black.withOpacity(0.8),
+                                                          borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                                                        ),
                                                         child: Column(
                                                           mainAxisAlignment: MainAxisAlignment.center,
                                                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -690,43 +761,53 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                     ),
                                                   ],
                                                 ),
-                                                Container(
-                                                  width: 110,
-                                                  decoration: BoxDecoration(
-                                                    color: etocolor[namedata['etype']!]?.withOpacity(1),
-                                                    borderRadius: BorderRadius.circular(2),
-                                                  ),
-                                                  child: Center(
-                                                    child: Text(data['stype']!,
-                                                        style: const TextStyle(
-                                                          //fontWeight: FontWeight.bold,
-                                                          color: Colors.white,
-                                                          fontSize: 20,
-                                                          fontWeight: FontWeight.bold,
-                                                          height: 1.1,
-                                                        )).tr(),
+                                                Positioned(
+                                                  top: 10,
+                                                  left: 10,
+                                                  child: Container(
+                                                    width: 110,
+                                                    decoration: BoxDecoration(
+                                                      color: etocolor[namedata['etype']!]?.withOpacity(0.3),
+                                                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                                                    ),
+                                                    child: Center(
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.all(2.0),
+                                                        child: Text(data['stype']!,
+                                                            style: const TextStyle(
+                                                              //fontWeight: FontWeight.bold,
+                                                              color: Colors.white,
+                                                              fontSize: 18,
+                                                              fontWeight: FontWeight.bold,
+                                                              height: 1.1,
+                                                            )).tr(),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
                                                 if (data['energy'] != null)
                                                   Positioned(
-                                                    top: 0,
-                                                    right: 0,
+                                                    top: 10,
+                                                    right: 10,
                                                     child: Container(
                                                       width: 110,
                                                       decoration: BoxDecoration(
-                                                        color: etocolor[namedata['etype']!]?.withOpacity(1),
-                                                        borderRadius: BorderRadius.circular(2),
+                                                        color: etocolor[namedata['etype']!]?.withOpacity(0.3),
+                                                        borderRadius: const BorderRadius.only(topRight: Radius.circular(15), bottomLeft: Radius.circular(15)),
                                                       ),
                                                       child: Center(
-                                                        child: Text('EP${data['energy']!}',
-                                                            style: const TextStyle(
-                                                              //fontWeight: FontWeight.bold,
-                                                              color: Colors.white,
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.all(2.0),
+                                                          child: Text('EP${data['energy']!}',
+                                                              style: const TextStyle(
+                                                                //fontWeight: FontWeight.bold,
+                                                                color: Colors.white,
 
-                                                              fontSize: 20,
-                                                              fontWeight: FontWeight.bold,
-                                                              height: 1.1,
-                                                            )).tr(),
+                                                                fontSize: 18,
+                                                                fontWeight: FontWeight.bold,
+                                                                height: 1.1,
+                                                              )).tr(),
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
@@ -747,7 +828,6 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                 sm: 12,
                                 child: Container(
                                   height: screenWidth > 905 ? screenHeight - 100 : null,
-                                  color: Colors.green.withOpacity(0.1),
                                   child: SingleChildScrollView(
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
@@ -775,46 +855,70 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                       Container(
                                                         width: double.infinity,
                                                         margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                                                        color: etocolor[namedata['etype']!]?.withOpacity(0.6),
-                                                        child: Row(
-                                                          children: [
-                                                            Image.network(
-                                                              data['imageurl']!,
-                                                              width: 100,
+                                                        clipBehavior: Clip.hardEdge,
+                                                        decoration: const BoxDecoration(
+                                                          borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+                                                        ),
+                                                        child: BackdropFilter(
+                                                          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                                                          child: Container(
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: (data['effect'] != null)
+                                                                  ? const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
+                                                                  : const BorderRadius.all(Radius.circular(15)),
+                                                              border: Border.all(color: Colors.white.withOpacity(0.13)),
+                                                              gradient: LinearGradient(
+                                                                  begin: Alignment.topLeft,
+                                                                  end: Alignment.bottomRight,
+                                                                  colors: [etocolor[namedata['etype']!]?.withOpacity(0.35) as Color, Colors.black.withOpacity(0.5) as Color]),
                                                             ),
-                                                            Expanded(
-                                                              child: Padding(
-                                                                padding: const EdgeInsets.all(8.0),
-                                                                child: Column(
-                                                                  children: [
-                                                                    Text(
-                                                                      ('lang'.tr() == 'en') ? data['ENname']! : (('lang'.tr() == 'cn') ? data['CNname']! : data['JAname']!),
-                                                                      style: const TextStyle(
-                                                                        color: Colors.white,
-                                                                        fontWeight: FontWeight.bold,
-                                                                        fontSize: 20,
-                                                                      ),
-                                                                    ),
-                                                                    Text(
-                                                                      detailtext,
-                                                                      style: const TextStyle(
-                                                                        color: Colors.white,
-                                                                        fontSize: 15,
-                                                                      ),
-                                                                      maxLines: 10,
-                                                                    ),
-                                                                  ],
+                                                            child: Row(
+                                                              children: [
+                                                                Container(
+                                                                  margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                                                                  child: Image.network(
+                                                                    data['imageurl']!,
+                                                                    width: 100,
+                                                                  ),
                                                                 ),
-                                                              ),
+                                                                Expanded(
+                                                                  child: Padding(
+                                                                    padding: const EdgeInsets.all(8.0),
+                                                                    child: Column(
+                                                                      children: [
+                                                                        Text(
+                                                                          ('lang'.tr() == 'en') ? data['ENname']! : (('lang'.tr() == 'cn') ? data['CNname']! : data['JAname']!),
+                                                                          style: const TextStyle(
+                                                                            color: Colors.white,
+                                                                            fontWeight: FontWeight.bold,
+                                                                            fontSize: 20,
+                                                                          ),
+                                                                        ),
+                                                                        Text(
+                                                                          detailtext,
+                                                                          style: const TextStyle(
+                                                                            color: Colors.white,
+                                                                            fontSize: 15,
+                                                                          ),
+                                                                          maxLines: 10,
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
-                                                          ],
+                                                          ),
                                                         ),
                                                       ),
                                                       if (data['effect'] != null)
                                                         Container(
                                                           width: double.infinity,
                                                           margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                                          color: Colors.black.withOpacity(0.8),
+                                                          decoration: BoxDecoration(
+                                                            color: Colors.black.withOpacity(0.8),
+                                                            borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                                                          ),
                                                           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                           child: Column(
                                                             mainAxisAlignment: MainAxisAlignment.center,
@@ -907,21 +1011,28 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                       ),
                                                     ],
                                                   ),
-                                                  Container(
-                                                    width: 110,
-                                                    decoration: BoxDecoration(
-                                                      color: etocolor[namedata['etype']!]?.withOpacity(1),
-                                                      borderRadius: BorderRadius.circular(2),
-                                                    ),
-                                                    child: Center(
-                                                      child: Text(data['stype']!,
-                                                          style: const TextStyle(
-                                                            //fontWeight: FontWeight.bold,
-                                                            color: Colors.white,
-                                                            fontSize: 20,
-                                                            fontWeight: FontWeight.bold,
-                                                            height: 1.1,
-                                                          )).tr(),
+                                                  Positioned(
+                                                    top: 10,
+                                                    left: 10,
+                                                    child: Container(
+                                                      width: 110,
+                                                      decoration: BoxDecoration(
+                                                        color: etocolor[namedata['etype']!]?.withOpacity(0.3),
+                                                        borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                                                      ),
+                                                      child: Center(
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.all(2.0),
+                                                          child: Text(data['stype']!,
+                                                              style: const TextStyle(
+                                                                //fontWeight: FontWeight.bold,
+                                                                color: Colors.white,
+                                                                fontSize: 18,
+                                                                fontWeight: FontWeight.bold,
+                                                                height: 1.1,
+                                                              )).tr(),
+                                                        ),
+                                                      ),
                                                     ),
                                                   ),
                                                   if (data['energy'] != null)
@@ -955,7 +1066,10 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                   Container(
                                                     width: double.infinity,
                                                     margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                                                    color: Colors.black.withOpacity(0.8),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.black.withOpacity(0.8),
+                                                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+                                                    ),
                                                     child: Row(
                                                       children: [
                                                         Padding(
@@ -997,7 +1111,10 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                     Container(
                                                       width: double.infinity,
                                                       margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                                      color: Colors.black.withOpacity(0.8),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.black.withOpacity(0.8),
+                                                        borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                                                      ),
                                                       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                       child: Column(
                                                         mainAxisAlignment: MainAxisAlignment.center,
@@ -1105,7 +1222,6 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                 sm: 12,
                                 child: Container(
                                   height: screenWidth > 905 ? screenHeight - 100 : null,
-                                  color: Colors.green.withOpacity(0.1),
                                   child: SingleChildScrollView(
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
@@ -1148,82 +1264,106 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                     Container(
                                                       width: double.infinity,
                                                       margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                                                      color: etocolor[namedata['etype']!]?.withOpacity(0.6),
-                                                      child: Row(
-                                                        children: [
-                                                          Image.network(
-                                                            data['imageurl']!,
-                                                            width: 100,
+                                                      clipBehavior: Clip.hardEdge,
+                                                      decoration: const BoxDecoration(
+                                                        borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+                                                      ),
+                                                      child: BackdropFilter(
+                                                        filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                                                        child: Container(
+                                                          decoration: BoxDecoration(
+                                                            borderRadius: (data['effect'] != null)
+                                                                ? const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
+                                                                : const BorderRadius.all(Radius.circular(15)),
+                                                            border: Border.all(color: Colors.white.withOpacity(0.13)),
+                                                            gradient: LinearGradient(
+                                                                begin: Alignment.topLeft,
+                                                                end: Alignment.bottomRight,
+                                                                colors: [etocolor[namedata['etype']!]?.withOpacity(0.35) as Color, Colors.black.withOpacity(0.5) as Color]),
                                                           ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding: const EdgeInsets.all(8.0),
-                                                              child: Column(
-                                                                children: [
-                                                                  Text(
-                                                                    ('lang'.tr() == 'en') ? data['ENname']! : (('lang'.tr() == 'cn') ? data['CNname']! : data['JAname']!),
-                                                                    style: const TextStyle(
-                                                                      color: Colors.white,
-                                                                      fontWeight: FontWeight.bold,
-                                                                      fontSize: 20,
-                                                                    ),
-                                                                  ),
-                                                                  Text(
-                                                                    fixedtext,
-                                                                    style: const TextStyle(
-                                                                      color: Colors.white,
-                                                                      fontSize: 15,
-                                                                    ),
-                                                                    maxLines: 10,
-                                                                  ),
-                                                                  if (data['maxlevel'] != null && data['maxlevel']! > 0)
-                                                                    Padding(
-                                                                      padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                                                      child: Row(
-                                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                        children: [
-                                                                          SizedBox(
-                                                                            child: Text(
-                                                                              "LV:${levelnumbers3[index].toInt()}",
-                                                                              style: const TextStyle(
-                                                                                //fontWeight: FontWeight.bold,
-                                                                                color: Colors.white,
-                                                                                fontSize: 20,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                height: 1.1,
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          Expanded(
-                                                                            child: Slider(
-                                                                              value: levelnumbers3[index],
-                                                                              min: 1,
-                                                                              max: (data['maxlevel']).toDouble(),
-                                                                              divisions: data['maxlevel'] - 1,
-                                                                              activeColor: etocolor[namedata['etype']!],
-                                                                              inactiveColor: etocolor[namedata['etype']!]?.withOpacity(0.5),
-                                                                              onChanged: (double value) {
-                                                                                setState(() {
-                                                                                  levelnumbers3[index] = value;
-                                                                                });
-                                                                              },
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                ],
+                                                          child: Row(
+                                                            children: [
+                                                              Container(
+                                                                margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                                                                child: Image.network(
+                                                                  data['imageurl']!,
+                                                                  width: 100,
+                                                                ),
                                                               ),
-                                                            ),
+                                                              Expanded(
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets.all(8.0),
+                                                                  child: Column(
+                                                                    children: [
+                                                                      Text(
+                                                                        ('lang'.tr() == 'en') ? data['ENname']! : (('lang'.tr() == 'cn') ? data['CNname']! : data['JAname']!),
+                                                                        style: const TextStyle(
+                                                                          color: Colors.white,
+                                                                          fontWeight: FontWeight.bold,
+                                                                          fontSize: 20,
+                                                                        ),
+                                                                      ),
+                                                                      Text(
+                                                                        fixedtext,
+                                                                        style: const TextStyle(
+                                                                          color: Colors.white,
+                                                                          fontSize: 15,
+                                                                        ),
+                                                                        maxLines: 10,
+                                                                      ),
+                                                                      if (data['maxlevel'] != null && data['maxlevel']! > 0)
+                                                                        Padding(
+                                                                          padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                                          child: Row(
+                                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              SizedBox(
+                                                                                child: Text(
+                                                                                  "LV:${levelnumbers3[index].toInt()}",
+                                                                                  style: const TextStyle(
+                                                                                    //fontWeight: FontWeight.bold,
+                                                                                    color: Colors.white,
+                                                                                    fontSize: 20,
+                                                                                    fontWeight: FontWeight.bold,
+                                                                                    height: 1.1,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              Expanded(
+                                                                                child: Slider(
+                                                                                  value: levelnumbers3[index],
+                                                                                  min: 1,
+                                                                                  max: (data['maxlevel']).toDouble(),
+                                                                                  divisions: data['maxlevel'] - 1,
+                                                                                  activeColor: etocolor[namedata['etype']!],
+                                                                                  inactiveColor: etocolor[namedata['etype']!]?.withOpacity(0.5),
+                                                                                  onChanged: (double value) {
+                                                                                    setState(() {
+                                                                                      levelnumbers3[index] = value;
+                                                                                    });
+                                                                                  },
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
                                                           ),
-                                                        ],
+                                                        ),
                                                       ),
                                                     ),
                                                     if (data['effect'] != null)
                                                       Container(
                                                         width: double.infinity,
                                                         margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                                        color: Colors.black.withOpacity(0.8),
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.black.withOpacity(0.8),
+                                                          borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                                                        ),
                                                         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                         child: Column(
                                                           mainAxisAlignment: MainAxisAlignment.center,
@@ -1323,21 +1463,28 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                     ),
                                                   ],
                                                 ),
-                                                Container(
-                                                  width: 110,
-                                                  decoration: BoxDecoration(
-                                                    color: etocolor[namedata['etype']!]?.withOpacity(1),
-                                                    borderRadius: BorderRadius.circular(2),
-                                                  ),
-                                                  child: Center(
-                                                    child: Text((data['stype']! as String).tr() + data['eidolonnum']!.toString(),
-                                                        style: const TextStyle(
-                                                          //fontWeight: FontWeight.bold,
-                                                          color: Colors.white,
-                                                          fontSize: 20,
-                                                          fontWeight: FontWeight.bold,
-                                                          height: 1.1,
-                                                        )),
+                                                Positioned(
+                                                  top: 10,
+                                                  left: 10,
+                                                  child: Container(
+                                                    width: 110,
+                                                    decoration: BoxDecoration(
+                                                      color: etocolor[namedata['etype']!]?.withOpacity(0.3),
+                                                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                                                    ),
+                                                    child: Center(
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.all(2.0),
+                                                        child: Text((data['stype']! as String).tr() + data['eidolonnum']!.toString(),
+                                                            style: const TextStyle(
+                                                              //fontWeight: FontWeight.bold,
+                                                              color: Colors.white,
+                                                              fontSize: 18,
+                                                              fontWeight: FontWeight.bold,
+                                                              height: 1.1,
+                                                            )),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
                                                 if (data['energy'] != null)
