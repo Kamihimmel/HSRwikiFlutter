@@ -39,7 +39,10 @@ const stattoimage = {
   'critdmg': AssetImage('images/IconCriticalDamage.png'),
   'energylimit': AssetImage('images/IconEnergyLimit.png'),
   'winddmg': AssetImage('images/IconWindAddedRatio.png'),
+  'icedmg': AssetImage('images/IconIceAddedRatio.png'),
   'effectres': AssetImage('images/IconStatusResistance.png'),
+  'energyrecovery': AssetImage('images/IconEnergyRecovery.png'),
+  'breakup': AssetImage('images/IconBreakUp.png'),
   'imaginarydmg': AssetImage('images/IconImaginaryAddedRatio.png'),
 };
 

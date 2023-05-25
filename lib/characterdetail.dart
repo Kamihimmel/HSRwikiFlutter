@@ -85,7 +85,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                 fit: BoxFit.fitHeight,
               )),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.black.withOpacity(0.1),
         appBar: AppBar(
           title: Text(('lang'.tr() == 'en') ? namedata['enname']! : (('lang'.tr() == 'cn') ? namedata['cnname']! : namedata['janame']!)),
         ),
@@ -474,6 +474,29 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                           ),
                                         ),
                                       ),
+                                      if (screenWidth > 905)
+                                        Expanded(
+                                          child: Image.network(characterData!['imagelargeurl'], filterQuality: FilterQuality.medium),
+                                        ),
+                                      if (screenWidth < 905)
+                                        Container(
+                                          clipBehavior: Clip.hardEdge,
+                                          decoration: const BoxDecoration(
+                                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                                          ),
+                                          child: BackdropFilter(
+                                            filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                                            child: Container(
+                                                margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                                decoration: BoxDecoration(
+                                                  borderRadius: const BorderRadius.all(Radius.circular(15)),
+                                                  border: Border.all(color: Colors.white.withOpacity(0.13)),
+                                                  gradient:
+                                                      LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.black.withOpacity(0.7), Colors.black.withOpacity(0.9)]),
+                                                ),
+                                                child: Image.network(characterData!['imagelargeurl'], filterQuality: FilterQuality.medium)),
+                                          ),
+                                        ),
                                     ],
                                   ),
                                 ),
@@ -561,7 +584,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                               ),
                                                               Expanded(
                                                                 child: Padding(
-                                                                  padding: const EdgeInsets.all(8.0),
+                                                                  padding: const EdgeInsets.fromLTRB(8, 20, 8, 8),
                                                                   child: Column(
                                                                     children: [
                                                                       Text(
@@ -788,6 +811,41 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                 if (data['energy'] != null)
                                                   Positioned(
                                                     top: 10,
+                                                    right: 130,
+                                                    child: Container(
+                                                      width: 80,
+                                                      decoration: BoxDecoration(
+                                                        color: etocolor[namedata['etype']!]?.withOpacity(0.3),
+                                                        borderRadius: const BorderRadius.only(bottomRight: Radius.circular(15), bottomLeft: Radius.circular(15)),
+                                                      ),
+                                                      child: Center(
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.all(2.0),
+                                                          child: Row(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            children: [
+                                                              ImageIcon(
+                                                                stattoimage['energylimit'],
+                                                                size: 15,
+                                                              ),
+                                                              Text('${data['energy']!}',
+                                                                  style: const TextStyle(
+                                                                    //fontWeight: FontWeight.bold,
+                                                                    color: Colors.white,
+
+                                                                    fontSize: 18,
+                                                                    fontWeight: FontWeight.bold,
+                                                                    height: 1.1,
+                                                                  )).tr(),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                if (data['weaknessbreak'] != null && data['energyregen'] != null)
+                                                  Positioned(
+                                                    top: 10,
                                                     right: 10,
                                                     child: Container(
                                                       width: 110,
@@ -798,15 +856,40 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                       child: Center(
                                                         child: Padding(
                                                           padding: const EdgeInsets.all(2.0),
-                                                          child: Text('EP${data['energy']!}',
-                                                              style: const TextStyle(
-                                                                //fontWeight: FontWeight.bold,
-                                                                color: Colors.white,
+                                                          child: Row(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            children: [
+                                                              ImageIcon(
+                                                                stattoimage['breakup'],
+                                                                size: 15,
+                                                              ),
+                                                              Text('${data['weaknessbreak']!}',
+                                                                  style: const TextStyle(
+                                                                    //fontWeight: FontWeight.bold,
+                                                                    color: Colors.white,
 
-                                                                fontSize: 18,
-                                                                fontWeight: FontWeight.bold,
-                                                                height: 1.1,
-                                                              )).tr(),
+                                                                    fontSize: 18,
+                                                                    fontWeight: FontWeight.bold,
+                                                                    height: 1.1,
+                                                                  )).tr(),
+                                                              const SizedBox(
+                                                                width: 10,
+                                                              ),
+                                                              ImageIcon(
+                                                                stattoimage['energyrecovery'],
+                                                                size: 15,
+                                                              ),
+                                                              Text('${data['energyregen']!}',
+                                                                  style: const TextStyle(
+                                                                    //fontWeight: FontWeight.bold,
+                                                                    color: Colors.white,
+
+                                                                    fontSize: 18,
+                                                                    fontWeight: FontWeight.bold,
+                                                                    height: 1.1,
+                                                                  )).tr(),
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
@@ -1402,10 +1485,11 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                             margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                             padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                             decoration: BoxDecoration(
-                                                                              color: Colors.redAccent,
+                                                                              color: typetocolor[(data['effect'][index2]['type'])],
                                                                               borderRadius: BorderRadius.circular(5),
                                                                             ),
-                                                                            child: Text('${(data['effect'][index2]['multipliertarget'] as String).tr()}$levelmulti%',
+                                                                            child: Text(
+                                                                                '${(data['effect'][index2]['multipliertarget'] as String).tr()}$levelmulti${((data['effect'][index2]['multipliertarget']) != '') ? "%" : ""}',
                                                                                 style: const TextStyle(
                                                                                   //fontWeight: FontWeight.bold,
                                                                                   color: Colors.black,

@@ -78,5 +78,12 @@
     "imprison": "imprison",
     "dmgreceive": "dmgreceive",
     "frozen": "Frozen",
-    "aoe": "AoE"
+    "aoe": "AoE",
+    "followupatk": "Follow-up Atk DMG",
+    "singleenemy": "Single Enemy",
+    "heal": "Heal",
+    "maxhp": "Max HP",
+    "Skill": "Skill",
+    "Trace": "Trace",
+    "Eidolon": "Eidolon"
 }

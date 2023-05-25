@@ -78,5 +78,12 @@
     "imprison": "禁錮",
     "dmgreceive": "被ダメージ",
     "frozen": "凍結",
-    "aoe": "全体攻撃"
+    "aoe": "全体攻撃",
+    "followupatk": "追加攻撃ダメージ",
+    "singleenemy": "敵単体",
+    "heal": "治療",
+    "maxhp": "最大 HP",
+    "Skill": "スキル",
+    "Trace": "軌跡",
+    "Eidolon": "星魂"
 }

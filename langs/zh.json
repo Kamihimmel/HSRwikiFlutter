@@ -78,5 +78,12 @@
     "imprison": "禁锢",
     "dmgreceive": "受到伤害",
     "frozen": "冻结",
-    "aoe": "群体攻击"
+    "aoe": "群体攻击",
+    "followupatk": "追加攻击伤害",
+    "singleenemy": "敌方单体",
+    "heal": "治疗",
+    "maxhp": "生命上限",
+    "Skill": "技能",
+    "Trace": "行迹",
+    "Eidolon": "星魂"
 }
