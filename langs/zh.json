@@ -85,5 +85,6 @@
     "maxhp": "生命上限",
     "Skill": "技能",
     "Trace": "行迹",
-    "Eidolon": "星魂"
+    "Eidolon": "星魂",
+    "basechance":"基础概率"
 }

@@ -85,5 +85,6 @@
     "maxhp": "最大 HP",
     "Skill": "スキル",
     "Trace": "軌跡",
-    "Eidolon": "星魂"
+    "Eidolon": "星魂",
+    "basechance":"基礎確率"
 }

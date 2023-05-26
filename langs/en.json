@@ -85,5 +85,6 @@
     "maxhp": "Max HP",
     "Skill": "Skill",
     "Trace": "Trace",
-    "Eidolon": "Eidolon"
+    "Eidolon": "Eidolon",
+    "basechance":"Base Chance"
 }
