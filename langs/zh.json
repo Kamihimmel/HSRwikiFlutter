@@ -75,9 +75,9 @@
     "skillpointre": "战技点恢复",
     "speed": "速度",
     "shield": "护盾",
-    "imprison": "禁锢",
+    "imprison": "【禁锢】",
     "dmgreceive": "受到伤害",
-    "frozen": "冻结",
+    "frozen": "【冻结】",
     "aoe": "群体攻击",
     "followupatk": "追加攻击伤害",
     "singleenemy": "敌方单体",
@@ -86,5 +86,6 @@
     "Skill": "技能",
     "Trace": "行迹",
     "Eidolon": "星魂",
-    "basechance":"基础概率"
+    "vulnerability": "【易伤】",
+    "reducespeed": "【减速】"
 }

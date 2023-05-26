@@ -72,12 +72,12 @@
     "energy": "Energy",
     "additionalatk": "Additional Atk DMG",
     "effectres": "Effect RES",
-    "speed": "speed",
+    "speed": "Speed",
     "shield": "Shield",
     "skillpointre": "SP Recovering",
-    "imprison": "imprison",
-    "dmgreceive": "dmgreceive",
-    "frozen": "Frozen",
+    "imprison": "[Imprison]",
+    "dmgreceive": "Dmgreceive",
+    "frozen": "[Frozen]",
     "aoe": "AoE",
     "followupatk": "Follow-up Atk DMG",
     "singleenemy": "Single Enemy",
@@ -86,5 +86,6 @@
     "Skill": "Skill",
     "Trace": "Trace",
     "Eidolon": "Eidolon",
-    "basechance":"Base Chance"
+    "vulnerability": "[Vulnerability]",
+    "reducespeed": "[Reduce Speed]"
 }
