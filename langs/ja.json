@@ -95,5 +95,8 @@
     "windpen": "風属性耐性貫通",
     "imaginarypen": "虚数属性耐性貫通",
     "physicalpen": "物理属性耐性貫通",
-    "lightningpen": "雷属性耐性貫通"
+    "lightningpen": "雷属性耐性貫通",
+    "character": "キャラクター",
+    "lightcone": "光円錐",
+    "relic": "遺物"
 }

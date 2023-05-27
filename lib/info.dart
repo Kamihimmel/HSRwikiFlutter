@@ -47,4 +47,10 @@ const stattoimage = {
   'critrate': AssetImage('images/IconCriticalChance.png'),
 };
 
+const sicontoimage = {
+  'avatar': AssetImage('images/DataBankIconAvatar.png'),
+  'lightcone': AssetImage('images/DataBankIconLightCone.png'),
+  'relic': AssetImage('images/DataBankIconRelics.png'),
+};
+
 var typetocolor = {'dmg': Colors.redAccent, 'debuff': Colors.grey[400], 'shield': Colors.blueAccent, 'heal': Colors.lime};

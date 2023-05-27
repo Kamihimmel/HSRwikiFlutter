@@ -95,5 +95,8 @@
     "windpen": "风抗性穿透",
     "imaginarypen": "虚数抗性穿透",
     "physicalpen": "物理抗性穿透",
-    "lightningpen": "雷抗性穿透"
+    "lightningpen": "雷抗性穿透",
+    "character": "角色",
+    "lightcone": "光锥",
+    "relic": "遗器"
 }

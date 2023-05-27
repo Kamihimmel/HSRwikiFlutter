@@ -76,7 +76,7 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   int _counter = 0;
 
   void _incrementCounter() {
@@ -91,10 +91,19 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   List<Map<String, String>> _data = [];
+  List<Map<String, String>> _data2 = [];
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 3, vsync: this);
     _getData();
+    _getData2();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   Future<void> _getData() async {
@@ -119,6 +128,27 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Future<void> _getData2() async {
+    final response = await http.get(Uri.parse('https://hsrwikidata.yunlu18.net/lib/lightconelist.json'));
+    final Map<String, dynamic> jsonData = json.decode(response.body);
+    print(jsonData);
+
+    setState(() {
+      _data2 = (jsonData['data'] as List<dynamic>)
+          .map((e) => {
+                'enname': e['ENname'] as String,
+                'cnname': e['CNname'] as String,
+                'janame': e['JAname'] as String,
+                'imageUrl': e['imageurl'] as String,
+                'wtype': e['wtype'] as String,
+                'rarity': e['rarity'] as String,
+                'infoUrl': e['infourl'] as String,
+              })
+          .toList();
+      _filteredData2 = List.from(_data2);
+    });
+  }
+
   //show control bool
   bool filterStar5On = false;
   bool filterStar4On = false;
@@ -139,6 +169,9 @@ class _MyHomePageState extends State<MyHomePage> {
   bool showall = true;
 
   List<Map<String, String>> _filteredData = [];
+  List<Map<String, String>> _filteredData2 = [];
+
+  late final TabController _tabController;
 
   @override
   Widget build(BuildContext context) {
@@ -274,394 +307,744 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text("${"title".tr()} Honkai Starrail Wiki"),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: screenWidth > 1300 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
-          children: <Widget>[
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FilterChip(
-                      selectedColor: Colors.amber.withOpacity(0.5),
-                      backgroundColor: Colors.amber[100]!.withOpacity(0.1),
-                      label: const Icon(
-                        Icons.star_border_rounded,
-                        size: 30,
-                        color: Colors.amber,
-                      ),
-                      selected: filterStar5On,
-                      onSelected: (bool value) {
-                        setState(() {
-                          filterStar5On = value;
-                        });
-                      },
+        title: PreferredSize(preferredSize: const Size.fromHeight(40), child: FittedBox(fit: BoxFit.scaleDown, child: Text("${"title".tr()} Honkai Starrail Wiki"))),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(33),
+          child: Container(
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              border: Border(bottom: BorderSide(width: 0.5, color: Colors.grey)),
+            ),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: TabBar(
+                controller: _tabController,
+                isScrollable: true,
+                tabs: <Widget>[
+                  Tab(
+                    height: 33,
+                    icon: Row(
+                      children: [
+                        const ImageIcon(
+                          AssetImage('images/AvatarIcon.png'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          child: const Text('character').tr(),
+                        )
+                      ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FilterChip(
-                      selectedColor: Colors.deepPurpleAccent.withOpacity(0.5),
-                      backgroundColor: Colors.deepPurpleAccent[100]!.withOpacity(0.1),
-                      label: const Icon(
-                        Icons.star_border_rounded,
-                        size: 30,
-                        color: Colors.deepPurpleAccent,
-                      ),
-                      selected: filterStar4On,
-                      onSelected: (bool value) {
-                        setState(() {
-                          filterStar4On = value;
-                        });
-                      },
+                  Tab(
+                    height: 33,
+                    icon: Row(
+                      children: [
+                        const ImageIcon(
+                          AssetImage('images/IconAvatarLightCone.png'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          child: const Text('lightcone').tr(),
+                        )
+                      ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FilterChip(
-                      selectedColor: Colors.purple.withOpacity(0.5),
-                      backgroundColor: Colors.purple[100]!.withOpacity(0.1),
-                      label: Image.network(
-                        etoimage['lightning']!,
-                        width: 30,
-                      ),
-                      selected: filterLightningOn,
-                      onSelected: (bool value) {
-                        setState(() {
-                          filterLightningOn = value;
-                        });
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FilterChip(
-                      selectedColor: Colors.lightBlue.withOpacity(0.5),
-                      backgroundColor: Colors.lightBlue[100]!.withOpacity(0.1),
-                      label: Image.network(
-                        etoimage['ice']!,
-                        width: 30,
-                      ),
-                      selected: filterIceOn,
-                      onSelected: (bool value) {
-                        setState(() {
-                          filterIceOn = value;
-                        });
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FilterChip(
-                      selectedColor: Colors.red.withOpacity(0.5),
-                      backgroundColor: Colors.red[100]!.withOpacity(0.1),
-                      label: Image.network(
-                        etoimage['fire']!,
-                        width: 30,
-                      ),
-                      selected: filterFireOn,
-                      onSelected: (bool value) {
-                        setState(() {
-                          filterFireOn = value;
-                        });
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FilterChip(
-                      selectedColor: Colors.yellow.withOpacity(0.5),
-                      backgroundColor: Colors.yellow[100]!.withOpacity(0.1),
-                      label: Image.network(
-                        etoimage['imaginary']!,
-                        width: 30,
-                      ),
-                      selected: filterImaginaryOn,
-                      onSelected: (bool value) {
-                        setState(() {
-                          filterImaginaryOn = value;
-                        });
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FilterChip(
-                      selectedColor: Colors.indigo.withOpacity(0.5),
-                      backgroundColor: Colors.indigo[100]!.withOpacity(0.1),
-                      label: Image.network(
-                        etoimage['quantum']!,
-                        width: 30,
-                      ),
-                      selected: filterQuantumOn,
-                      onSelected: (bool value) {
-                        setState(() {
-                          filterQuantumOn = value;
-                        });
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FilterChip(
-                      selectedColor: Colors.green.withOpacity(0.5),
-                      backgroundColor: Colors.green[100]!.withOpacity(0.1),
-                      label: Image.network(
-                        etoimage['wind']!,
-                        width: 30,
-                      ),
-                      selected: filterWindOn,
-                      onSelected: (bool value) {
-                        setState(() {
-                          filterWindOn = value;
-                        });
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FilterChip(
-                      selectedColor: Colors.grey.withOpacity(0.5),
-                      backgroundColor: Colors.grey[100]!.withOpacity(0.1),
-                      label: Image.network(
-                        etoimage['physical']!,
-                        width: 30,
-                      ),
-                      selected: filterPhysicalOn,
-                      onSelected: (bool value) {
-                        setState(() {
-                          filterPhysicalOn = value;
-                        });
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FilterChip(
-                      selectedColor: Colors.grey.withOpacity(0.5),
-                      backgroundColor: Colors.grey[100]!.withOpacity(0.1),
-                      label: Image.network(
-                        wtoimage['destruction']!,
-                        width: 30,
-                      ),
-                      selected: filterDestructionOn,
-                      onSelected: (bool value) {
-                        setState(() {
-                          filterDestructionOn = value;
-                        });
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FilterChip(
-                      selectedColor: Colors.grey.withOpacity(0.5),
-                      backgroundColor: Colors.grey[100]!.withOpacity(0.1),
-                      label: Image.network(
-                        wtoimage['erudition']!,
-                        width: 30,
-                      ),
-                      selected: filterEruditionOn,
-                      onSelected: (bool value) {
-                        setState(() {
-                          filterEruditionOn = value;
-                        });
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FilterChip(
-                      selectedColor: Colors.grey.withOpacity(0.5),
-                      backgroundColor: Colors.grey[100]!.withOpacity(0.1),
-                      label: Image.network(
-                        wtoimage['harmony']!,
-                        width: 30,
-                      ),
-                      selected: filterHarmonyOn,
-                      onSelected: (bool value) {
-                        setState(() {
-                          filterHarmonyOn = value;
-                        });
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FilterChip(
-                      selectedColor: Colors.grey.withOpacity(0.5),
-                      backgroundColor: Colors.grey[100]!.withOpacity(0.1),
-                      label: Image.network(
-                        wtoimage['thehunt']!,
-                        width: 30,
-                      ),
-                      selected: filterThehuntOn,
-                      onSelected: (bool value) {
-                        setState(() {
-                          filterThehuntOn = value;
-                        });
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FilterChip(
-                      selectedColor: Colors.grey.withOpacity(0.5),
-                      backgroundColor: Colors.grey[100]!.withOpacity(0.1),
-                      label: Image.network(
-                        wtoimage['nihility']!,
-                        width: 30,
-                      ),
-                      selected: filterNihilityOn,
-                      onSelected: (bool value) {
-                        setState(() {
-                          filterNihilityOn = value;
-                        });
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FilterChip(
-                      selectedColor: Colors.grey.withOpacity(0.5),
-                      backgroundColor: Colors.grey[100]!.withOpacity(0.1),
-                      label: Image.network(
-                        wtoimage['abundance']!,
-                        width: 30,
-                      ),
-                      selected: filterAbundanceOn,
-                      onSelected: (bool value) {
-                        setState(() {
-                          filterAbundanceOn = value;
-                        });
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FilterChip(
-                      selectedColor: Colors.grey.withOpacity(0.5),
-                      backgroundColor: Colors.grey[100]!.withOpacity(0.1),
-                      label: Image.network(
-                        wtoimage['preservation']!,
-                        width: 30,
-                      ),
-                      selected: filterPreservationOn,
-                      onSelected: (bool value) {
-                        setState(() {
-                          filterPreservationOn = value;
-                        });
-                      },
+                  Tab(
+                    height: 33,
+                    icon: Row(
+                      children: [
+                        const ImageIcon(
+                          AssetImage('images/IconAvatarRelic.png'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          child: const Text('relic').tr(),
+                        )
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: crossAxisCount,
-                childAspectRatio: (374 / 508),
-                children: _filteredData.asMap().entries.map((e) {
-                  final int index = e.key;
-                  final Map<String, String> data = e.value;
+          ),
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          //ANCHOR - Character
+          Center(
+            // Center is a layout widget. It takes a single child and positions it
+            // in the middle of the parent.
+            child: Column(
+              // Column is also a layout widget. It takes a list of children and
 
-                  return Material(
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ChracterDetailPage(jsonUrl: data['infoUrl']!),
-                            settings: RouteSettings(
-                              arguments: data,
-                            ),
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: screenWidth > 1300 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+              children: <Widget>[
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.amber.withOpacity(0.5),
+                          backgroundColor: Colors.amber[100]!.withOpacity(0.1),
+                          label: const Icon(
+                            Icons.star_border_rounded,
+                            size: 30,
+                            color: Colors.amber,
                           ),
-                        );
-                      },
-                      onHover: (value) {
-                        if (value) {
-                          setState(() {});
-                        }
-                      },
-                      hoverColor: etocolor[data['etype']!],
-                      child: Card(
-                        color: Colors.grey.withOpacity(0.1),
-                        child: Stack(
-                          children: [
-                            Hero(
-                              tag: data['imageUrl']!,
-                              child: Image.network(
-                                data['imageUrl']!,
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                                color: Colors.black54,
-                                child: Text(
-                                  ('lang'.tr() == 'en') ? data['enname']! : (('lang'.tr() == 'cn') ? data['cnname']! : data['janame']!),
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              top: 0,
-                              right: 0,
-                              child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Column(
-                                  children: [
-                                    ConstrainedBox(
-                                      constraints: const BoxConstraints(maxWidth: 50),
-                                      child: Image.network(
-                                        etoimage[data['etype']!] ?? 'none',
-                                        width: screenWidth / 20,
-                                      ),
-                                    ),
-                                    ConstrainedBox(
-                                      constraints: const BoxConstraints(maxWidth: 50),
-                                      child: Image.network(
-                                        wtoimage[data['wtype']!]!,
-                                        width: screenWidth / 20,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
+                          selected: filterStar5On,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterStar5On = value;
+                            });
+                          },
                         ),
                       ),
-                    ),
-                  );
-                }).toList(),
-              ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.deepPurpleAccent.withOpacity(0.5),
+                          backgroundColor: Colors.deepPurpleAccent[100]!.withOpacity(0.1),
+                          label: const Icon(
+                            Icons.star_border_rounded,
+                            size: 30,
+                            color: Colors.deepPurpleAccent,
+                          ),
+                          selected: filterStar4On,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterStar4On = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.purple.withOpacity(0.5),
+                          backgroundColor: Colors.purple[100]!.withOpacity(0.1),
+                          label: Image.network(
+                            etoimage['lightning']!,
+                            width: 30,
+                          ),
+                          selected: filterLightningOn,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterLightningOn = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.lightBlue.withOpacity(0.5),
+                          backgroundColor: Colors.lightBlue[100]!.withOpacity(0.1),
+                          label: Image.network(
+                            etoimage['ice']!,
+                            width: 30,
+                          ),
+                          selected: filterIceOn,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterIceOn = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.red.withOpacity(0.5),
+                          backgroundColor: Colors.red[100]!.withOpacity(0.1),
+                          label: Image.network(
+                            etoimage['fire']!,
+                            width: 30,
+                          ),
+                          selected: filterFireOn,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterFireOn = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.yellow.withOpacity(0.5),
+                          backgroundColor: Colors.yellow[100]!.withOpacity(0.1),
+                          label: Image.network(
+                            etoimage['imaginary']!,
+                            width: 30,
+                          ),
+                          selected: filterImaginaryOn,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterImaginaryOn = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.indigo.withOpacity(0.5),
+                          backgroundColor: Colors.indigo[100]!.withOpacity(0.1),
+                          label: Image.network(
+                            etoimage['quantum']!,
+                            width: 30,
+                          ),
+                          selected: filterQuantumOn,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterQuantumOn = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.green.withOpacity(0.5),
+                          backgroundColor: Colors.green[100]!.withOpacity(0.1),
+                          label: Image.network(
+                            etoimage['wind']!,
+                            width: 30,
+                          ),
+                          selected: filterWindOn,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterWindOn = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.grey.withOpacity(0.5),
+                          backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                          label: Image.network(
+                            etoimage['physical']!,
+                            width: 30,
+                          ),
+                          selected: filterPhysicalOn,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterPhysicalOn = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.grey.withOpacity(0.5),
+                          backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                          label: Image.network(
+                            wtoimage['destruction']!,
+                            width: 30,
+                          ),
+                          selected: filterDestructionOn,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterDestructionOn = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.grey.withOpacity(0.5),
+                          backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                          label: Image.network(
+                            wtoimage['erudition']!,
+                            width: 30,
+                          ),
+                          selected: filterEruditionOn,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterEruditionOn = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.grey.withOpacity(0.5),
+                          backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                          label: Image.network(
+                            wtoimage['harmony']!,
+                            width: 30,
+                          ),
+                          selected: filterHarmonyOn,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterHarmonyOn = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.grey.withOpacity(0.5),
+                          backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                          label: Image.network(
+                            wtoimage['thehunt']!,
+                            width: 30,
+                          ),
+                          selected: filterThehuntOn,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterThehuntOn = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.grey.withOpacity(0.5),
+                          backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                          label: Image.network(
+                            wtoimage['nihility']!,
+                            width: 30,
+                          ),
+                          selected: filterNihilityOn,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterNihilityOn = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.grey.withOpacity(0.5),
+                          backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                          label: Image.network(
+                            wtoimage['abundance']!,
+                            width: 30,
+                          ),
+                          selected: filterAbundanceOn,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterAbundanceOn = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.grey.withOpacity(0.5),
+                          backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                          label: Image.network(
+                            wtoimage['preservation']!,
+                            width: 30,
+                          ),
+                          selected: filterPreservationOn,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterPreservationOn = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: GridView.count(
+                    crossAxisCount: crossAxisCount,
+                    childAspectRatio: (374 / 508),
+                    children: _filteredData.asMap().entries.map((e) {
+                      final int index = e.key;
+                      final Map<String, String> data = e.value;
+
+                      return Material(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChracterDetailPage(jsonUrl: data['infoUrl']!),
+                                settings: RouteSettings(
+                                  arguments: data,
+                                ),
+                              ),
+                            );
+                          },
+                          onHover: (value) {
+                            if (value) {
+                              setState(() {});
+                            }
+                          },
+                          hoverColor: etocolor[data['etype']!],
+                          child: Card(
+                            color: Colors.grey.withOpacity(0.1),
+                            child: Stack(
+                              children: [
+                                Hero(
+                                  tag: data['imageUrl']!,
+                                  child: Image.network(
+                                    data['imageUrl']!,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                    color: Colors.black54,
+                                    child: Text(
+                                      ('lang'.tr() == 'en') ? data['enname']! : (('lang'.tr() == 'cn') ? data['cnname']! : data['janame']!),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Column(
+                                      children: [
+                                        ConstrainedBox(
+                                          constraints: const BoxConstraints(maxWidth: 50),
+                                          child: Image.network(
+                                            etoimage[data['etype']!] ?? 'none',
+                                            width: screenWidth / 20,
+                                          ),
+                                        ),
+                                        ConstrainedBox(
+                                          constraints: const BoxConstraints(maxWidth: 50),
+                                          child: Image.network(
+                                            wtoimage[data['wtype']!]!,
+                                            width: screenWidth / 20,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    'Provided by yunlu18.net ',
+                  ),
+                ),
+              ],
             ),
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                'Provided by yunlu18.net ',
-              ),
+          ),
+          //ANCHOR - Lightcone
+          Center(
+            // Center is a layout widget. It takes a single child and positions it
+            // in the middle of the parent.
+            child: Column(
+              // Column is also a layout widget. It takes a list of children and
+
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: screenWidth > 1300 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+              children: <Widget>[
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.amber.withOpacity(0.5),
+                          backgroundColor: Colors.amber[100]!.withOpacity(0.1),
+                          label: const Icon(
+                            Icons.star_border_rounded,
+                            size: 30,
+                            color: Colors.amber,
+                          ),
+                          selected: filterStar5On,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterStar5On = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.deepPurpleAccent.withOpacity(0.5),
+                          backgroundColor: Colors.deepPurpleAccent[100]!.withOpacity(0.1),
+                          label: const Icon(
+                            Icons.star_border_rounded,
+                            size: 30,
+                            color: Colors.deepPurpleAccent,
+                          ),
+                          selected: filterStar4On,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterStar4On = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.deepPurpleAccent.withOpacity(0.5),
+                          backgroundColor: Colors.deepPurpleAccent[100]!.withOpacity(0.1),
+                          label: const Icon(
+                            Icons.star_border_rounded,
+                            size: 30,
+                            color: Colors.blueAccent,
+                          ),
+                          selected: filterStar4On,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterStar4On = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.grey.withOpacity(0.5),
+                          backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                          label: Image.network(
+                            wtoimage['destruction']!,
+                            width: 30,
+                          ),
+                          selected: filterDestructionOn,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterDestructionOn = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.grey.withOpacity(0.5),
+                          backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                          label: Image.network(
+                            wtoimage['erudition']!,
+                            width: 30,
+                          ),
+                          selected: filterEruditionOn,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterEruditionOn = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.grey.withOpacity(0.5),
+                          backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                          label: Image.network(
+                            wtoimage['harmony']!,
+                            width: 30,
+                          ),
+                          selected: filterHarmonyOn,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterHarmonyOn = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.grey.withOpacity(0.5),
+                          backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                          label: Image.network(
+                            wtoimage['thehunt']!,
+                            width: 30,
+                          ),
+                          selected: filterThehuntOn,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterThehuntOn = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.grey.withOpacity(0.5),
+                          backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                          label: Image.network(
+                            wtoimage['nihility']!,
+                            width: 30,
+                          ),
+                          selected: filterNihilityOn,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterNihilityOn = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.grey.withOpacity(0.5),
+                          backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                          label: Image.network(
+                            wtoimage['abundance']!,
+                            width: 30,
+                          ),
+                          selected: filterAbundanceOn,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterAbundanceOn = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.grey.withOpacity(0.5),
+                          backgroundColor: Colors.grey[100]!.withOpacity(0.1),
+                          label: Image.network(
+                            wtoimage['preservation']!,
+                            width: 30,
+                          ),
+                          selected: filterPreservationOn,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterPreservationOn = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: GridView.count(
+                    crossAxisCount: crossAxisCount,
+                    childAspectRatio: (374 / 508),
+                    children: _filteredData2.asMap().entries.map((e) {
+                      final int index = e.key;
+                      final Map<String, String> data = e.value;
+
+                      return Material(
+                        child: InkWell(
+                          onTap: () {
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => ChracterDetailPage(jsonUrl: data['infoUrl']!),
+                            //     settings: RouteSettings(
+                            //       arguments: data,
+                            //     ),
+                            //   ),
+                            // );
+                          },
+                          onHover: (value) {
+                            if (value) {
+                              setState(() {});
+                            }
+                          },
+                          hoverColor: Colors.grey,
+                          child: Card(
+                            color: Colors.grey.withOpacity(0.1),
+                            child: Stack(
+                              children: [
+                                Hero(
+                                  tag: data['imageUrl']!,
+                                  child: Image.network(
+                                    data['imageUrl']!,
+                                    fit: BoxFit.scaleDown,
+                                    width: double.infinity,
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                    color: Colors.black54,
+                                    child: Text(
+                                      ('lang'.tr() == 'en') ? data['enname']! : (('lang'.tr() == 'cn') ? data['cnname']! : data['janame']!),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Column(
+                                      children: [
+                                        ConstrainedBox(
+                                          constraints: const BoxConstraints(maxWidth: 50),
+                                          child: Image.network(
+                                            wtoimage[data['wtype']!]!,
+                                            width: screenWidth / 20,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    'Provided by yunlu18.net ',
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          //ANCHOR - Relic
+          Center(
+            child: Text("It's cloudy here too"),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,

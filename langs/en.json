@@ -95,5 +95,8 @@
     "windpen": "Wind Penetration",
     "imaginarypen": "Imaginary Penetration",
     "physicalpen": "Physical Penetration",
-    "lightningpen": "Lightning Penetration"
+    "lightningpen": "Lightning Penetration",
+    "character": "Characters",
+    "lightcone": "Light Cones",
+    "relic": "Relics"
 }
