@@ -44,6 +44,7 @@ const stattoimage = {
   'energyrecovery': AssetImage('images/IconEnergyRecovery.png'),
   'breakup': AssetImage('images/IconBreakUp.png'),
   'imaginarydmg': AssetImage('images/IconImaginaryAddedRatio.png'),
+  'critrate': AssetImage('images/IconCriticalChance.png'),
 };
 
 var typetocolor = {'dmg': Colors.redAccent, 'debuff': Colors.grey[400], 'shield': Colors.blueAccent, 'heal': Colors.lime};

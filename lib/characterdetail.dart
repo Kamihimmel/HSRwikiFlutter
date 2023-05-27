@@ -1452,7 +1452,11 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                           mainAxisAlignment: MainAxisAlignment.center,
                                                           crossAxisAlignment: CrossAxisAlignment.start,
                                                           children: List.generate(data['effect'].length, (index2) {
-                                                            String levelmulti = (data['effect'][index2]['multiplier']).toString();
+                                                            String levelmulti = "";
+
+                                                            if (data['effect'][index2]['multiplier'] != null) {
+                                                              levelmulti = (data['effect'][index2]['multiplier']).toString();
+                                                            }
                                                             if (data['maxlevel'] != null && data['maxlevel']! > 0) {
                                                               Map<String, dynamic> leveldata2 = (data['levelmultiplier']![(data['effect'][index2]['multiplier']) - 1]);
                                                               String levelnum2 = (levelnumbers3[index].toStringAsFixed(0));
@@ -1489,7 +1493,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                               borderRadius: BorderRadius.circular(5),
                                                                             ),
                                                                             child: Text(
-                                                                                '${(data['effect'][index2]['multipliertarget'] as String).tr()}$levelmulti${((data['effect'][index2]['multipliertarget']) != '') ? "%" : ""}',
+                                                                                '${(data['effect'][index2]['multipliertarget'] as String).tr()}$levelmulti${((data['effect'][index2]['multipliertarget']) != '') && (data['effect'][index2]['multiplier'] != null) ? "%" : ""}',
                                                                                 style: const TextStyle(
                                                                                   //fontWeight: FontWeight.bold,
                                                                                   color: Colors.black,
