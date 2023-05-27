@@ -152,6 +152,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   //show control bool
   bool filterStar5On = false;
   bool filterStar4On = false;
+  bool filterStar3On = false;
   bool filterFireOn = false;
   bool filterLightningOn = false;
   bool filterIceOn = false;
@@ -247,6 +248,49 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       }
       _filteredData = List.from(tempData);
       tempData = [];
+    }
+
+    _filteredData2 = List.from(_data2);
+    List<Map<String, String>> tempData2 = [];
+
+    if (filterStar4On || filterStar5On || filterStar3On) {
+      if (filterStar4On) {
+        tempData2.addAll(_filteredData2.where((item) => item['rarity'] == '4').toList());
+      }
+      if (filterStar5On) {
+        tempData2.addAll(_filteredData2.where((item) => item['rarity'] == '5').toList());
+      }
+      if (filterStar3On) {
+        tempData2.addAll(_filteredData2.where((item) => item['rarity'] == '3').toList());
+      }
+      _filteredData2 = List.from(tempData2);
+      tempData2 = [];
+    }
+
+    if (filterDestructionOn || filterEruditionOn || filterHarmonyOn || filterThehuntOn || filterNihilityOn || filterAbundanceOn || filterPreservationOn) {
+      if (filterDestructionOn) {
+        tempData2.addAll(_filteredData2.where((item) => item['wtype'] == 'destruction').toList());
+      }
+      if (filterEruditionOn) {
+        tempData2.addAll(_filteredData2.where((item) => item['wtype'] == 'erudition').toList());
+      }
+      if (filterHarmonyOn) {
+        tempData2.addAll(_filteredData2.where((item) => item['wtype'] == 'harmony').toList());
+      }
+      if (filterThehuntOn) {
+        tempData2.addAll(_filteredData2.where((item) => item['wtype'] == 'thehunt').toList());
+      }
+      if (filterNihilityOn) {
+        tempData2.addAll(_filteredData2.where((item) => item['wtype'] == 'nihility').toList());
+      }
+      if (filterAbundanceOn) {
+        tempData2.addAll(_filteredData2.where((item) => item['wtype'] == 'abundance').toList());
+      }
+      if (filterPreservationOn) {
+        tempData2.addAll(_filteredData2.where((item) => item['wtype'] == 'preservation').toList());
+      }
+      _filteredData2 = List.from(tempData2);
+      tempData2 = [];
     }
 
     return Scaffold(
@@ -820,10 +864,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                             size: 30,
                             color: Colors.blueAccent,
                           ),
-                          selected: filterStar4On,
+                          selected: filterStar3On,
                           onSelected: (bool value) {
                             setState(() {
-                              filterStar4On = value;
+                              filterStar3On = value;
                             });
                           },
                         ),
