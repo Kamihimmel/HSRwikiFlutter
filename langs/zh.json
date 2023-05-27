@@ -87,5 +87,13 @@
     "Trace": "行迹",
     "Eidolon": "星魂",
     "vulnerability": "【易伤】",
-    "reducespeed": "【减速】"
+    "reducespeed": "【减速】",
+    "hp": "生命值",
+    "energyregenrate": "能量恢复效率",
+    "icepen": "冰抗性穿透",
+    "firepen": "火抗性穿透",
+    "windpen": "风抗性穿透",
+    "imaginarypen": "虚数抗性穿透",
+    "physicalpen": "物理抗性穿透",
+    "lightningpen": "雷抗性穿透"
 }

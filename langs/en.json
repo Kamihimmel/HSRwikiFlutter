@@ -87,5 +87,13 @@
     "Trace": "Trace",
     "Eidolon": "Eidolon",
     "vulnerability": "[Vulnerability]",
-    "reducespeed": "[Reduce Speed]"
+    "reducespeed": "[Reduce Speed]",
+    "hp": "HP",
+    "energyregenrate": "Energy Regenerate Rate",
+    "icepen": "Ice Penetration",
+    "firepen": "Fire Penetration",
+    "windpen": "Wind Penetration",
+    "imaginarypen": "Imaginary Penetration",
+    "physicalpen": "Physical Penetration",
+    "lightningpen": "Lightning Penetration"
 }

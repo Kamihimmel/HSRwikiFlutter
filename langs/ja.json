@@ -87,5 +87,13 @@
     "Trace": "軌跡",
     "Eidolon": "星魂",
     "vulnerability": "【被ダメージアップ】",
-    "reducespeed": "【速度ダウン】"
+    "reducespeed": "【速度ダウン】",
+    "hp": "HP",
+    "energyregenrate": "EP回復効率",
+    "icepen": "氷属性耐性貫通",
+    "firepen": "火属性耐性貫通",
+    "windpen": "風属性耐性貫通",
+    "imaginarypen": "虚数属性耐性貫通",
+    "physicalpen": "物理属性耐性貫通",
+    "lightningpen": "雷属性耐性貫通"
 }
