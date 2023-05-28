@@ -92,12 +92,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   List<Map<String, String>> _data = [];
   List<Map<String, String>> _data2 = [];
+  List<Map<String, String>> _data3 = [];
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _getData();
     _getData2();
+    _getData3();
   }
 
   @override
@@ -149,9 +151,31 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     });
   }
 
+  Future<void> _getData3() async {
+    final response = await http.get(Uri.parse('https://hsrwikidata.yunlu18.net/lib/reliclist.json'));
+    final Map<String, dynamic> jsonData = json.decode(response.body);
+    print(jsonData);
+
+    setState(() {
+      _data3 = (jsonData['data'] as List<dynamic>)
+          .map((e) => {
+                'enname': e['ENname'] as String,
+                'cnname': e['CNname'] as String,
+                'janame': e['JAname'] as String,
+                'imageUrl': e['imageurl'] as String,
+                'set': e['set'] as String,
+                'infoUrl': e['infourl'] as String,
+              })
+          .toList();
+      _filteredData3 = List.from(_data3);
+    });
+  }
+
   //show control bool
   bool filterStar5On = false;
   bool filterStar4On = false;
+  bool filterSet4On = false;
+  bool filterSet2On = false;
   bool filterStar3On = false;
   bool filterFireOn = false;
   bool filterLightningOn = false;
@@ -171,6 +195,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   List<Map<String, String>> _filteredData = [];
   List<Map<String, String>> _filteredData2 = [];
+  List<Map<String, String>> _filteredData3 = [];
 
   late final TabController _tabController;
 
@@ -182,6 +207,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         ? 4
         : screenWidth < 1000
             ? 6
+            : 8;
+
+    final crossAxisCount2 = screenWidth < 600
+        ? 2
+        : screenWidth < 1000
+            ? 4
             : 8;
 
     _filteredData = List.from(_data);
@@ -291,6 +322,20 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       }
       _filteredData2 = List.from(tempData2);
       tempData2 = [];
+    }
+
+    _filteredData3 = List.from(_data3);
+    List<Map<String, String>> tempData3 = [];
+
+    if (filterSet2On || filterSet4On) {
+      if (filterSet4On) {
+        tempData3.addAll(_filteredData3.where((item) => item['set'] == '4').toList());
+      }
+      if (filterSet2On) {
+        tempData3.addAll(_filteredData3.where((item) => item['set'] == '2').toList());
+      }
+      _filteredData3 = List.from(tempData3);
+      tempData3 = [];
     }
 
     return Scaffold(
@@ -857,8 +902,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: FilterChip(
-                          selectedColor: Colors.deepPurpleAccent.withOpacity(0.5),
-                          backgroundColor: Colors.deepPurpleAccent[100]!.withOpacity(0.1),
+                          selectedColor: Colors.blueAccent.withOpacity(0.5),
+                          backgroundColor: Colors.blueAccent[100]!.withOpacity(0.1),
                           label: const Icon(
                             Icons.star_border_rounded,
                             size: 30,
@@ -1086,7 +1131,128 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           ),
           //ANCHOR - Relic
           Center(
-            child: Text("It's cloudy here too"),
+            // Center is a layout widget. It takes a single child and positions it
+            // in the middle of the parent.
+            child: Column(
+              // Column is also a layout widget. It takes a list of children and
+
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: screenWidth > 1300 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+              children: <Widget>[
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.white.withOpacity(0.5),
+                          backgroundColor: Colors.white.withOpacity(0.1),
+                          label: const Icon(
+                            Icons.looks_4,
+                            size: 25,
+                            color: Colors.white,
+                          ),
+                          selected: filterSet4On,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterSet4On = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                          selectedColor: Colors.white.withOpacity(0.5),
+                          backgroundColor: Colors.white.withOpacity(0.1),
+                          label: const Icon(
+                            Icons.looks_two,
+                            size: 25,
+                            color: Colors.white,
+                          ),
+                          selected: filterSet2On,
+                          onSelected: (bool value) {
+                            setState(() {
+                              filterSet2On = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: GridView.count(
+                    crossAxisCount: crossAxisCount2,
+                    childAspectRatio: (1 / 1),
+                    children: _filteredData3.asMap().entries.map((e) {
+                      final int index = e.key;
+                      final Map<String, String> data = e.value;
+
+                      return Material(
+                        child: InkWell(
+                          onTap: () {
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => ChracterDetailPage(jsonUrl: data['infoUrl']!),
+                            //     settings: RouteSettings(
+                            //       arguments: data,
+                            //     ),
+                            //   ),
+                            // );
+                          },
+                          onHover: (value) {
+                            if (value) {
+                              setState(() {});
+                            }
+                          },
+                          hoverColor: Colors.grey,
+                          child: Card(
+                            color: Colors.grey.withOpacity(0.1),
+                            child: Stack(
+                              children: [
+                                Hero(
+                                  tag: data['imageUrl']!,
+                                  child: Image.network(
+                                    data['imageUrl']!,
+                                    fit: BoxFit.scaleDown,
+                                    width: double.infinity,
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                    color: Colors.black54,
+                                    child: Text(
+                                      ('lang'.tr() == 'en') ? data['enname']! : (('lang'.tr() == 'cn') ? data['cnname']! : data['janame']!),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    'Provided by yunlu18.net ',
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
