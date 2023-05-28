@@ -743,7 +743,8 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                               color: Colors.greenAccent,
                                                                               borderRadius: BorderRadius.circular(5),
                                                                             ),
-                                                                            child: Text('${(data['effect'][index2]['addtarget'] as String).tr()}$levelmulti%',
+                                                                            child: Text(
+                                                                                '${(data['effect'][index2]['addtarget'] as String).tr()}$levelmulti${((data['effect'][index2]['addtarget']) != 'energy') ? "%" : ""}',
                                                                                 style: const TextStyle(
                                                                                   //fontWeight: FontWeight.bold,
                                                                                   color: Colors.black,

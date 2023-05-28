@@ -45,6 +45,7 @@ const stattoimage = {
   'breakup': AssetImage('images/IconBreakUp.png'),
   'imaginarydmg': AssetImage('images/IconImaginaryAddedRatio.png'),
   'critrate': AssetImage('images/IconCriticalChance.png'),
+  'lightningdmg': AssetImage('images/IconThunderAddedRatio.png'),
 };
 
 const sicontoimage = {
