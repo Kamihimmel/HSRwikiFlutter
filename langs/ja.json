@@ -98,5 +98,7 @@
     "lightningpen": "雷属性耐性貫通",
     "character": "キャラクター",
     "lightcone": "光円錐",
-    "relic": "遺物"
+    "relic": "遺物",
+    "healingbonus": "治癒量",
+    "weaken": "【虚弱】"
 }

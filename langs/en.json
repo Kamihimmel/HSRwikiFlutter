@@ -98,5 +98,7 @@
     "lightningpen": "Lightning Penetration",
     "character": "Characters",
     "lightcone": "Light Cones",
-    "relic": "Relics"
+    "relic": "Relics",
+    "healingbonus": "Healing Bonus",
+    "weaken": "[Weaken]"
 }
