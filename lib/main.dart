@@ -8,6 +8,7 @@ import 'package:url_strategy/url_strategy.dart';
 
 import 'characterdetail.dart';
 import 'lightconedetail.dart';
+import 'relicdetail.dart';
 import 'info.dart';
 
 void main() async {
@@ -1194,15 +1195,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       return Material(
                         child: InkWell(
                           onTap: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => ChracterDetailPage(jsonUrl: data['infoUrl']!),
-                            //     settings: RouteSettings(
-                            //       arguments: data,
-                            //     ),
-                            //   ),
-                            // );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => RelicDetailPage(jsonUrl: data['infoUrl']!),
+                                settings: RouteSettings(
+                                  arguments: data,
+                                ),
+                              ),
+                            );
                           },
                           onHover: (value) {
                             if (value) {

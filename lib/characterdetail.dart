@@ -77,7 +77,9 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
       duration: const Duration(seconds: 1),
       constraints: const BoxConstraints.expand(),
       decoration: isLoading
-          ? null
+          ? const BoxDecoration(
+              color: Color.fromRGBO(42, 41, 48, 1),
+            )
           : BoxDecoration(
               color: const Color.fromRGBO(42, 41, 48, 1),
               image: DecorationImage(

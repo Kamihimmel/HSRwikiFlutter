@@ -8,16 +8,16 @@ import 'dart:async';
 
 import 'info.dart';
 
-class LightconeDetailPage extends StatefulWidget {
+class RelicDetailPage extends StatefulWidget {
   final String jsonUrl;
-  const LightconeDetailPage({super.key, required this.jsonUrl});
+  const RelicDetailPage({super.key, required this.jsonUrl});
 
   @override
-  State<LightconeDetailPage> createState() => _LightconeDetailPageState();
+  State<RelicDetailPage> createState() => _RelicDetailPageState();
 }
 
-class _LightconeDetailPageState extends State<LightconeDetailPage> {
-  Map<String, dynamic>? lightconeData;
+class _RelicDetailPageState extends State<RelicDetailPage> {
+  Map<String, dynamic>? relicData;
   bool isLoading = true;
 
   @override
@@ -28,7 +28,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
   }
 
   final ScrollController _scrollController = ScrollController();
-  late List<dynamic> levelData;
+
   late List<dynamic> skillData;
   late int attributeCount;
   late double _currentSliderValue;
@@ -37,13 +37,12 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
   Future<void> _getData(String url) async {
     final response = await http.get(Uri.parse(url));
     final Map<String, dynamic> jsonData = json.decode(response.body);
-    lightconeData = jsonData;
-    levelData = lightconeData!['leveldata'];
-    skillData = lightconeData!['skilldata'];
-    _currentSliderValue = levelData.length - 1.0;
+    relicData = jsonData;
+    skillData = relicData!['skilldata'];
+
     levelnumbers = List.generate(skillData.length, (index) => 5);
-    attributeCount = levelData.length;
-    print(lightconeData);
+
+    print(relicData);
     setState(() {
       isLoading = false;
     });
@@ -78,14 +77,11 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
       constraints: const BoxConstraints.expand(),
       decoration: isLoading
           ? const BoxDecoration(
-              color: Color.fromRGBO(42, 41, 48, 1),
-            )
-          : BoxDecoration(
               color: const Color.fromRGBO(42, 41, 48, 1),
-              image: DecorationImage(
-                image: NetworkImage(lightconeData!['imagelargeurl']),
-                fit: BoxFit.cover,
-              )),
+            )
+          : const BoxDecoration(
+              color: const Color.fromRGBO(42, 41, 48, 1),
+            ),
       child: Scaffold(
         backgroundColor: Colors.black.withOpacity(0.8),
         appBar: AppBar(
@@ -114,9 +110,28 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                         height: 110,
                                       ),
                                       if (screenWidth > 905)
-                                        Expanded(
-                                          child: Image.network(lightconeData!['imagelargeurl'], filterQuality: FilterQuality.medium),
-                                        ),
+                                        if (relicData!['set'] == "4")
+                                          Expanded(
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Image.network(relicData!['head'], filterQuality: FilterQuality.medium),
+                                                    Image.network(relicData!['hands'], filterQuality: FilterQuality.medium),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Image.network(relicData!['body'], filterQuality: FilterQuality.medium),
+                                                    Image.network(relicData!['feet'], filterQuality: FilterQuality.medium),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
                                       if (screenWidth < 905)
                                         Container(
                                           clipBehavior: Clip.hardEdge,
@@ -126,14 +141,32 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                           child: BackdropFilter(
                                             filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                                             child: Container(
-                                                margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                                decoration: BoxDecoration(
-                                                  borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                                  border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                  gradient:
-                                                      LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.black.withOpacity(0.7), Colors.black.withOpacity(0.9)]),
-                                                ),
-                                                child: Image.network(lightconeData!['imagelargeurl'], filterQuality: FilterQuality.medium)),
+                                              margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                              decoration: BoxDecoration(
+                                                borderRadius: const BorderRadius.all(Radius.circular(15)),
+                                                border: Border.all(color: Colors.white.withOpacity(0.13)),
+                                                gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.black.withOpacity(0.7), Colors.black.withOpacity(0.9)]),
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      Image.network(relicData!['head'], filterQuality: FilterQuality.medium),
+                                                      Image.network(relicData!['hands'], filterQuality: FilterQuality.medium),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      Image.network(relicData!['body'], filterQuality: FilterQuality.medium),
+                                                      Image.network(relicData!['feet'], filterQuality: FilterQuality.medium),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                           ),
                                         ),
                                     ],
@@ -168,231 +201,13 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                             ),
                                           ),
                                         ),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                          children: [
-                                            Flexible(
-                                              child: Padding(
-                                                padding: const EdgeInsets.fromLTRB(5, 10, 10, 0),
-                                                child: Container(
-                                                  clipBehavior: Clip.hardEdge,
-                                                  decoration: const BoxDecoration(
-                                                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                  ),
-                                                  child: BackdropFilter(
-                                                    filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        borderRadius: const BorderRadius.all(Radius.circular(10)),
-                                                        border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                        gradient: LinearGradient(
-                                                            begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.white.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
-                                                      ),
-                                                      child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.center,
-                                                        children: [
-                                                          Image.network(
-                                                            wtoimage[lightconeData!['wtype']!]!,
-                                                            height: 50,
-                                                          ),
-                                                          Text(
-                                                            lightconeData!['wtype'],
-                                                            style: const TextStyle(
-                                                              //fontWeight: FontWeight.bold,
-                                                              color: Colors.white,
-                                                              fontSize: 25,
-                                                              fontWeight: FontWeight.bold,
-                                                              height: 1,
-                                                            ),
-                                                          ).tr(),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: Container(
-                                            clipBehavior: Clip.hardEdge,
-                                            decoration: const BoxDecoration(
-                                              borderRadius: BorderRadius.all(Radius.circular(10)),
-                                            ),
-                                            child: BackdropFilter(
-                                              filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                                                  border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                  gradient:
-                                                      LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.white.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
-                                                ),
-                                                child: Column(
-                                                  children: [
-                                                    Padding(
-                                                      padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                      child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          SizedBox(
-                                                            width: 100,
-                                                            child: Text(
-                                                              "LV:${levelData[_currentSliderValue.toInt()]['level']}",
-                                                              style: const TextStyle(
-                                                                //fontWeight: FontWeight.bold,
-                                                                color: Colors.white,
-                                                                fontSize: 30,
-                                                                fontWeight: FontWeight.bold,
-                                                                height: 1.1,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Slider(
-                                                              value: _currentSliderValue,
-                                                              min: 0,
-                                                              max: (attributeCount - 1).toDouble(),
-                                                              divisions: attributeCount - 1,
-                                                              activeColor: raritytocolor[lightconeData?['rarity']],
-                                                              inactiveColor: raritytocolor[lightconeData?['rarity']]?.withOpacity(0.5),
-                                                              onChanged: (double value) {
-                                                                setState(() {
-                                                                  _currentSliderValue = value;
-                                                                });
-                                                              },
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                      child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          Row(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            children: [
-                                                              ImageIcon(stattoimage['hp']),
-                                                              Text(
-                                                                "HP".tr(),
-                                                                style: const TextStyle(
-                                                                  //fontWeight: FontWeight.bold,
-                                                                  color: Colors.white,
-                                                                  fontSize: 30,
-                                                                  fontWeight: FontWeight.bold,
-                                                                  height: 1.1,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Text(
-                                                            levelData[_currentSliderValue.toInt()]['hp'].toString(),
-                                                            style: const TextStyle(
-                                                              //fontWeight: FontWeight.bold,
-                                                              color: Colors.white,
-                                                              fontSize: 30,
-                                                              fontWeight: FontWeight.bold,
-                                                              height: 1.1,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                      child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          Row(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            children: [
-                                                              ImageIcon(stattoimage['atk']),
-                                                              Text(
-                                                                "ATK".tr(),
-                                                                style: const TextStyle(
-                                                                  //fontWeight: FontWeight.bold,
-                                                                  color: Colors.white,
-                                                                  fontSize: 30,
-                                                                  fontWeight: FontWeight.bold,
-                                                                  height: 1.1,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Text(
-                                                            levelData[_currentSliderValue.toInt()]['atk'].toString(),
-                                                            style: const TextStyle(
-                                                              //fontWeight: FontWeight.bold,
-                                                              color: Colors.white,
-                                                              fontSize: 30,
-                                                              fontWeight: FontWeight.bold,
-                                                              height: 1.1,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets.fromLTRB(30, 5, 30, 20),
-                                                      child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          Row(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            children: [
-                                                              ImageIcon(stattoimage['def']),
-                                                              Text(
-                                                                "DEF".tr(),
-                                                                style: const TextStyle(
-                                                                  //fontWeight: FontWeight.bold,
-                                                                  color: Colors.white,
-                                                                  fontSize: 30,
-                                                                  fontWeight: FontWeight.bold,
-                                                                  height: 1.1,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Text(
-                                                            levelData[_currentSliderValue.toInt()]['def'].toString(),
-                                                            style: const TextStyle(
-                                                              //fontWeight: FontWeight.bold,
-                                                              color: Colors.white,
-                                                              fontSize: 30,
-                                                              fontWeight: FontWeight.bold,
-                                                              height: 1.1,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          "Skill".tr(),
-                                          style: const TextStyle(
-                                            //fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.bold,
-                                            height: 1.1,
-                                          ),
-                                        ),
                                         Column(
                                           children: List.generate(skillData.length, (index) {
                                             final data = skillData[index];
                                             String fixedtext = "";
 
                                             String detailtext = ('lang'.tr() == 'en') ? data['DescriptionEN']! : (('lang'.tr() == 'cn') ? data['DescriptionCN']! : data['DescriptionJP']!);
-                                            if (data['maxlevel'] > 0) {
+                                            if (data['maxlevel'] != null && data['maxlevel'] > 0) {
                                               List<dynamic> multiplierData = data['levelmultiplier']!;
 
                                               int multicount = multiplierData.length;
@@ -457,7 +272,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                         ),
                                                                         maxLines: 10,
                                                                       ),
-                                                                      if (data['maxlevel']! > 0)
+                                                                      if (data['maxlevel'] != null && data['maxlevel']! > 0)
                                                                         Padding(
                                                                           padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                                                                           child: Row(
@@ -481,8 +296,8 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                                   min: 1,
                                                                                   max: (data['maxlevel']).toDouble(),
                                                                                   divisions: data['maxlevel'] - 1,
-                                                                                  activeColor: raritytocolor[lightconeData?['rarity']],
-                                                                                  inactiveColor: raritytocolor[lightconeData?['rarity']]?.withOpacity(0.5),
+                                                                                  activeColor: raritytocolor[relicData?['rarity']],
+                                                                                  inactiveColor: raritytocolor[relicData?['rarity']]?.withOpacity(0.5),
                                                                                   onChanged: (double value) {
                                                                                     setState(() {
                                                                                       levelnumbers[index] = value;
@@ -662,7 +477,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                           child: Image.network(
                             namedata['imageUrl']!,
                             alignment: const Alignment(1, -0.5),
-                            fit: BoxFit.none,
+                            fit: BoxFit.scaleDown,
                           ),
                         ),
                       ),
