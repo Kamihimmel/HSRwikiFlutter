@@ -404,12 +404,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           child: Container(
             width: double.infinity,
             decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(width: 0.5, color: Colors.grey)),
+              border: Border(bottom: BorderSide(width: 1, color: Color.fromRGBO(72, 69, 78, 1))),
             ),
             child: Align(
               alignment: Alignment.centerLeft,
               child: TabBar(
                 controller: _tabController,
+                dividerColor: Colors.transparent,
                 isScrollable: true,
                 tabs: <Widget>[
                   Tab(
