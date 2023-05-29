@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_grid/responsive_grid.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 
@@ -20,11 +21,48 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
   Map<String, dynamic>? relicData;
   bool isLoading = true;
 
+  Color darkcolor = Colors.black;
+  Color lightcolor = Colors.black;
+
   @override
   void initState() {
     super.initState();
 
     _getData(widget.jsonUrl);
+  }
+
+  late PaletteGenerator _palette;
+  bool _isLoading = true;
+  bool _hasError = false;
+
+  Future<void> _loadPalette(String url) async {
+    try {
+      final imageProvider = NetworkImage(url);
+      _palette = await PaletteGenerator.fromImageProvider(imageProvider);
+      setState(() {
+        _isLoading = false;
+        darkcolor = _palette.darkMutedColor?.color ?? Colors.black;
+        lightcolor = _palette.lightVibrantColor?.color ?? Colors.black;
+
+        final hexCode = darkcolor.value.toRadixString(16).padLeft(8, '0');
+        final directColor = '#${hexCode.substring(2)}';
+
+        print('Dark Color: $directColor');
+
+        final hexCode2 = lightcolor.value.toRadixString(16).padLeft(8, '0');
+        final directColor2 = '#${hexCode.substring(2)}';
+        print('Light Color: $directColor2');
+
+        final hexCode3 = (Colors.black).value.toRadixString(16).padLeft(8, '0');
+        final directColor3 = '#${hexCode.substring(2)}';
+        print('Black Color: $directColor3');
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _hasError = true;
+      });
+    }
   }
 
   final ScrollController _scrollController = ScrollController();
@@ -51,6 +89,9 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> namedata = ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+    if (darkcolor == Colors.black && lightcolor == Colors.black) {
+      _loadPalette(namedata['imageUrl']!);
+    }
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final columnwidth = screenWidth > 1440
@@ -75,15 +116,11 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
     return AnimatedContainer(
       duration: const Duration(seconds: 1),
       constraints: const BoxConstraints.expand(),
-      decoration: isLoading
-          ? const BoxDecoration(
-              color: const Color.fromRGBO(42, 41, 48, 1),
-            )
-          : const BoxDecoration(
-              color: const Color.fromRGBO(42, 41, 48, 1),
-            ),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [lightcolor.withOpacity(1), darkcolor.withOpacity(1)]),
+      ),
       child: Scaffold(
-        backgroundColor: Colors.black.withOpacity(0.8),
+        backgroundColor: Colors.transparent,
         appBar: AppBar(
           title: Text(('lang'.tr() == 'en') ? namedata['enname']! : (('lang'.tr() == 'cn') ? namedata['cnname']! : namedata['janame']!)),
         ),
@@ -132,43 +169,61 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                               ],
                                             ),
                                           ),
-                                      if (screenWidth < 905)
-                                        Container(
-                                          clipBehavior: Clip.hardEdge,
-                                          decoration: const BoxDecoration(
-                                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                                          ),
-                                          child: BackdropFilter(
-                                            filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                                            child: Container(
-                                              margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                              decoration: BoxDecoration(
-                                                borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                                border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.black.withOpacity(0.7), Colors.black.withOpacity(0.9)]),
-                                              ),
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: [
-                                                      Image.network(relicData!['head'], filterQuality: FilterQuality.medium),
-                                                      Image.network(relicData!['hands'], filterQuality: FilterQuality.medium),
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: [
-                                                      Image.network(relicData!['body'], filterQuality: FilterQuality.medium),
-                                                      Image.network(relicData!['feet'], filterQuality: FilterQuality.medium),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
+                                      if (screenWidth > 905)
+                                        if (relicData!['set'] == "2")
+                                          Expanded(
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Image.network(relicData!['sphere'], filterQuality: FilterQuality.medium),
+                                                    Image.network(relicData!['rope'], filterQuality: FilterQuality.medium),
+                                                  ],
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                        ),
+                                      if (screenWidth < 905)
+                                        if (relicData!['set'] == "4")
+                                          FittedBox(
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Image.network(relicData!['head'], filterQuality: FilterQuality.medium),
+                                                    Image.network(relicData!['hands'], filterQuality: FilterQuality.medium),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Image.network(relicData!['body'], filterQuality: FilterQuality.medium),
+                                                    Image.network(relicData!['feet'], filterQuality: FilterQuality.medium),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                      if (screenWidth < 905)
+                                        if (relicData!['set'] == "2")
+                                          FittedBox(
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Image.network(relicData!['sphere'], filterQuality: FilterQuality.medium),
+                                                    Image.network(relicData!['rope'], filterQuality: FilterQuality.medium),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
                                     ],
                                   ),
                                 ),
@@ -188,16 +243,18 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                         const SizedBox(
                                           height: 100,
                                         ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(25.0),
-                                          child: Text(
-                                            ('lang'.tr() == 'en') ? namedata['enname']! : (('lang'.tr() == 'cn') ? namedata['cnname']! : namedata['janame']!),
-                                            style: const TextStyle(
-                                              //fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                              fontSize: 50,
-                                              fontWeight: FontWeight.bold,
-                                              height: 1,
+                                        FittedBox(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(25.0),
+                                            child: Text(
+                                              ('lang'.tr() == 'en') ? namedata['enname']! : (('lang'.tr() == 'cn') ? namedata['cnname']! : namedata['janame']!),
+                                              style: const TextStyle(
+                                                //fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                                fontSize: 50,
+                                                fontWeight: FontWeight.bold,
+                                                height: 1,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -247,7 +304,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                                 : const BorderRadius.all(Radius.circular(15)),
                                                             border: Border.all(color: Colors.white.withOpacity(0.13)),
                                                             gradient: LinearGradient(
-                                                                begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.white.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                                                                begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [lightcolor.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                                                           ),
                                                           child: Row(
                                                             children: [
@@ -323,7 +380,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                         margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                         decoration: BoxDecoration(
-                                                          color: Colors.black.withOpacity(0.8),
+                                                          color: Colors.black.withOpacity(0.5),
                                                           borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
                                                         ),
                                                         child: Column(
@@ -481,16 +538,18 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(25.0),
-                        child: Text(
-                          ('lang'.tr() == 'en') ? namedata['enname']! : (('lang'.tr() == 'cn') ? namedata['cnname']! : namedata['janame']!),
-                          style: const TextStyle(
-                            //fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontSize: 50,
-                            fontWeight: FontWeight.bold,
-                            height: 1,
+                      FittedBox(
+                        child: Padding(
+                          padding: const EdgeInsets.all(25.0),
+                          child: Text(
+                            ('lang'.tr() == 'en') ? namedata['enname']! : (('lang'.tr() == 'cn') ? namedata['cnname']! : namedata['janame']!),
+                            style: const TextStyle(
+                              //fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: 50,
+                              fontWeight: FontWeight.bold,
+                              height: 1,
+                            ),
                           ),
                         ),
                       )

@@ -40,6 +40,7 @@ dependencies:
   url_launcher: ^6.1.11
   responsive_grid: ^2.2.0
   url_strategy: ^0.2.0
+  palette_generator: ^0.3.3+2
 
 dev_dependencies:
   flutter_test:
