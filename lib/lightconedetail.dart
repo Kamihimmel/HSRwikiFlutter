@@ -126,7 +126,8 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
               )),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(seconds: 1),
           decoration: BoxDecoration(
             gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [lightcolor.withOpacity(0.3), darkcolor.withOpacity(0.8)]),
           ),
