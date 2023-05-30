@@ -105,5 +105,6 @@
     "addweakness":"[Add Weakness]",
     "reducespecificres":"[Reduce Specific DMG Type RES]",
     "reduceallres":"[Reduce All DMG Type RES]",
-    "reducedef":"[Reduce DEF]"
+    "reducedef":"[Reduce DEF]",
+    "dmgreduction": "Damage Reduction"
 }

@@ -46,6 +46,9 @@ const stattoimage = {
   'imaginarydmg': AssetImage('images/IconImaginaryAddedRatio.png'),
   'critrate': AssetImage('images/IconCriticalChance.png'),
   'lightningdmg': AssetImage('images/IconThunderAddedRatio.png'),
+  'physicaldmg': AssetImage('images/IconPhysicalAddedRatio.png'),
+  'firedmg': AssetImage('images/IconFireAddedRatio.png'),
+  'quantumdmg': AssetImage('images/IconQuantumAddedRatio.png'),
 };
 
 const sicontoimage = {
