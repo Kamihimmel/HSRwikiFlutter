@@ -72,6 +72,7 @@
     "energy": "EP",
     "additionalatk": "付加攻撃ダメージ",
     "effectres": "効果抵抗",
+    "effecthit": "效果命中",
     "skillpointre": "SP回復",
     "speed": "速度",
     "shield": "バリア",
@@ -100,5 +101,8 @@
     "lightcone": "光円錐",
     "relic": "遺物",
     "healingbonus": "治癒量",
-    "weaken": "【虚弱】"
+    "weaken": "【虚弱】",
+    "addweakness":"【弱点追加】",
+    "reducespecificres":"【特定属性耐性ダウン】",
+    "reducedef":"【防御力ダウン】"
 }

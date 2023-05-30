@@ -72,6 +72,7 @@
     "energy": "能量",
     "additionalatk": "附加攻击伤害",
     "effectres": "效果抵抗",
+    "effecthit": "效果抵抗",
     "skillpointre": "战技点恢复",
     "speed": "速度",
     "shield": "护盾",
@@ -100,5 +101,8 @@
     "lightcone": "光锥",
     "relic": "遗器",
     "healingbonus": "治疗量",
-    "weaken": "【虚弱】"
+    "weaken": "【虚弱】",
+    "addweakness":"【添加弱点】",
+    "reducespecificres":"【降低特定属性抗性】",
+    "reducedef":"【降低防御力】"
 }
