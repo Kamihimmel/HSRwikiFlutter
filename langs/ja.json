@@ -72,6 +72,7 @@
     "energy": "EP",
     "additionalatk": "付加攻撃ダメージ",
     "effectres": "効果抵抗",
+    "effecthit": "效果命中",
     "skillpointre": "SP回復",
     "speed": "速度",
     "shield": "バリア",
@@ -101,5 +102,12 @@
     "relic": "遺物",
     "healingbonus": "治癒量",
     "weaken": "【虚弱】",
+    "addweakness":"【弱点追加】",
+    "reducespecificres":"【特定属性耐性ダウン】",
+    "reduceallres":"【全属性耐性ダウン】",
+    "specificres":"特定属性耐性",
+    "allres":"全属性耐性",
+    "reducedef":"【防御力ダウン】",
+    "reduceatk":"【攻撃力ダウン】",
     "dmgreduction": "被ダメージダウン"
 }
