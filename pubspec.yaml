@@ -41,6 +41,7 @@ dependencies:
   responsive_grid: ^2.2.0
   url_strategy: ^0.2.0
   palette_generator: ^0.3.3+2
+  transparent_image: ^2.0.1
 
 dev_dependencies:
   flutter_test:
