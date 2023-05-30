@@ -100,5 +100,6 @@
     "lightcone": "Light Cones",
     "relic": "Relics",
     "healingbonus": "Healing Bonus",
-    "weaken": "[Weaken]"
+    "weaken": "[Weaken]",
+    "dmgreduction": "Damage Reduction"
 }

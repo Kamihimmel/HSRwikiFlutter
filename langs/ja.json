@@ -100,5 +100,6 @@
     "lightcone": "光円錐",
     "relic": "遺物",
     "healingbonus": "治癒量",
-    "weaken": "【虚弱】"
+    "weaken": "【虚弱】",
+    "dmgreduction": "被ダメージダウン"
 }
