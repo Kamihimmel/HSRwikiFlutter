@@ -104,6 +104,9 @@
     "weaken": "【虚弱】",
     "addweakness":"【添加弱点】",
     "reducespecificres":"【降低特定属性抗性】",
+    "specificres":"特定属性抗性",
+    "allres":"全属性抗性",
     "reducedef":"【降低防御力】",
+    "reduceatk":"【降低攻击力】",
     "dmgreduction": "减伤"
 }
