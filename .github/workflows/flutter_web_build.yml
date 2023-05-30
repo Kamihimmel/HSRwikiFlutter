@@ -22,7 +22,7 @@ jobs:
           channel: 'stable'
 
       - name: Build Flutter Web
-        run: flutter build web --web-renderer canvaskit
+        run: flutter build web --web-renderer canvaskit --release --dart-define=BROWSER_IMAGE_DECODING_ENABLED=false
 
       - name: Clone GitHub Pages repository
         uses: actions/checkout@v2
