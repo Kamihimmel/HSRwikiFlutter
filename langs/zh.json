@@ -118,5 +118,6 @@
     "dotdmgreceive": "受到持续伤害",
     "dotdmgmultiplier": "持续攻击伤害倍率",
     "breakeffect": "击破特攻",
-    "weaknessbreakefficiency": "弱点击破效率"
+    "weaknessbreakefficiency": "弱点击破效率",
+    "controlresist": "行動制限抵抗"
 }

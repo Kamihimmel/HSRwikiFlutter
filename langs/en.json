@@ -118,5 +118,6 @@
     "dotdmgreceive": "DoT Dmg Receive",
     "dotdmgmultiplier": "DoT DMG Multiplier",
     "breakeffect": "Break Effect",
-    "weaknessbreakefficiency": "Weakness Break Efficiency"
+    "weaknessbreakefficiency": "Weakness Break Efficiency",
+    "controlresist": "Control Resist"
 }

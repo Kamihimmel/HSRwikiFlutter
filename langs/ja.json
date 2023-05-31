@@ -118,5 +118,6 @@
     "dotdmgreceive": "持続被ダメージ",
     "dotdmgmultiplier": "持続ダメージ倍率",
     "breakeffect": "撃破特効",
-    "weaknessbreakefficiency": "弱点撃破効率"
+    "weaknessbreakefficiency": "弱点撃破効率",
+    "controlresist": "Control Resist"
 }
