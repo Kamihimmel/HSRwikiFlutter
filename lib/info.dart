@@ -50,6 +50,7 @@ const stattoimage = {
   'physicaldmg': AssetImage('images/IconPhysicalAddedRatio.png'),
   'firedmg': AssetImage('images/IconFireAddedRatio.png'),
   'quantumdmg': AssetImage('images/IconQuantumAddedRatio.png'),
+  'breakeffect': AssetImage('images/IconBreakUp.png'),
 };
 
 const sicontoimage = {
@@ -58,4 +59,4 @@ const sicontoimage = {
   'relic': AssetImage('images/DataBankIconRelics.png'),
 };
 
-var typetocolor = {'dmg': Colors.redAccent, 'debuff': Colors.grey[400], 'shield': Colors.blueAccent, 'heal': Colors.lime};
+var typetocolor = {'dmg': Colors.redAccent, 'debuff': Colors.grey[400], 'shield': Colors.blueAccent, 'heal': Colors.lime, 'revive': Colors.green};
