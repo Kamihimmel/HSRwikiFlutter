@@ -31,7 +31,7 @@
     "dmg": "Damage",
     "buff": "Buff",
     "debuff": "Debuff",
-    "purge debuff": "Purge Debuff",
+    "removedebuff": "Remove Debuff",
     "atk": "ATK",
     "singleatk": "Single Atk",
     "bounce": "Bounce",
@@ -119,5 +119,6 @@
     "dotdmgmultiplier": "DoT DMG Multiplier",
     "breakeffect": "Break Effect",
     "weaknessbreakefficiency": "Weakness Break Efficiency",
-    "controlresist": "Control Resist"
+    "controlresist": "Control Resist",
+    "removebuff":"Remove Buff"
 }

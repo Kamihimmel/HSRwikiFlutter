@@ -31,7 +31,7 @@
     "dmg": "伤害",
     "buff": "增益",
     "debuff": "减益",
-    "purge debuff": "解除减益",
+    "removedebuff": "解除减益",
     "atk": "攻击力",
     "singleatk": "单体攻击",
     "bounce": "弹射",
@@ -119,5 +119,6 @@
     "dotdmgmultiplier": "持续攻击伤害倍率",
     "breakeffect": "击破特攻",
     "weaknessbreakefficiency": "弱点击破效率",
-    "controlresist": "控制抵抗"
+    "controlresist": "控制抵抗",
+    "removebuff":"解除增益"
 }
