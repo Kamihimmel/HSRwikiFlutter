@@ -1625,7 +1625,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                               height: 100,
                               color: etocolor[namedata['etype']!]?.withOpacity(0.6),
                               child: Image.network(
-                                namedata['imageUrl']!,
+                                (gender == false && namedata['imageUrlalter'] != "") ? namedata['imageUrlalter']! : namedata['imageUrl']!,
                                 alignment: const Alignment(1, -0.5),
                                 fit: BoxFit.none,
                               ),

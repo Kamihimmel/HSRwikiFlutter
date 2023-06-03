@@ -120,5 +120,10 @@
     "breakeffect": "Break Effect",
     "weaknessbreakefficiency": "Weakness Break Efficiency",
     "controlresist": "Control Resist",
-    "removebuff":"Remove Buff"
+    "removebuff": "Remove Buff",
+    "Trailblazer": "Trailblazer",
+    "Settings": "Settings",
+    "firevulnerability": "[Fire Vulnerability]",
+    "firedmgreceive": "Fire Dmg Receive",
+    "burn": "[Burn]"
 }

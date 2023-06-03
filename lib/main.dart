@@ -10,6 +10,7 @@ import 'characterdetail.dart';
 import 'lightconedetail.dart';
 import 'relicdetail.dart';
 import 'info.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -102,6 +103,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     _getData();
     _getData2();
     _getData3();
+    fetchgenderstaus();
   }
 
   @override
@@ -122,6 +124,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 'cnname': e['CNname'] as String,
                 'janame': e['JAname'] as String,
                 'imageUrl': e['imageurl'] as String,
+                'imageUrlalter': (e['imageurlalter'] != null ? (e['imageurlalter'] as String) : ""),
                 'etype': e['etype'] as String,
                 'wtype': e['wtype'] as String,
                 'rarity': e['rarity'] as String,
@@ -170,6 +173,16 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               })
           .toList();
       _filteredData3 = List.from(_data3);
+    });
+  }
+
+  Future<void> fetchgenderstaus() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    String genderN = prefs.getString('gender') ?? "999";
+    if ('male' == genderN) gender = false;
+    setState(() {
+      // Here you can write your code for open new view
     });
   }
 
@@ -391,6 +404,35 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   // ...
                 },
               ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
+                child: Divider(
+                  thickness: 1,
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(22, 0, 22, 5),
+                child: Text(
+                  "Settings".tr(),
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ),
+              SwitchListTile(
+                  title: const Text('Trailblazer').tr(),
+                  secondary: (gender ? const Icon(Icons.female) : const Icon(Icons.male)),
+                  value: gender,
+                  onChanged: (bool value) async {
+                    setState(() => gender = value);
+
+                    if (gender == false) {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setString('gender', "male");
+                    } else {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setString('gender', "female");
+                    }
+                  }),
             ],
           ),
         ),
@@ -789,7 +831,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                 Hero(
                                   tag: data['imageUrl']!,
                                   child: Image.network(
-                                    data['imageUrl']!,
+                                    (gender == false && data['imageUrlalter'] != "") ? data['imageUrlalter']! : data['imageUrl']!,
                                     fit: BoxFit.cover,
                                     width: double.infinity,
                                   ),

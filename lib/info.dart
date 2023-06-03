@@ -60,3 +60,5 @@ const sicontoimage = {
 };
 
 var typetocolor = {'dmg': Colors.redAccent, 'debuff': Colors.grey[400], 'shield': Colors.blueAccent, 'heal': Colors.lime, 'revive': Colors.green};
+
+bool gender = true;
