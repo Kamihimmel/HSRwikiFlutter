@@ -826,6 +826,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           hoverColor: etocolor[data['etype']!],
                           child: Card(
                             color: Colors.grey.withOpacity(0.1),
+                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))),
                             child: Stack(
                               children: [
                                 Hero(
@@ -840,16 +841,34 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                   bottom: 0,
                                   left: 0,
                                   right: 0,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                                    color: Colors.black54,
-                                    child: Text(
-                                      ('lang'.tr() == 'en') ? data['enname']! : (('lang'.tr() == 'cn') ? data['cnname']! : data['janame']!),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                        color: Colors.black54,
+                                        child: Text(
+                                          ('lang'.tr() == 'en') ? data['enname']! : (('lang'.tr() == 'cn') ? data['cnname']! : data['janame']!),
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                      Container(
+                                        padding: const EdgeInsets.only(bottom: 1),
+                                        decoration: BoxDecoration(
+                                          color: data['rarity'] == '5' ? Colors.amber.withOpacity(0.5) : Colors.deepPurpleAccent.withOpacity(0.5),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: data['rarity'] == '5' ? Colors.amber.withOpacity(0.5) : Colors.deepPurpleAccent.withOpacity(0.5), // Adjust the color and opacity as desired
+                                              blurRadius: 5.0, // Adjust the blur radius to control the size of the glow effect
+                                              spreadRadius: 1.0, // Adjust the spread radius to control the intensity of the glow effect
+                                            ),
+                                          ], // This blend mode allows the glow effect to show on top of the container
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 Positioned(
@@ -1113,6 +1132,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           hoverColor: Colors.grey,
                           child: Card(
                             color: Colors.grey.withOpacity(0.1),
+                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))),
                             child: Stack(
                               children: [
                                 Hero(
@@ -1127,16 +1147,42 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                   bottom: 0,
                                   left: 0,
                                   right: 0,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                                    color: Colors.black54,
-                                    child: Text(
-                                      ('lang'.tr() == 'en') ? data['enname']! : (('lang'.tr() == 'cn') ? data['cnname']! : data['janame']!),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                        color: Colors.black54,
+                                        child: Text(
+                                          ('lang'.tr() == 'en') ? data['enname']! : (('lang'.tr() == 'cn') ? data['cnname']! : data['janame']!),
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                      Container(
+                                        padding: const EdgeInsets.only(bottom: 1),
+                                        decoration: BoxDecoration(
+                                          color: data['rarity'] == '5'
+                                              ? Colors.amber.withOpacity(0.5)
+                                              : data['rarity'] == '4'
+                                                  ? Colors.deepPurpleAccent.withOpacity(0.5)
+                                                  : Colors.blueAccent.withOpacity(0.5),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: data['rarity'] == '5'
+                                                  ? Colors.amber.withOpacity(0.5)
+                                                  : data['rarity'] == '4'
+                                                      ? Colors.deepPurpleAccent.withOpacity(0.5)
+                                                      : Colors.blueAccent.withOpacity(0.5), // Adjust the color and opacity as desired
+                                              blurRadius: 5.0, // Adjust the blur radius to control the size of the glow effect
+                                              spreadRadius: 1.0, // Adjust the spread radius to control the intensity of the glow effect
+                                            ),
+                                          ], // This blend mode allows the glow effect to show on top of the container
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 Positioned(
@@ -1256,6 +1302,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           hoverColor: Colors.grey,
                           child: Card(
                             color: Colors.grey.withOpacity(0.1),
+                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))),
                             child: Stack(
                               children: [
                                 Hero(

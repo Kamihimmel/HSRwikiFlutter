@@ -125,5 +125,6 @@
     "Settings": "Settings",
     "firevulnerability": "[Fire Vulnerability]",
     "firedmgreceive": "Fire Dmg Receive",
-    "burn": "[Burn]"
+    "burn": "[Burn]",
+    "tauntdebuff": "[Taunt]"
 }

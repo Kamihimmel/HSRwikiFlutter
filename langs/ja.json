@@ -125,5 +125,6 @@
     "Settings": "設定",
     "firevulnerability": "【火属性被ダメージアップ】",
     "firedmgreceive": "火属性被ダメージ",
-    "burn": "【燃焼】"
+    "burn": "【燃焼】",
+    "tauntdebuff": "【挑発】"
 }
