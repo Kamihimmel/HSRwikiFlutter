@@ -120,13 +120,18 @@
     "breakeffect": "Break Effect",
     "weaknessbreakefficiency": "Weakness Break Efficiency",
     "controlresist": "Control Resist",
-    "removebuff":"Remove Buff",
+    "removebuff": "Remove Buff",
     "ignoredef": "Ignore DEF",
-    "shielddmgabsorb":"Shield DMG Absorb",
+    "shielddmgabsorb": "Shield DMG Absorb",
     "Trailblazer": "Trailblazer",
     "Settings": "Settings",
     "firevulnerability": "[Fire Vulnerability]",
     "firedmgreceive": "Fire Dmg Receive",
     "burn": "[Burn]",
-    "tauntdebuff": "[Taunt]"
+    "tauntdebuff": "[Taunt]",
+    "windshear": "[Wind Shear]",
+    "exposed": "[Exposed]",
+    "iceres": "Ice DMG RES",
+    "toughnessreducingdmg": "Toughness-Reducing Damage",
+    "speedpt": "Speed"
 }

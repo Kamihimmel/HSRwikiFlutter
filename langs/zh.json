@@ -120,13 +120,18 @@
     "breakeffect": "击破特攻",
     "weaknessbreakefficiency": "弱点击破效率",
     "controlresist": "控制抵抗",
-    "removebuff":"解除增益",
+    "removebuff": "解除增益",
     "ignoredef": "无视防御力",
-    "shielddmgabsorb":"护盾量",
+    "shielddmgabsorb": "护盾量",
     "Trailblazer": "开拓者",
     "Settings": "设置",
     "firevulnerability": "【火易伤】",
     "firedmgreceive": "受到火伤害",
     "burn": "【灼烧】",
-    "tauntdebuff": "【嘲讽】"
+    "tauntdebuff": "【嘲讽】",
+    "windshear": "【风化】",
+    "exposed": "【通解】",
+    "iceres": "冰属性抗性",
+    "toughnessreducingdmg": "削韧伤害",
+    "speedpt": "速度"
 }

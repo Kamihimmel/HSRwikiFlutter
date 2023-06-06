@@ -339,7 +339,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                     ],
                                                                   ),
                                                                   Text(
-                                                                    levelData[_currentSliderValue.toInt()]['hp'].toString(),
+                                                                    levelData[_currentSliderValue.toInt()]['hp'].toStringAsFixed(0),
                                                                     style: const TextStyle(
                                                                       //fontWeight: FontWeight.bold,
                                                                       color: Colors.white,
@@ -373,7 +373,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                     ],
                                                                   ),
                                                                   Text(
-                                                                    levelData[_currentSliderValue.toInt()]['atk'].toString(),
+                                                                    levelData[_currentSliderValue.toInt()]['atk'].toStringAsFixed(0),
                                                                     style: const TextStyle(
                                                                       //fontWeight: FontWeight.bold,
                                                                       color: Colors.white,
@@ -407,7 +407,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                     ],
                                                                   ),
                                                                   Text(
-                                                                    levelData[_currentSliderValue.toInt()]['def'].toString(),
+                                                                    levelData[_currentSliderValue.toInt()]['def'].toStringAsFixed(0),
                                                                     style: const TextStyle(
                                                                       //fontWeight: FontWeight.bold,
                                                                       color: Colors.white,
@@ -647,7 +647,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                                       borderRadius: BorderRadius.circular(5),
                                                                                     ),
                                                                                     child: Text(
-                                                                                        '${(data['effect'][index2]['addtarget'] as String).tr()}$levelmulti${((data['effect'][index2]['addtarget']) != 'energy') ? "%" : ""}',
+                                                                                        '${(data['effect'][index2]['addtarget'] as String).tr()}$levelmulti${((data['effect'][index2]['addtarget']) != 'energy') && ((data['effect'][index2]['addtarget']) != 'speedpt') ? "%" : ""}',
                                                                                         style: const TextStyle(
                                                                                           //fontWeight: FontWeight.bold,
                                                                                           color: Colors.black,
