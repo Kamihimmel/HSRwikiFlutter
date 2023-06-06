@@ -120,5 +120,7 @@
     "breakeffect": "撃破特効",
     "weaknessbreakefficiency": "弱点撃破効率",
     "controlresist": "行動制限抵抗",
-    "removebuff":"バフ解除"
+    "removebuff":"バフ解除",
+    "ignoredef": "防御力無視",
+    "shielddmgabsorb":"バリア耐久"
 }

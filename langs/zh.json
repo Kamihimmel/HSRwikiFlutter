@@ -120,5 +120,7 @@
     "breakeffect": "击破特攻",
     "weaknessbreakefficiency": "弱点击破效率",
     "controlresist": "控制抵抗",
-    "removebuff":"解除增益"
+    "removebuff":"解除增益",
+    "ignoredef": "无视防御力",
+    "shielddmgabsorb":"护盾量"
 }

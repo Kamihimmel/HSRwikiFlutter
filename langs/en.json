@@ -120,5 +120,7 @@
     "breakeffect": "Break Effect",
     "weaknessbreakefficiency": "Weakness Break Efficiency",
     "controlresist": "Control Resist",
-    "removebuff":"Remove Buff"
+    "removebuff":"Remove Buff",
+    "ignoredef": "Ignore DEF",
+    "shielddmgabsorb":"Shield DMG Absorb"
 }
