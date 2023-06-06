@@ -122,5 +122,11 @@
     "controlresist": "控制抵抗",
     "removebuff":"解除增益",
     "ignoredef": "无视防御力",
-    "shielddmgabsorb":"护盾量"
+    "shielddmgabsorb":"护盾量",
+    "Trailblazer": "开拓者",
+    "Settings": "设置",
+    "firevulnerability": "【火易伤】",
+    "firedmgreceive": "受到火伤害",
+    "burn": "【灼烧】",
+    "tauntdebuff": "【嘲讽】"
 }

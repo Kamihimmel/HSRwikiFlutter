@@ -122,5 +122,11 @@
     "controlresist": "行動制限抵抗",
     "removebuff":"バフ解除",
     "ignoredef": "防御力無視",
-    "shielddmgabsorb":"バリア耐久"
+    "shielddmgabsorb":"バリア耐久",
+    "Trailblazer": "開拓者",
+    "Settings": "設定",
+    "firevulnerability": "【火属性被ダメージアップ】",
+    "firedmgreceive": "火属性被ダメージ",
+    "burn": "【燃焼】",
+    "tauntdebuff": "【挑発】"
 }

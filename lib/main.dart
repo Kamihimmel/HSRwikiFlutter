@@ -10,6 +10,7 @@ import 'characterdetail.dart';
 import 'lightconedetail.dart';
 import 'relicdetail.dart';
 import 'info.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -102,6 +103,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     _getData();
     _getData2();
     _getData3();
+    fetchgenderstaus();
   }
 
   @override
@@ -122,6 +124,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 'cnname': e['CNname'] as String,
                 'janame': e['JAname'] as String,
                 'imageUrl': e['imageurl'] as String,
+                'imageUrlalter': (e['imageurlalter'] != null ? (e['imageurlalter'] as String) : ""),
                 'etype': e['etype'] as String,
                 'wtype': e['wtype'] as String,
                 'rarity': e['rarity'] as String,
@@ -170,6 +173,16 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               })
           .toList();
       _filteredData3 = List.from(_data3);
+    });
+  }
+
+  Future<void> fetchgenderstaus() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    String genderN = prefs.getString('gender') ?? "999";
+    if ('male' == genderN) gender = false;
+    setState(() {
+      // Here you can write your code for open new view
     });
   }
 
@@ -391,6 +404,35 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   // ...
                 },
               ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
+                child: Divider(
+                  thickness: 1,
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(22, 0, 22, 5),
+                child: Text(
+                  "Settings".tr(),
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ),
+              SwitchListTile(
+                  title: const Text('Trailblazer').tr(),
+                  secondary: (gender ? const Icon(Icons.female) : const Icon(Icons.male)),
+                  value: gender,
+                  onChanged: (bool value) async {
+                    setState(() => gender = value);
+
+                    if (gender == false) {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setString('gender', "male");
+                    } else {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setString('gender', "female");
+                    }
+                  }),
             ],
           ),
         ),
@@ -784,12 +826,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           hoverColor: etocolor[data['etype']!],
                           child: Card(
                             color: Colors.grey.withOpacity(0.1),
+                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))),
                             child: Stack(
                               children: [
                                 Hero(
                                   tag: data['imageUrl']!,
                                   child: Image.network(
-                                    data['imageUrl']!,
+                                    (gender == false && data['imageUrlalter'] != "") ? data['imageUrlalter']! : data['imageUrl']!,
                                     fit: BoxFit.cover,
                                     width: double.infinity,
                                   ),
@@ -798,16 +841,34 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                   bottom: 0,
                                   left: 0,
                                   right: 0,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                                    color: Colors.black54,
-                                    child: Text(
-                                      ('lang'.tr() == 'en') ? data['enname']! : (('lang'.tr() == 'cn') ? data['cnname']! : data['janame']!),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                        color: Colors.black54,
+                                        child: Text(
+                                          ('lang'.tr() == 'en') ? data['enname']! : (('lang'.tr() == 'cn') ? data['cnname']! : data['janame']!),
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                      Container(
+                                        padding: const EdgeInsets.only(bottom: 1),
+                                        decoration: BoxDecoration(
+                                          color: data['rarity'] == '5' ? Colors.amber.withOpacity(0.5) : Colors.deepPurpleAccent.withOpacity(0.5),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: data['rarity'] == '5' ? Colors.amber.withOpacity(0.5) : Colors.deepPurpleAccent.withOpacity(0.5), // Adjust the color and opacity as desired
+                                              blurRadius: 5.0, // Adjust the blur radius to control the size of the glow effect
+                                              spreadRadius: 1.0, // Adjust the spread radius to control the intensity of the glow effect
+                                            ),
+                                          ], // This blend mode allows the glow effect to show on top of the container
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 Positioned(
@@ -1071,6 +1132,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           hoverColor: Colors.grey,
                           child: Card(
                             color: Colors.grey.withOpacity(0.1),
+                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))),
                             child: Stack(
                               children: [
                                 Hero(
@@ -1085,16 +1147,42 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                   bottom: 0,
                                   left: 0,
                                   right: 0,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                                    color: Colors.black54,
-                                    child: Text(
-                                      ('lang'.tr() == 'en') ? data['enname']! : (('lang'.tr() == 'cn') ? data['cnname']! : data['janame']!),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                        color: Colors.black54,
+                                        child: Text(
+                                          ('lang'.tr() == 'en') ? data['enname']! : (('lang'.tr() == 'cn') ? data['cnname']! : data['janame']!),
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                      Container(
+                                        padding: const EdgeInsets.only(bottom: 1),
+                                        decoration: BoxDecoration(
+                                          color: data['rarity'] == '5'
+                                              ? Colors.amber.withOpacity(0.5)
+                                              : data['rarity'] == '4'
+                                                  ? Colors.deepPurpleAccent.withOpacity(0.5)
+                                                  : Colors.blueAccent.withOpacity(0.5),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: data['rarity'] == '5'
+                                                  ? Colors.amber.withOpacity(0.5)
+                                                  : data['rarity'] == '4'
+                                                      ? Colors.deepPurpleAccent.withOpacity(0.5)
+                                                      : Colors.blueAccent.withOpacity(0.5), // Adjust the color and opacity as desired
+                                              blurRadius: 5.0, // Adjust the blur radius to control the size of the glow effect
+                                              spreadRadius: 1.0, // Adjust the spread radius to control the intensity of the glow effect
+                                            ),
+                                          ], // This blend mode allows the glow effect to show on top of the container
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 Positioned(
@@ -1214,6 +1302,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           hoverColor: Colors.grey,
                           child: Card(
                             color: Colors.grey.withOpacity(0.1),
+                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))),
                             child: Stack(
                               children: [
                                 Hero(

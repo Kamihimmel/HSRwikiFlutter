@@ -122,5 +122,11 @@
     "controlresist": "Control Resist",
     "removebuff":"Remove Buff",
     "ignoredef": "Ignore DEF",
-    "shielddmgabsorb":"Shield DMG Absorb"
+    "shielddmgabsorb":"Shield DMG Absorb",
+    "Trailblazer": "Trailblazer",
+    "Settings": "Settings",
+    "firevulnerability": "[Fire Vulnerability]",
+    "firedmgreceive": "Fire Dmg Receive",
+    "burn": "[Burn]",
+    "tauntdebuff": "[Taunt]"
 }

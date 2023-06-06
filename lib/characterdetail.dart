@@ -84,7 +84,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
           if (!isLoading)
             FadeInImage.memoryNetwork(
               placeholder: kTransparentImage,
-              image: characterData!['imagelargeurl'],
+              image: (gender == false && characterData!['imagelargeurlalter'] != null) ? characterData!['imagelargeurlalter'] : characterData!['imagelargeurl'],
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               fit: BoxFit.fitHeight,
@@ -481,7 +481,9 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                           ),
                                           if (screenWidth > 905)
                                             Expanded(
-                                              child: Image.network(characterData!['imagelargeurl'], filterQuality: FilterQuality.medium),
+                                              child: Image.network(
+                                                  (gender == false && characterData!['imagelargeurlalter'] != null) ? characterData!['imagelargeurlalter'] : characterData!['imagelargeurl'],
+                                                  filterQuality: FilterQuality.medium),
                                             ),
                                           if (screenWidth < 905)
                                             Container(
@@ -499,7 +501,9 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                       gradient:
                                                           LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.black.withOpacity(0.7), Colors.black.withOpacity(0.9)]),
                                                     ),
-                                                    child: Image.network(characterData!['imagelargeurl'], filterQuality: FilterQuality.medium)),
+                                                    child: Image.network(
+                                                        (gender == false && characterData!['imagelargeurlalter'] != null) ? characterData!['imagelargeurlalter'] : characterData!['imagelargeurl'],
+                                                        filterQuality: FilterQuality.medium)),
                                               ),
                                             ),
                                         ],
@@ -1625,7 +1629,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                               height: 100,
                               color: etocolor[namedata['etype']!]?.withOpacity(0.6),
                               child: Image.network(
-                                namedata['imageUrl']!,
+                                (gender == false && namedata['imageUrlalter'] != "") ? namedata['imageUrlalter']! : namedata['imageUrl']!,
                                 alignment: const Alignment(1, -0.5),
                                 fit: BoxFit.none,
                               ),
