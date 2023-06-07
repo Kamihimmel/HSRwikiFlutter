@@ -43,11 +43,29 @@ dependencies:
   palette_generator: ^0.3.3+2
   transparent_image: ^2.0.1
   shared_preferences: ^2.1.1
+  firebase_core: ^2.13.1
+  firebase_analytics: ^10.4.2
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.13.1
 
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "images/icon.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "images/icon.png"
+    background_color: "#473D82"
+    theme_color: "#473D82"
+  windows:
+    generate: true
+    image_path: "images/icon.png"
+    icon_size: 256 # min:48, max:256, default: 48
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your

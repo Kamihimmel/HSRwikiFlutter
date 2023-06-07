@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "895109510915",
+    "project_id": "aliceworkshop4honkaistarrail",
+    "storage_bucket": "aliceworkshop4honkaistarrail.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:895109510915:android:432b13aa3072a210951b36",
+        "android_client_info": {
+          "package_name": "com.example.hsrwikiproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "895109510915-bqgu1s27ma1hqqs4q7ndb12b3gutablh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5bY_CBHTK3eKA1cg9WmFMl9bR74JdGZs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "895109510915-bqgu1s27ma1hqqs4q7ndb12b3gutablh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "895109510915-6vf0dsgj676319f4liajjeemgjp4r99u.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.hsrwikiproject"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

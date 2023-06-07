@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -12,10 +13,24 @@ import 'relicdetail.dart';
 import 'info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'dart:io' show Platform;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   setPathUrlStrategy();
+  bool needsWeb = false;
+  if (kIsWeb) {
+    // running on the web!
+  } else {
+    needsWeb = Platform.isLinux | Platform.isWindows;
+    // NOT running on the web! You can check for additional platforms here.
+  }
+  await Firebase.initializeApp(
+    options: needsWeb ? DefaultFirebaseOptions.web : DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(EasyLocalization(
       supportedLocales: const [Locale('en'), Locale.fromSubtags(languageCode: 'zh', countryCode: 'CN'), Locale('ja')],
       path: 'langs', // <-- change the path of the translation files
