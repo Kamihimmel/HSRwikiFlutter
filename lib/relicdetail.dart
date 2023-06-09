@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:palette_generator/palette_generator.dart';
+import 'package:transparent_image/transparent_image.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 
@@ -194,15 +195,39 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                 Row(
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: [
-                                                    Image.network(relicData!['head'], filterQuality: FilterQuality.medium),
-                                                    Image.network(relicData!['hands'], filterQuality: FilterQuality.medium),
+                                                    FadeInImage.memoryNetwork(
+                                                      placeholder: kTransparentImage,
+                                                      image: relicData!['head'],
+                                                      height: MediaQuery.of(context).size.width / 2,
+                                                      width: MediaQuery.of(context).size.width / 2,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                    FadeInImage.memoryNetwork(
+                                                      placeholder: kTransparentImage,
+                                                      image: relicData!['hands'],
+                                                      height: MediaQuery.of(context).size.width / 2,
+                                                      width: MediaQuery.of(context).size.width / 2,
+                                                      fit: BoxFit.cover,
+                                                    ),
                                                   ],
                                                 ),
                                                 Row(
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: [
-                                                    Image.network(relicData!['body'], filterQuality: FilterQuality.medium),
-                                                    Image.network(relicData!['feet'], filterQuality: FilterQuality.medium),
+                                                    FadeInImage.memoryNetwork(
+                                                      placeholder: kTransparentImage,
+                                                      image: relicData!['body'],
+                                                      height: MediaQuery.of(context).size.width / 2,
+                                                      width: MediaQuery.of(context).size.width / 2,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                    FadeInImage.memoryNetwork(
+                                                      placeholder: kTransparentImage,
+                                                      image: relicData!['feet'],
+                                                      height: MediaQuery.of(context).size.width / 2,
+                                                      width: MediaQuery.of(context).size.width / 2,
+                                                      fit: BoxFit.cover,
+                                                    ),
                                                   ],
                                                 ),
                                               ],
@@ -217,8 +242,20 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                 Row(
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: [
-                                                    Image.network(relicData!['sphere'], filterQuality: FilterQuality.medium),
-                                                    Image.network(relicData!['rope'], filterQuality: FilterQuality.medium),
+                                                    FadeInImage.memoryNetwork(
+                                                      placeholder: kTransparentImage,
+                                                      image: relicData!['sphere'],
+                                                      height: MediaQuery.of(context).size.width / 2,
+                                                      width: MediaQuery.of(context).size.width / 2,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                    FadeInImage.memoryNetwork(
+                                                      placeholder: kTransparentImage,
+                                                      image: relicData!['rope'],
+                                                      height: MediaQuery.of(context).size.width / 2,
+                                                      width: MediaQuery.of(context).size.width / 2,
+                                                      fit: BoxFit.cover,
+                                                    ),
                                                   ],
                                                 ),
                                               ],
@@ -238,26 +275,28 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                   height: screenWidth > 905 ? screenHeight - 100 : null,
                                   child: SingleChildScrollView(
                                     child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
+                                      padding: const EdgeInsets.fromLTRB(0, 8, 0, 10),
                                       child: Column(children: [
-                                        const SizedBox(
-                                          height: 100,
-                                        ),
-                                        FittedBox(
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(25.0),
-                                            child: Text(
-                                              ('lang'.tr() == 'en') ? namedata['enname']! : (('lang'.tr() == 'cn') ? namedata['cnname']! : namedata['janame']!),
-                                              style: const TextStyle(
-                                                //fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                                fontSize: 50,
-                                                fontWeight: FontWeight.bold,
-                                                height: 1,
+                                        if (screenWidth > 905)
+                                          const SizedBox(
+                                            height: 100,
+                                          ),
+                                        if (screenWidth > 905)
+                                          FittedBox(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(25.0),
+                                              child: Text(
+                                                ('lang'.tr() == 'en') ? namedata['enname']! : (('lang'.tr() == 'cn') ? namedata['cnname']! : namedata['janame']!),
+                                                style: const TextStyle(
+                                                  //fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                  fontSize: 50,
+                                                  fontWeight: FontWeight.bold,
+                                                  height: 1,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
                                         Column(
                                           children: List.generate(skillData.length, (index) {
                                             final data = skillData[index];
@@ -538,17 +577,22 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                           ),
                         ),
                       ),
-                      FittedBox(
+                      Container(
+                        alignment: Alignment(0, 0),
+                        height: 100,
+                        width: columnwidth,
                         child: Padding(
-                          padding: const EdgeInsets.all(25.0),
-                          child: Text(
-                            ('lang'.tr() == 'en') ? namedata['enname']! : (('lang'.tr() == 'cn') ? namedata['cnname']! : namedata['janame']!),
-                            style: const TextStyle(
-                              //fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              fontSize: 50,
-                              fontWeight: FontWeight.bold,
-                              height: 1,
+                          padding: const EdgeInsets.fromLTRB(25, 25, 110, 25),
+                          child: FittedBox(
+                            child: Text(
+                              ('lang'.tr() == 'en') ? namedata['enname']! : (('lang'.tr() == 'cn') ? namedata['cnname']! : namedata['janame']!),
+                              style: const TextStyle(
+                                //fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 50,
+                                fontWeight: FontWeight.bold,
+                                height: 1,
+                              ),
                             ),
                           ),
                         ),

@@ -5,7 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:url_strategy/url_strategy.dart';
+import 'donatePage.dart';
 
 import 'characterdetail.dart';
 import 'lightconedetail.dart';
@@ -15,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+
 import 'dart:io' show Platform;
 
 void main() async {
@@ -105,6 +108,42 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
+
+      if (_counter > 4 && testmode == false) {
+        _counter = 0;
+        testmode = true;
+        final snackBar = SnackBar(
+          content: const Text('Oops!Test mode activated!'),
+          action: SnackBarAction(
+            label: "✕",
+            onPressed: () {
+              // Some code to undo the change.
+            },
+          ),
+        );
+
+        // Find the ScaffoldMessenger in the widget tree
+        // and use it to show a SnackBar.
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+
+      if (_counter > 4 && testmode == true) {
+        _counter = 0;
+        testmode = false;
+        final snackBar = SnackBar(
+          content: const Text('Test mode Deactivated!'),
+          action: SnackBarAction(
+            label: "✕",
+            onPressed: () {
+              // Some code to undo the change.
+            },
+          ),
+        );
+
+        // Find the ScaffoldMessenger in the widget tree
+        // and use it to show a SnackBar.
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
     });
   }
 
@@ -118,7 +157,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     _getData();
     _getData2();
     _getData3();
-    fetchgenderstaus();
+    fetchstaus();
   }
 
   @override
@@ -144,6 +183,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 'wtype': e['wtype'] as String,
                 'rarity': e['rarity'] as String,
                 'infoUrl': e['infourl'] as String,
+                'spoiler': (e['spoiler'] ? "true" : "false")
               })
           .toList();
       _filteredData = List.from(_data);
@@ -191,11 +231,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     });
   }
 
-  Future<void> fetchgenderstaus() async {
+  Future<void> fetchstaus() async {
     final prefs = await SharedPreferences.getInstance();
 
     String genderN = prefs.getString('gender') ?? "999";
     if ('male' == genderN) gender = false;
+
+    String spoilerN = prefs.getString('spoilermode') ?? "false";
+    if ('true' == spoilerN) spoilermode = true;
+
     setState(() {
       // Here you can write your code for open new view
     });
@@ -245,8 +289,22 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             ? 4
             : 8;
 
+    // filter character data
     _filteredData = List.from(_data);
     List<Map<String, String>> tempData = [];
+
+    if (spoilermode) {
+      tempData.addAll(_filteredData.where((item) => item['spoiler'] == 'true').toList());
+      tempData.addAll(_filteredData.where((item) => item['spoiler'] == 'false').toList());
+
+      _filteredData = List.from(tempData);
+      tempData = [];
+    } else {
+      tempData.addAll(_filteredData.where((item) => item['spoiler'] == 'false').toList());
+
+      _filteredData = List.from(tempData);
+      tempData = [];
+    }
 
     if (filterStar4On || filterStar5On) {
       if (filterStar4On) {
@@ -310,6 +368,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       _filteredData = List.from(tempData);
       tempData = [];
     }
+    // filter lightcone data
 
     _filteredData2 = List.from(_data2);
     List<Map<String, String>> tempData2 = [];
@@ -353,6 +412,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       _filteredData2 = List.from(tempData2);
       tempData2 = [];
     }
+    // filter relic data
 
     _filteredData3 = List.from(_data3);
     List<Map<String, String>> tempData3 = [];
@@ -367,6 +427,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       _filteredData3 = List.from(tempData3);
       tempData3 = [];
     }
+
+    const footer = const Padding(
+      padding: EdgeInsets.all(8.0),
+      child: FittedBox(
+        child: Text(
+          'Designed and developed by yunlu18.net. Game assets are property of COGNOSPHERE PTE. LTD / miHoYo.',
+        ),
+      ),
+    );
 
     return Scaffold(
       drawer: SafeArea(
@@ -448,6 +517,67 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       await prefs.setString('gender', "female");
                     }
                   }),
+              if (testmode == true)
+                SwitchListTile(
+                    title: const Text('Spoiler Mode').tr(),
+                    value: spoilermode,
+                    onChanged: (bool value) async {
+                      setState(() => spoilermode = value);
+
+                      if (spoilermode == false) {
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setString('spoilermode', "false");
+                      } else {
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setString('spoilermode', "true");
+                      }
+                    }),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
+                child: Divider(
+                  thickness: 1,
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(22, 0, 22, 5),
+                child: Text(
+                  "Others".tr(),
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.open_in_new),
+                title: const Text('Alice Workshop for Genshin').tr(),
+                onTap: () {
+                  // Update the state of the app.
+                  launchUrlString("https://genshincalc.yunlu18.net/".tr());
+
+                  // ...
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.open_in_new),
+                title: const Text('Privacy Policy').tr(),
+                onTap: () {
+                  launchUrlString("https://genshincalc.yunlu18.net/privacy.html");
+                  // Update the state of the app.
+
+                  // ...
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.coffee),
+                title: Text('Buy Me a Coffee').tr(),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => DonatePage()),
+                  ).then((value) {
+                    setState(() {});
+                  });
+                },
+              ),
             ],
           ),
         ),
@@ -919,12 +1049,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     }).toList(),
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'Provided by yunlu18.net ',
-                  ),
-                ),
+                footer,
               ],
             ),
           ),
@@ -1226,12 +1351,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     }).toList(),
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'Provided by yunlu18.net ',
-                  ),
-                ),
+                footer,
               ],
             ),
           ),
@@ -1352,12 +1472,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     }).toList(),
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'Provided by yunlu18.net ',
-                  ),
-                ),
+                footer,
               ],
             ),
           ),
@@ -1365,8 +1480,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        child: Image.asset(
+          "images/silverwolficon.png",
+          width: 45,
+        ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }

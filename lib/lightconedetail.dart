@@ -168,21 +168,19 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                 ),
                                               if (screenWidth < 905)
                                                 Container(
-                                                  clipBehavior: Clip.hardEdge,
-                                                  decoration: const BoxDecoration(
-                                                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                                                  margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: const BorderRadius.all(Radius.circular(0)),
+                                                    border: Border.all(color: Colors.white.withOpacity(0.13)),
+                                                    gradient:
+                                                        LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [lightcolor.withOpacity(0.7), Colors.black.withOpacity(0.9)]),
                                                   ),
-                                                  child: BackdropFilter(
-                                                    filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                                                    child: Container(
-                                                        margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                                        decoration: BoxDecoration(
-                                                          borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                                          border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                          gradient: LinearGradient(
-                                                              begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.black.withOpacity(0.7), Colors.black.withOpacity(0.9)]),
-                                                        ),
-                                                        child: Image.network(lightconeData!['imagelargeurl'], filterQuality: FilterQuality.medium)),
+                                                  child: FadeInImage.memoryNetwork(
+                                                    placeholder: kTransparentImage,
+                                                    image: lightconeData!['imagelargeurl'],
+                                                    height: MediaQuery.of(context).size.width / 867 * 1230,
+                                                    width: MediaQuery.of(context).size.width,
+                                                    fit: BoxFit.cover,
                                                   ),
                                                 ),
                                             ],
@@ -199,30 +197,32 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                           height: screenWidth > 905 ? screenHeight - 100 : null,
                                           child: SingleChildScrollView(
                                             child: Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
                                               child: Column(children: [
-                                                const SizedBox(
-                                                  height: 100,
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.all(25.0),
-                                                  child: Text(
-                                                    ('lang'.tr() == 'en') ? namedata['enname']! : (('lang'.tr() == 'cn') ? namedata['cnname']! : namedata['janame']!),
-                                                    style: const TextStyle(
-                                                      //fontWeight: FontWeight.bold,
-                                                      color: Colors.white,
-                                                      fontSize: 50,
-                                                      fontWeight: FontWeight.bold,
-                                                      height: 1,
+                                                if (screenWidth > 905)
+                                                  const SizedBox(
+                                                    height: 100,
+                                                  ),
+                                                if (screenWidth > 905)
+                                                  Padding(
+                                                    padding: const EdgeInsets.all(25.0),
+                                                    child: Text(
+                                                      ('lang'.tr() == 'en') ? namedata['enname']! : (('lang'.tr() == 'cn') ? namedata['cnname']! : namedata['janame']!),
+                                                      style: const TextStyle(
+                                                        //fontWeight: FontWeight.bold,
+                                                        color: Colors.white,
+                                                        fontSize: 50,
+                                                        fontWeight: FontWeight.bold,
+                                                        height: 1,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
                                                 Row(
                                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                                   children: [
                                                     Flexible(
                                                       child: Padding(
-                                                        padding: const EdgeInsets.fromLTRB(5, 10, 10, 0),
+                                                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                                                         child: Container(
                                                           clipBehavior: Clip.hardEdge,
                                                           decoration: const BoxDecoration(
@@ -707,7 +707,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                 child: Container(
                                   width: columnwidth,
                                   height: 100,
-                                  color: Colors.grey.withOpacity(0.6),
+                                  color: darkcolor.withOpacity(0.6),
                                   child: Image.network(
                                     namedata['imageUrl']!,
                                     alignment: const Alignment(1, -0.5),
@@ -715,16 +715,23 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                   ),
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(25.0),
-                                child: Text(
-                                  ('lang'.tr() == 'en') ? namedata['enname']! : (('lang'.tr() == 'cn') ? namedata['cnname']! : namedata['janame']!),
-                                  style: const TextStyle(
-                                    //fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    fontSize: 50,
-                                    fontWeight: FontWeight.bold,
-                                    height: 1,
+                              Container(
+                                alignment: Alignment(-1, 0),
+                                height: 100,
+                                width: columnwidth - 100,
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(25, 25, 110, 25),
+                                  child: FittedBox(
+                                    child: Text(
+                                      ('lang'.tr() == 'en') ? namedata['enname']! : (('lang'.tr() == 'cn') ? namedata['cnname']! : namedata['janame']!),
+                                      style: const TextStyle(
+                                        //fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                        fontSize: 50,
+                                        fontWeight: FontWeight.bold,
+                                        height: 1,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               )

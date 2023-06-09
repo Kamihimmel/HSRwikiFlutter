@@ -501,8 +501,13 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                       gradient:
                                                           LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.black.withOpacity(0.7), Colors.black.withOpacity(0.9)]),
                                                     ),
-                                                    child: Image.network(
-                                                        (gender == false && characterData!['imagelargeurlalter'] != null) ? characterData!['imagelargeurlalter'] : characterData!['imagelargeurl'],
+                                                    child: FadeInImage.memoryNetwork(
+                                                        placeholder: kTransparentImage,
+                                                        image:
+                                                            (gender == false && characterData!['imagelargeurlalter'] != null) ? characterData!['imagelargeurlalter'] : characterData!['imagelargeurl'],
+                                                        height: MediaQuery.of(context).size.width,
+                                                        width: MediaQuery.of(context).size.width,
+                                                        fit: BoxFit.cover,
                                                         filterQuality: FilterQuality.medium)),
                                               ),
                                             ),
@@ -520,7 +525,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                       height: screenWidth > 905 ? screenHeight - 100 : null,
                                       child: SingleChildScrollView(
                                         child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
+                                          padding: const EdgeInsets.fromLTRB(0, 8, 0, 5),
                                           child: Column(children: [
                                             Text(
                                               "Skill".tr(),
@@ -923,7 +928,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                       height: screenWidth > 905 ? screenHeight - 100 : null,
                                       child: SingleChildScrollView(
                                         child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
+                                          padding: const EdgeInsets.fromLTRB(0, 8, 0, 5),
                                           child: Column(children: [
                                             Text(
                                               "Trace".tr(),
@@ -1317,7 +1322,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                       height: screenWidth > 905 ? screenHeight - 100 : null,
                                       child: SingleChildScrollView(
                                         child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
+                                          padding: const EdgeInsets.fromLTRB(0, 8, 0, 5),
                                           child: Column(children: [
                                             Text(
                                               "Eidolon".tr(),
