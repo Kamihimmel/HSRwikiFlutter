@@ -13,11 +13,30 @@ Widget adsenseAdsView(double swidth) {
         ..src = 'adview.html'
         ..style.border = 'none');
 
-  return SizedBox(
-    height: 100.0,
-    width: swidth,
-    child: HtmlElementView(
-      viewType: 'adViewType',
-    ),
-  );
+  // ignore: undefined_prefixed_name
+  ui.platformViewRegistry.registerViewFactory(
+      'adViewTypeshort',
+      (int viewID) => IFrameElement()
+        ..width = '$swidth'
+        ..height = '100'
+        ..src = 'adviewshort.html'
+        ..style.border = 'none');
+
+  if (swidth > 800) {
+    return SizedBox(
+      height: 100.0,
+      width: swidth,
+      child: HtmlElementView(
+        viewType: 'adViewType',
+      ),
+    );
+  } else {
+    return SizedBox(
+      height: 100.0,
+      width: swidth,
+      child: HtmlElementView(
+        viewType: 'adViewTypeshort',
+      ),
+    );
+  }
 }
