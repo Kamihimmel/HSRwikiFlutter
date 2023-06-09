@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 
 import 'info.dart';
+import 'platformad_stub.dart' if (dart.library.io) 'platformad_stub.dart' if (dart.library.html) 'platformad.dart';
 
 class LightconeDetailPage extends StatefulWidget {
   final String jsonUrl;
@@ -691,7 +692,8 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                       ],
                                                     );
                                                   }),
-                                                )
+                                                ),
+                                                adsenseAdsView(columnwidth - 20),
                                               ]),
                                             ),
                                           ),

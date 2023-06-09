@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 
 import 'info.dart';
+import 'platformad_stub.dart' if (dart.library.io) 'platformad_stub.dart' if (dart.library.html) 'platformad.dart';
 
 class RelicDetailPage extends StatefulWidget {
   final String jsonUrl;
@@ -553,7 +554,8 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                               ],
                                             );
                                           }),
-                                        )
+                                        ),
+                                        adsenseAdsView(columnwidth - 20),
                                       ]),
                                     ),
                                   ),

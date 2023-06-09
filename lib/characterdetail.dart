@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'package:transparent_image/transparent_image.dart';
 import 'info.dart';
+import 'platformad_stub.dart' if (dart.library.io) 'platformad_stub.dart' if (dart.library.html) 'platformad.dart';
 
 class ChracterDetailPage extends StatefulWidget {
   final String jsonUrl;
@@ -1616,7 +1617,8 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                   ],
                                                 );
                                               }),
-                                            )
+                                            ),
+                                            adsenseAdsView(columnwidth - 20),
                                           ]),
                                         ),
                                       ),
