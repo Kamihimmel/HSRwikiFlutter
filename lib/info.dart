@@ -11,23 +11,23 @@ const etocolor = {
 };
 
 const etoimage = {
-  'fire': "https://hsrwikidata.yunlu18.net/images/icons/fire.webp",
-  'ice': "https://hsrwikidata.yunlu18.net/images/icons/ice.webp",
-  'lightning': "https://hsrwikidata.yunlu18.net/images/icons/lightning.webp",
-  'imaginary': "https://hsrwikidata.yunlu18.net/images/icons/imaginary.webp",
-  'quantum': "https://hsrwikidata.yunlu18.net/images/icons/quantum.webp",
-  'wind': "https://hsrwikidata.yunlu18.net/images/icons/wind.webp",
-  'physical': "https://hsrwikidata.yunlu18.net/images/icons/physical.webp",
+  'fire': "https://hsrwikidata.kchlu.com/images/icons/fire.webp",
+  'ice': "https://hsrwikidata.kchlu.com/images/icons/ice.webp",
+  'lightning': "https://hsrwikidata.kchlu.com/images/icons/lightning.webp",
+  'imaginary': "https://hsrwikidata.kchlu.com/images/icons/imaginary.webp",
+  'quantum': "https://hsrwikidata.kchlu.com/images/icons/quantum.webp",
+  'wind': "https://hsrwikidata.kchlu.com/images/icons/wind.webp",
+  'physical': "https://hsrwikidata.kchlu.com/images/icons/physical.webp",
 };
 
 const wtoimage = {
-  'destruction': "https://hsrwikidata.yunlu18.net/images/icons/destruction.webp",
-  'erudition': "https://hsrwikidata.yunlu18.net/images/icons/erudition.webp",
-  'harmony': "https://hsrwikidata.yunlu18.net/images/icons/harmony.webp",
-  'thehunt': "https://hsrwikidata.yunlu18.net/images/icons/thehunt.webp",
-  'nihility': "https://hsrwikidata.yunlu18.net/images/icons/nihility.webp",
-  'abundance': "https://hsrwikidata.yunlu18.net/images/icons/abundance.webp",
-  'preservation': "https://hsrwikidata.yunlu18.net/images/icons/preservation.webp",
+  'destruction': "https://hsrwikidata.kchlu.com/images/icons/destruction.webp",
+  'erudition': "https://hsrwikidata.kchlu.com/images/icons/erudition.webp",
+  'harmony': "https://hsrwikidata.kchlu.com/images/icons/harmony.webp",
+  'thehunt': "https://hsrwikidata.kchlu.com/images/icons/thehunt.webp",
+  'nihility': "https://hsrwikidata.kchlu.com/images/icons/nihility.webp",
+  'abundance': "https://hsrwikidata.kchlu.com/images/icons/abundance.webp",
+  'preservation': "https://hsrwikidata.kchlu.com/images/icons/preservation.webp",
 };
 
 const stattoimage = {
