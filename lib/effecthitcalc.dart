@@ -1,13 +1,9 @@
-import 'dart:ffi';
 import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_grid/responsive_grid.dart';
-import 'package:http/http.dart' as http;
-import 'dart:async';
 import 'package:flutter/services.dart';
 
-import 'info.dart';
 import 'platformad_stub.dart' if (dart.library.io) 'platformad_stub.dart' if (dart.library.html) 'platformad.dart';
 
 class EffecthitCalcPage extends StatefulWidget {
