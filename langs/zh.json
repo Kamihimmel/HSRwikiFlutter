@@ -144,5 +144,14 @@
     "Others": "其他",
     "Alice Workshop for Genshin": "爱丽丝工坊 for 原神",
     "Privacy Policy": "隐私条款",
-    "ultcritdmg": "终结技暴击伤害"
+    "ultcritdmg": "终结技暴击伤害",
+    "toolbox": "工具箱",
+    "Effect Hit & Effect Res Calculator": "效果命中与效果抵抗计算器",
+    "Basic Chance": "基础概率",
+    "Effect hit": "效果命中",
+    "Enemy Effect RES": "敌方效果抵抗",
+    "Enemy Effect RES Reduce": "敌方效果抵抗削减",
+    "Enemy Special Effect RES": "敌方特殊效果抵抗",
+    "Final Chance": "最终概率",
+    "100% Chance Effect hit Required": "100%概率所需的效果命中"
 }

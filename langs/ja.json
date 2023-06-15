@@ -144,5 +144,14 @@
     "Others": "Others",
     "Alice Workshop for Genshin": "アリスワークショップ for 原神",
     "Privacy Policy": "プライバシーポリシー",
-    "ultcritdmg": "必殺技会心ダメージ"
+    "ultcritdmg": "必殺技会心ダメージ",
+    "toolbox": "ツールボックス",
+    "Effect Hit & Effect Res Calculator": "效果命中 & 効果抵抗 計算",
+    "Basic Chance": "基礎確率",
+    "Effect hit": "效果命中",
+    "Enemy Effect RES": "敵効果抵抗",
+    "Enemy Effect RES Reduce": "敵効果抵抗削減",
+    "Enemy Special Effect RES": "敵特別効果抵抗",
+    "Final Chance": "最終確率",
+    "100% Chance Effect hit Required": "100%確率で必要な效果命中"
 }

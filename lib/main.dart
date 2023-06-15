@@ -20,6 +20,8 @@ import 'firebase_options.dart';
 
 import 'dart:io' show Platform;
 
+import 'toolboxPage.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
@@ -155,7 +157,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     _getData();
     _getData2();
     _getData3();
@@ -290,6 +292,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         : screenWidth < 1000
             ? 4
             : 8;
+
+    final crossAxisCount3 = screenWidth < 600
+        ? 1
+        : screenWidth < 1000
+            ? 1
+            : 2;
 
     // filter character data
     _filteredData = List.from(_data);
@@ -640,6 +648,20 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                         Padding(
                           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                           child: const Text('relic').tr(),
+                        )
+                      ],
+                    ),
+                  ),
+                  Tab(
+                    height: 33,
+                    icon: Row(
+                      children: [
+                        const ImageIcon(
+                          AssetImage('images/ShopMaterialsIcon.png'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          child: const Text('toolbox').tr(),
                         )
                       ],
                     ),
@@ -1478,6 +1500,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               ],
             ),
           ),
+          //ANCHOR - Tools
+          Toolboxpage(screenWidth: screenWidth, crossAxisCount3: crossAxisCount3, footer: footer),
         ],
       ),
       floatingActionButton: FloatingActionButton(
