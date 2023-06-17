@@ -172,7 +172,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   Future<void> _getData() async {
     final response = await http.get(Uri.parse('https://hsrwikidata.alicews.com/lib/characterlist.json'));
-    final Map<String, dynamic> jsonData = json.decode(response.body);
+    final Map<String, dynamic> jsonData = json.decode(utf8.decode(response.bodyBytes));
     print(jsonData);
 
     setState(() {
@@ -196,7 +196,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   Future<void> _getData2() async {
     final response = await http.get(Uri.parse('https://hsrwikidata.alicews.com/lib/lightconelist.json'));
-    final Map<String, dynamic> jsonData = json.decode(response.body);
+    final Map<String, dynamic> jsonData = json.decode(utf8.decode(response.bodyBytes));
     print(jsonData);
 
     setState(() {
@@ -217,7 +217,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   Future<void> _getData3() async {
     final response = await http.get(Uri.parse('https://hsrwikidata.alicews.com/lib/reliclist.json'));
-    final Map<String, dynamic> jsonData = json.decode(response.body);
+    final Map<String, dynamic> jsonData = json.decode(utf8.decode(response.bodyBytes));
     print(jsonData);
 
     setState(() {

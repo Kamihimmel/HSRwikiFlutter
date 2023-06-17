@@ -40,7 +40,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
 
   Future<void> _getData(String url) async {
     final response = await http.get(Uri.parse(url));
-    final Map<String, dynamic> jsonData = json.decode(response.body);
+    final Map<String, dynamic> jsonData = json.decode(utf8.decode(response.bodyBytes));
     characterData = jsonData;
     levelData = characterData!['leveldata'];
     skillData = characterData!['skilldata'];
