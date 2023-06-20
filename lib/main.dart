@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:hsrwikiproject/uidimportPage.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher_string.dart';
@@ -155,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
     _getData();
     _getData2();
     _getData3();
@@ -169,7 +170,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
   Future<void> _getData() async {
-    final response = await http.get(Uri.parse('https://hsrwikidata.yunlu18.net/lib/characterlist.json'));
+    final response = await http.get(Uri.parse(urlendpoint + 'lib/characterlist.json'));
     final Map<String, dynamic> jsonData = json.decode(response.body);
     print(jsonData);
 
@@ -179,12 +180,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 'enname': e['ENname'] as String,
                 'cnname': e['CNname'] as String,
                 'janame': e['JAname'] as String,
-                'imageUrl': e['imageurl'] as String,
-                'imageUrlalter': (e['imageurlalter'] != null ? (e['imageurlalter'] as String) : ""),
+                'imageUrl': urlendpoint + e['imageurl'],
+                'imageUrlalter': (e['imageurlalter'] != null ? urlendpoint + e['imageurlalter'] : ""),
                 'etype': e['etype'] as String,
                 'wtype': e['wtype'] as String,
                 'rarity': e['rarity'] as String,
-                'infoUrl': e['infourl'] as String,
+                'infoUrl': urlendpoint + e['infourl'],
                 'spoiler': (e['spoiler'] ? "true" : "false")
               })
           .toList();
@@ -193,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
   Future<void> _getData2() async {
-    final response = await http.get(Uri.parse('https://hsrwikidata.yunlu18.net/lib/lightconelist.json'));
+    final response = await http.get(Uri.parse(urlendpoint + 'lib/lightconelist.json'));
     final Map<String, dynamic> jsonData = json.decode(response.body);
     print(jsonData);
 
@@ -203,10 +204,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 'enname': e['ENname'] as String,
                 'cnname': e['CNname'] as String,
                 'janame': e['JAname'] as String,
-                'imageUrl': e['imageurl'] as String,
+                'imageUrl': urlendpoint + e['imageurl'],
                 'wtype': e['wtype'] as String,
                 'rarity': e['rarity'] as String,
-                'infoUrl': e['infourl'] as String,
+                'infoUrl': urlendpoint + e['infourl'],
               })
           .toList();
       _filteredData2 = List.from(_data2);
@@ -214,7 +215,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
   Future<void> _getData3() async {
-    final response = await http.get(Uri.parse('https://hsrwikidata.yunlu18.net/lib/reliclist.json'));
+    final response = await http.get(Uri.parse(urlendpoint + 'lib/reliclist.json'));
     final Map<String, dynamic> jsonData = json.decode(response.body);
     print(jsonData);
 
@@ -224,9 +225,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 'enname': e['ENname'] as String,
                 'cnname': e['CNname'] as String,
                 'janame': e['JAname'] as String,
-                'imageUrl': e['imageurl'] as String,
+                'imageUrl': urlendpoint + e['imageurl'],
                 'set': e['set'] as String,
-                'infoUrl': e['infourl'] as String,
+                'infoUrl': urlendpoint + e['infourl'],
               })
           .toList();
       _filteredData3 = List.from(_data3);
@@ -664,6 +665,20 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       ],
                     ),
                   ),
+                  Tab(
+                    height: 33,
+                    icon: Row(
+                      children: [
+                        const ImageIcon(
+                          AssetImage('images/TeamIcon.png'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          child: const Text('Your Characters').tr(),
+                        )
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -729,7 +744,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           selectedColor: Colors.purple.withOpacity(0.5),
                           backgroundColor: Colors.purple[100]!.withOpacity(0.1),
                           label: Image.network(
-                            etoimage['lightning']!,
+                            urlendpoint + etoimage['lightning']!,
                             width: 30,
                           ),
                           selected: filterLightningOn,
@@ -746,7 +761,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           selectedColor: Colors.lightBlue.withOpacity(0.5),
                           backgroundColor: Colors.lightBlue[100]!.withOpacity(0.1),
                           label: Image.network(
-                            etoimage['ice']!,
+                            urlendpoint + etoimage['ice']!,
                             width: 30,
                           ),
                           selected: filterIceOn,
@@ -763,7 +778,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           selectedColor: Colors.red.withOpacity(0.5),
                           backgroundColor: Colors.red[100]!.withOpacity(0.1),
                           label: Image.network(
-                            etoimage['fire']!,
+                            urlendpoint + etoimage['fire']!,
                             width: 30,
                           ),
                           selected: filterFireOn,
@@ -780,7 +795,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           selectedColor: Colors.yellow.withOpacity(0.5),
                           backgroundColor: Colors.yellow[100]!.withOpacity(0.1),
                           label: Image.network(
-                            etoimage['imaginary']!,
+                            urlendpoint + etoimage['imaginary']!,
                             width: 30,
                           ),
                           selected: filterImaginaryOn,
@@ -797,7 +812,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           selectedColor: Colors.indigo.withOpacity(0.5),
                           backgroundColor: Colors.indigo[100]!.withOpacity(0.1),
                           label: Image.network(
-                            etoimage['quantum']!,
+                            urlendpoint + etoimage['quantum']!,
                             width: 30,
                           ),
                           selected: filterQuantumOn,
@@ -814,7 +829,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           selectedColor: Colors.green.withOpacity(0.5),
                           backgroundColor: Colors.green[100]!.withOpacity(0.1),
                           label: Image.network(
-                            etoimage['wind']!,
+                            urlendpoint + etoimage['wind']!,
                             width: 30,
                           ),
                           selected: filterWindOn,
@@ -831,7 +846,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           selectedColor: Colors.grey.withOpacity(0.5),
                           backgroundColor: Colors.grey[100]!.withOpacity(0.1),
                           label: Image.network(
-                            etoimage['physical']!,
+                            urlendpoint + etoimage['physical']!,
                             width: 30,
                           ),
                           selected: filterPhysicalOn,
@@ -848,7 +863,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           selectedColor: Colors.grey.withOpacity(0.5),
                           backgroundColor: Colors.grey[100]!.withOpacity(0.1),
                           label: Image.network(
-                            wtoimage['destruction']!,
+                            urlendpoint + wtoimage['destruction']!,
                             width: 30,
                           ),
                           selected: filterDestructionOn,
@@ -865,7 +880,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           selectedColor: Colors.grey.withOpacity(0.5),
                           backgroundColor: Colors.grey[100]!.withOpacity(0.1),
                           label: Image.network(
-                            wtoimage['erudition']!,
+                            urlendpoint + wtoimage['erudition']!,
                             width: 30,
                           ),
                           selected: filterEruditionOn,
@@ -882,7 +897,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           selectedColor: Colors.grey.withOpacity(0.5),
                           backgroundColor: Colors.grey[100]!.withOpacity(0.1),
                           label: Image.network(
-                            wtoimage['harmony']!,
+                            urlendpoint + wtoimage['harmony']!,
                             width: 30,
                           ),
                           selected: filterHarmonyOn,
@@ -899,7 +914,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           selectedColor: Colors.grey.withOpacity(0.5),
                           backgroundColor: Colors.grey[100]!.withOpacity(0.1),
                           label: Image.network(
-                            wtoimage['thehunt']!,
+                            urlendpoint + wtoimage['thehunt']!,
                             width: 30,
                           ),
                           selected: filterThehuntOn,
@@ -916,7 +931,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           selectedColor: Colors.grey.withOpacity(0.5),
                           backgroundColor: Colors.grey[100]!.withOpacity(0.1),
                           label: Image.network(
-                            wtoimage['nihility']!,
+                            urlendpoint + wtoimage['nihility']!,
                             width: 30,
                           ),
                           selected: filterNihilityOn,
@@ -933,7 +948,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           selectedColor: Colors.grey.withOpacity(0.5),
                           backgroundColor: Colors.grey[100]!.withOpacity(0.1),
                           label: Image.network(
-                            wtoimage['abundance']!,
+                            urlendpoint + wtoimage['abundance']!,
                             width: 30,
                           ),
                           selected: filterAbundanceOn,
@@ -950,7 +965,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           selectedColor: Colors.grey.withOpacity(0.5),
                           backgroundColor: Colors.grey[100]!.withOpacity(0.1),
                           label: Image.network(
-                            wtoimage['preservation']!,
+                            urlendpoint + wtoimage['preservation']!,
                             width: 30,
                           ),
                           selected: filterPreservationOn,
@@ -1048,14 +1063,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                         ConstrainedBox(
                                           constraints: const BoxConstraints(maxWidth: 50),
                                           child: Image.network(
-                                            etoimage[data['etype']!] ?? 'none',
+                                            urlendpoint + etoimage[data['etype']!]!,
                                             width: screenWidth / 20,
                                           ),
                                         ),
                                         ConstrainedBox(
                                           constraints: const BoxConstraints(maxWidth: 50),
                                           child: Image.network(
-                                            wtoimage[data['wtype']!]!,
+                                            urlendpoint + wtoimage[data['wtype']!]!,
                                             width: screenWidth / 20,
                                           ),
                                         ),
@@ -1149,7 +1164,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           selectedColor: Colors.grey.withOpacity(0.5),
                           backgroundColor: Colors.grey[100]!.withOpacity(0.1),
                           label: Image.network(
-                            wtoimage['destruction']!,
+                            urlendpoint + wtoimage['destruction']!,
                             width: 30,
                           ),
                           selected: filterDestructionOn,
@@ -1166,7 +1181,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           selectedColor: Colors.grey.withOpacity(0.5),
                           backgroundColor: Colors.grey[100]!.withOpacity(0.1),
                           label: Image.network(
-                            wtoimage['erudition']!,
+                            urlendpoint + wtoimage['erudition']!,
                             width: 30,
                           ),
                           selected: filterEruditionOn,
@@ -1183,7 +1198,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           selectedColor: Colors.grey.withOpacity(0.5),
                           backgroundColor: Colors.grey[100]!.withOpacity(0.1),
                           label: Image.network(
-                            wtoimage['harmony']!,
+                            urlendpoint + wtoimage['harmony']!,
                             width: 30,
                           ),
                           selected: filterHarmonyOn,
@@ -1200,7 +1215,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           selectedColor: Colors.grey.withOpacity(0.5),
                           backgroundColor: Colors.grey[100]!.withOpacity(0.1),
                           label: Image.network(
-                            wtoimage['thehunt']!,
+                            urlendpoint + wtoimage['thehunt']!,
                             width: 30,
                           ),
                           selected: filterThehuntOn,
@@ -1217,7 +1232,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           selectedColor: Colors.grey.withOpacity(0.5),
                           backgroundColor: Colors.grey[100]!.withOpacity(0.1),
                           label: Image.network(
-                            wtoimage['nihility']!,
+                            urlendpoint + wtoimage['nihility']!,
                             width: 30,
                           ),
                           selected: filterNihilityOn,
@@ -1234,7 +1249,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           selectedColor: Colors.grey.withOpacity(0.5),
                           backgroundColor: Colors.grey[100]!.withOpacity(0.1),
                           label: Image.network(
-                            wtoimage['abundance']!,
+                            urlendpoint + wtoimage['abundance']!,
                             width: 30,
                           ),
                           selected: filterAbundanceOn,
@@ -1251,7 +1266,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           selectedColor: Colors.grey.withOpacity(0.5),
                           backgroundColor: Colors.grey[100]!.withOpacity(0.1),
                           label: Image.network(
-                            wtoimage['preservation']!,
+                            urlendpoint + wtoimage['preservation']!,
                             width: 30,
                           ),
                           selected: filterPreservationOn,
@@ -1357,7 +1372,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                         ConstrainedBox(
                                           constraints: const BoxConstraints(maxWidth: 50),
                                           child: Image.network(
-                                            wtoimage[data['wtype']!]!,
+                                            urlendpoint + wtoimage[data['wtype']!]!,
                                             width: screenWidth / 20,
                                           ),
                                         ),
@@ -1500,6 +1515,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           ),
           //ANCHOR - Tools
           Toolboxpage(screenWidth: screenWidth, crossAxisCount3: crossAxisCount3, footer: footer),
+          //ANCHOR - Uidimport
+          Uidimportpage(screenWidth: screenWidth, crossAxisCount3: crossAxisCount3, footer: footer),
         ],
       ),
       floatingActionButton: FloatingActionButton(

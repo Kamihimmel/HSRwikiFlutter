@@ -157,15 +157,15 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                 Row(
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: [
-                                                    Image.network(relicData!['head'], filterQuality: FilterQuality.medium),
-                                                    Image.network(relicData!['hands'], filterQuality: FilterQuality.medium),
+                                                    Image.network(urlendpoint + relicData!['head'], filterQuality: FilterQuality.medium),
+                                                    Image.network(urlendpoint + relicData!['hands'], filterQuality: FilterQuality.medium),
                                                   ],
                                                 ),
                                                 Row(
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: [
-                                                    Image.network(relicData!['body'], filterQuality: FilterQuality.medium),
-                                                    Image.network(relicData!['feet'], filterQuality: FilterQuality.medium),
+                                                    Image.network(urlendpoint + relicData!['body'], filterQuality: FilterQuality.medium),
+                                                    Image.network(urlendpoint + relicData!['feet'], filterQuality: FilterQuality.medium),
                                                   ],
                                                 ),
                                               ],
@@ -180,8 +180,8 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                 Row(
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: [
-                                                    Image.network(relicData!['sphere'], filterQuality: FilterQuality.medium),
-                                                    Image.network(relicData!['rope'], filterQuality: FilterQuality.medium),
+                                                    Image.network(urlendpoint + relicData!['sphere'], filterQuality: FilterQuality.medium),
+                                                    Image.network(urlendpoint + relicData!['rope'], filterQuality: FilterQuality.medium),
                                                   ],
                                                 ),
                                               ],
@@ -198,14 +198,14 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                   children: [
                                                     FadeInImage.memoryNetwork(
                                                       placeholder: kTransparentImage,
-                                                      image: relicData!['head'],
+                                                      image: urlendpoint + relicData!['head'],
                                                       height: MediaQuery.of(context).size.width / 2,
                                                       width: MediaQuery.of(context).size.width / 2,
                                                       fit: BoxFit.cover,
                                                     ),
                                                     FadeInImage.memoryNetwork(
                                                       placeholder: kTransparentImage,
-                                                      image: relicData!['hands'],
+                                                      image: urlendpoint + relicData!['hands'],
                                                       height: MediaQuery.of(context).size.width / 2,
                                                       width: MediaQuery.of(context).size.width / 2,
                                                       fit: BoxFit.cover,
@@ -217,14 +217,14 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                   children: [
                                                     FadeInImage.memoryNetwork(
                                                       placeholder: kTransparentImage,
-                                                      image: relicData!['body'],
+                                                      image: urlendpoint + relicData!['body'],
                                                       height: MediaQuery.of(context).size.width / 2,
                                                       width: MediaQuery.of(context).size.width / 2,
                                                       fit: BoxFit.cover,
                                                     ),
                                                     FadeInImage.memoryNetwork(
                                                       placeholder: kTransparentImage,
-                                                      image: relicData!['feet'],
+                                                      image: urlendpoint + relicData!['feet'],
                                                       height: MediaQuery.of(context).size.width / 2,
                                                       width: MediaQuery.of(context).size.width / 2,
                                                       fit: BoxFit.cover,
@@ -245,14 +245,14 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                   children: [
                                                     FadeInImage.memoryNetwork(
                                                       placeholder: kTransparentImage,
-                                                      image: relicData!['sphere'],
+                                                      image: urlendpoint + relicData!['sphere'],
                                                       height: MediaQuery.of(context).size.width / 2,
                                                       width: MediaQuery.of(context).size.width / 2,
                                                       fit: BoxFit.cover,
                                                     ),
                                                     FadeInImage.memoryNetwork(
                                                       placeholder: kTransparentImage,
-                                                      image: relicData!['rope'],
+                                                      image: urlendpoint + relicData!['rope'],
                                                       height: MediaQuery.of(context).size.width / 2,
                                                       width: MediaQuery.of(context).size.width / 2,
                                                       fit: BoxFit.cover,

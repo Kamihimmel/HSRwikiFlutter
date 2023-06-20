@@ -124,7 +124,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
           if (!isLoading)
             FadeInImage.memoryNetwork(
               placeholder: kTransparentImage,
-              image: lightconeData!['imagelargeurl'],
+              image: urlendpoint + lightconeData!['imagelargeurl'],
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               fit: BoxFit.cover,
@@ -165,7 +165,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                               ),
                                               if (screenWidth > 905)
                                                 Expanded(
-                                                  child: Image.network(lightconeData!['imagelargeurl'], filterQuality: FilterQuality.medium),
+                                                  child: Image.network(urlendpoint + lightconeData!['imagelargeurl'], filterQuality: FilterQuality.medium),
                                                 ),
                                               if (screenWidth < 905)
                                                 Container(
@@ -178,7 +178,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                   ),
                                                   child: FadeInImage.memoryNetwork(
                                                     placeholder: kTransparentImage,
-                                                    image: lightconeData!['imagelargeurl'],
+                                                    image: urlendpoint + lightconeData!['imagelargeurl'],
                                                     height: MediaQuery.of(context).size.width / 867 * 1230,
                                                     width: MediaQuery.of(context).size.width,
                                                     fit: BoxFit.cover,
@@ -242,7 +242,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                                 children: [
                                                                   Image.network(
-                                                                    wtoimage[lightconeData!['wtype']!]!,
+                                                                    urlendpoint + wtoimage[lightconeData!['wtype']!]!,
                                                                     height: 50,
                                                                   ),
                                                                   Text(

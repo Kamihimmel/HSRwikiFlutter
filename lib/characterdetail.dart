@@ -85,7 +85,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
           if (!isLoading)
             FadeInImage.memoryNetwork(
               placeholder: kTransparentImage,
-              image: (gender == false && characterData!['imagelargeurlalter'] != null) ? characterData!['imagelargeurlalter'] : characterData!['imagelargeurl'],
+              image: (gender == false && characterData!['imagelargeurlalter'] != null) ? urlendpoint + characterData!['imagelargeurlalter'] : urlendpoint + characterData!['imagelargeurl'],
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               fit: BoxFit.fitHeight,
@@ -143,7 +143,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                           mainAxisAlignment: MainAxisAlignment.center,
                                                           children: [
                                                             Image.network(
-                                                              etoimage[characterData!['etype']!]!,
+                                                              urlendpoint + etoimage[characterData!['etype']!]!,
                                                               height: 50,
                                                             ),
                                                             Text(
@@ -186,7 +186,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                           mainAxisAlignment: MainAxisAlignment.center,
                                                           children: [
                                                             Image.network(
-                                                              wtoimage[characterData!['wtype']!]!,
+                                                              urlendpoint + wtoimage[characterData!['wtype']!]!,
                                                               height: 50,
                                                             ),
                                                             Text(
@@ -483,7 +483,9 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                           if (screenWidth > 905)
                                             Expanded(
                                               child: Image.network(
-                                                  (gender == false && characterData!['imagelargeurlalter'] != null) ? characterData!['imagelargeurlalter'] : characterData!['imagelargeurl'],
+                                                  (gender == false && characterData!['imagelargeurlalter'] != null)
+                                                      ? urlendpoint + characterData!['imagelargeurlalter']
+                                                      : urlendpoint + characterData!['imagelargeurl'],
                                                   filterQuality: FilterQuality.medium),
                                             ),
                                           if (screenWidth < 905)
@@ -504,8 +506,9 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                     ),
                                                     child: FadeInImage.memoryNetwork(
                                                         placeholder: kTransparentImage,
-                                                        image:
-                                                            (gender == false && characterData!['imagelargeurlalter'] != null) ? characterData!['imagelargeurlalter'] : characterData!['imagelargeurl'],
+                                                        image: (gender == false && characterData!['imagelargeurlalter'] != null)
+                                                            ? urlendpoint + characterData!['imagelargeurlalter']
+                                                            : urlendpoint + characterData!['imagelargeurl'],
                                                         height: MediaQuery.of(context).size.width,
                                                         width: MediaQuery.of(context).size.width,
                                                         fit: BoxFit.cover,
@@ -593,7 +596,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                   Container(
                                                                     margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                                                                     child: Image.network(
-                                                                      data['imageurl']!,
+                                                                      urlendpoint + data['imageurl']!,
                                                                       width: 100,
                                                                     ),
                                                                   ),
@@ -976,7 +979,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                     Container(
                                                                       margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                                                                       child: Image.network(
-                                                                        data['imageurl']!,
+                                                                        urlendpoint + data['imageurl']!,
                                                                         width: 100,
                                                                       ),
                                                                     ),
@@ -1385,7 +1388,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                   Container(
                                                                     margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                                                                     child: Image.network(
-                                                                      data['imageurl']!,
+                                                                      urlendpoint + data['imageurl']!,
                                                                       width: 100,
                                                                     ),
                                                                   ),
