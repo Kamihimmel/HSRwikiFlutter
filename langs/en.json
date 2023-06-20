@@ -152,5 +152,10 @@
     "Enemy Effect RES Reduce": "Enemy Effect RES Reduce",
     "Enemy Special Effect RES": "Enemy Special Effect RES",
     "Final Chance": "Final Chance",
-    "100% Chance Effect hit Required": "100% Chance Effect hit Required"
+    "100% Chance Effect hit Required": "100% Chance Effect hit Required",
+    "You have not imported any character.\nPlease import Using your in game UID.": "You have not imported any character.\nPlease import Using your in game UID.",
+    "Import": "Import",
+    "Last Update At:": "Last Update At:",
+    "Your Characters": "Your Characters",
+    "Your UID": "Your UID"
 }

@@ -66,3 +66,5 @@ bool spoilermode = false;
 bool testmode = false;
 
 String urlendpoint = "https://hsrwikidata.yunlu18.net/";
+
+Map<String, String> idtoimage = {};

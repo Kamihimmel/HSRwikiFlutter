@@ -190,6 +190,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               })
           .toList();
       _filteredData = List.from(_data);
+
+      List<dynamic> charactersJson = jsonData['data'];
+      charactersJson.forEach((character) {
+        String id = character['id'];
+        String imageUrl = character['imageurl'];
+        idtoimage[id] = imageUrl;
+      });
     });
   }
 

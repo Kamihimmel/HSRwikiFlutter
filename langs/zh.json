@@ -153,5 +153,10 @@
     "Enemy Effect RES Reduce": "敌方效果抵抗削减",
     "Enemy Special Effect RES": "敌方特殊效果抵抗",
     "Final Chance": "最终概率",
-    "100% Chance Effect hit Required": "100%概率所需的效果命中"
+    "100% Chance Effect hit Required": "100%概率所需的效果命中",
+    "You have not imported any character.\nPlease import Using your in game UID.": "还没有导入角色。\n请输入UID导入你已有的角色。",
+    "Import": "导入",
+    "Last Update At:": "最新更新时间:",
+    "Your Characters": "角色仓库",
+    "Your UID": "游戏UID"
 }

@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:hsrwikiproject/info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:transparent_image/transparent_image.dart';
 
 class Character {
   final String id;
@@ -14,6 +15,17 @@ class Character {
   final Map<String, dynamic> info;
 
   Character(this.id, this.createdate, this.info);
+
+  Character.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        createdate = json['createdate'],
+        info = json['info'];
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'createdate': createdate,
+        'info': info,
+      };
 }
 
 class Uidimportpage extends StatefulWidget {
@@ -47,6 +59,7 @@ class _UidimportpageState extends State<Uidimportpage> {
   String nickname = "";
   String level = "";
   List<Character> characters = [];
+
   void addOrUpdateCharacter(Character newCharacter) {
     setState(() {
       final existingIndex = characters.indexWhere((c) => c.id == newCharacter.id);
@@ -68,6 +81,17 @@ class _UidimportpageState extends State<Uidimportpage> {
       nickname = prefs.getString('nickname') ?? '';
       avatarimage = prefs.getString('avatarimage') ?? '';
       level = prefs.getString('level') ?? '';
+
+      setState(() {});
+    }
+
+    if (characters.isEmpty) {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      final charactersJson = pref.getString('characters');
+      if (charactersJson != null) {
+        final charactersList = jsonDecode(charactersJson) as List;
+        characters = charactersList.map((json) => Character.fromJson(json)).toList();
+      }
 
       setState(() {});
     }
@@ -117,7 +141,7 @@ class _UidimportpageState extends State<Uidimportpage> {
                               final prefs = await SharedPreferences.getInstance();
                               await prefs.setString('uid', uid);
                             }
-                            String langcode = ('lang'.tr() == 'en') ? 'en' : (('lang'.tr() == 'cn') ? 'cn' : 'ja');
+                            String langcode = ('lang'.tr() == 'en') ? 'en' : (('lang'.tr() == 'cn') ? 'cn' : 'jp');
                             String url = kIsWeb ? "https://mohomoapi.yunlu18.net/$uid?lang=$langcode" : "https://api.mihomo.me/sr_info_parsed/$uid?lang=$langcode";
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               duration: Duration(days: 1),
@@ -179,10 +203,17 @@ class _UidimportpageState extends State<Uidimportpage> {
                               addOrUpdateCharacter(newCharacter);
                             });
 
+                            if (characters.isNotEmpty) {
+                              final prefs = await SharedPreferences.getInstance();
+
+                              String chracterinfo = jsonEncode(characters);
+                              await prefs.setString('characters', chracterinfo);
+                            }
+
                             setState(() {});
                           }
                         : null,
-                    child: const Text('Import'),
+                    child: const Text('Import').tr(),
                   ),
                 ],
               ),
@@ -190,7 +221,7 @@ class _UidimportpageState extends State<Uidimportpage> {
             if (nickname == "")
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text("You have not imported any character.\nPlease import Using your in game UID."),
+                child: Text("You have not imported any character.\nPlease import Using your in game UID.").tr(),
               ),
             if (avatarimage != "") Image.network(avatarimage),
             if (nickname != "")
@@ -238,23 +269,141 @@ class _UidimportpageState extends State<Uidimportpage> {
                         children: [
                           Card(
                             child: Image.network(
-                              urlendpoint + "starrailres/" + character.info['icon'],
+                              urlendpoint + imagestring(character),
                               fit: BoxFit.cover,
                             ),
                           ),
-                          Column(
-                            children: [
-                              Text(character.id),
-                              Text(character.createdate),
-                              IconButton(
-                                icon: Icon(Icons.delete),
-                                onPressed: () {
-                                  setState(() {
-                                    characters.removeAt(index);
-                                  });
-                                },
-                              ),
-                            ],
+                          Positioned(
+                            left: 0,
+                            bottom: 0,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (character.info["light_cone"] != null)
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Stack(
+                                      children: [
+                                        Container(
+                                          width: 180,
+                                          height: 180,
+                                          decoration: BoxDecoration(
+                                              borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                              border: Border.all(color: Colors.white.withOpacity(0.13)),
+                                              gradient: LinearGradient(
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
+                                                colors: [Colors.white.withOpacity(0.01), Colors.white.withOpacity(0.1)],
+                                              )),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: FadeInImage.memoryNetwork(
+                                              placeholder: kTransparentImage,
+                                              height: 160,
+                                              image: urlendpoint + "images/lightcones/" + character.info["light_cone"]['id'] + '.png',
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          right: 0,
+                                          bottom: 0,
+                                          child: Column(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.all(10.0),
+                                                child: Text(
+                                                  "R" + character.info["light_cone"]['rank'].toString(),
+                                                  style: const TextStyle(
+                                                    //fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                    fontSize: 25,
+                                                    fontWeight: FontWeight.bold,
+                                                    height: 1,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                Container(
+                                  width: 374,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(0.0),
+                                        child: Text(
+                                          "LV" + character.info['level'].toString() + " " + character.info['name'],
+                                          style: const TextStyle(
+                                            //fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            height: 1,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Text(
+                                    "Last Update At:".tr() + character.createdate,
+                                    style: TextStyle(
+                                      //fontWeight: FontWeight.bold,
+                                      color: Colors.grey.withOpacity(0.6),
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.normal,
+                                      height: 1,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            right: 0,
+                            top: 0,
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: IconButton(
+                                    icon: Icon(Icons.delete),
+                                    onPressed: () {
+                                      setState(() {
+                                        characters.removeAt(index);
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            left: 5,
+                            top: 0,
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Text(
+                                    "C" + character.info['rank'].toString(),
+                                    style: const TextStyle(
+                                      //fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                      fontSize: 45,
+                                      fontWeight: FontWeight.bold,
+                                      height: 1,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -268,5 +417,23 @@ class _UidimportpageState extends State<Uidimportpage> {
         ],
       ),
     );
+  }
+
+  String imagestring(Character character) {
+    if (character.id == '8001' || character.id == '8002') {
+      if (gender) {
+        return "images/characters/mc.webp";
+      } else {
+        return "images/characters/mcm.webp";
+      }
+    } else if (character.id == '8003' || character.id == '8004') {
+      if (gender) {
+        return "images/characters/mcf.webp";
+      } else {
+        return "images/characters/mcmf.webp";
+      }
+    } else {
+      return idtoimage[character.id]!;
+    }
   }
 }
