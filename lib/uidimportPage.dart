@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
@@ -117,7 +118,7 @@ class _UidimportpageState extends State<Uidimportpage> {
                               await prefs.setString('uid', uid);
                             }
                             String langcode = ('lang'.tr() == 'en') ? 'en' : (('lang'.tr() == 'cn') ? 'cn' : 'ja');
-                            String url = "https://api.mihomo.me/sr_info_parsed/$uid?lang=$langcode";
+                            String url = kIsWeb ? "https://mohomoapi.yunlu18.net/$uid?lang=$langcode" : "https://api.mihomo.me/sr_info_parsed/$uid?lang=$langcode";
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               duration: Duration(days: 1),
                               backgroundColor: Colors.blue,
