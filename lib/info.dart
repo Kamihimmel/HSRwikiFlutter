@@ -4,6 +4,7 @@ const etocolor = {
   'fire': Colors.red,
   'ice': Colors.lightBlue,
   'lightning': Colors.purple,
+  'thunder': Colors.purple,
   'imaginary': Colors.yellow,
   'quantum': Colors.indigo,
   'wind': Colors.green,

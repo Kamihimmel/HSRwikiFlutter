@@ -9,6 +9,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:transparent_image/transparent_image.dart';
 
+extension HexString on String {
+  int getHexValue() => int.parse(replaceAll('#', '0xff'));
+}
+
 class Character {
   final String id;
   final String createdate;
@@ -59,6 +63,7 @@ class _UidimportpageState extends State<Uidimportpage> {
   String nickname = "";
   String level = "";
   List<Character> characters = [];
+  final ExpansionTileController expandcontroller = ExpansionTileController();
 
   void addOrUpdateCharacter(Character newCharacter) {
     setState(() {
@@ -79,6 +84,9 @@ class _UidimportpageState extends State<Uidimportpage> {
       uid = prefs.getString('uid') ?? '';
 
       nickname = prefs.getString('nickname') ?? '';
+      if (nickname == '') {
+        expandcontroller.expand();
+      }
       avatarimage = prefs.getString('avatarimage') ?? '';
       level = prefs.getString('level') ?? '';
 
@@ -99,159 +107,175 @@ class _UidimportpageState extends State<Uidimportpage> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      // Center is a layout widget. It takes a single child and positions it
-      // in the middle of the parent.
-      child: Column(
-        // Column is also a layout widget. It takes a list of children and
+    return Column(
+      // Column is also a layout widget. It takes a list of children and
 
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: widget.screenWidth > 1300 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
-        children: <Widget>[
-          Expanded(
-              child: Column(children: [
-            ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 1000),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      textAlign: TextAlign.center,
-                      decoration: InputDecoration(
-                        labelText: 'Your UID'.tr(),
-                        border: OutlineInputBorder(),
-                      ),
-                      controller: uidController,
-                      onChanged: (value) {
-                        setState(() {
-                          uid = value;
-                        });
-                      },
-                      keyboardType: TextInputType.numberWithOptions(decimal: false),
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: widget.screenWidth > 1300 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+      children: <Widget>[
+        Expanded(
+            child: SingleChildScrollView(
+          child: Column(children: [
+            ExpansionTile(
+              expandedAlignment: Alignment.center,
+              controller: expandcontroller,
+              title: (nickname == "")
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text("You have not imported any character.\nPlease import Using your in game UID.").tr(),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (avatarimage != "")
+                          Image.network(
+                            avatarimage,
+                            width: 80,
+                          ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            nickname,
+                            style: const TextStyle(
+                              //fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              height: 1,
+                            ),
+                          ),
+                        ),
+                        if (level != "")
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "LV$level",
+                              style: const TextStyle(
+                                //fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.normal,
+                                height: 1,
+                              ),
+                            ),
+                          ),
                       ],
                     ),
-                  ),
-                  ElevatedButton(
-                    onPressed: (uid.length == 9)
-                        ? () async {
-                            if (uid != '') {
-                              final prefs = await SharedPreferences.getInstance();
-                              await prefs.setString('uid', uid);
-                            }
-                            String langcode = ('lang'.tr() == 'en') ? 'en' : (('lang'.tr() == 'cn') ? 'cn' : 'jp');
-                            String url = kIsWeb ? "https://mohomoapi.yunlu18.net/$uid?lang=$langcode" : "https://api.mihomo.me/sr_info_parsed/$uid?lang=$langcode";
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              duration: Duration(days: 1),
-                              backgroundColor: Colors.blue,
-                              content: Text("Loading.....").tr(),
-                              action: SnackBarAction(
-                                textColor: Colors.white,
-                                label: '×',
-                                onPressed: () {
-                                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                  // Some code to undo the change.
-                                },
-                              ),
-                            ));
-                            http.Response resp = await http.get(
-                              Uri.parse(url),
-                            );
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
-                            if (resp.statusCode != 200) {
-                              setState(() {
-                                int statusCode = resp.statusCode;
-
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                  duration: Duration(days: 1),
-                                  backgroundColor: Colors.red,
-                                  content: Text("Failed to get $statusCode").tr(),
-                                  action: SnackBarAction(
-                                    textColor: Colors.white,
-                                    label: '×',
-                                    onPressed: () {
-                                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                      // Some code to undo the change.
-                                    },
-                                  ),
-                                ));
-                              });
-                              return;
-                            }
-                            returndata = jsonDecode(utf8.decode(resp.bodyBytes));
-                            print(returndata['player']);
-                            nickname = returndata['player']['nickname'];
-
-                            level = returndata['player']['level'].toString();
-                            avatarimage = urlendpoint + "starrailres/" + returndata['player']['avatar']['icon'];
-                            if (nickname != '' && avatarimage != '' && level != '') {
-                              final prefs = await SharedPreferences.getInstance();
-                              await prefs.setString('nickname', nickname);
-                              await prefs.setString('avatarimage', avatarimage);
-                              await prefs.setString('level', level);
-                            }
-
-                            print(avatarimage);
-
-                            final List<Character> newCharacters = List<Character>.from(
-                                returndata['characters'].map((json) => Character(json['id'] as String, DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()), json as Map<String, dynamic>)));
-
-                            newCharacters.forEach((newCharacter) {
-                              addOrUpdateCharacter(newCharacter);
+              children: [
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 1000),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          textAlign: TextAlign.center,
+                          decoration: InputDecoration(
+                            labelText: 'Your UID'.tr(),
+                            border: OutlineInputBorder(),
+                          ),
+                          controller: uidController,
+                          onChanged: (value) {
+                            setState(() {
+                              uid = value;
                             });
+                          },
+                          keyboardType: TextInputType.numberWithOptions(decimal: false),
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          onPressed: (uid.length == 9)
+                              ? () async {
+                                  if (uid != '') {
+                                    final prefs = await SharedPreferences.getInstance();
+                                    await prefs.setString('uid', uid);
+                                  }
+                                  String langcode = ('lang'.tr() == 'en') ? 'en' : (('lang'.tr() == 'cn') ? 'cn' : 'jp');
+                                  String url = kIsWeb ? "https://mohomoapi.yunlu18.net/$uid?lang=$langcode" : "https://api.mihomo.me/sr_info_parsed/$uid?lang=$langcode";
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                    duration: Duration(days: 1),
+                                    backgroundColor: Colors.blue,
+                                    content: Text("Loading.....").tr(),
+                                    action: SnackBarAction(
+                                      textColor: Colors.white,
+                                      label: '×',
+                                      onPressed: () {
+                                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                        // Some code to undo the change.
+                                      },
+                                    ),
+                                  ));
+                                  http.Response resp = await http.get(
+                                    Uri.parse(url),
+                                  );
+                                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-                            if (characters.isNotEmpty) {
-                              final prefs = await SharedPreferences.getInstance();
+                                  if (resp.statusCode != 200) {
+                                    setState(() {
+                                      int statusCode = resp.statusCode;
 
-                              String chracterinfo = jsonEncode(characters);
-                              await prefs.setString('characters', chracterinfo);
-                            }
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                        duration: Duration(days: 1),
+                                        backgroundColor: Colors.red,
+                                        content: Text("Failed to get $statusCode").tr(),
+                                        action: SnackBarAction(
+                                          textColor: Colors.white,
+                                          label: '×',
+                                          onPressed: () {
+                                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                            // Some code to undo the change.
+                                          },
+                                        ),
+                                      ));
+                                    });
+                                    return;
+                                  }
+                                  returndata = jsonDecode(utf8.decode(resp.bodyBytes));
+                                  print(returndata['player']);
+                                  nickname = returndata['player']['nickname'];
 
-                            setState(() {});
-                          }
-                        : null,
-                    child: const Text('Import').tr(),
+                                  level = returndata['player']['level'].toString();
+                                  avatarimage = urlendpoint + "starrailres/" + returndata['player']['avatar']['icon'];
+                                  if (nickname != '' && avatarimage != '' && level != '') {
+                                    final prefs = await SharedPreferences.getInstance();
+                                    await prefs.setString('nickname', nickname);
+                                    await prefs.setString('avatarimage', avatarimage);
+                                    await prefs.setString('level', level);
+                                  }
+
+                                  print(avatarimage);
+
+                                  final List<Character> newCharacters = List<Character>.from(
+                                      returndata['characters'].map((json) => Character(json['id'] as String, DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()), json as Map<String, dynamic>)));
+
+                                  newCharacters.forEach((newCharacter) {
+                                    addOrUpdateCharacter(newCharacter);
+                                  });
+
+                                  if (characters.isNotEmpty) {
+                                    final prefs = await SharedPreferences.getInstance();
+
+                                    String chracterinfo = jsonEncode(characters);
+                                    await prefs.setString('characters', chracterinfo);
+                                  }
+                                  expandcontroller.collapse();
+
+                                  setState(() {});
+                                }
+                              : null,
+                          child: const Text('Import').tr(),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            if (nickname == "")
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("You have not imported any character.\nPlease import Using your in game UID.").tr(),
-              ),
-            if (avatarimage != "") Image.network(avatarimage),
-            if (nickname != "")
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  nickname,
-                  style: const TextStyle(
-                    //fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    height: 1,
-                  ),
-                ),
-              ),
-            if (level != "")
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "LV$level",
-                  style: const TextStyle(
-                    //fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.normal,
-                    height: 1,
-                  ),
-                ),
-              ),
             Container(
               height: 510,
               width: double.infinity,
@@ -262,161 +286,267 @@ class _UidimportpageState extends State<Uidimportpage> {
                   itemCount: characters.length,
                   itemBuilder: (context, index) {
                     final character = characters[index];
-                    return Container(
-                      width: 374,
-                      height: 508,
-                      child: Stack(
-                        children: [
-                          Card(
-                            child: Image.network(
-                              urlendpoint + imagestring(character),
-                              fit: BoxFit.cover,
+                    return InkWell(
+                      onHover: (value) {
+                        if (value) {
+                          setState(() {});
+                        }
+                      },
+                      onTap: () {
+                        setState(() {});
+                      },
+                      hoverColor: getcolor(character),
+                      child: Container(
+                        width: 374,
+                        height: 508,
+                        child: Stack(
+                          children: [
+                            Card(
+                              color: Colors.grey.withOpacity(0.1),
+                              child: Image.network(
+                                urlendpoint + imagestring(character),
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                          ),
-                          Positioned(
-                            left: 0,
-                            bottom: 0,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (character.info["light_cone"] != null)
+                            Positioned(
+                              left: 0,
+                              bottom: 0,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Stack(
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.end,
                                       children: [
-                                        Container(
-                                          width: 180,
-                                          height: 180,
-                                          decoration: BoxDecoration(
-                                              borderRadius: const BorderRadius.all(Radius.circular(10)),
-                                              border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                              gradient: LinearGradient(
-                                                begin: Alignment.topLeft,
-                                                end: Alignment.bottomRight,
-                                                colors: [Colors.white.withOpacity(0.01), Colors.white.withOpacity(0.1)],
-                                              )),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: FadeInImage.memoryNetwork(
-                                              placeholder: kTransparentImage,
-                                              height: 160,
-                                              image: urlendpoint + "images/lightcones/" + character.info["light_cone"]['id'] + '.png',
-                                            ),
-                                          ),
-                                        ),
-                                        Positioned(
-                                          right: 0,
-                                          bottom: 0,
-                                          child: Column(
+                                        if (character.info["light_cone"] != null)
+                                          Stack(
                                             children: [
-                                              Padding(
-                                                padding: const EdgeInsets.all(10.0),
-                                                child: Text(
-                                                  "R" + character.info["light_cone"]['rank'].toString(),
-                                                  style: const TextStyle(
-                                                    //fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                                    fontSize: 25,
-                                                    fontWeight: FontWeight.bold,
-                                                    height: 1,
+                                              Container(
+                                                width: 180,
+                                                height: 180,
+                                                decoration: BoxDecoration(
+                                                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                                    border: Border.all(color: Colors.white.withOpacity(0.13)),
+                                                    gradient: LinearGradient(
+                                                      begin: Alignment.topLeft,
+                                                      end: Alignment.bottomRight,
+                                                      colors: [Colors.white.withOpacity(0.01), Colors.white.withOpacity(0.1)],
+                                                    )),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: FadeInImage.memoryNetwork(
+                                                    placeholder: kTransparentImage,
+                                                    height: 160,
+                                                    image: urlendpoint + "images/lightcones/" + character.info["light_cone"]['id'] + '.png',
                                                   ),
                                                 ),
                                               ),
+                                              Positioned(
+                                                right: 0,
+                                                bottom: 0,
+                                                child: Column(
+                                                  children: [
+                                                    Padding(
+                                                      padding: const EdgeInsets.all(10.0),
+                                                      child: Text(
+                                                        "R" + character.info["light_cone"]['rank'].toString(),
+                                                        style: const TextStyle(
+                                                          //fontWeight: FontWeight.bold,
+                                                          color: Colors.white,
+                                                          fontSize: 25,
+                                                          fontWeight: FontWeight.bold,
+                                                          height: 1,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
                                             ],
+                                          ),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        if (character.info["relic_sets"] != null && character.info["relic_sets"].length != 0)
+                                          Container(
+                                            width: 83,
+                                            height: 83,
+                                            decoration: BoxDecoration(
+                                                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                                border: Border.all(color: Colors.white.withOpacity(0.13)),
+                                                gradient: LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                  colors: [Colors.white.withOpacity(0.01), Colors.white.withOpacity(0.1)],
+                                                )),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: FadeInImage.memoryNetwork(
+                                                  placeholder: kTransparentImage, image: urlendpoint + "starrailres/" + character.info["relic_sets"][0]['icon'], filterQuality: FilterQuality.medium),
+                                            ),
+                                          ),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        Column(
+                                          children: [
+                                            if (character.info["relic_sets"] != null && character.info["relic_sets"].length > 2)
+                                              Container(
+                                                width: 83,
+                                                height: 83,
+                                                decoration: BoxDecoration(
+                                                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                                    border: Border.all(color: Colors.white.withOpacity(0.13)),
+                                                    gradient: LinearGradient(
+                                                      begin: Alignment.topLeft,
+                                                      end: Alignment.bottomRight,
+                                                      colors: [Colors.white.withOpacity(0.01), Colors.white.withOpacity(0.1)],
+                                                    )),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: FadeInImage.memoryNetwork(
+                                                      placeholder: kTransparentImage,
+                                                      image: urlendpoint + "starrailres/" + character.info["relic_sets"][2]['icon'],
+                                                      filterQuality: FilterQuality.medium),
+                                                ),
+                                              ),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            if (character.info["relic_sets"] != null && character.info["relic_sets"].length > 1)
+                                              Container(
+                                                width: 83,
+                                                height: 83,
+                                                decoration: BoxDecoration(
+                                                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                                    border: Border.all(color: Colors.white.withOpacity(0.13)),
+                                                    gradient: LinearGradient(
+                                                      begin: Alignment.topLeft,
+                                                      end: Alignment.bottomRight,
+                                                      colors: [Colors.white.withOpacity(0.01), Colors.white.withOpacity(0.1)],
+                                                    )),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: FadeInImage.memoryNetwork(
+                                                      placeholder: kTransparentImage,
+                                                      image: urlendpoint + "starrailres/" + character.info["relic_sets"][1]['icon'],
+                                                      filterQuality: FilterQuality.medium),
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 374,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(0.0),
+                                          child: Text(
+                                            "LV" + character.info['level'].toString() + " " + character.info['name'],
+                                            style: const TextStyle(
+                                              //fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              height: 1,
+                                            ),
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                Container(
-                                  width: 374,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(0.0),
-                                        child: Text(
-                                          "LV" + character.info['level'].toString() + " " + character.info['name'],
-                                          style: const TextStyle(
-                                            //fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            height: 1,
-                                          ),
-                                        ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Text(
+                                      "Last Update At:".tr() + character.createdate,
+                                      style: TextStyle(
+                                        //fontWeight: FontWeight.bold,
+                                        color: Colors.grey.withOpacity(0.6),
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.normal,
+                                        height: 1,
                                       ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Text(
-                                    "Last Update At:".tr() + character.createdate,
-                                    style: TextStyle(
-                                      //fontWeight: FontWeight.bold,
-                                      color: Colors.grey.withOpacity(0.6),
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.normal,
-                                      height: 1,
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          Positioned(
-                            right: 0,
-                            top: 0,
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: IconButton(
-                                    icon: Icon(Icons.delete),
-                                    onPressed: () {
-                                      setState(() {
-                                        characters.removeAt(index);
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Positioned(
-                            left: 5,
-                            top: 0,
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Text(
-                                    "C" + character.info['rank'].toString(),
-                                    style: const TextStyle(
-                                      //fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                      fontSize: 45,
-                                      fontWeight: FontWeight.bold,
-                                      height: 1,
+                            Positioned(
+                              right: 0,
+                              top: 0,
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: IconButton(
+                                      icon: Icon(Icons.delete),
+                                      onPressed: () async {
+                                        setState(() {
+                                          characters.removeAt(index);
+                                          if (characters.isEmpty) {
+                                            nickname = "";
+                                            avatarimage = "";
+                                            level = "";
+                                            expandcontroller.expand();
+                                          }
+                                        });
+                                        final prefs = await SharedPreferences.getInstance();
+                                        await prefs.setString('nickname', nickname);
+                                        await prefs.setString('avatarimage', avatarimage);
+                                        await prefs.setString('level', level);
+                                        String chracterinfo = jsonEncode(characters);
+                                        await prefs.setString('characters', chracterinfo);
+                                      },
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                            Positioned(
+                              left: 5,
+                              top: 0,
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Text(
+                                      "C" + character.info['rank'].toString(),
+                                      style: const TextStyle(
+                                        //fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                        fontSize: 45,
+                                        fontWeight: FontWeight.bold,
+                                        height: 1,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },
                 ),
               ),
             ),
-          ])),
-          widget.footer,
-        ],
-      ),
+          ]),
+        )),
+        widget.footer,
+      ],
     );
+  }
+
+  MaterialColor getcolor(Character character) {
+    String element = character.info['element']['id'].toLowerCase();
+
+    return etocolor[element]!;
   }
 
   String imagestring(Character character) {
