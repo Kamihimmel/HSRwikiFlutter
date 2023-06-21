@@ -4,6 +4,7 @@ const etocolor = {
   'fire': Colors.red,
   'ice': Colors.lightBlue,
   'lightning': Colors.purple,
+  'thunder': Colors.purple,
   'imaginary': Colors.yellow,
   'quantum': Colors.indigo,
   'wind': Colors.green,
@@ -11,23 +12,23 @@ const etocolor = {
 };
 
 const etoimage = {
-  'fire': "https://hsrwikidata.kchlu.com/images/icons/fire.webp",
-  'ice': "https://hsrwikidata.kchlu.com/images/icons/ice.webp",
-  'lightning': "https://hsrwikidata.kchlu.com/images/icons/lightning.webp",
-  'imaginary': "https://hsrwikidata.kchlu.com/images/icons/imaginary.webp",
-  'quantum': "https://hsrwikidata.kchlu.com/images/icons/quantum.webp",
-  'wind': "https://hsrwikidata.kchlu.com/images/icons/wind.webp",
-  'physical': "https://hsrwikidata.kchlu.com/images/icons/physical.webp",
+  'fire': "images/icons/fire.webp",
+  'ice': "images/icons/ice.webp",
+  'lightning': "images/icons/lightning.webp",
+  'imaginary': "images/icons/imaginary.webp",
+  'quantum': "images/icons/quantum.webp",
+  'wind': "images/icons/wind.webp",
+  'physical': "images/icons/physical.webp",
 };
 
 const wtoimage = {
-  'destruction': "https://hsrwikidata.kchlu.com/images/icons/destruction.webp",
-  'erudition': "https://hsrwikidata.kchlu.com/images/icons/erudition.webp",
-  'harmony': "https://hsrwikidata.kchlu.com/images/icons/harmony.webp",
-  'thehunt': "https://hsrwikidata.kchlu.com/images/icons/thehunt.webp",
-  'nihility': "https://hsrwikidata.kchlu.com/images/icons/nihility.webp",
-  'abundance': "https://hsrwikidata.kchlu.com/images/icons/abundance.webp",
-  'preservation': "https://hsrwikidata.kchlu.com/images/icons/preservation.webp",
+  'destruction': "images/icons/destruction.webp",
+  'erudition': "images/icons/erudition.webp",
+  'harmony': "images/icons/harmony.webp",
+  'thehunt': "images/icons/thehunt.webp",
+  'nihility': "images/icons/nihility.webp",
+  'abundance': "images/icons/abundance.webp",
+  'preservation': "images/icons/preservation.webp",
 };
 
 const stattoimage = {
@@ -64,3 +65,7 @@ var typetocolor = {'dmg': Colors.redAccent, 'debuff': Colors.grey[400], 'shield'
 bool gender = true;
 bool spoilermode = false;
 bool testmode = false;
+
+String urlendpoint = "https://hsrwikidata.kchlu.com/";
+
+Map<String, String> idtoimage = {};

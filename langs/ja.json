@@ -153,5 +153,10 @@
     "Enemy Effect RES Reduce": "敵効果抵抗削減",
     "Enemy Special Effect RES": "敵特別効果抵抗",
     "Final Chance": "最終確率",
-    "100% Chance Effect hit Required": "100%確率で必要な效果命中"
+    "100% Chance Effect hit Required": "100%確率で必要な效果命中",
+    "You have not imported any character.\nPlease import Using your in game UID.": "まだキャラクターインポートしたことありません。\nゲームUID入力してインポートしてください。",
+    "Import": "インポート",
+    "Last Update At:": "最終更新日時:",
+    "Your Characters": "キャラクターインポート",
+    "Your UID": "ゲームUID"
 }
