@@ -3,6 +3,8 @@
 # workaround https://github.com/CocoaPods/CocoaPods/issues/11355
 # sed -i '' $'1s/^/source "https:\\/\\/github.com\\/CocoaPods\\/Specs.git"\\\n\\\n/' Podfile
 
+flutter pub get
+
 cd ios 
 
 # Install Ruby Bundler
