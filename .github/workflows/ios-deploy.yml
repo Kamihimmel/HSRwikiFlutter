@@ -4,9 +4,6 @@ on:
   push:
     branches:
     - main
-  pull_request:
-    branches:
-    - main
 
 jobs:
   build:
@@ -60,7 +57,7 @@ jobs:
       - name: Upload TestFlight Build
         uses: Apple-Actions/upload-testflight-build@master
         with:
-          app-path: ios/.build/Artifacts/Runner.ipa/Runner.ipa
+          app-path: ios/.build/Artifacts/Runner.ipa/hsrwikiproject.ipa
           issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
           api-key-id: ${{ secrets.APPSTORE_KEY_ID }}
           api-private-key: ${{ secrets.APPSTORE_PRIVATE_KEY }}
