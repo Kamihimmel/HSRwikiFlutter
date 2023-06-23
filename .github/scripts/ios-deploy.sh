@@ -21,7 +21,7 @@ ARTIFACT_PATH=${RESULT_PATH:-${BUILD_DIR}/Artifacts}
 RESULT_BUNDLE_PATH="${ARTIFACT_PATH}/${SCHEME}.xcresult"
 ARCHIVE_PATH=${ARCHIVE_PATH:-${BUILD_DIR}/Archives/${SCHEME}.xcarchive}
 DERIVED_DATA_PATH=${DERIVED_DATA_PATH:-${BUILD_DIR}/DerivedData}
-EXPORT_OPTIONS_FILE=".github/support/ExportOptions.plist"
+EXPORT_OPTIONS_FILE="../.github/support/ExportOptions.plist"
 
 WORK_DIR=$(pwd)
 API_PRIVATE_KEYS_PATH="${WORK_DIR}/${BUILD_DIR}/private_keys"
