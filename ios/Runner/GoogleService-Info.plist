@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>895109510915-6vf0dsgj676319f4liajjeemgjp4r99u.apps.googleusercontent.com</string>
+	<string>895109510915-4o9mnfktu4jd6132ldbehnoh2p5q5rpl.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.895109510915-6vf0dsgj676319f4liajjeemgjp4r99u</string>
+	<string>com.googleusercontent.apps.895109510915-4o9mnfktu4jd6132ldbehnoh2p5q5rpl</string>
 	<key>API_KEY</key>
 	<string>AIzaSyBEE29Kfh2M2hF6QqhO8h4tgW0Et9XWsao</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.hsrwikiproject</string>
+	<string>net.yunlu18.hsrwikiproject</string>
 	<key>PROJECT_ID</key>
 	<string>aliceworkshop4honkaistarrail</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:895109510915:ios:7fc2d088308f36ce951b36</string>
+	<string>1:895109510915:ios:d7668acdf3a1fa57951b36</string>
 </dict>
 </plist>
