@@ -73,7 +73,7 @@ xcrun xcodebuild \
     -authenticationKeyIssuerID "${ENV_ISSUER_ID}"
 
 # check tree
-tree
+tree -a
 
 # Zip up the Xcode Archive into Artifacts folder.
 # ditto -c -k --sequesterRsrc --keepParent "${ARCHIVE_PATH}" "${ARTIFACT_PATH}/${SCHEME}.xcarchive.zip"
