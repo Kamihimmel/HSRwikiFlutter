@@ -8,7 +8,10 @@ set -o pipefail
 
 flutter pub get
 
-cd ios 
+cd ios
+
+# install tree
+brew install tree
 
 # Install Ruby Bundler
 gem install bundler:2.3.11
