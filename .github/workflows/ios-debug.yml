@@ -1,0 +1,30 @@
+name: iOS Debug CI
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+
+# macOS environments: https://github.com/actions/virtual-environments/tree/main/images/macos
+
+jobs:
+  build:
+    name: CI build
+    runs-on: macos-12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Setup
+        run: exec ./.github/scripts/ios-setup.sh
+        
+      - name: Build
+        run: exec ./.github/scripts/ios-build.sh
