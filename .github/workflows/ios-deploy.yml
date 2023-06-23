@@ -1,12 +1,12 @@
 name: Build for Develop TestFlight
 
-on: 
+on:
   push:
     branches:
     - main
-    - develop
-    - release*
-    - ci-test
+  pull_request:
+    branches:
+    - main
 
 jobs:
   build:
