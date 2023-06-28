@@ -158,5 +158,10 @@
     "Import": "导入",
     "Last Update At:": "最新更新时间:",
     "Your Characters": "角色仓库",
-    "Your UID": "游戏UID"
+    "Your UID": "游戏UID",
+    "url": "https://starrail.kchlu.com/",
+    "API Support": "API Support",
+    "Main Stats": "主要属性",
+    "Additional Stats": "其他属性",
+    "Save and Share": "保存并分享"
 }

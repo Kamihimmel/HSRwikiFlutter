@@ -158,5 +158,10 @@
     "Import": "インポート",
     "Last Update At:": "最終更新日時:",
     "Your Characters": "キャラクターインポート",
-    "Your UID": "ゲームUID"
+    "Your UID": "ゲームUID",
+    "url": "https://starrail.yunlu18.net/",
+    "API Support": "データソース",
+    "Main Stats": "メインステータス",
+    "Additional Stats": "追加ステータス",
+    "Save and Share": "保存及びシェア"
 }

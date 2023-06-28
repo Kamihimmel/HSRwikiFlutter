@@ -215,6 +215,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 'wtype': e['wtype'] as String,
                 'rarity': e['rarity'] as String,
                 'infoUrl': urlendpoint + e['infourl'],
+                'spoiler': (e['spoiler'] ? "true" : "false")
               })
           .toList();
       _filteredData2 = List.from(_data2);
@@ -235,6 +236,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 'imageUrl': urlendpoint + e['imageurl'],
                 'set': e['set'] as String,
                 'infoUrl': urlendpoint + e['infourl'],
+                'spoiler': (e['spoiler'] ? "true" : "false")
               })
           .toList();
       _filteredData3 = List.from(_data3);
@@ -389,6 +391,19 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     _filteredData2 = List.from(_data2);
     List<Map<String, String>> tempData2 = [];
 
+    if (spoilermode) {
+      tempData2.addAll(_filteredData2.where((item) => item['spoiler'] == 'true').toList());
+      tempData2.addAll(_filteredData2.where((item) => item['spoiler'] == 'false').toList());
+
+      _filteredData2 = List.from(tempData2);
+      tempData2 = [];
+    } else {
+      tempData2.addAll(_filteredData2.where((item) => item['spoiler'] == 'false').toList());
+
+      _filteredData2 = List.from(tempData2);
+      tempData2 = [];
+    }
+
     if (filterStar4On || filterStar5On || filterStar3On) {
       if (filterStar4On) {
         tempData2.addAll(_filteredData2.where((item) => item['rarity'] == '4').toList());
@@ -432,6 +447,19 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
     _filteredData3 = List.from(_data3);
     List<Map<String, String>> tempData3 = [];
+
+    if (spoilermode) {
+      tempData3.addAll(_filteredData3.where((item) => item['spoiler'] == 'true').toList());
+      tempData3.addAll(_filteredData3.where((item) => item['spoiler'] == 'false').toList());
+
+      _filteredData3 = List.from(tempData3);
+      tempData3 = [];
+    } else {
+      tempData3.addAll(_filteredData3.where((item) => item['spoiler'] == 'false').toList());
+
+      _filteredData3 = List.from(tempData3);
+      tempData3 = [];
+    }
 
     if (filterSet2On || filterSet4On) {
       if (filterSet4On) {
