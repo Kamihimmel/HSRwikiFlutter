@@ -68,7 +68,7 @@ class MyApp extends StatelessWidget {
       supportedLocales: context.supportedLocales,
       locale: context.locale,
       debugShowCheckedModeBanner: false,
-      title: 'Honkai Starrail wiki',
+      title: "title".tr(),
       theme: ThemeData(
         useMaterial3: true,
       ),
@@ -77,7 +77,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       themeMode: ThemeMode.dark,
-      home: const MyHomePage(title: ' Honkai Starrail wiki'),
+      home: const MyHomePage(title: "title"),
     );
   }
 }
