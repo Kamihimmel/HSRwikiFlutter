@@ -921,8 +921,19 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
                                         var dateFormat = DateFormat('yyyyMMddHHmmss');
                                         String timeNow = dateFormat.format(now);
                                         String fileName = widget.characterinfo[widget.initialcharacter].info['name'] + timeNow;
-                                        if (kIsWeb) {
+                                        if (kIsWeb || Platform.isWindows) {
                                           await FileSaver.instance.saveFile(fileName, image!, 'png', mimeType: MimeType.PNG);
+                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                            duration: Duration(seconds: 3),
+                                            content: Text("Saved".tr() + ((!kIsWeb && Platform.isWindows) ? " to Donwnload folder" : "")),
+                                            action: SnackBarAction(
+                                              label: '×',
+                                              onPressed: () {
+                                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                                // Some code to undo the change.
+                                              },
+                                            ),
+                                          ));
                                         } else if (Platform.isAndroid || Platform.isIOS) {
                                           XFile shareFile = XFile.fromData(image!, mimeType: MimeType.PNG.name, name: fileName, length: image.lengthInBytes);
                                           ShareResult shareResult = await Share.shareXFiles([shareFile], subject: fileName, text: 'Share Text'.tr());

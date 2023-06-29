@@ -200,10 +200,8 @@ class _UidimportpageState extends State<Uidimportpage> {
                                   String url = kIsWeb ? "https://mohomoapi.yunlu18.net/$uid?lang=$langcode" : "https://api.mihomo.me/sr_info_parsed/$uid?lang=$langcode";
                                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                     duration: Duration(days: 1),
-                                    backgroundColor: Colors.blue,
                                     content: Text("Loading.....").tr(),
                                     action: SnackBarAction(
-                                      textColor: Colors.white,
                                       label: '×',
                                       onPressed: () {
                                         ScaffoldMessenger.of(context).hideCurrentSnackBar();
