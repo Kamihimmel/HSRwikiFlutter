@@ -1,13 +1,17 @@
-import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:file_saver/file_saver.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hsrwikiproject/uidimportPage.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'info.dart';
 
 class ShowcaseDetailPage extends StatefulWidget {
@@ -914,14 +918,34 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
                                     onPressed: () async {
                                       await screenshotController.capture(delay: const Duration(milliseconds: 10)).then((Uint8List? image) async {
                                         var now = DateTime.now();
-                                        var formatterDate = DateFormat('yyyyMMdd');
-                                        var formatterTime = DateFormat('HHmmss');
-                                        String actualDate = formatterDate.format(now);
-                                        print(actualDate);
-                                        String actualTime = formatterTime.format(now);
-                                        print(actualTime);
-                                        String timenow = actualDate + actualTime;
-                                        await FileSaver.instance.saveFile(widget.characterinfo[widget.initialcharacter].info['name'] + timenow, image!, "png", mimeType: MimeType.PNG);
+                                        var dateFormat = DateFormat('yyyyMMddHHmmss');
+                                        String timeNow = dateFormat.format(now);
+                                        String fileName = widget.characterinfo[widget.initialcharacter].info['name'] + timeNow;
+                                        if (kIsWeb) {
+                                          await FileSaver.instance.saveFile(fileName, image!, 'png', mimeType: MimeType.PNG);
+                                        } else if (Platform.isAndroid || Platform.isIOS) {
+                                          XFile shareFile = XFile.fromData(image!, mimeType: MimeType.PNG.name, name: fileName, length: image.lengthInBytes);
+                                          ShareResult shareResult = await Share.shareXFiles([shareFile], subject: fileName, text: 'Share Text'.tr());
+                                          print("shareStatus: ${shareResult.status.name}, raw: ${shareResult.raw}");
+                                          if (shareResult.status == ShareResultStatus.success) {
+                                            String toastText = "";
+                                            if (shareResult.raw.contains('com.apple.UIKit.activity.SaveToCameraRoll')) {
+                                              toastText = 'Saved'.tr();
+                                            } else if (shareResult.raw.contains("com.apple.UIKit.activity.CopyToPasteboard")) {
+                                              toastText = 'Copied'.tr();
+                                            }
+                                            if (toastText.isNotEmpty) {
+                                              Fluttertoast.showToast(
+                                                  msg: toastText.tr(),
+                                                  toastLength: Toast.LENGTH_SHORT,
+                                                  gravity: ToastGravity.CENTER,
+                                                  timeInSecForIosWeb: 1,
+                                                  backgroundColor: Colors.grey,
+                                                  textColor: Colors.white,
+                                                  fontSize: 16.0);
+                                            }
+                                          }
+                                        }
                                       });
                                       setState(() {});
                                     },

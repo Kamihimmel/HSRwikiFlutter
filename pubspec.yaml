@@ -47,7 +47,9 @@ dependencies:
   firebase_analytics: ^10.4.2
   screenshot: ^2.1.0
   file_saver: ^0.1.1
-
+  share_plus: ^7.0.2
+  image_gallery_saver: ^2.0.2
+  fluttertoast: ^8.2.2
 
 dev_dependencies:
   flutter_test:
