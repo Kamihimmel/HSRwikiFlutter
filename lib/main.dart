@@ -157,10 +157,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(length: 5, vsync: this);
+    fetchstaus();
     _getData();
     _getData2();
     _getData3();
-    fetchstaus();
   }
 
   @override
@@ -251,6 +251,18 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
     String spoilerN = prefs.getString('spoilermode') ?? "false";
     if ('true' == spoilerN) spoilermode = true;
+
+    if (!kIsWeb) {
+      String deviceCountry = Platform.localeName.substring(Platform.localeName.length - 2);
+      String modeString = "false";
+      if (deviceCountry == "CN") {
+        urlendpoint = "https://hsrwikidata.kchlu.com/";
+        modeString = "true";
+      }
+
+      String cnmodeN = prefs.getString('cnmode') ?? modeString;
+      if ('true' == cnmodeN) cnmode = true;
+    }
 
     setState(() {
       // Here you can write your code for open new view
@@ -574,6 +586,31 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       } else {
                         final prefs = await SharedPreferences.getInstance();
                         await prefs.setString('spoilermode', "true");
+                      }
+                    }),
+              if (!kIsWeb)
+                SwitchListTile(
+                    title: cnmode ? Text('Datasource:China').tr() : Text('Datasource:International').tr(),
+                    value: cnmode,
+                    onChanged: (bool value) async {
+                      setState(() => cnmode = value);
+
+                      if (cnmode == false) {
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setString('cnmode', "false");
+
+                        urlendpoint = "https://hsrwikidata.yunlu18.net/";
+                        _getData();
+                        _getData2();
+                        _getData3();
+                      } else {
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setString('cnmode', "true");
+
+                        urlendpoint = "https://hsrwikidata.kchlu.com/";
+                        _getData();
+                        _getData2();
+                        _getData3();
                       }
                     }),
               Padding(
