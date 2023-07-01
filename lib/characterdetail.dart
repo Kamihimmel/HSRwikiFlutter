@@ -24,7 +24,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
   bool isLoading = true;
 
   BannerAd? _bannerAd;
-
+  bool _isBannerAdReady = false;
   @override
   void initState() {
     super.initState();
@@ -35,11 +35,13 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
       listener: BannerAdListener(
         onAdLoaded: (ad) {
           setState(() {
+            _isBannerAdReady = true;
             _bannerAd = ad as BannerAd;
           });
         },
         onAdFailedToLoad: (ad, err) {
           print('Failed to load a banner ad: ${err.message}');
+          _isBannerAdReady = false;
           ad.dispose();
         },
       ),
@@ -1650,11 +1652,12 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                               }),
                                             ),
                                             adsenseAdsView(columnwidth - 20),
-                                            Container(
-                                              width: _bannerAd!.size.width.toDouble(),
-                                              height: _bannerAd!.size.height.toDouble(),
-                                              child: AdWidget(ad: _bannerAd!),
-                                            ),
+                                            if (_isBannerAdReady)
+                                              Container(
+                                                width: _bannerAd!.size.width.toDouble(),
+                                                height: _bannerAd!.size.height.toDouble(),
+                                                child: AdWidget(ad: _bannerAd!),
+                                              ),
                                           ]),
                                         ),
                                       ),

@@ -288,12 +288,16 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       String deviceCountry = Platform.localeName.substring(Platform.localeName.length - 2);
       String modeString = "false";
       if (deviceCountry == "CN") {
-        urlendpoint = "https://hsrwikidata.kchlu.com/";
         modeString = "true";
       }
 
       String cnmodeN = prefs.getString('cnmode') ?? modeString;
-      if ('true' == cnmodeN) cnmode = true;
+      print(prefs.getString('cnmode'));
+      if ('true' == cnmodeN) {
+        cnmode = true;
+        urlendpoint = "https://hsrwikidata.kchlu.com/";
+      }
+      ;
     }
 
     setState(() {

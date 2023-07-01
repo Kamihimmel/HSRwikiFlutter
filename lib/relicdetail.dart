@@ -28,6 +28,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
   Color darkcolor = Colors.black;
   Color lightcolor = Colors.black;
   BannerAd? _bannerAd;
+  bool _isBannerAdReady = false;
 
   @override
   void initState() {
@@ -39,11 +40,13 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
       listener: BannerAdListener(
         onAdLoaded: (ad) {
           setState(() {
+            _isBannerAdReady = true;
             _bannerAd = ad as BannerAd;
           });
         },
         onAdFailedToLoad: (ad, err) {
           print('Failed to load a banner ad: ${err.message}');
+          _isBannerAdReady = false;
           ad.dispose();
         },
       ),
@@ -583,11 +586,12 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                           }),
                                         ),
                                         adsenseAdsView(columnwidth - 20),
-                                        Container(
-                                          width: _bannerAd!.size.width.toDouble(),
-                                          height: _bannerAd!.size.height.toDouble(),
-                                          child: AdWidget(ad: _bannerAd!),
-                                        ),
+                                        if (_isBannerAdReady)
+                                          Container(
+                                            width: _bannerAd!.size.width.toDouble(),
+                                            height: _bannerAd!.size.height.toDouble(),
+                                            child: AdWidget(ad: _bannerAd!),
+                                          ),
                                       ]),
                                     ),
                                   ),
