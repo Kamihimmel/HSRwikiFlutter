@@ -1,8 +1,10 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hsrwikiproject/uidimportPage.dart';
 import 'dart:convert';
@@ -117,6 +119,30 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
+      List<String> sStrings = [
+        "silverwolf1".tr(),
+        "silverwolf2".tr(),
+        "silverwolf3".tr(),
+        "silverwolf4".tr(),
+        "silverwolf5".tr(),
+        "silverwolf6".tr(),
+        "silverwolf7".tr(),
+        "silverwolf8".tr(),
+        "silverwolf9".tr(),
+        "silverwolf10".tr(),
+      ];
+      final random = Random();
+      final randomString = sStrings[random.nextInt(sStrings.length)];
+
+      if (kIsWeb || Platform.isIOS || Platform.isAndroid)
+        Fluttertoast.showToast(
+            msg: randomString,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            textColor: Colors.white,
+            fontSize: 16.0);
 
       if (_counter > 4 && testmode == false) {
         _counter = 0;
