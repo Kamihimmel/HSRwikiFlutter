@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 
+import 'ad_helper.dart';
 import 'info.dart';
 import 'platformad_stub.dart' if (dart.library.io) 'platformad_stub.dart' if (dart.library.html) 'platformad.dart';
 
@@ -25,12 +27,37 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
 
   Color darkcolor = Colors.black;
   Color lightcolor = Colors.black;
+  BannerAd? _bannerAd;
 
   @override
   void initState() {
     super.initState();
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _bannerAd = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    ).load();
 
     _getData(widget.jsonUrl);
+  }
+
+  @override
+  void dispose() {
+    // TODO: Dispose a BannerAd object
+    _bannerAd?.dispose();
+
+    super.dispose();
   }
 
   late PaletteGenerator _palette;
@@ -694,6 +721,11 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                   }),
                                                 ),
                                                 adsenseAdsView(columnwidth - 20),
+                                                Container(
+                                                  width: _bannerAd!.size.width.toDouble(),
+                                                  height: _bannerAd!.size.height.toDouble(),
+                                                  child: AdWidget(ad: _bannerAd!),
+                                                ),
                                               ]),
                                             ),
                                           ),

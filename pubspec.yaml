@@ -50,6 +50,7 @@ dependencies:
   share_plus: ^7.0.2
   image_gallery_saver: ^2.0.2
   fluttertoast: ^8.2.2
+  google_mobile_ads: ^3.0.0
 
 dev_dependencies:
   flutter_test:
