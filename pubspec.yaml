@@ -52,6 +52,9 @@ dependencies:
   fluttertoast: ^8.2.2
   google_mobile_ads: ^3.0.0
 
+dependency_overrides:
+  webview_flutter_wkwebview: 3.5.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
