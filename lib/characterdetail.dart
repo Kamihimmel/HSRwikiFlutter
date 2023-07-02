@@ -174,6 +174,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                           children: [
                                                             Image.network(
                                                               urlendpoint + etoimage[characterData!['etype']!]!,
+                                                              filterQuality: FilterQuality.medium,
                                                               height: 50,
                                                             ),
                                                             Text(
@@ -217,6 +218,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                           children: [
                                                             Image.network(
                                                               urlendpoint + wtoimage[characterData!['wtype']!]!,
+                                                              filterQuality: FilterQuality.medium,
                                                               height: 50,
                                                             ),
                                                             Text(
@@ -627,6 +629,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                     margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                                                                     child: Image.network(
                                                                       urlendpoint + data['imageurl']!,
+                                                                      filterQuality: FilterQuality.medium,
                                                                       width: 100,
                                                                     ),
                                                                   ),
@@ -1010,6 +1013,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                       margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                                                                       child: Image.network(
                                                                         urlendpoint + data['imageurl']!,
+                                                                        filterQuality: FilterQuality.medium,
                                                                         width: 100,
                                                                       ),
                                                                     ),
@@ -1419,6 +1423,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                     margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                                                                     child: Image.network(
                                                                       urlendpoint + data['imageurl']!,
+                                                                      filterQuality: FilterQuality.medium,
                                                                       width: 100,
                                                                     ),
                                                                   ),
@@ -1674,11 +1679,8 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                               width: columnwidth,
                               height: 100,
                               color: etocolor[namedata['etype']!]?.withOpacity(0.6),
-                              child: Image.network(
-                                (gender == false && namedata['imageUrlalter'] != "") ? namedata['imageUrlalter']! : namedata['imageUrl']!,
-                                alignment: const Alignment(1, -0.5),
-                                fit: BoxFit.none,
-                              ),
+                              child: Image.network((gender == false && namedata['imageUrlalter'] != "") ? namedata['imageUrlalter']! : namedata['imageUrl']!,
+                                  alignment: const Alignment(1, -0.5), fit: BoxFit.none, filterQuality: FilterQuality.medium),
                             ),
                           ),
                           Padding(

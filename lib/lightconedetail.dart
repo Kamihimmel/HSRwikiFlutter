@@ -273,6 +273,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                 children: [
                                                                   Image.network(
                                                                     urlendpoint + wtoimage[lightconeData!['wtype']!]!,
+                                                                    filterQuality: FilterQuality.medium,
                                                                     height: 50,
                                                                   ),
                                                                   Text(
@@ -749,6 +750,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                   child: Image.network(
                                     namedata['imageUrl']!,
                                     alignment: const Alignment(1, -0.5),
+                                    filterQuality: FilterQuality.medium,
                                     fit: BoxFit.none,
                                   ),
                                 ),

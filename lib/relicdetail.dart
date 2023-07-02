@@ -608,11 +608,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                           width: columnwidth,
                           height: 100,
                           color: Colors.grey.withOpacity(0.6),
-                          child: Image.network(
-                            namedata['imageUrl']!,
-                            alignment: const Alignment(1, -0.5),
-                            fit: BoxFit.scaleDown,
-                          ),
+                          child: Image.network(namedata['imageUrl']!, alignment: const Alignment(1, -0.5), fit: BoxFit.scaleDown, filterQuality: FilterQuality.medium),
                         ),
                       ),
                       Container(

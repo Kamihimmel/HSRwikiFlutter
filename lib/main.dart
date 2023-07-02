@@ -1593,6 +1593,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                     child: Image.network(
                                       data['imageUrl']!,
                                       fit: BoxFit.scaleDown,
+                                      filterQuality: FilterQuality.medium,
                                       width: double.infinity,
                                     ),
                                   ),

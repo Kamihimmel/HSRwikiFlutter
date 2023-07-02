@@ -311,6 +311,8 @@ class _EffecthitCalcPageState extends State<EffecthitCalcPage> {
                                     image: AssetImage('images/effecthit.jpg'),
                                     width: double.infinity,
                                     height: double.infinity,
+                                    alignment: const Alignment(0.5, -0.25),
+                                    filterQuality: FilterQuality.medium,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
