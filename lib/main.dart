@@ -686,18 +686,19 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     // ...
                   },
                 ),
-                ListTile(
-                  leading: Icon(Icons.coffee),
-                  title: Text('Buy Me a Coffee').tr(),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => DonatePage()),
-                    ).then((value) {
-                      setState(() {});
-                    });
-                  },
-                ),
+                if (kIsWeb || Platform.isWindows)
+                  ListTile(
+                    leading: Icon(Icons.coffee),
+                    title: Text('Buy Me a Coffee').tr(),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => DonatePage()),
+                      ).then((value) {
+                        setState(() {});
+                      });
+                    },
+                  ),
               ],
             ),
           ),
