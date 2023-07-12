@@ -1,0 +1,30 @@
+name: Release Version
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    if: ${{ !contains(github.event.head_commit.message, '[update version]') }}
+    name: release-version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Tag
+        run: |
+          git config --global user.email "shengwu.code@gmail.com"
+          git config --global user.name "workflow-${GITHUB_RUN_ID}"
+          version=$(grep -E "^version: " pubspec.yaml | awk '{print $NF}')
+          t="v${version}"
+          git tag ${t}
+          git push origin ${t}
+      - name: Increment flutter build number
+        uses: BentEngbers/flutter-change-version@v1.0.3
+      - name: Update
+        run: |
+          git add pubspec.yaml
+          git commit -m "[update version] ${GITHUB_RUN_ID}"
+          git push

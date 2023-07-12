@@ -1,0 +1,31 @@
+name: Windows Deploy
+
+on:
+  push:
+    branches:
+     - main
+
+jobs:
+  build:
+    name: windows-deploy
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2.3.0
+        with:
+          flutter-version: '3.10.1'
+          cache: true
+
+      - name: Install project dependencies
+        run: flutter pub get
+
+      - name: Build
+        env:
+          ENV_MS_STORE_PUBLISHER_NAME: ${{ secrets.MS_STORE_PUBLISHER_NAME }}
+          ENV_MS_STORE_IDENTITY_NAME: ${{ secrets.MS_STORE_IDENTITY_NAME }}
+          ENV_MS_STORE_PUBLISHER: ${{ secrets.MS_STORE_PUBLISHER }}
+        run: |
+          $version = Select-String "^version: .*" .\pubspec.yaml | ForEach-Object{($_ -split "\s+")[1]}
+          $version = $version.replace("+", ".")
+          echo $version
+          dart run msix:create --publisher-display-name "$env:ENV_MS_STORE_PUBLISHER_NAME" --identity-name "$env:ENV_MS_STORE_IDENTITY_NAME" --publisher "$env:ENV_MS_STORE_PUBLISHER" --version "$version"
