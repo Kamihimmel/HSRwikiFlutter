@@ -1,0 +1,50 @@
+name: Windows Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: windows-deploy
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2.3.0
+        with:
+          flutter-version: '3.10.1'
+          cache: true
+
+      - name: Install project dependencies
+        run: flutter pub get
+
+      - name: Build
+        run: |
+          flutter build windows --obfuscate --split-debug-info=.\build\windows\runner\Debug
+
+      - name: Inno Setup
+        env:
+          ENV_TAG: ${{ github.ref }}
+        run: |
+          tar zxvf tool\IS6.tar
+          $Env:APP_VERSION = $Env:ENV_TAG.replace("refs/tags/v", "").replace("+", ".")
+          echo "VERSION=$Env:APP_VERSION" >> $env:GITHUB_ENV
+          IS6\iscc .\windows\setup\hsrwikiproject.iss /DMyAppVersion=$Env:APP_VERSION
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: Auto generated release
+          draft: true
+          prerelease: false
+
+      - name: Upload asset to release
+        uses: csexton/release-asset-action@v2
+        with:
+          file: .\windows\setup\hsrwikiproject-$env:VERSION.exe
+          github-token: ${{ secrets.GITHUB_TOKEN }}
