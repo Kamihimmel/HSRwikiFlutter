@@ -20,7 +20,7 @@ jobs:
           version=$(grep -E "^version: " pubspec.yaml | awk '{print $NF}')
           t="v${version}"
           git tag ${t}
-          git push origin ${t}
+          git push --tags
       - name: Increment flutter build number
         uses: BentEngbers/flutter-change-version@v1.0.3
       - name: Update
