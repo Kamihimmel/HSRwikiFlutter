@@ -44,7 +44,6 @@ jobs:
           prerelease: false
 
       - name: Upload asset to release
-        uses: csexton/release-asset-action@v2
+        uses: softprops/action-gh-release@v1
         with:
-          file: .\windows\setup\hsrwikiproject-$env:VERSION.exe
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          files: .\windows\setup\hsrwikiproject-$env:VERSION.exe
