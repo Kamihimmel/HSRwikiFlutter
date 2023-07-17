@@ -2,11 +2,10 @@ name: Windows Release
 
 on:
   push:
-    tags:
-      - 'v*'
 
 jobs:
   build:
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
     name: windows-deploy
     runs-on: windows-latest
     steps:
