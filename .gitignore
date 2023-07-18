@@ -33,7 +33,6 @@ migrate_working_dir/
 /build/
 /linux/
 /macos/
-/windows/
 
 # Symbolication related
 app.*.symbols
@@ -45,3 +44,5 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+/IS6
