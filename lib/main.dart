@@ -686,7 +686,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     // ...
                   },
                 ),
-                if (kIsWeb || Platform.isWindows)
+                if (kIsWeb || Platform.isWindows || Platform.isIOS)
                   ListTile(
                     leading: Icon(Icons.coffee),
                     title: Text('Buy Me a Coffee').tr(),

@@ -50,6 +50,7 @@ dependencies:
   image_gallery_saver: ^2.0.2
   fluttertoast: ^8.2.2
   google_mobile_ads: ^3.0.0
+  in_app_purchase: ^3.1.7
 
 dependency_overrides:
   webview_flutter_wkwebview: 3.5.0
