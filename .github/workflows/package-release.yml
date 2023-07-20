@@ -43,6 +43,31 @@ jobs:
         with:
           name: windows-package
           path: build\windows\runner\Release\hsrwikiproject.msix
+  package-android:
+    name: android-apk
+    runs-on: windows-latest
+    needs:
+      - version
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '17.x'
+      - uses: subosito/flutter-action@v2.3.0
+        with:
+          flutter-version: '3.10.1'
+          cache: true
+      - name: Install project dependencies
+        run: flutter pub get
+      - name: Build Windows
+        env:
+          ENV_VERSION: ${{ needs.version.outputs.version }}
+        run: |
+          flutter build apk --release
+      - uses: actions/upload-artifact@v3
+        with:
+          name: android-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
   release:
     if: ${{ startsWith(github.ref, 'refs/tags/v') }}
     name: create-release
@@ -50,16 +75,22 @@ jobs:
     needs:
       - version
       - package-windows
+      - package-android
     steps:
       - uses: actions/download-artifact@v3
         with:
           name: windows-package
-          path: build/windows/runner/Release
+          path: build
+      - uses: actions/download-artifact@v3
+        with:
+          name: android-apk
+          path: build
       - name: Rename File
         env:
           ENV_VERSION: ${{ needs.version.outputs.version }}
         run: |
-          mv ./build/windows/runner/Release/hsrwikiproject.msix ./build/windows/runner/Release/hsrwikiproject-${ENV_VERSION}.msix
+          cp ./build/hsrwikiproject.msix ./build/hsrwikiproject-${ENV_VERSION}.msix
+          cp ./build/app-release.apk ./build/hsrwikiproject-${ENV_VERSION}.apk
           tree ./build
       - name: Create Release
         uses: softprops/action-gh-release@v1
@@ -70,4 +101,10 @@ jobs:
           prerelease: true
           generate_release_notes: true
           files: |
-            ./build/windows/runner/Release/hsrwikiproject-${{ needs.version.outputs.version }}.msix
+            ./build/hsrwikiproject-${{ needs.version.outputs.version }}.msix
+            ./build/hsrwikiproject-${{ needs.version.outputs.version }}.apk
+      - name: Commit to Wiki
+        env:
+          ENV_DEPLOY_KEY_WIKI: ${{ secrets.DEPLOY_KEY_WIKI }}
+        run: |
+          date
