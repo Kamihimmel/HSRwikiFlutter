@@ -114,6 +114,7 @@ jobs:
           git config --global user.name "workflow-release-package"
           mkdir -p ~/.ssh
           echo "${ENV_DEPLOY_KEY_WIKI}" > ~/.ssh/github_key
+          chmod 400 ~/.ssh/github_key
           cat > ~/.ssh/config <<EOF
           Host *
             StrictHostKeyChecking no
