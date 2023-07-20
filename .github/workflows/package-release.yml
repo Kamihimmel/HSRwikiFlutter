@@ -38,7 +38,6 @@ jobs:
           ENV_MS_STORE_PUBLISHER: ${{ secrets.MS_STORE_PUBLISHER }}
           ENV_VERSION: ${{ needs.version.outputs.version }}
         run: |
-          echo $env:ENV_VERSION
           dart run msix:create --publisher-display-name "$env:ENV_MS_STORE_PUBLISHER_NAME" --identity-name "$env:ENV_MS_STORE_IDENTITY_NAME" --publisher "$env:ENV_MS_STORE_PUBLISHER" --version "$env:ENV_VERSION"
       - uses: actions/upload-artifact@v3
         with:
@@ -49,6 +48,7 @@ jobs:
     name: create-release
     runs-on: ubuntu-latest
     needs:
+      - version
       - package-windows
     steps:
       - uses: actions/download-artifact@v3
