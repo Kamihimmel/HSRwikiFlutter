@@ -1,9 +1,11 @@
 import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:flutter/services.dart';
 
+import 'ad_helper.dart';
 import 'platformad_stub.dart' if (dart.library.io) 'platformad_stub.dart' if (dart.library.html) 'platformad.dart';
 
 class EffecthitCalcPage extends StatefulWidget {
@@ -15,9 +17,38 @@ class EffecthitCalcPage extends StatefulWidget {
 }
 
 class _EffecthitCalcPageState extends State<EffecthitCalcPage> {
+  BannerAd? _bannerAd;
+  bool _isBannerAdReady = false;
+
   @override
   void initState() {
     super.initState();
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _isBannerAdReady = true;
+            _bannerAd = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          _isBannerAdReady = false;
+          ad.dispose();
+        },
+      ),
+    ).load();
+  }
+
+  @override
+  void dispose() {
+    // TODO: Dispose a BannerAd object
+    _bannerAd?.dispose();
+
+    super.dispose();
   }
 
   final ScrollController _scrollController = ScrollController();
@@ -100,6 +131,12 @@ class _EffecthitCalcPageState extends State<EffecthitCalcPage> {
                                           height: 110,
                                         ),
                                         adsenseAdsView(columnwidth - 20),
+                                        if (_isBannerAdReady)
+                                          Container(
+                                            width: _bannerAd!.size.width.toDouble(),
+                                            height: _bannerAd!.size.height.toDouble(),
+                                            child: AdWidget(ad: _bannerAd!),
+                                          ),
                                         ConstrainedBox(
                                           constraints: BoxConstraints(maxWidth: 1000),
                                           child: Column(
@@ -274,6 +311,8 @@ class _EffecthitCalcPageState extends State<EffecthitCalcPage> {
                                     image: AssetImage('images/effecthit.jpg'),
                                     width: double.infinity,
                                     height: double.infinity,
+                                    alignment: const Alignment(0.5, -0.25),
+                                    filterQuality: FilterQuality.medium,
                                     fit: BoxFit.cover,
                                   ),
                                 ),

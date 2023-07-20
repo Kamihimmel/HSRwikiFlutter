@@ -65,6 +65,7 @@ var typetocolor = {'dmg': Colors.redAccent, 'debuff': Colors.grey[400], 'shield'
 bool gender = true;
 bool spoilermode = false;
 bool testmode = false;
+bool cnmode = false;
 
 String urlendpoint = "https://hsrwikidata.kchlu.com/";
 

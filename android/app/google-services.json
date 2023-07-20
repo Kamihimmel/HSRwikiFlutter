@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:895109510915:android:432b13aa3072a210951b36",
+        "mobilesdk_app_id": "1:895109510915:android:814fac32a6e62d61951b36",
         "android_client_info": {
-          "package_name": "com.example.hsrwikiproject"
+          "package_name": "net.yunlu18.hsrwikiproject"
         }
       },
       "oauth_client": [
@@ -31,10 +31,10 @@
               "client_type": 3
             },
             {
-              "client_id": "895109510915-6vf0dsgj676319f4liajjeemgjp4r99u.apps.googleusercontent.com",
+              "client_id": "895109510915-4o9mnfktu4jd6132ldbehnoh2p5q5rpl.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.hsrwikiproject"
+                "bundle_id": "net.yunlu18.hsrwikiproject"
               }
             }
           ]

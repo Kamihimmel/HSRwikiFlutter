@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
 import 'package:hsrwikiproject/info.dart';
+import 'package:hsrwikiproject/showcasedetail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:transparent_image/transparent_image.dart';
@@ -199,10 +200,8 @@ class _UidimportpageState extends State<Uidimportpage> {
                                   String url = kIsWeb ? "https://mohomoapi.yunlu18.net/$uid?lang=$langcode" : "https://api.mihomo.me/sr_info_parsed/$uid?lang=$langcode";
                                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                     duration: Duration(days: 1),
-                                    backgroundColor: Colors.blue,
                                     content: Text("Loading.....").tr(),
                                     action: SnackBarAction(
-                                      textColor: Colors.white,
                                       label: '×',
                                       onPressed: () {
                                         ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -293,7 +292,15 @@ class _UidimportpageState extends State<Uidimportpage> {
                         }
                       },
                       onTap: () {
-                        setState(() {});
+                        setState(() {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ShowcaseDetailPage(characterinfo: characters, initialcharacter: index),
+                              settings: RouteSettings(),
+                            ),
+                          );
+                        });
                       },
                       hoverColor: getcolor(character),
                       child: Container(
@@ -303,9 +310,12 @@ class _UidimportpageState extends State<Uidimportpage> {
                           children: [
                             Card(
                               color: Colors.grey.withOpacity(0.1),
-                              child: Image.network(
-                                urlendpoint + imagestring(character),
-                                fit: BoxFit.cover,
+                              child: Hero(
+                                tag: character.id,
+                                child: Image.network(
+                                  urlendpoint + imagestring(character),
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                             Positioned(
@@ -514,14 +524,20 @@ class _UidimportpageState extends State<Uidimportpage> {
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.all(10.0),
-                                    child: Text(
-                                      "C" + character.info['rank'].toString(),
-                                      style: const TextStyle(
-                                        //fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                        fontSize: 45,
-                                        fontWeight: FontWeight.bold,
-                                        height: 1,
+                                    child: Hero(
+                                      tag: character.info['rank'].toString() + index.toString(),
+                                      child: DefaultTextStyle(
+                                        style: Theme.of(context).textTheme.titleLarge!,
+                                        child: Text(
+                                          "E" + character.info['rank'].toString(),
+                                          style: const TextStyle(
+                                            //fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontSize: 45,
+                                            fontWeight: FontWeight.bold,
+                                            height: 1,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),

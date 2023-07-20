@@ -1,0 +1,40 @@
+name: Package Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+    name: windows-deploy
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2.3.0
+        with:
+          flutter-version: '3.10.1'
+          cache: true
+
+      - name: Install project dependencies
+        run: flutter pub get
+
+      - name: Build Windows
+        env:
+          ENV_MS_STORE_PUBLISHER_NAME: ${{ secrets.MS_STORE_PUBLISHER_NAME }}
+          ENV_MS_STORE_IDENTITY_NAME: ${{ secrets.MS_STORE_IDENTITY_NAME }}
+          ENV_MS_STORE_PUBLISHER: ${{ secrets.MS_STORE_PUBLISHER }}
+          ENV_TAG: ${{ github.ref }}
+        run: |
+          $version = $Env:ENV_TAG.replace("refs/tags/v", "").replace("+", ".")
+          echo $version
+          echo "VERSION=$version" >> $env:GITHUB_ENV
+          dart run msix:create --publisher-display-name "$env:ENV_MS_STORE_PUBLISHER_NAME" --identity-name "$env:ENV_MS_STORE_IDENTITY_NAME" --publisher "$env:ENV_MS_STORE_PUBLISHER" --version "$version" --output_name "hsrwikiproject-$version.msix"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          prerelease: true
+          generate_release_notes: true
+          files: |
+            .\build\windows\runner\Release\hsrwikiproject-$env:VERSION.exe
