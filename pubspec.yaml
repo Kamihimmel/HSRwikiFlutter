@@ -123,7 +123,7 @@ flutter:
     # see https://flutter.dev/custom-fonts/#from-packages
 
 msix_config:
-  display_name: hsrwikiproject
+  display_name: "Herta Toolbox"
   languages: en-us,zh-cn,ja-jp
   logo_path: .\windows\runner\resources\app_icon.ico
   sign_msix: false

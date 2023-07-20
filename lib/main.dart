@@ -71,7 +71,7 @@ class MyApp extends StatelessWidget {
       supportedLocales: context.supportedLocales,
       locale: context.locale,
       debugShowCheckedModeBanner: false,
-      title: "title".tr(),
+      title: !kIsWeb && Platform.isWindows ? "title_windows".tr() : "title".tr(),
       theme: ThemeData(
         useMaterial3: true,
       ),
@@ -530,7 +530,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     );
 
     return Title(
-      title: "${"title".tr()}",
+      title: !kIsWeb && Platform.isWindows ? "title_windows".tr() : "title".tr(),
       color: Theme.of(context).colorScheme.background,
       child: Scaffold(
         drawer: SafeArea(
@@ -706,7 +706,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         appBar: AppBar(
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
-          title: PreferredSize(preferredSize: const Size.fromHeight(40), child: FittedBox(fit: BoxFit.scaleDown, child: Text("${"title".tr()}"))),
+          title: PreferredSize(preferredSize: const Size.fromHeight(40), child: FittedBox(fit: BoxFit.scaleDown, child: Text(!kIsWeb && Platform.isWindows ? "title_windows".tr() : "title".tr()))),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(33),
             child: Container(

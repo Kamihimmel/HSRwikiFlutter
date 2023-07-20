@@ -501,7 +501,7 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
                                                               color: Colors.white70,
                                                             ),
                                                             Text(
-                                                              "${"title".tr()}",
+                                                              !kIsWeb && Platform.isWindows ? "title_windows".tr() : "title".tr(),
                                                               style: const TextStyle(
                                                                 //fontWeight: FontWeight.bold,
                                                                 color: Colors.white70,
