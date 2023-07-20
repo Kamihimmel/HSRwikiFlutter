@@ -54,7 +54,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: windows-package
-          path: build/windows/runner/Release/hsrwikiproject.msix
+          path: build/windows/runner/Release
       - name: Rename File
         env:
           ENV_VERSION: ${{ needs.version.outputs.version }}
@@ -63,9 +63,11 @@ jobs:
           tree ./build
       - name: Create Release
         uses: softprops/action-gh-release@v1
+        env:
+          ENV_VERSION: ${{ needs.version.outputs.version }}
         with:
           draft: true
           prerelease: true
           generate_release_notes: true
           files: |
-            ./build/windows/runner/Release/hsrwikiproject-${{ needs.version.outputs.version }}.msix
+            ./build/windows/runner/Release/hsrwikiproject-${ENV_VERSION}.msix
