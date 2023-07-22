@@ -123,6 +123,8 @@ jobs:
           EOF
           cd build && git clone git@github.com:Kamihimmel/HSRwiki.git
           cd HSRwiki && mkdir -p downloads
+          fs=$(./downloads/hsrwikiproject-* || echo)
+          [ -n "$fs" ] && rm -f ./downloads/hsrwikiproject-*
           cp ../hsrwikiproject-* ./downloads
           git add downloads/*
           git commit -m "[update release package] ${GITHUB_RUN_ID}"
