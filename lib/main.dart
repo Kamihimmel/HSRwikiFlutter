@@ -1321,7 +1321,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     ),
                   ),
                   footer,
-                  footer2
+                  if (kIsWeb) footer2
                 ],
               ),
             ),
@@ -1624,7 +1624,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     ),
                   ),
                   footer,
-                  footer2
+                  if (kIsWeb) footer2
                 ],
               ),
             ),
@@ -1747,7 +1747,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     ),
                   ),
                   footer,
-                  footer2
+                  if (kIsWeb) footer2
                 ],
               ),
             ),
