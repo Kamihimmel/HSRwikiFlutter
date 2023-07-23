@@ -1,3 +1,4 @@
+import 'dart:js_util';
 import 'dart:math';
 import 'dart:ui';
 
@@ -522,11 +523,132 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       tempData3 = [];
     }
 
-    const footer = const Padding(
+    var footer = Padding(
       padding: EdgeInsets.all(8.0),
       child: FittedBox(
-        child: Text(
-          'Designed and developed by yunlu18.net. Game assets are property of COGNOSPHERE PTE. LTD / miHoYo.',
+        child: Column(
+          children: [
+            Text(
+              'Designed and developed by yunlu18.net. Game assets are property of COGNOSPHERE PTE. LTD / miHoYo.',
+            ),
+          ],
+        ),
+      ),
+    );
+
+    var footer2 = Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Container(
+        height: 70,
+        width: double.infinity,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  InkWell(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 0),
+                      child: Image(
+                        image: bannericon['apple']!,
+                        width: 130,
+                      ),
+                    ),
+                    onTap: () {
+                      launchUrlString("https://apps.apple.com/app/alice-workshop-for-star-rail/id6450605570");
+                    },
+                  ),
+                  InkWell(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 0),
+                      child: Image(
+                        image: bannericon['google']!,
+                        width: 170,
+                      ),
+                    ),
+                    onTap: () {
+                      launchUrlString("https://play.google.com/store/apps/details?id=net.yunlu18.hsrwikiproject");
+                    },
+                  ),
+                  InkWell(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                          border: Border.all(color: Colors.white, width: 0.5),
+                        ),
+                        child: Image(
+                          image: bannericon['microsoft']!,
+                          width: 125,
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      launchUrlString("https://www.microsoft.com/store/apps/9MT6XF11KVT7");
+                    },
+                  ),
+                  InkWell(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Container(
+                        width: 130,
+                        height: 45,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                          border: Border.all(color: Colors.white, width: 0.5),
+                          color: Colors.black,
+                        ),
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.android),
+                              Text(
+                                'Download APK',
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      launchUrlString(urlendpoint + "downloads/hsrwikiproject-" + versionstring + ".apk");
+                    },
+                  ),
+                  InkWell(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Container(
+                        width: 130,
+                        height: 45,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                          border: Border.all(color: Colors.white, width: 0.5),
+                          color: Colors.black,
+                        ),
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.window),
+                              Text(
+                                'Download Msix',
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      launchUrlString(urlendpoint + "downloads/hsrwikiproject-" + versionstring + ".msix");
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -1201,6 +1323,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     ),
                   ),
                   footer,
+                  if (kIsWeb) footer2
                 ],
               ),
             ),
@@ -1503,6 +1626,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     ),
                   ),
                   footer,
+                  if (kIsWeb) footer2
                 ],
               ),
             ),
@@ -1625,6 +1749,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     ),
                   ),
                   footer,
+                  if (kIsWeb) footer2
                 ],
               ),
             ),

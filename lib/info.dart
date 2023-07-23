@@ -54,6 +54,12 @@ const stattoimage = {
   'breakeffect': AssetImage('images/IconBreakUp.png'),
 };
 
+const bannericon = {
+  'apple': AssetImage('images/applebanner.png'),
+  'google': AssetImage('images/googlebanner.png'),
+  'microsoft': AssetImage('images/microsoftbanner.png'),
+};
+
 const sicontoimage = {
   'avatar': AssetImage('images/DataBankIconAvatar.png'),
   'lightcone': AssetImage('images/DataBankIconLightCone.png'),
@@ -70,3 +76,5 @@ bool cnmode = false;
 String urlendpoint = "https://hsrwikidata.kchlu.com/";
 
 Map<String, String> idtoimage = {};
+
+String versionstring = "1.0.1.21";
