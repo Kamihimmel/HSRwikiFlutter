@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -6,23 +5,28 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:transparent_image/transparent_image.dart';
-import 'package:http/http.dart' as http;
 import 'dart:async';
 
-import 'ad_helper.dart';
-import 'info.dart';
-import 'platformad_stub.dart' if (dart.library.io) 'platformad_stub.dart' if (dart.library.html) 'platformad.dart';
+import '../ad_helper.dart';
+import '../info.dart';
+import '../platformad_stub.dart' if (dart.library.io) '../platformad_stub.dart' if (dart.library.html) '../platformad.dart';
+import '../relics/relic.dart';
+import '../relics/relic_entity.dart';
+import '../relics/relic_manager.dart';
+import '../utils/helper.dart';
+import '../utils/logging.dart';
 
 class RelicDetailPage extends StatefulWidget {
-  final String jsonUrl;
-  const RelicDetailPage({super.key, required this.jsonUrl});
+  final Relic basicRelic;
+
+  const RelicDetailPage({super.key, required this.basicRelic});
 
   @override
   State<RelicDetailPage> createState() => _RelicDetailPageState();
 }
 
 class _RelicDetailPageState extends State<RelicDetailPage> {
-  Map<String, dynamic>? relicData;
+  Relic relicData = Relic();
   bool isLoading = true;
 
   Color darkcolor = Colors.black;
@@ -45,14 +49,14 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
           });
         },
         onAdFailedToLoad: (ad, err) {
-          print('Failed to load a banner ad: ${err.message}');
+          logger.e('Failed to load a banner ad: ${err.message}');
           _isBannerAdReady = false;
           ad.dispose();
         },
       ),
     ).load();
 
-    _getData(widget.jsonUrl);
+    _getData();
   }
 
   @override
@@ -69,8 +73,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
 
   Future<void> _loadPalette(String url) async {
     try {
-      final imageProvider = NetworkImage(url);
-      _palette = await PaletteGenerator.fromImageProvider(imageProvider);
+      _palette = await PaletteGenerator.fromImageProvider(getImageComponent(url));
       setState(() {
         _isLoading = false;
         darkcolor = _palette.darkMutedColor?.color ?? Colors.black;
@@ -79,15 +82,13 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
         final hexCode = darkcolor.value.toRadixString(16).padLeft(8, '0');
         final directColor = '#${hexCode.substring(2)}';
 
-        print('Dark Color: $directColor');
+        logger.i('Dark Color: $directColor');
 
-        final hexCode2 = lightcolor.value.toRadixString(16).padLeft(8, '0');
         final directColor2 = '#${hexCode.substring(2)}';
-        print('Light Color: $directColor2');
+        logger.i('Light Color: $directColor2');
 
-        final hexCode3 = (Colors.black).value.toRadixString(16).padLeft(8, '0');
         final directColor3 = '#${hexCode.substring(2)}';
-        print('Black Color: $directColor3');
+        logger.i('Black Color: $directColor3');
       });
     } catch (e) {
       setState(() {
@@ -98,21 +99,14 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
   }
 
   final ScrollController _scrollController = ScrollController();
-
-  late List<dynamic> skillData;
+  late List<RelicSkilldata> skillData;
   late int attributeCount;
-  late double _currentSliderValue;
   late List<double> levelnumbers;
 
-  Future<void> _getData(String url) async {
-    final response = await http.get(Uri.parse(url));
-    final Map<String, dynamic> jsonData = json.decode(response.body);
-    relicData = jsonData;
-    skillData = relicData!['skilldata'];
-
+  Future<void> _getData() async {
+    relicData = await RelicManager.loadFromRemote(widget.basicRelic);
+    skillData = relicData.entity.skilldata;
     levelnumbers = List.generate(skillData.length, (index) => 5);
-
-    print(relicData);
     setState(() {
       isLoading = false;
     });
@@ -120,9 +114,15 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, String> namedata = ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+    final String cid = ModalRoute.of(context)!.settings.arguments as String;
+    final Relic routeRelic = RelicManager.getRelic(cid);
+    logger.i("navigate to relic: $cid");
+    if (!relicData.loaded) {
+      relicData = routeRelic;
+      _getData();
+    }
     if (darkcolor == Colors.black && lightcolor == Colors.black) {
-      _loadPalette(namedata['imageUrl']!);
+      _loadPalette(relicData.entity.imageurl);
     }
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -154,7 +154,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: Text(('lang'.tr() == 'en') ? namedata['enname']! : (('lang'.tr() == 'cn') ? namedata['cnname']! : namedata['janame']!)),
+          title: Text(relicData.getName(getLanguageCode(context))),
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -179,7 +179,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                         height: 110,
                                       ),
                                       if (screenWidth > 905)
-                                        if (relicData!['set'] == "4")
+                                        if (relicData.entity.xSet == "4")
                                           Expanded(
                                             child: Column(
                                               mainAxisAlignment: MainAxisAlignment.center,
@@ -187,22 +187,22 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                 Row(
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: [
-                                                    Image.network(urlendpoint + relicData!['head'], filterQuality: FilterQuality.medium),
-                                                    Image.network(urlendpoint + relicData!['hands'], filterQuality: FilterQuality.medium),
+                                                    getImageComponent(routeRelic.entity.head, imageWrap: true),
+                                                    getImageComponent(routeRelic.entity.hands, imageWrap: true),
                                                   ],
                                                 ),
                                                 Row(
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: [
-                                                    Image.network(urlendpoint + relicData!['body'], filterQuality: FilterQuality.medium),
-                                                    Image.network(urlendpoint + relicData!['feet'], filterQuality: FilterQuality.medium),
+                                                    getImageComponent(routeRelic.entity.body, imageWrap: true),
+                                                    getImageComponent(routeRelic.entity.feet, imageWrap: true),
                                                   ],
                                                 ),
                                               ],
                                             ),
                                           ),
                                       if (screenWidth > 905)
-                                        if (relicData!['set'] == "2")
+                                        if (relicData.entity.xSet == "2")
                                           Expanded(
                                             child: Column(
                                               mainAxisAlignment: MainAxisAlignment.center,
@@ -210,15 +210,15 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                 Row(
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: [
-                                                    Image.network(urlendpoint + relicData!['sphere'], filterQuality: FilterQuality.medium),
-                                                    Image.network(urlendpoint + relicData!['rope'], filterQuality: FilterQuality.medium),
+                                                    getImageComponent(routeRelic.entity.sphere, imageWrap: true),
+                                                    getImageComponent(routeRelic.entity.rope, imageWrap: true),
                                                   ],
                                                 ),
                                               ],
                                             ),
                                           ),
                                       if (screenWidth < 905)
-                                        if (relicData!['set'] == "4")
+                                        if (relicData.entity.xSet == "4")
                                           FittedBox(
                                             child: Column(
                                               mainAxisAlignment: MainAxisAlignment.center,
@@ -226,46 +226,42 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                 Row(
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: [
-                                                    FadeInImage.memoryNetwork(
-                                                      placeholder: kTransparentImage,
-                                                      image: urlendpoint + relicData!['head'],
-                                                      height: MediaQuery.of(context).size.width / 2,
-                                                      width: MediaQuery.of(context).size.width / 2,
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                    FadeInImage.memoryNetwork(
-                                                      placeholder: kTransparentImage,
-                                                      image: urlendpoint + relicData!['hands'],
-                                                      height: MediaQuery.of(context).size.width / 2,
-                                                      width: MediaQuery.of(context).size.width / 2,
-                                                      fit: BoxFit.cover,
-                                                    ),
+                                                    getImageComponent(relicData.entity.head,
+                                                        imageWrap: true,
+                                                        placeholder: kTransparentImage,
+                                                        fit: BoxFit.cover,
+                                                        height: MediaQuery.of(context).size.width / 2,
+                                                        width: MediaQuery.of(context).size.width / 2),
+                                                    getImageComponent(relicData.entity.hands,
+                                                        imageWrap: true,
+                                                        placeholder: kTransparentImage,
+                                                        fit: BoxFit.cover,
+                                                        height: MediaQuery.of(context).size.width / 2,
+                                                        width: MediaQuery.of(context).size.width / 2),
                                                   ],
                                                 ),
                                                 Row(
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: [
-                                                    FadeInImage.memoryNetwork(
-                                                      placeholder: kTransparentImage,
-                                                      image: urlendpoint + relicData!['body'],
-                                                      height: MediaQuery.of(context).size.width / 2,
-                                                      width: MediaQuery.of(context).size.width / 2,
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                    FadeInImage.memoryNetwork(
-                                                      placeholder: kTransparentImage,
-                                                      image: urlendpoint + relicData!['feet'],
-                                                      height: MediaQuery.of(context).size.width / 2,
-                                                      width: MediaQuery.of(context).size.width / 2,
-                                                      fit: BoxFit.cover,
-                                                    ),
+                                                    getImageComponent(relicData.entity.body,
+                                                        imageWrap: true,
+                                                        placeholder: kTransparentImage,
+                                                        fit: BoxFit.cover,
+                                                        height: MediaQuery.of(context).size.width / 2,
+                                                        width: MediaQuery.of(context).size.width / 2),
+                                                    getImageComponent(relicData.entity.feet,
+                                                        imageWrap: true,
+                                                        placeholder: kTransparentImage,
+                                                        fit: BoxFit.cover,
+                                                        height: MediaQuery.of(context).size.width / 2,
+                                                        width: MediaQuery.of(context).size.width / 2),
                                                   ],
                                                 ),
                                               ],
                                             ),
                                           ),
                                       if (screenWidth < 905)
-                                        if (relicData!['set'] == "2")
+                                        if (relicData.entity.xSet == "2")
                                           FittedBox(
                                             child: Column(
                                               mainAxisAlignment: MainAxisAlignment.center,
@@ -273,20 +269,18 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                 Row(
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: [
-                                                    FadeInImage.memoryNetwork(
-                                                      placeholder: kTransparentImage,
-                                                      image: urlendpoint + relicData!['sphere'],
-                                                      height: MediaQuery.of(context).size.width / 2,
-                                                      width: MediaQuery.of(context).size.width / 2,
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                    FadeInImage.memoryNetwork(
-                                                      placeholder: kTransparentImage,
-                                                      image: urlendpoint + relicData!['rope'],
-                                                      height: MediaQuery.of(context).size.width / 2,
-                                                      width: MediaQuery.of(context).size.width / 2,
-                                                      fit: BoxFit.cover,
-                                                    ),
+                                                    getImageComponent(relicData.entity.sphere,
+                                                        imageWrap: true,
+                                                        placeholder: kTransparentImage,
+                                                        fit: BoxFit.cover,
+                                                        height: MediaQuery.of(context).size.width / 2,
+                                                        width: MediaQuery.of(context).size.width / 2),
+                                                    getImageComponent(relicData.entity.rope,
+                                                        imageWrap: true,
+                                                        placeholder: kTransparentImage,
+                                                        fit: BoxFit.cover,
+                                                        height: MediaQuery.of(context).size.width / 2,
+                                                        width: MediaQuery.of(context).size.width / 2),
                                                   ],
                                                 ),
                                               ],
@@ -317,7 +311,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                             child: Padding(
                                               padding: const EdgeInsets.all(25.0),
                                               child: Text(
-                                                ('lang'.tr() == 'en') ? namedata['enname']! : (('lang'.tr() == 'cn') ? namedata['cnname']! : namedata['janame']!),
+                                                relicData.getName(getLanguageCode(context)),
                                                 style: const TextStyle(
                                                   //fontWeight: FontWeight.bold,
                                                   color: Colors.white,
@@ -331,29 +325,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                         Column(
                                           children: List.generate(skillData.length, (index) {
                                             final data = skillData[index];
-                                            String fixedtext = "";
-
-                                            String detailtext = ('lang'.tr() == 'en') ? data['DescriptionEN']! : (('lang'.tr() == 'cn') ? data['DescriptionCN']! : data['DescriptionJP']!);
-                                            if (data['maxlevel'] != null && data['maxlevel'] > 0) {
-                                              List<dynamic> multiplierData = data['levelmultiplier']!;
-
-                                              int multicount = multiplierData.length;
-                                              fixedtext = detailtext;
-
-                                              for (var i = multicount; i >= 1; i--) {
-                                                Map<String, dynamic> currentleveldata = multiplierData[i - 1];
-                                                String levelnum = (levelnumbers[index].toStringAsFixed(0));
-
-                                                if (currentleveldata['default'] == null) {
-                                                  fixedtext = fixedtext.replaceAll("[$i]", (currentleveldata[levelnum]).toString());
-                                                } else {
-                                                  fixedtext = fixedtext.replaceAll("[$i]", (currentleveldata['default']).toString());
-                                                }
-                                              }
-                                            } else {
-                                              fixedtext = detailtext;
-                                            }
-
+                                            String fixedtext = relicData.getSkillDescription(index, getLanguageCode(context));
                                             return Stack(
                                               children: [
                                                 Column(
@@ -369,12 +341,14 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                         filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                                                         child: Container(
                                                           decoration: BoxDecoration(
-                                                            borderRadius: (data['effect'] != null)
+                                                            borderRadius: (data.effect.isNotEmpty)
                                                                 ? const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
                                                                 : const BorderRadius.all(Radius.circular(15)),
                                                             border: Border.all(color: Colors.white.withOpacity(0.13)),
                                                             gradient: LinearGradient(
-                                                                begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [lightcolor.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                                                                begin: Alignment.topLeft,
+                                                                end: Alignment.bottomRight,
+                                                                colors: [lightcolor.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                                                           ),
                                                           child: Row(
                                                             children: [
@@ -384,7 +358,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                                   child: Column(
                                                                     children: [
                                                                       Text(
-                                                                        ('lang'.tr() == 'en') ? data['ENname']! : (('lang'.tr() == 'cn') ? data['CNname']! : data['JAname']!),
+                                                                        relicData.getSkillName(index, getLanguageCode(context)),
                                                                         style: const TextStyle(
                                                                           color: Colors.white,
                                                                           fontWeight: FontWeight.bold,
@@ -399,42 +373,6 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                                         ),
                                                                         maxLines: 10,
                                                                       ),
-                                                                      if (data['maxlevel'] != null && data['maxlevel']! > 0)
-                                                                        Padding(
-                                                                          padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                                                          child: Row(
-                                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            children: [
-                                                                              SizedBox(
-                                                                                child: Text(
-                                                                                  "LV:${levelnumbers[index].toInt()}",
-                                                                                  style: const TextStyle(
-                                                                                    //fontWeight: FontWeight.bold,
-                                                                                    color: Colors.white,
-                                                                                    fontSize: 20,
-                                                                                    fontWeight: FontWeight.bold,
-                                                                                    height: 1.1,
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                              Expanded(
-                                                                                child: Slider(
-                                                                                  value: levelnumbers[index],
-                                                                                  min: 1,
-                                                                                  max: (data['maxlevel']).toDouble(),
-                                                                                  divisions: data['maxlevel'] - 1,
-                                                                                  activeColor: raritytocolor[relicData?['rarity']],
-                                                                                  inactiveColor: raritytocolor[relicData?['rarity']]?.withOpacity(0.5),
-                                                                                  onChanged: (double value) {
-                                                                                    setState(() {
-                                                                                      levelnumbers[index] = value;
-                                                                                    });
-                                                                                  },
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
                                                                     ],
                                                                   ),
                                                                 ),
@@ -444,34 +382,21 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                         ),
                                                       ),
                                                     ),
-                                                    if (data['effect'] != null)
+                                                    if (data.effect.isNotEmpty)
                                                       Container(
                                                         width: double.infinity,
                                                         margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                         decoration: BoxDecoration(
                                                           color: Colors.black.withOpacity(0.5),
-                                                          borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                                                          borderRadius:
+                                                              const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
                                                         ),
                                                         child: Column(
                                                           mainAxisAlignment: MainAxisAlignment.center,
                                                           crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: List.generate(data['effect'].length, (index2) {
-                                                            String levelmulti = "";
-
-                                                            if (data['levelmultiplier'] != null) {
-                                                              Map<String, dynamic> leveldata2 = (data['levelmultiplier']![(data['effect'][index2]['multiplier']) - 1]);
-                                                              String levelnum2 = (levelnumbers[index].toStringAsFixed(0));
-
-                                                              if (leveldata2['default'] == null) {
-                                                                levelmulti = leveldata2[levelnum2].toString();
-                                                              } else {
-                                                                levelmulti = leveldata2['default'].toString();
-                                                              }
-                                                            } else {
-                                                              levelmulti = data['effect'][index2]['multiplier'].toString();
-                                                            }
-
+                                                          children: List.generate(data.effect.length, (index2) {
+                                                            String levelmulti = data.effect[index2].multiplier.toString();
                                                             return SingleChildScrollView(
                                                               scrollDirection: Axis.horizontal,
                                                               child: Scrollbar(
@@ -485,7 +410,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                                             color: Colors.amber,
                                                                             borderRadius: BorderRadius.circular(5),
                                                                           ),
-                                                                          child: Text(data['effect'][index2]['type'],
+                                                                          child: Text(data.effect[index2].type,
                                                                               style: const TextStyle(
                                                                                 //fontWeight: FontWeight.bold,
                                                                                 color: Colors.black,
@@ -493,7 +418,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                                                 fontWeight: FontWeight.bold,
                                                                                 height: 1.1,
                                                                               )).tr()),
-                                                                      if (data['effect'][index2]['referencetarget'] != null)
+                                                                      if (data.effect[index2].referencetarget != '')
                                                                         Container(
                                                                             margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                             padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -503,10 +428,10 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                                             ),
                                                                             child: Text(
                                                                                 ('lang'.tr() == 'en')
-                                                                                    ? data['effect'][index2]['referencetargetEN']!
+                                                                                    ? data.effect[index2].referencetargetEN
                                                                                     : (('lang'.tr() == 'cn')
-                                                                                        ? data['effect'][index2]['referencetargetCN']!
-                                                                                        : data['effect'][index2]['referencetargetJP']!),
+                                                                                        ? data.effect[index2].referencetargetCN
+                                                                                        : data.effect[index2].referencetargetJP),
                                                                                 style: const TextStyle(
                                                                                   //fontWeight: FontWeight.bold,
                                                                                   color: Colors.black,
@@ -514,16 +439,16 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                                                   fontWeight: FontWeight.bold,
                                                                                   height: 1.1,
                                                                                 ))),
-                                                                      if (data['effect'][index2]['multipliertarget'] != null)
+                                                                      if (data.effect[index2].multipliertarget != '')
                                                                         Container(
                                                                             margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                             padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                             decoration: BoxDecoration(
-                                                                              color: typetocolor[(data['effect'][index2]['type'])],
+                                                                              color: typetocolor[(data.effect[index2].type)],
                                                                               borderRadius: BorderRadius.circular(5),
                                                                             ),
                                                                             child: Text(
-                                                                                '${(data['effect'][index2]['multipliertarget'] as String).tr()}$levelmulti${((data['effect'][index2]['multipliertarget']) != '') ? "%" : ""}',
+                                                                                '${(data.effect[index2].multipliertarget as String).tr()}$levelmulti${((data.effect[index2].multipliertarget) != '') ? "%" : ""}',
                                                                                 style: const TextStyle(
                                                                                   //fontWeight: FontWeight.bold,
                                                                                   color: Colors.black,
@@ -531,7 +456,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                                                   fontWeight: FontWeight.bold,
                                                                                   height: 1.1,
                                                                                 ))),
-                                                                      if (data['effect'][index2]['addtarget'] != null)
+                                                                      if (data.effect[index2].addtarget != '')
                                                                         Container(
                                                                             margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                             padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -540,7 +465,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                                               borderRadius: BorderRadius.circular(5),
                                                                             ),
                                                                             child: Text(
-                                                                                '${(data['effect'][index2]['addtarget'] as String).tr()}$levelmulti${((data['effect'][index2]['addtarget']) != 'energy') ? "%" : ""}',
+                                                                                '${(data.effect[index2].addtarget as String).tr()}$levelmulti${((data.effect[index2].addtarget) != 'energy') ? "%" : ""}',
                                                                                 style: const TextStyle(
                                                                                   //fontWeight: FontWeight.bold,
                                                                                   color: Colors.black,
@@ -551,8 +476,8 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                                     ],
                                                                   ),
                                                                   Row(
-                                                                      children: List.generate(data['effect'][index2]['tag'].length, (index3) {
-                                                                    List<dynamic> taglist = data['effect'][index2]['tag'];
+                                                                      children: List.generate(data.effect[index2].tag.length, (index3) {
+                                                                    List<dynamic> taglist = data.effect[index2].tag;
 
                                                                     return Container(
                                                                         margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
@@ -603,12 +528,12 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                   Stack(
                     children: [
                       Hero(
-                        tag: namedata['imageUrl']!,
+                        tag: relicData.entity.imageurl,
                         child: Container(
                           width: columnwidth,
                           height: 100,
                           color: Colors.grey.withOpacity(0.6),
-                          child: Image.network(namedata['imageUrl']!, alignment: const Alignment(1, -0.5), fit: BoxFit.scaleDown, filterQuality: FilterQuality.medium),
+                          child: getImageComponent(relicData.entity.imageurl, imageWrap: true, fit: BoxFit.none, alignment: const Alignment(1, -0.5)),
                         ),
                       ),
                       Container(
@@ -619,7 +544,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                           padding: const EdgeInsets.fromLTRB(25, 25, 110, 25),
                           child: FittedBox(
                             child: Text(
-                              ('lang'.tr() == 'en') ? namedata['enname']! : (('lang'.tr() == 'cn') ? namedata['cnname']! : namedata['janame']!),
+                              relicData.getName(getLanguageCode(context)),
                               style: const TextStyle(
                                 //fontWeight: FontWeight.bold,
                                 color: Colors.white,

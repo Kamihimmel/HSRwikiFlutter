@@ -1,0 +1,97 @@
+import 'dart:convert';
+
+import '../components/global_state.dart';
+import '../utils/helper.dart';
+import '../utils/logging.dart';
+import 'character.dart';
+import 'character_entity.dart';
+
+class CharacterManager {
+  static final GlobalState _gs = GlobalState();
+  static final Map<String, Character> _characters = {};
+  static final String defaultCharacter = "1013";
+
+  CharacterManager._();
+
+  static Future<Map<String, Character>> initAllCharacters() async {
+    await _initFromLib();
+    return getCharacters();
+  }
+
+  static Future<void> _initFromLib() async {
+    try {
+      _characters.clear();
+      String jsonStr = await loadLibJsonString('lib/characterlist.json', cnMode: _gs.getAppConfig().cnMode);
+      final Map<String, dynamic> allCharacters = json.decode(jsonStr);
+      logger.d(json.encode(allCharacters));
+      for (var c in allCharacters['data']!) {
+        // get brief from list json
+        Character character = Character.fromJson(c, spoiler: c['spoiler'], supported: c['supported'] ?? true, order: c['order'] ?? 999);
+        _characters[c['id']] = character;
+      }
+    } catch (e) {
+      logger.e("load characters exception: ${e.toString()}");
+    }
+  }
+
+  static Map<String, Character> getCharacters({withDiy = false}) {
+    Map<String, Character> map = Map.from(_characters);
+    if (withDiy) {
+    }
+    return map;
+  }
+
+  /// sorted for side panel
+  static Map<String, Character> getSortedCharacters({withDiy = false, filterSupported = false}) {
+    Map<String, Character> map = getCharacters(withDiy: withDiy);
+    List<Character> cList = map.values.toList();
+    cList.sort((c1, c2) => c1.order.compareTo(c2.order));
+    Map<String, Character> result = {};
+    for (Character c in cList) {
+      if (filterSupported && !c.supported) {
+        continue;
+      }
+      result[c.entity.id] = map[c.entity.id]!;
+    }
+    return result;
+  }
+
+  static Character getCharacter(String id) {
+    return _characters[id]!;
+  }
+
+  static Character getDefaultCharacter() {
+    return getCharacter(defaultCharacter);
+  }
+
+  static Future<Character> _loadFromRemoteById(String id) async {
+    Character c = Character();
+    c.entity = CharacterEntity();
+    c.entity.id = id;
+    c.spoiler = false;
+    c.supported = true;
+    c.order = 999;
+    return loadFromRemote(c);
+  }
+
+  static Future<Character> loadFromRemote(Character c) async {
+    if (c.loaded) {
+      return c;
+    }
+    if (_characters.containsKey(c.entity.id) && _characters[c.entity.id]!.loaded) {
+      return _characters[c.entity.id]!;
+    }
+    String jsonStr = await loadLibJsonString(c.entity.infourl, cnMode: _gs.getAppConfig().cnMode);
+    final Map<String, dynamic> characterMap = json.decode(jsonStr);
+    logger.d(json.encode(characterMap));
+    Character character = Character.fromJson(characterMap, spoiler: c.spoiler, supported: c.supported, order: c.order);
+    character.loaded = true;
+    _characters[c.entity.id] = character;
+    logger.i("loaded character: ${character.entity.id}");
+    return character;
+  }
+
+  static List<String> getCharacterIds() {
+    return _characters.keys.toList();
+  }
+}

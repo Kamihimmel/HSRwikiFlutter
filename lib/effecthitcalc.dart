@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 
 import 'ad_helper.dart';
 import 'platformad_stub.dart' if (dart.library.io) 'platformad_stub.dart' if (dart.library.html) 'platformad.dart';
+import 'utils/logging.dart';
 
 class EffecthitCalcPage extends StatefulWidget {
   final String jsonUrl;
@@ -35,7 +36,7 @@ class _EffecthitCalcPageState extends State<EffecthitCalcPage> {
           });
         },
         onAdFailedToLoad: (ad, err) {
-          print('Failed to load a banner ad: ${err.message}');
+          logger.e('Failed to load a banner ad: ${err.message}');
           _isBannerAdReady = false;
           ad.dispose();
         },

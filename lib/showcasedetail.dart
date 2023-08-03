@@ -12,7 +12,9 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'characters/character_manager.dart';
 import 'info.dart';
+import 'utils/logging.dart';
 
 class ShowcaseDetailPage extends StatefulWidget {
   final List<Character> characterinfo;
@@ -1515,7 +1517,7 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
         return "images/characters/mcmf.webp";
       }
     } else {
-      return idtoimage[character.id]!;
+      return CharacterManager.getCharacter(character.id).entity.imageurl;
     }
   }
 }

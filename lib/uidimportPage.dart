@@ -4,11 +4,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
-import 'package:hsrwikiproject/info.dart';
-import 'package:hsrwikiproject/showcasedetail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:transparent_image/transparent_image.dart';
+
+import 'characters/character_manager.dart';
+import 'info.dart';
+import 'relics/relic_manager.dart';
+import 'showcasedetail.dart';
+import 'utils/logging.dart';
+import 'calculator/player_info.dart';
 
 extension HexString on String {
   int getHexValue() => int.parse(replaceAll('#', '0xff'));
@@ -59,7 +64,6 @@ class _UidimportpageState extends State<Uidimportpage> {
   TextEditingController uidController = TextEditingController(text: '');
 
   String uid = "";
-  late Map<String, dynamic> returndata;
   String avatarimage = "";
   String nickname = "";
   String level = "";
@@ -234,8 +238,13 @@ class _UidimportpageState extends State<Uidimportpage> {
                                     });
                                     return;
                                   }
-                                  returndata = jsonDecode(utf8.decode(resp.bodyBytes));
-                                  print(returndata['player']);
+                                  Map<String, dynamic> returndata = jsonDecode(utf8.decode(resp.bodyBytes));
+                                  if (RelicManager.getRelicIds().isEmpty) {
+                                    await RelicManager.initAllRelics();
+                                  }
+                                  PlayerInfo playerInfo = PlayerInfo.fromImportJson(returndata);
+                                  logger.d(playerInfo);
+                                  logger.d(returndata['player']);
                                   nickname = returndata['player']['nickname'];
 
                                   level = returndata['player']['level'].toString();
@@ -246,9 +255,6 @@ class _UidimportpageState extends State<Uidimportpage> {
                                     await prefs.setString('avatarimage', avatarimage);
                                     await prefs.setString('level', level);
                                   }
-
-                                  print(avatarimage);
-
                                   final List<Character> newCharacters = List<Character>.from(
                                       returndata['characters'].map((json) => Character(json['id'] as String, DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()), json as Map<String, dynamic>)));
 
@@ -579,7 +585,7 @@ class _UidimportpageState extends State<Uidimportpage> {
         return "images/characters/mcmf.webp";
       }
     } else {
-      return idtoimage[character.id]!;
+      return CharacterManager.getCharacter(character.id).entity.imageurl;
     }
   }
 }

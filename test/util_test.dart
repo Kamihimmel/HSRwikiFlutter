@@ -1,3 +1,5 @@
+import 'package:hsrwikiproject/utils/logging.dart';
+
 RegExp regExp =
     new RegExp(r"{param(?<index>\d+):(?:F(?<precision>\d+))?(?<percent>P?)}");
 
@@ -73,8 +75,8 @@ void main() {
     if (d.isEmpty) {
       continue;
     }
-    print(desc[i]);
-    print(parseDesc(desc[i], params));
-    print('------------------------------------------');
+    logger.i(desc[i]);
+    logger.i(parseDesc(desc[i], params));
+    logger.i('------------------------------------------');
   }
 }

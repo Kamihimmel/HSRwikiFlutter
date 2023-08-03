@@ -51,6 +51,10 @@ dependencies:
   fluttertoast: ^8.2.2
   google_mobile_ads: ^3.0.0
   in_app_purchase: ^3.1.7
+  stack_trace: ^1.11.0
+  logger: ^1.4.0
+  provider: ^6.0.5
+  math_expressions: ^2.4.0
 
 dependency_overrides:
   webview_flutter_wkwebview: 3.5.0
