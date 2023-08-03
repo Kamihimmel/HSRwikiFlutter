@@ -1,30 +1,38 @@
-import 'dart:convert';
 import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:responsive_grid/responsive_grid.dart';
-import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'package:transparent_image/transparent_image.dart';
-import 'ad_helper.dart';
-import 'info.dart';
-import 'platformad_stub.dart' if (dart.library.io) 'platformad_stub.dart' if (dart.library.html) 'platformad.dart';
+import '../ad_helper.dart';
+import '../characters/character.dart';
+import '../characters/character_entity.dart';
+import '../characters/character_manager.dart';
+import '../info.dart';
+import '../platformad_stub.dart' if (dart.library.io) '../platformad_stub.dart' if (dart.library.html) '../platformad.dart';
+import '../utils/helper.dart';
+import '../utils/logging.dart';
+import 'global_state.dart';
 
-class ChracterDetailPage extends StatefulWidget {
-  final String jsonUrl;
-  const ChracterDetailPage({super.key, required this.jsonUrl});
+/// 角色详情
+class CharacterDetailPage extends StatefulWidget {
+  final Character characterBasic;
+
+  const CharacterDetailPage({super.key, required this.characterBasic});
 
   @override
-  State<ChracterDetailPage> createState() => _ChracterDetailPageState();
+  State<CharacterDetailPage> createState() => _CharacterDetailPageState();
 }
 
-class _ChracterDetailPageState extends State<ChracterDetailPage> {
-  Map<String, dynamic>? characterData;
+class _CharacterDetailPageState extends State<CharacterDetailPage> {
+  final GlobalState _gs = GlobalState();
+  Character characterData = Character();
   bool isLoading = true;
 
   BannerAd? _bannerAd;
   bool _isBannerAdReady = false;
+
   @override
   void initState() {
     super.initState();
@@ -40,14 +48,14 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
           });
         },
         onAdFailedToLoad: (ad, err) {
-          print('Failed to load a banner ad: ${err.message}');
+          logger.e('Failed to load a banner ad: ${err.message}');
           _isBannerAdReady = false;
           ad.dispose();
         },
       ),
     ).load();
 
-    _getData(widget.jsonUrl);
+    _getData();
   }
 
   @override
@@ -59,28 +67,25 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
   }
 
   final ScrollController _scrollController = ScrollController();
-  late List<dynamic> levelData;
-  late List<dynamic> skillData;
-  late List<dynamic> traceData;
-  late List<dynamic> eidolonData;
+  late List<CharacterLeveldata> levelData;
+  late List<CharacterSkilldata> skillData;
+  late List<CharacterTracedata> traceData;
+  late List<CharacterEidolon> eidolonData;
   late int attributeCount;
   late double _currentSliderValue;
   late List<double> levelnumbers;
   late List<double> levelnumbers3;
 
-  Future<void> _getData(String url) async {
-    final response = await http.get(Uri.parse(url));
-    final Map<String, dynamic> jsonData = json.decode(response.body);
-    characterData = jsonData;
-    levelData = characterData!['leveldata'];
-    skillData = characterData!['skilldata'];
-    traceData = characterData!['tracedata'];
-    eidolonData = characterData!['eidolon'];
+  Future<void> _getData() async {
+    characterData = await CharacterManager.loadFromRemote(widget.characterBasic);
+    levelData = characterData.entity.leveldata;
+    skillData = characterData.entity.skilldata;
+    traceData = characterData.entity.tracedata;
+    eidolonData = characterData.entity.eidolon;
     _currentSliderValue = levelData.length - 1.0;
     levelnumbers = List.generate(skillData.length, (index) => 8);
     levelnumbers3 = List.generate(eidolonData.length, (index) => 8);
     attributeCount = levelData.length;
-    print(characterData);
     setState(() {
       isLoading = false;
     });
@@ -88,7 +93,13 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, String> namedata = ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+    final String cid = ModalRoute.of(context)!.settings.arguments as String;
+    final Character routeCharacter = CharacterManager.getCharacter(cid);
+    logger.i("navigate to character: $cid");
+    if (!characterData.loaded) {
+      characterData = routeCharacter;
+      _getData();
+    }
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final columnwidth = screenWidth > 1440
@@ -113,17 +124,16 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
       child: Stack(
         children: [
           if (!isLoading)
-            FadeInImage.memoryNetwork(
-              placeholder: kTransparentImage,
-              image: (gender == false && characterData!['imagelargeurlalter'] != null) ? urlendpoint + characterData!['imagelargeurlalter'] : urlendpoint + characterData!['imagelargeurl'],
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              fit: BoxFit.fitHeight,
-            ),
+            getImageComponent(
+                characterData.getImageLargeUrl(_gs),
+                placeholder: kTransparentImage,
+                fit: BoxFit.fitHeight,
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width),
           Scaffold(
             backgroundColor: Colors.black.withOpacity(0.1),
             appBar: AppBar(
-              title: Text(('lang'.tr() == 'en') ? namedata['enname']! : (('lang'.tr() == 'cn') ? namedata['cnname']! : namedata['janame']!)),
+              title: Text(characterData.getName(getLanguageCode(context))),
             ),
             body: SingleChildScrollView(
               child: Column(
@@ -164,21 +174,17 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                         decoration: BoxDecoration(
                                                           borderRadius: const BorderRadius.all(Radius.circular(10)),
                                                           border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                          gradient: LinearGradient(
-                                                              begin: Alignment.topLeft,
-                                                              end: Alignment.bottomRight,
-                                                              colors: [etocolor[namedata['etype']!]?.withOpacity(0.35) as Color, etocolor[namedata['etype']!]?.withOpacity(0.5) as Color]),
+                                                          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
+                                                            routeCharacter.elementType.color.withOpacity(0.35),
+                                                            routeCharacter.elementType.color.withOpacity(0.5)
+                                                          ]),
                                                         ),
                                                         child: Row(
                                                           mainAxisAlignment: MainAxisAlignment.center,
                                                           children: [
-                                                            Image.network(
-                                                              urlendpoint + etoimage[characterData!['etype']!]!,
-                                                              filterQuality: FilterQuality.medium,
-                                                              height: 50,
-                                                            ),
+                                                            getImageComponent(characterData.elementType.icon, imageWrap: true, width: 50),
                                                             Text(
-                                                              characterData!['etype'],
+                                                              characterData.elementType.key,
                                                               style: const TextStyle(
                                                                 //fontWeight: FontWeight.bold,
                                                                 color: Colors.white,
@@ -208,21 +214,17 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                         decoration: BoxDecoration(
                                                           borderRadius: const BorderRadius.all(Radius.circular(10)),
                                                           border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                          gradient: LinearGradient(
-                                                              begin: Alignment.topLeft,
-                                                              end: Alignment.bottomRight,
-                                                              colors: [etocolor[namedata['etype']!]?.withOpacity(0.35) as Color, etocolor[namedata['etype']!]?.withOpacity(0.5) as Color]),
+                                                          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
+                                                            routeCharacter.elementType.color.withOpacity(0.35),
+                                                            routeCharacter.elementType.color.withOpacity(0.5)
+                                                          ]),
                                                         ),
                                                         child: Row(
                                                           mainAxisAlignment: MainAxisAlignment.center,
                                                           children: [
-                                                            Image.network(
-                                                              urlendpoint + wtoimage[characterData!['wtype']!]!,
-                                                              filterQuality: FilterQuality.medium,
-                                                              height: 50,
-                                                            ),
+                                                          getImageComponent(characterData.pathType.icon, imageWrap: true, width: 50),
                                                             Text(
-                                                              characterData!['wtype'],
+                                                              characterData.pathType.key,
                                                               style: const TextStyle(
                                                                 //fontWeight: FontWeight.bold,
                                                                 color: Colors.white,
@@ -253,10 +255,10 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                   decoration: BoxDecoration(
                                                     borderRadius: const BorderRadius.all(Radius.circular(10)),
                                                     border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                    gradient: LinearGradient(
-                                                        begin: Alignment.topLeft,
-                                                        end: Alignment.bottomRight,
-                                                        colors: [etocolor[namedata['etype']!]?.withOpacity(0.35) as Color, etocolor[namedata['etype']!]?.withOpacity(0.5) as Color]),
+                                                    gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
+                                                      routeCharacter.elementType.color.withOpacity(0.35),
+                                                      routeCharacter.elementType.color.withOpacity(0.5)
+                                                    ]),
                                                   ),
                                                   child: Column(
                                                     children: [
@@ -268,7 +270,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                             SizedBox(
                                                               width: 100,
                                                               child: Text(
-                                                                "LV:${levelData[_currentSliderValue.toInt()]['level']}",
+                                                                "LV:${levelData[_currentSliderValue.toInt()].level}",
                                                                 style: const TextStyle(
                                                                   //fontWeight: FontWeight.bold,
                                                                   color: Colors.white,
@@ -284,8 +286,8 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                 min: 0,
                                                                 max: (attributeCount - 1).toDouble(),
                                                                 divisions: attributeCount - 1,
-                                                                activeColor: etocolor[namedata['etype']!],
-                                                                inactiveColor: etocolor[namedata['etype']!]?.withOpacity(0.5),
+                                                                activeColor: routeCharacter.elementType.color,
+                                                                inactiveColor: routeCharacter.elementType.color.withOpacity(0.5),
                                                                 onChanged: (double value) {
                                                                   setState(() {
                                                                     _currentSliderValue = value;
@@ -318,7 +320,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                               ],
                                                             ),
                                                             Text(
-                                                              levelData[_currentSliderValue.toInt()]['hp'].toStringAsFixed(0),
+                                                              levelData[_currentSliderValue.toInt()].hp.toStringAsFixed(0),
                                                               style: const TextStyle(
                                                                 //fontWeight: FontWeight.bold,
                                                                 color: Colors.white,
@@ -352,7 +354,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                               ],
                                                             ),
                                                             Text(
-                                                              levelData[_currentSliderValue.toInt()]['atk'].toStringAsFixed(0),
+                                                              levelData[_currentSliderValue.toInt()].atk.toStringAsFixed(0),
                                                               style: const TextStyle(
                                                                 //fontWeight: FontWeight.bold,
                                                                 color: Colors.white,
@@ -386,7 +388,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                               ],
                                                             ),
                                                             Text(
-                                                              levelData[_currentSliderValue.toInt()]['def'].toStringAsFixed(0),
+                                                              levelData[_currentSliderValue.toInt()].def.toStringAsFixed(0),
                                                               style: const TextStyle(
                                                                 //fontWeight: FontWeight.bold,
                                                                 color: Colors.white,
@@ -420,7 +422,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                               ],
                                                             ),
                                                             Text(
-                                                              characterData!['dspeed'].toString(),
+                                                              characterData.entity.dspeed.toString(),
                                                               style: const TextStyle(
                                                                 //fontWeight: FontWeight.bold,
                                                                 color: Colors.white,
@@ -457,7 +459,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                               ],
                                                             ),
                                                             Text(
-                                                              characterData!['dtaunt'].toString(),
+                                                              characterData.entity.dtaunt.toString(),
                                                               style: const TextStyle(
                                                                 //fontWeight: FontWeight.bold,
                                                                 color: Colors.white,
@@ -494,7 +496,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                               ],
                                                             ),
                                                             Text(
-                                                              characterData!['maxenergy'].toString(),
+                                                              characterData.entity.maxenergy.toString(),
                                                               style: const TextStyle(
                                                                 //fontWeight: FontWeight.bold,
                                                                 color: Colors.white,
@@ -514,11 +516,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                           ),
                                           if (screenWidth > 905)
                                             Expanded(
-                                              child: Image.network(
-                                                  (gender == false && characterData!['imagelargeurlalter'] != null)
-                                                      ? urlendpoint + characterData!['imagelargeurlalter']
-                                                      : urlendpoint + characterData!['imagelargeurl'],
-                                                  filterQuality: FilterQuality.medium),
+                                              child: getImageComponent(characterData.getImageLargeUrl(_gs), imageWrap: true)
                                             ),
                                           if (screenWidth < 905)
                                             Container(
@@ -533,18 +531,17 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                     decoration: BoxDecoration(
                                                       borderRadius: const BorderRadius.all(Radius.circular(15)),
                                                       border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                      gradient:
-                                                          LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.black.withOpacity(0.7), Colors.black.withOpacity(0.9)]),
+                                                      gradient: LinearGradient(
+                                                          begin: Alignment.topLeft,
+                                                          end: Alignment.bottomRight,
+                                                          colors: [Colors.black.withOpacity(0.7), Colors.black.withOpacity(0.9)]),
                                                     ),
-                                                    child: FadeInImage.memoryNetwork(
+                                                    child: getImageComponent(
+                                                        characterData.getImageLargeUrl(_gs),
                                                         placeholder: kTransparentImage,
-                                                        image: (gender == false && characterData!['imagelargeurlalter'] != null)
-                                                            ? urlendpoint + characterData!['imagelargeurlalter']
-                                                            : urlendpoint + characterData!['imagelargeurl'],
-                                                        height: MediaQuery.of(context).size.width,
-                                                        width: MediaQuery.of(context).size.width,
-                                                        fit: BoxFit.cover,
-                                                        filterQuality: FilterQuality.medium)),
+                                                        height: MediaQuery.of(context).size.height,
+                                                        width: MediaQuery.of(context).size.width)
+                                                ),
                                               ),
                                             ),
                                         ],
@@ -578,15 +575,21 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                 final data = skillData[index];
                                                 String fixedtext = "";
 
-                                                String detailtext = ('lang'.tr() == 'en') ? data['DescriptionEN']! : (('lang'.tr() == 'cn') ? data['DescriptionCN']! : data['DescriptionJP']!);
-                                                if (data['maxlevel'] > 0) {
-                                                  List<dynamic> multiplierData = data['levelmultiplier']!;
+                                                String detailtext = characterData.getSkillDescription(index, getLanguageCode(context));
+                                                if (data.maxlevel > 0) {
+                                                  List<Map<String, double>> multiplierData = data.levelmultiplier.map((e) {
+                                                    Map<String, double> m = {};
+                                                    for (var entry in e.entries) {
+                                                      m[entry.key] = num.tryParse(entry.value.toString())?.toDouble() ?? 0;
+                                                    }
+                                                    return m;
+                                                  }).toList();
 
                                                   int multicount = multiplierData.length;
                                                   fixedtext = detailtext;
 
                                                   for (var i = multicount; i >= 1; i--) {
-                                                    Map<String, dynamic> currentleveldata = multiplierData[i - 1];
+                                                    Map<String, double> currentleveldata = multiplierData[i - 1];
                                                     String levelnum = (levelnumbers[index].toStringAsFixed(0));
 
                                                     if (currentleveldata['default'] == null) {
@@ -614,24 +617,20 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                             filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                                                             child: Container(
                                                               decoration: BoxDecoration(
-                                                                borderRadius: (data['effect'] != null)
+                                                                borderRadius: (data.effect.isNotEmpty)
                                                                     ? const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
                                                                     : const BorderRadius.all(Radius.circular(15)),
                                                                 border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                                gradient: LinearGradient(
-                                                                    begin: Alignment.topLeft,
-                                                                    end: Alignment.bottomRight,
-                                                                    colors: [etocolor[namedata['etype']!]?.withOpacity(0.35) as Color, Colors.black.withOpacity(0.5) as Color]),
+                                                                gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
+                                                                  routeCharacter.elementType.color.withOpacity(0.35),
+                                                                  Colors.black.withOpacity(0.5)
+                                                                ]),
                                                               ),
                                                               child: Row(
                                                                 children: [
                                                                   Container(
                                                                     margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                                                                    child: Image.network(
-                                                                      urlendpoint + data['imageurl']!,
-                                                                      filterQuality: FilterQuality.medium,
-                                                                      width: 100,
-                                                                    ),
+                                                                    child: getImageComponent(data.imageurl, imageWrap: true, width: 100),
                                                                   ),
                                                                   Expanded(
                                                                     child: Padding(
@@ -639,7 +638,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                       child: Column(
                                                                         children: [
                                                                           Text(
-                                                                            ('lang'.tr() == 'en') ? data['ENname']! : (('lang'.tr() == 'cn') ? data['CNname']! : data['JAname']!),
+                                                                            characterData.getSkillName(index, getLanguageCode(context)),
                                                                             style: const TextStyle(
                                                                               color: Colors.white,
                                                                               fontWeight: FontWeight.bold,
@@ -654,7 +653,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                             ),
                                                                             maxLines: 10,
                                                                           ),
-                                                                          if (data['maxlevel']! > 0)
+                                                                          if (data.maxlevel > 0)
                                                                             Padding(
                                                                               padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                                                                               child: Row(
@@ -676,10 +675,10 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                                     child: Slider(
                                                                                       value: levelnumbers[index],
                                                                                       min: 1,
-                                                                                      max: (data['maxlevel']).toDouble(),
-                                                                                      divisions: data['maxlevel'] - 1,
-                                                                                      activeColor: etocolor[namedata['etype']!],
-                                                                                      inactiveColor: etocolor[namedata['etype']!]?.withOpacity(0.5),
+                                                                                      max: (data.maxlevel).toDouble(),
+                                                                                      divisions: data.maxlevel - 1,
+                                                                                      activeColor: routeCharacter.elementType.color,
+                                                                                      inactiveColor: routeCharacter.elementType.color.withOpacity(0.5),
                                                                                       onChanged: (double value) {
                                                                                         setState(() {
                                                                                           levelnumbers[index] = value;
@@ -699,23 +698,25 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                             ),
                                                           ),
                                                         ),
-                                                        if (data['effect'] != null)
+                                                        if (data.effect.isNotEmpty)
                                                           Container(
                                                             width: double.infinity,
                                                             margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                             decoration: BoxDecoration(
                                                               color: Colors.black.withOpacity(0.8),
-                                                              borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                                                              borderRadius:
+                                                                  const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
                                                             ),
                                                             child: Column(
                                                               mainAxisAlignment: MainAxisAlignment.center,
                                                               crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: List.generate(data['effect'].length, (index2) {
+                                                              children: List.generate(data.effect.length, (index2) {
                                                                 String levelmulti = "";
 
-                                                                if (data['levelmultiplier'] != null) {
-                                                                  Map<String, dynamic> leveldata2 = (data['levelmultiplier']![(data['effect'][index2]['multiplier']) - 1]);
+                                                                if (data.levelmultiplier.isNotEmpty) {
+                                                                  Map<String, dynamic> leveldata2 =
+                                                                      (data.levelmultiplier[data.effect[index2].multiplier.toInt() - 1]);
                                                                   String levelnum2 = (levelnumbers[index].toStringAsFixed(0));
 
                                                                   if (leveldata2['default'] == null) {
@@ -724,7 +725,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                     levelmulti = leveldata2['default'].toString();
                                                                   }
                                                                 } else {
-                                                                  levelmulti = data['effect'][index2]['multiplier'].toString();
+                                                                  levelmulti = data.effect[index2].multiplier.toString();
                                                                 }
 
                                                                 return SingleChildScrollView(
@@ -740,7 +741,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                                 color: Colors.amber,
                                                                                 borderRadius: BorderRadius.circular(5),
                                                                               ),
-                                                                              child: Text(data['effect'][index2]['type'],
+                                                                              child: Text(data.effect[index2].type,
                                                                                   style: const TextStyle(
                                                                                     //fontWeight: FontWeight.bold,
                                                                                     color: Colors.black,
@@ -748,7 +749,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                                     fontWeight: FontWeight.bold,
                                                                                     height: 1.1,
                                                                                   )).tr()),
-                                                                          if (data['effect'][index2]['referencetarget'] != null)
+                                                                          if (data.effect[index2].referencetarget != '')
                                                                             Container(
                                                                                 margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                 padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -758,10 +759,10 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                                 ),
                                                                                 child: Text(
                                                                                     ('lang'.tr() == 'en')
-                                                                                        ? data['effect'][index2]['referencetargetEN']!
+                                                                                        ? data.effect[index2].referencetargetEN
                                                                                         : (('lang'.tr() == 'cn')
-                                                                                            ? data['effect'][index2]['referencetargetCN']!
-                                                                                            : data['effect'][index2]['referencetargetJP']!),
+                                                                                            ? data.effect[index2].referencetargetCN
+                                                                                            : data.effect[index2].referencetargetJP),
                                                                                     style: const TextStyle(
                                                                                       //fontWeight: FontWeight.bold,
                                                                                       color: Colors.black,
@@ -769,16 +770,16 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                                       fontWeight: FontWeight.bold,
                                                                                       height: 1.1,
                                                                                     ))),
-                                                                          if (data['effect'][index2]['multipliertarget'] != null)
+                                                                          if (data.effect[index2].multipliertarget != '')
                                                                             Container(
                                                                                 margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                 padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                                 decoration: BoxDecoration(
-                                                                                  color: typetocolor[(data['effect'][index2]['type'])],
+                                                                                  color: typetocolor[(data.effect[index2].type)],
                                                                                   borderRadius: BorderRadius.circular(5),
                                                                                 ),
                                                                                 child: Text(
-                                                                                    '${(data['effect'][index2]['multipliertarget'] as String).tr()}$levelmulti${((data['effect'][index2]['multipliertarget']) != '') ? "%" : ""}',
+                                                                                    '${(data.effect[index2].multipliertarget).tr()}$levelmulti${((data.effect[index2].multipliertarget) != '') ? "%" : ""}',
                                                                                     style: const TextStyle(
                                                                                       //fontWeight: FontWeight.bold,
                                                                                       color: Colors.black,
@@ -786,7 +787,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                                       fontWeight: FontWeight.bold,
                                                                                       height: 1.1,
                                                                                     ))),
-                                                                          if (data['effect'][index2]['addtarget'] != null)
+                                                                          if (data.effect[index2].addtarget != '')
                                                                             Container(
                                                                                 margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                 padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -795,7 +796,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                                   borderRadius: BorderRadius.circular(5),
                                                                                 ),
                                                                                 child: Text(
-                                                                                    '${(data['effect'][index2]['addtarget'] as String).tr()}$levelmulti${((data['effect'][index2]['addtarget']) != 'energy') && ((data['effect'][index2]['addtarget']) != 'speedpt') ? "%" : ""}',
+                                                                                    '${(data.effect[index2].addtarget).tr()}$levelmulti${((data.effect[index2].addtarget) != 'energy') && ((data.effect[index2].addtarget) != 'speedpt') ? "%" : ""}',
                                                                                     style: const TextStyle(
                                                                                       //fontWeight: FontWeight.bold,
                                                                                       color: Colors.black,
@@ -806,8 +807,8 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                         ],
                                                                       ),
                                                                       Row(
-                                                                          children: List.generate(data['effect'][index2]['tag'].length, (index3) {
-                                                                        List<dynamic> taglist = data['effect'][index2]['tag'];
+                                                                          children: List.generate(data.effect[index2].tag.length, (index3) {
+                                                                        List<dynamic> taglist = data.effect[index2].tag;
 
                                                                         return Container(
                                                                             margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
@@ -842,13 +843,13 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                       child: Container(
                                                         width: 110,
                                                         decoration: BoxDecoration(
-                                                          color: etocolor[namedata['etype']!]?.withOpacity(0.3),
+                                                          color: routeCharacter.elementType.color.withOpacity(0.3),
                                                           borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
                                                         ),
                                                         child: Center(
                                                           child: Padding(
                                                             padding: const EdgeInsets.all(2.0),
-                                                            child: Text(data['stype']!,
+                                                            child: Text(data.stype,
                                                                 style: const TextStyle(
                                                                   //fontWeight: FontWeight.bold,
                                                                   color: Colors.white,
@@ -860,15 +861,16 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                         ),
                                                       ),
                                                     ),
-                                                    if (data['energy'] != null)
+                                                    if (data.energy > 0)
                                                       Positioned(
                                                         top: 10,
                                                         right: 130,
                                                         child: Container(
                                                           width: 80,
                                                           decoration: BoxDecoration(
-                                                            color: etocolor[namedata['etype']!]?.withOpacity(0.3),
-                                                            borderRadius: const BorderRadius.only(bottomRight: Radius.circular(15), bottomLeft: Radius.circular(15)),
+                                                            color: routeCharacter.elementType.color.withOpacity(0.3),
+                                                            borderRadius:
+                                                                const BorderRadius.only(bottomRight: Radius.circular(15), bottomLeft: Radius.circular(15)),
                                                           ),
                                                           child: Center(
                                                             child: Padding(
@@ -880,7 +882,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                     stattoimage['energylimit'],
                                                                     size: 15,
                                                                   ),
-                                                                  Text('${data['energy']!}',
+                                                                  Text('${data.energy}',
                                                                       style: const TextStyle(
                                                                         //fontWeight: FontWeight.bold,
                                                                         color: Colors.white,
@@ -888,64 +890,64 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                         fontSize: 18,
                                                                         fontWeight: FontWeight.bold,
                                                                         height: 1.1,
-                                                                      )).tr(),
+                                                                      )),
                                                                 ],
                                                               ),
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-                                                    if (data['weaknessbreak'] != null && data['energyregen'] != null)
-                                                      Positioned(
-                                                        top: 10,
-                                                        right: 10,
-                                                        child: Container(
-                                                          width: 110,
-                                                          decoration: BoxDecoration(
-                                                            color: etocolor[namedata['etype']!]?.withOpacity(0.3),
-                                                            borderRadius: const BorderRadius.only(topRight: Radius.circular(15), bottomLeft: Radius.circular(15)),
-                                                          ),
-                                                          child: Center(
-                                                            child: Padding(
-                                                              padding: const EdgeInsets.all(2.0),
-                                                              child: Row(
-                                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                                children: [
-                                                                  ImageIcon(
-                                                                    stattoimage['breakup'],
-                                                                    size: 15,
-                                                                  ),
-                                                                  Text('${data['weaknessbreak']!}',
-                                                                      style: const TextStyle(
-                                                                        //fontWeight: FontWeight.bold,
-                                                                        color: Colors.white,
+                                                    Positioned(
+                                                      top: 10,
+                                                      right: 10,
+                                                      child: Container(
+                                                        width: 110,
+                                                        decoration: BoxDecoration(
+                                                          color: routeCharacter.elementType.color.withOpacity(0.3),
+                                                          borderRadius:
+                                                              const BorderRadius.only(topRight: Radius.circular(15), bottomLeft: Radius.circular(15)),
+                                                        ),
+                                                        child: Center(
+                                                          child: Padding(
+                                                            padding: const EdgeInsets.all(2.0),
+                                                            child: Row(
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              children: [
+                                                                ImageIcon(
+                                                                  stattoimage['breakup'],
+                                                                  size: 15,
+                                                                ),
+                                                                Text('${data.weaknessbreak}',
+                                                                    style: const TextStyle(
+                                                                      //fontWeight: FontWeight.bold,
+                                                                      color: Colors.white,
 
-                                                                        fontSize: 18,
-                                                                        fontWeight: FontWeight.bold,
-                                                                        height: 1.1,
-                                                                      )).tr(),
-                                                                  const SizedBox(
-                                                                    width: 10,
-                                                                  ),
-                                                                  ImageIcon(
-                                                                    stattoimage['energyrecovery'],
-                                                                    size: 15,
-                                                                  ),
-                                                                  Text('${data['energyregen']!}',
-                                                                      style: const TextStyle(
-                                                                        //fontWeight: FontWeight.bold,
-                                                                        color: Colors.white,
+                                                                      fontSize: 18,
+                                                                      fontWeight: FontWeight.bold,
+                                                                      height: 1.1,
+                                                                    )),
+                                                                const SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                ImageIcon(
+                                                                  stattoimage['energyrecovery'],
+                                                                  size: 15,
+                                                                ),
+                                                                Text('${data.energyregen}',
+                                                                    style: const TextStyle(
+                                                                      //fontWeight: FontWeight.bold,
+                                                                      color: Colors.white,
 
-                                                                        fontSize: 18,
-                                                                        fontWeight: FontWeight.bold,
-                                                                        height: 1.1,
-                                                                      )).tr(),
-                                                                ],
-                                                              ),
+                                                                      fontSize: 18,
+                                                                      fontWeight: FontWeight.bold,
+                                                                      height: 1.1,
+                                                                    )),
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
                                                       ),
+                                                    ),
                                                   ],
                                                 );
                                               }),
@@ -980,9 +982,8 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                             Column(
                                               children: List.generate(traceData.length, (index) {
                                                 final data = traceData[index];
-                                                String detailtext = ('lang'.tr() == 'en') ? data['DescriptionEN']! : (('lang'.tr() == 'cn') ? data['DescriptionCN']! : data['DescriptionJP']!);
-
-                                                if (data['tiny'] == false) {
+                                                String detailtext = characterData.getTraceDescription(index, getLanguageCode(context));
+                                                if (!data.tiny) {
                                                   return Stack(
                                                     children: [
                                                       Column(
@@ -998,24 +999,20 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                               filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                                                               child: Container(
                                                                 decoration: BoxDecoration(
-                                                                  borderRadius: (data['effect'] != null)
+                                                                  borderRadius: (data.effect.isNotEmpty)
                                                                       ? const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
                                                                       : const BorderRadius.all(Radius.circular(15)),
                                                                   border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                                  gradient: LinearGradient(
-                                                                      begin: Alignment.topLeft,
-                                                                      end: Alignment.bottomRight,
-                                                                      colors: [etocolor[namedata['etype']!]?.withOpacity(0.35) as Color, Colors.black.withOpacity(0.5) as Color]),
+                                                                  gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
+                                                                    routeCharacter.elementType.color.withOpacity(0.35),
+                                                                    Colors.black.withOpacity(0.5)
+                                                                  ]),
                                                                 ),
                                                                 child: Row(
                                                                   children: [
                                                                     Container(
                                                                       margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                                                                      child: Image.network(
-                                                                        urlendpoint + data['imageurl']!,
-                                                                        filterQuality: FilterQuality.medium,
-                                                                        width: 100,
-                                                                      ),
+                                                                      child: getImageComponent(data.imageurl, imageWrap: true, width: 100),
                                                                     ),
                                                                     Expanded(
                                                                       child: Padding(
@@ -1023,7 +1020,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                         child: Column(
                                                                           children: [
                                                                             Text(
-                                                                              ('lang'.tr() == 'en') ? data['ENname']! : (('lang'.tr() == 'cn') ? data['CNname']! : data['JAname']!),
+                                                                              characterData.getTraceName(index, getLanguageCode(context)),
                                                                               style: const TextStyle(
                                                                                 color: Colors.white,
                                                                                 fontWeight: FontWeight.bold,
@@ -1047,19 +1044,20 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                               ),
                                                             ),
                                                           ),
-                                                          if (data['effect'] != null)
+                                                          if (data.effect.isNotEmpty)
                                                             Container(
                                                               width: double.infinity,
                                                               margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                               decoration: BoxDecoration(
                                                                 color: Colors.black.withOpacity(0.8),
-                                                                borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                                                                borderRadius:
+                                                                    const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
                                                               ),
                                                               padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                               child: Column(
                                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                                                children: List.generate(data['effect'].length, (index2) {
+                                                                children: List.generate(data.effect.length, (index2) {
                                                                   return SingleChildScrollView(
                                                                     scrollDirection: Axis.horizontal,
                                                                     child: Scrollbar(
@@ -1073,7 +1071,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                                   color: Colors.amber,
                                                                                   borderRadius: BorderRadius.circular(5),
                                                                                 ),
-                                                                                child: Text(data['effect'][index2]['type'],
+                                                                                child: Text(data.effect[index2].type,
                                                                                     style: const TextStyle(
                                                                                       //fontWeight: FontWeight.bold,
                                                                                       color: Colors.black,
@@ -1081,15 +1079,16 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                                       fontWeight: FontWeight.bold,
                                                                                       height: 1.1,
                                                                                     )).tr()),
-                                                                            if (data['effect'][index2]['multipliertarget'] != null)
+                                                                            if (data.effect[index2].multipliertarget != '')
                                                                               Container(
                                                                                   margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                   padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                                   decoration: BoxDecoration(
-                                                                                    color: typetocolor[(data['effect'][index2]['type'])],
+                                                                                    color: typetocolor[(data.effect[index2].type)],
                                                                                     borderRadius: BorderRadius.circular(5),
                                                                                   ),
-                                                                                  child: Text('${(data['effect'][index2]['multipliertarget'] as String).tr()}${data['effect'][index2]['multiplier']}%',
+                                                                                  child: Text(
+                                                                                      '${(data.effect[index2].multipliertarget).tr()}${data.effect[index2].multiplier}%',
                                                                                       style: const TextStyle(
                                                                                         //fontWeight: FontWeight.bold,
                                                                                         color: Colors.black,
@@ -1097,7 +1096,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                                         fontWeight: FontWeight.bold,
                                                                                         height: 1.1,
                                                                                       ))),
-                                                                            if (data['effect'][index2]['addtarget'] != null)
+                                                                            if (data.effect[index2].addtarget != '')
                                                                               Container(
                                                                                   margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                   padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -1106,7 +1105,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                                     borderRadius: BorderRadius.circular(5),
                                                                                   ),
                                                                                   child: Text(
-                                                                                      '${(data['effect'][index2]['addtarget'] as String).tr()}${data['effect'][index2]['multiplier']}${((data['effect'][index2]['addtarget']) != 'energy') ? "%" : ""}',
+                                                                                      '${(data.effect[index2].addtarget).tr()}${data.effect[index2].multiplier}${((data.effect[index2].addtarget) != 'energy') ? "%" : ""}',
                                                                                       style: const TextStyle(
                                                                                         //fontWeight: FontWeight.bold,
                                                                                         color: Colors.black,
@@ -1117,8 +1116,8 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                           ],
                                                                         ),
                                                                         Row(
-                                                                            children: List.generate(data['effect'][index2]['tag'].length, (index3) {
-                                                                          List<dynamic> taglist = data['effect'][index2]['tag'];
+                                                                            children: List.generate(data.effect[index2].tag.length, (index3) {
+                                                                          List<dynamic> taglist = data.effect[index2].tag;
 
                                                                           return Container(
                                                                               margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
@@ -1153,13 +1152,14 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                         child: Container(
                                                           width: 110,
                                                           decoration: BoxDecoration(
-                                                            color: etocolor[namedata['etype']!]?.withOpacity(0.3),
-                                                            borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                                                            color: routeCharacter.elementType.color.withOpacity(0.3),
+                                                            borderRadius:
+                                                                const BorderRadius.only(topLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
                                                           ),
                                                           child: Center(
                                                             child: Padding(
                                                               padding: const EdgeInsets.all(2.0),
-                                                              child: Text(data['stype']!,
+                                                              child: Text(data.stype,
                                                                   style: const TextStyle(
                                                                     //fontWeight: FontWeight.bold,
                                                                     color: Colors.white,
@@ -1171,29 +1171,6 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                           ),
                                                         ),
                                                       ),
-                                                      if (data['energy'] != null)
-                                                        Positioned(
-                                                          top: 0,
-                                                          right: 0,
-                                                          child: Container(
-                                                            width: 110,
-                                                            decoration: BoxDecoration(
-                                                              color: etocolor[namedata['etype']!]?.withOpacity(1),
-                                                              borderRadius: BorderRadius.circular(2),
-                                                            ),
-                                                            child: Center(
-                                                              child: Text('EP${data['energy']!}',
-                                                                  style: const TextStyle(
-                                                                    //fontWeight: FontWeight.bold,
-                                                                    color: Colors.white,
-
-                                                                    fontSize: 20,
-                                                                    fontWeight: FontWeight.bold,
-                                                                    height: 1.1,
-                                                                  )).tr(),
-                                                            ),
-                                                          ),
-                                                        ),
                                                     ],
                                                   );
                                                 } else {
@@ -1211,7 +1188,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                             Padding(
                                                               padding: const EdgeInsets.all(8.0),
                                                               child: ImageIcon(
-                                                                stattoimage[data['ttype']!],
+                                                                stattoimage[data.ttype],
                                                                 size: 40,
                                                               ),
                                                             ),
@@ -1221,7 +1198,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                 child: Column(
                                                                   children: [
                                                                     Text(
-                                                                      ('lang'.tr() == 'en') ? data['ENname']! : (('lang'.tr() == 'cn') ? data['CNname']! : data['JAname']!),
+                                                                      characterData.getTraceName(index, getLanguageCode(context)),
                                                                       style: const TextStyle(
                                                                         color: Colors.white,
                                                                         fontWeight: FontWeight.bold,
@@ -1243,19 +1220,20 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                           ],
                                                         ),
                                                       ),
-                                                      if (data['effect'] != null)
+                                                      if (data.effect.isNotEmpty)
                                                         Container(
                                                           width: double.infinity,
                                                           margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                           decoration: BoxDecoration(
                                                             color: Colors.black.withOpacity(0.8),
-                                                            borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                                                            borderRadius:
+                                                                const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
                                                           ),
                                                           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                           child: Column(
                                                             mainAxisAlignment: MainAxisAlignment.center,
                                                             crossAxisAlignment: CrossAxisAlignment.start,
-                                                            children: List.generate(data['effect'].length, (index2) {
+                                                            children: List.generate(data.effect.length, (index2) {
                                                               return SingleChildScrollView(
                                                                 scrollDirection: Axis.horizontal,
                                                                 child: Scrollbar(
@@ -1269,7 +1247,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                               color: Colors.amber,
                                                                               borderRadius: BorderRadius.circular(5),
                                                                             ),
-                                                                            child: Text(data['effect'][index2]['type'],
+                                                                            child: Text(data.effect[index2].type,
                                                                                 style: const TextStyle(
                                                                                   //fontWeight: FontWeight.bold,
                                                                                   color: Colors.black,
@@ -1277,7 +1255,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                                   fontWeight: FontWeight.bold,
                                                                                   height: 1.1,
                                                                                 )).tr()),
-                                                                        if (data['effect'][index2]['multipliertarget'] != null)
+                                                                        if (data.effect[index2].multipliertarget != '')
                                                                           Container(
                                                                               margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                               padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -1285,7 +1263,8 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                                 color: Colors.redAccent,
                                                                                 borderRadius: BorderRadius.circular(5),
                                                                               ),
-                                                                              child: Text('${(data['effect'][index2]['multipliertarget'] as String).tr()}${data['effect'][index2]['multiplier']}%',
+                                                                              child: Text(
+                                                                                  '${(data.effect[index2].multipliertarget).tr()}${data.effect[index2].multiplier}%',
                                                                                   style: const TextStyle(
                                                                                     //fontWeight: FontWeight.bold,
                                                                                     color: Colors.black,
@@ -1293,7 +1272,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                                     fontWeight: FontWeight.bold,
                                                                                     height: 1.1,
                                                                                   ))),
-                                                                        if (data['effect'][index2]['addtarget'] != null)
+                                                                        if (data.effect[index2].addtarget != '')
                                                                           Container(
                                                                               margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                               padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -1301,7 +1280,8 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                                 color: Colors.greenAccent,
                                                                                 borderRadius: BorderRadius.circular(5),
                                                                               ),
-                                                                              child: Text('${(data['effect'][index2]['addtarget'] as String).tr()}${data['effect'][index2]['multiplier']}%',
+                                                                              child: Text(
+                                                                                  '${(data.effect[index2].addtarget).tr()}${data.effect[index2].multiplier}%',
                                                                                   style: const TextStyle(
                                                                                     //fontWeight: FontWeight.bold,
                                                                                     color: Colors.black,
@@ -1312,8 +1292,8 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                       ],
                                                                     ),
                                                                     Row(
-                                                                        children: List.generate(data['effect'][index2]['tag'].length, (index3) {
-                                                                      List<dynamic> taglist = data['effect'][index2]['tag'];
+                                                                        children: List.generate(data.effect[index2].tag.length, (index3) {
+                                                                      List<dynamic> taglist = data.effect[index2].tag;
 
                                                                       return Container(
                                                                           margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
@@ -1375,24 +1355,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                             Column(
                                               children: List.generate(eidolonData.length, (index) {
                                                 final data = eidolonData[index];
-                                                String fixedtext = "";
-
-                                                String detailtext = ('lang'.tr() == 'en') ? data['DescriptionEN']! : (('lang'.tr() == 'cn') ? data['DescriptionCN']! : data['DescriptionJP']!);
-                                                if (data['maxlevel'] != null && data['maxlevel'] > 0) {
-                                                  List<dynamic> multiplierData = data['levelmultiplier']!;
-
-                                                  int multicount = multiplierData.length;
-
-                                                  for (var i = multicount; i >= 1; i--) {
-                                                    Map<String, dynamic> currentleveldata = multiplierData[i - 1];
-                                                    String levelnum = (levelnumbers3[index].toStringAsFixed(0));
-
-                                                    fixedtext = detailtext.replaceAll("[$i]", (currentleveldata[levelnum]).toString());
-                                                  }
-                                                } else {
-                                                  fixedtext = detailtext;
-                                                }
-
+                                                String fixedtext = characterData.getEidolonDescription(index, getLanguageCode(context));
                                                 return Stack(
                                                   children: [
                                                     Column(
@@ -1408,24 +1371,20 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                             filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                                                             child: Container(
                                                               decoration: BoxDecoration(
-                                                                borderRadius: (data['effect'] != null)
+                                                                borderRadius: (data.effect.isNotEmpty)
                                                                     ? const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
                                                                     : const BorderRadius.all(Radius.circular(15)),
                                                                 border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                                gradient: LinearGradient(
-                                                                    begin: Alignment.topLeft,
-                                                                    end: Alignment.bottomRight,
-                                                                    colors: [etocolor[namedata['etype']!]?.withOpacity(0.35) as Color, Colors.black.withOpacity(0.5) as Color]),
+                                                                gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
+                                                                  routeCharacter.elementType.color.withOpacity(0.35),
+                                                                  Colors.black.withOpacity(0.5)
+                                                                ]),
                                                               ),
                                                               child: Row(
                                                                 children: [
                                                                   Container(
                                                                     margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                                                                    child: Image.network(
-                                                                      urlendpoint + data['imageurl']!,
-                                                                      filterQuality: FilterQuality.medium,
-                                                                      width: 100,
-                                                                    ),
+                                                                    child: getImageComponent(data.imageurl, imageWrap: true, width: 100),
                                                                   ),
                                                                   Expanded(
                                                                     child: Padding(
@@ -1433,7 +1392,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                       child: Column(
                                                                         children: [
                                                                           Text(
-                                                                            ('lang'.tr() == 'en') ? data['ENname']! : (('lang'.tr() == 'cn') ? data['CNname']! : data['JAname']!),
+                                                                            characterData.getEidolonName(index, getLanguageCode(context)),
                                                                             style: const TextStyle(
                                                                               color: Colors.white,
                                                                               fontWeight: FontWeight.bold,
@@ -1448,42 +1407,6 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                             ),
                                                                             maxLines: 10,
                                                                           ),
-                                                                          if (data['maxlevel'] != null && data['maxlevel']! > 0)
-                                                                            Padding(
-                                                                              padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                                                              child: Row(
-                                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                                children: [
-                                                                                  SizedBox(
-                                                                                    child: Text(
-                                                                                      "LV:${levelnumbers3[index].toInt()}",
-                                                                                      style: const TextStyle(
-                                                                                        //fontWeight: FontWeight.bold,
-                                                                                        color: Colors.white,
-                                                                                        fontSize: 20,
-                                                                                        fontWeight: FontWeight.bold,
-                                                                                        height: 1.1,
-                                                                                      ),
-                                                                                    ),
-                                                                                  ),
-                                                                                  Expanded(
-                                                                                    child: Slider(
-                                                                                      value: levelnumbers3[index],
-                                                                                      min: 1,
-                                                                                      max: (data['maxlevel']).toDouble(),
-                                                                                      divisions: data['maxlevel'] - 1,
-                                                                                      activeColor: etocolor[namedata['etype']!],
-                                                                                      inactiveColor: etocolor[namedata['etype']!]?.withOpacity(0.5),
-                                                                                      onChanged: (double value) {
-                                                                                        setState(() {
-                                                                                          levelnumbers3[index] = value;
-                                                                                        });
-                                                                                      },
-                                                                                    ),
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                            ),
                                                                         ],
                                                                       ),
                                                                     ),
@@ -1493,29 +1416,23 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                             ),
                                                           ),
                                                         ),
-                                                        if (data['effect'] != null)
+                                                        if (data.effect.isNotEmpty)
                                                           Container(
                                                             width: double.infinity,
                                                             margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                             decoration: BoxDecoration(
                                                               color: Colors.black.withOpacity(0.8),
-                                                              borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                                                              borderRadius:
+                                                                  const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
                                                             ),
                                                             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                             child: Column(
                                                               mainAxisAlignment: MainAxisAlignment.center,
                                                               crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: List.generate(data['effect'].length, (index2) {
+                                                              children: List.generate(data.effect.length, (index2) {
                                                                 String levelmulti = "";
 
-                                                                if (data['effect'][index2]['multiplier'] != null) {
-                                                                  levelmulti = (data['effect'][index2]['multiplier']).toString();
-                                                                }
-                                                                if (data['maxlevel'] != null && data['maxlevel']! > 0) {
-                                                                  Map<String, dynamic> leveldata2 = (data['levelmultiplier']![(data['effect'][index2]['multiplier']) - 1]);
-                                                                  String levelnum2 = (levelnumbers3[index].toStringAsFixed(0));
-                                                                  levelmulti = leveldata2[levelnum2].toString();
-                                                                }
+                                                                levelmulti = (data.effect[index2].multiplier).toString();
 
                                                                 return SingleChildScrollView(
                                                                   scrollDirection: Axis.horizontal,
@@ -1530,7 +1447,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                                 color: Colors.amber,
                                                                                 borderRadius: BorderRadius.circular(5),
                                                                               ),
-                                                                              child: Text(data['effect'][index2]['type'],
+                                                                              child: Text(data.effect[index2].type,
                                                                                   style: const TextStyle(
                                                                                     //fontWeight: FontWeight.bold,
                                                                                     color: Colors.black,
@@ -1538,16 +1455,16 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                                     fontWeight: FontWeight.bold,
                                                                                     height: 1.1,
                                                                                   )).tr()),
-                                                                          if (data['effect'][index2]['multipliertarget'] != null)
+                                                                          if (data.effect[index2].multipliertarget != '')
                                                                             Container(
                                                                                 margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                 padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                                 decoration: BoxDecoration(
-                                                                                  color: typetocolor[(data['effect'][index2]['type'])],
+                                                                                  color: typetocolor[(data.effect[index2].type)],
                                                                                   borderRadius: BorderRadius.circular(5),
                                                                                 ),
                                                                                 child: Text(
-                                                                                    '${(data['effect'][index2]['multipliertarget'] as String).tr()}$levelmulti${((data['effect'][index2]['multipliertarget']) != '') && (data['effect'][index2]['multiplier'] != null) ? "%" : ""}',
+                                                                                    '${(data.effect[index2].multipliertarget).tr()}$levelmulti${((data.effect[index2].multipliertarget) != '') && (data.effect[index2].multiplier != '') ? "%" : ""}',
                                                                                     style: const TextStyle(
                                                                                       //fontWeight: FontWeight.bold,
                                                                                       color: Colors.black,
@@ -1555,7 +1472,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                                       fontWeight: FontWeight.bold,
                                                                                       height: 1.1,
                                                                                     ))),
-                                                                          if (data['effect'][index2]['addtarget'] != null)
+                                                                          if (data.effect[index2].addtarget != '')
                                                                             Container(
                                                                                 margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                 padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -1564,7 +1481,7 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                                   borderRadius: BorderRadius.circular(5),
                                                                                 ),
                                                                                 child: Text(
-                                                                                    '${(data['effect'][index2]['addtarget'] as String).tr()}$levelmulti${((data['effect'][index2]['addtarget']) != 'energy') ? "%" : ""}',
+                                                                                    '${(data.effect[index2].addtarget).tr()}$levelmulti${((data.effect[index2].addtarget) != 'energy') ? "%" : ""}',
                                                                                     style: const TextStyle(
                                                                                       //fontWeight: FontWeight.bold,
                                                                                       color: Colors.black,
@@ -1575,8 +1492,8 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                                         ],
                                                                       ),
                                                                       Row(
-                                                                          children: List.generate(data['effect'][index2]['tag'].length, (index3) {
-                                                                        List<dynamic> taglist = data['effect'][index2]['tag'];
+                                                                          children: List.generate(data.effect[index2].tag.length, (index3) {
+                                                                        List<dynamic> taglist = data.effect[index2].tag;
 
                                                                         return Container(
                                                                             margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
@@ -1611,13 +1528,13 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                       child: Container(
                                                         width: 110,
                                                         decoration: BoxDecoration(
-                                                          color: etocolor[namedata['etype']!]?.withOpacity(0.3),
+                                                          color: routeCharacter.elementType.color.withOpacity(0.3),
                                                           borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
                                                         ),
                                                         child: Center(
                                                           child: Padding(
                                                             padding: const EdgeInsets.all(2.0),
-                                                            child: Text((data['stype']! as String).tr() + data['eidolonnum']!.toString(),
+                                                            child: Text(data.stype.tr() + data.eidolonnum.toString(),
                                                                 style: const TextStyle(
                                                                   //fontWeight: FontWeight.bold,
                                                                   color: Colors.white,
@@ -1629,29 +1546,6 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                                                         ),
                                                       ),
                                                     ),
-                                                    if (data['energy'] != null)
-                                                      Positioned(
-                                                        top: 0,
-                                                        right: 0,
-                                                        child: Container(
-                                                          width: 110,
-                                                          decoration: BoxDecoration(
-                                                            color: etocolor[namedata['etype']!]?.withOpacity(1),
-                                                            borderRadius: BorderRadius.circular(2),
-                                                          ),
-                                                          child: Center(
-                                                            child: Text('EP${data['energy']!}',
-                                                                style: const TextStyle(
-                                                                  //fontWeight: FontWeight.bold,
-                                                                  color: Colors.white,
-
-                                                                  fontSize: 20,
-                                                                  fontWeight: FontWeight.bold,
-                                                                  height: 1.1,
-                                                                )).tr(),
-                                                          ),
-                                                        ),
-                                                      ),
                                                   ],
                                                 );
                                               }),
@@ -1674,19 +1568,18 @@ class _ChracterDetailPageState extends State<ChracterDetailPage> {
                       Stack(
                         children: [
                           Hero(
-                            tag: namedata['imageUrl']!,
+                            tag: routeCharacter.getImageUrl(_gs),
                             child: Container(
                               width: columnwidth,
                               height: 100,
-                              color: etocolor[namedata['etype']!]?.withOpacity(0.6),
-                              child: Image.network((gender == false && namedata['imageUrlalter'] != "") ? namedata['imageUrlalter']! : namedata['imageUrl']!,
-                                  alignment: const Alignment(1, -0.5), fit: BoxFit.none, filterQuality: FilterQuality.medium),
+                              color: routeCharacter.elementType.color.withOpacity(0.6),
+                              child: getImageComponent(routeCharacter.getImageUrl(_gs), imageWrap: true, fit: BoxFit.none, alignment: const Alignment(1, -0.5)),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(25.0),
                             child: Text(
-                              ('lang'.tr() == 'en') ? namedata['enname']! : (('lang'.tr() == 'cn') ? namedata['cnname']! : namedata['janame']!),
+                              routeCharacter.getName(getLanguageCode(context)),
                               style: const TextStyle(
                                 //fontWeight: FontWeight.bold,
                                 color: Colors.white,

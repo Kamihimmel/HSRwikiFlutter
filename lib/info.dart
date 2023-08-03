@@ -11,26 +11,6 @@ const etocolor = {
   'physical': Colors.grey,
 };
 
-const etoimage = {
-  'fire': "images/icons/fire.webp",
-  'ice': "images/icons/ice.webp",
-  'lightning': "images/icons/lightning.webp",
-  'imaginary': "images/icons/imaginary.webp",
-  'quantum': "images/icons/quantum.webp",
-  'wind': "images/icons/wind.webp",
-  'physical': "images/icons/physical.webp",
-};
-
-const wtoimage = {
-  'destruction': "images/icons/destruction.webp",
-  'erudition': "images/icons/erudition.webp",
-  'harmony': "images/icons/harmony.webp",
-  'thehunt': "images/icons/thehunt.webp",
-  'nihility': "images/icons/nihility.webp",
-  'abundance': "images/icons/abundance.webp",
-  'preservation': "images/icons/preservation.webp",
-};
-
 const stattoimage = {
   'hp': AssetImage('images/IconMaxHP.png'),
   'atk': AssetImage('images/IconAttack.png'),
