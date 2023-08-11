@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hsrwikiproject/dmgcalcPage.dart';
 import 'package:hsrwikiproject/effecthitcalc.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -23,13 +24,68 @@ class Toolboxpage extends StatelessWidget {
         // Column is also a layout widget. It takes a list of children and
 
         mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: screenWidth > 1300 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+        crossAxisAlignment: screenWidth > 1300
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.center,
         children: <Widget>[
           Expanded(
             child: GridView.count(
               crossAxisCount: crossAxisCount3,
               childAspectRatio: (4 / 1),
               children: <Widget>[
+                Material(
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DmgCalcPage(jsonUrl: ""),
+                        ),
+                      );
+                    },
+                    onHover: (value) {},
+                    hoverColor: Colors.grey,
+                    child: Card(
+                      color: Colors.grey.withOpacity(0.1),
+                      clipBehavior: Clip.hardEdge,
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12))),
+                      child: Stack(
+                        children: [
+                          Hero(
+                            tag: "damagecalc",
+                            child: Image(
+                              image: AssetImage('images/damagecalc.jpeg'),
+                              width: double.infinity,
+                              height: double.infinity,
+                              alignment: Alignment(0.5, -0.6),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 8, horizontal: 16),
+                              color: Colors.black54,
+                              child: Text(
+                                "HSR Damage Calculator".tr(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
                 Material(
                   child: InkWell(
                     onTap: () {
@@ -45,7 +101,10 @@ class Toolboxpage extends StatelessWidget {
                     child: Card(
                       color: Colors.grey.withOpacity(0.1),
                       clipBehavior: Clip.hardEdge,
-                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))),
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12))),
                       child: Stack(
                         children: [
                           Hero(
@@ -62,7 +121,8 @@ class Toolboxpage extends StatelessWidget {
                             left: 0,
                             right: 0,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 8, horizontal: 16),
                               color: Colors.black54,
                               child: Text(
                                 "Effect Hit & Effect Res Calculator".tr(),
