@@ -42,6 +42,13 @@ class RelicManager {
     return _relics[id]!;
   }
 
+  static Future<Relic> loadFromRemoteById(String id) async {
+    if (!_relics.containsKey(id)) {
+      await initAllRelics();
+    }
+    return loadFromRemote(getRelic(id));
+  }
+
   static Future<Relic> loadFromRemote(Relic r) async {
     if (r.loaded) {
       return r;

@@ -31,7 +31,7 @@ class CharacterStats {
     if (withDefault && relics.isEmpty) {
       return CharacterManager.getDefaultRelicSets(id);
     }
-    List<String> sets = ['0', '0', '0'];
+    List<String> sets = ['', '', ''];
     List<String> setIds4 = relics.entries.where((e) => e.key.xSet == '4').map((e) => e.value.setId).toList();
     Map<String, int> validSet4 = setIds4.fold({}, (value, e) {
       int cnt = value[e] ?? 0;

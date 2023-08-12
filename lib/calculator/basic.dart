@@ -1,3 +1,5 @@
+import '../relics/relic.dart';
+
 enum FightProp {
   maxHP(desc: 'HP', icon: 'starrailres/icon/property/IconMaxHP.png'),
   attack(desc: 'ATK', icon: 'starrailres/icon/property/IconAttack.png'),
@@ -75,5 +77,66 @@ enum FightProp {
   static FightProp fromImportType(String importType) {
     String type = importType.replaceFirst('Base', '').toLowerCase();
     return FightProp.values.firstWhere((p) => p.name.toLowerCase() == type, orElse: () => FightProp.none);
+  }
+}
+
+class PropSource {
+  static final int selfBasic = 0;
+  static final int lightconeBasic = 1;
+  static final int selfSkill = 2;
+  static final int selfTrace = 3;
+  static final int selfEidolon = 4;
+  static final int lightconeSkill = 5;
+  static final int relicMain = 6;
+  static final int relicSub = 7;
+  static final int otherSkill = 8;
+  static final int otherTrace = 9;
+  static final int otherEidolon = 10;
+  static final int unknown = 99;
+
+  String id = '';
+  String name = '';
+  String desc = '';
+  int source = PropSource.unknown;
+
+  PropSource.characterBasic(String id, String name, {desc = ''}) {
+    _setBase(id, name, desc);
+    this.source = PropSource.selfBasic;
+  }
+
+  PropSource.characterSkill(String id, String name, {desc = '', self = false}) {
+    _setBase(id, name, desc);
+    this.source = self ? PropSource.selfSkill : PropSource.otherSkill;
+  }
+
+  PropSource.characterTrace(String id, String name, {desc = '', self = false}) {
+    _setBase(id, name, desc);
+    this.source = self ? PropSource.selfTrace : PropSource.otherTrace;
+  }
+
+  PropSource.characterEidolon(String id, String name, {desc = '', self = false}) {
+    _setBase(id, name, desc);
+    this.source = self ? PropSource.selfEidolon : PropSource.otherEidolon;
+  }
+
+  PropSource.lightconeAttr(String id, String name, {desc = ''}) {
+    _setBase(id, name, desc);
+    this.source = PropSource.lightconeBasic;
+  }
+
+  PropSource.lightconeEffect(String id, String name, {desc = ''}) {
+    _setBase(id, name, desc);
+    this.source = PropSource.lightconeSkill;
+  }
+
+  PropSource.relicAttr(RelicPart relicPart, {desc = '', mainAttr = false}) {
+    _setBase(relicPart.name, relicPart.name, desc);
+    this.source = mainAttr ? PropSource.relicMain : PropSource.relicSub;
+  }
+
+  _setBase(String id, String name, String desc) {
+    this.id = id;
+    this.name = name;
+    this.desc = desc;
   }
 }

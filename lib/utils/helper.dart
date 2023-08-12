@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../calculator/basic.dart';
+import '../characters/character_manager.dart';
 import '../components/global_state.dart';
+import '../info.dart';
 
 final GlobalState _gs = GlobalState();
 final String urlEndpoint = "https://hsrwikidata.yunlu18.net/";
@@ -148,6 +150,24 @@ enum PathType {
 
   static PathType fromKey(String key) {
     return PathType.values.firstWhere((p) => p.key == key, orElse: () => PathType.diy);
+  }
+}
+
+String imagestring(String cid) {
+  if (cid == '8001' || cid == '8002') {
+    if (gender) {
+      return "images/characters/mc.webp";
+    } else {
+      return "images/characters/mcm.webp";
+    }
+  } else if (cid == '8003' || cid == '8004') {
+    if (gender) {
+      return "images/characters/mcf.webp";
+    } else {
+      return "images/characters/mcmf.webp";
+    }
+  } else {
+    return CharacterManager.getCharacter(cid).entity.imageurl;
   }
 }
 
