@@ -10,8 +10,8 @@ import 'platformad_stub.dart' if (dart.library.io) 'platformad_stub.dart' if (da
 import 'utils/logging.dart';
 
 class EffecthitCalcPage extends StatefulWidget {
-  final String jsonUrl;
-  const EffecthitCalcPage({super.key, required this.jsonUrl});
+
+  const EffecthitCalcPage({super.key});
 
   @override
   State<EffecthitCalcPage> createState() => _EffecthitCalcPageState();

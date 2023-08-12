@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:hsrwikiproject/dmgcalcPage.dart';
-import 'package:hsrwikiproject/effecthitcalc.dart';
 import 'package:easy_localization/easy_localization.dart';
+
+import 'dmgcalcPage.dart';
+import 'effecthitcalc.dart';
 
 class Toolboxpage extends StatelessWidget {
   const Toolboxpage({
     super.key,
-    required this.screenWidth,
-    required this.crossAxisCount3,
     required this.footer,
   });
 
-  final double screenWidth;
-  final int crossAxisCount3;
   final Padding footer;
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final crossAxisCount = screenWidth < 600
+        ? 1
+        : screenWidth < 1000
+        ? 1
+        : 2;
     return Center(
       // Center is a layout widget. It takes a single child and positions it
       // in the middle of the parent.
@@ -30,7 +33,7 @@ class Toolboxpage extends StatelessWidget {
         children: <Widget>[
           Expanded(
             child: GridView.count(
-              crossAxisCount: crossAxisCount3,
+              crossAxisCount: crossAxisCount,
               childAspectRatio: (4 / 1),
               children: <Widget>[
                 Material(
@@ -39,7 +42,7 @@ class Toolboxpage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => DmgCalcPage(jsonUrl: ""),
+                          builder: (context) => DmgCalcPage(),
                         ),
                       );
                     },
@@ -92,7 +95,7 @@ class Toolboxpage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => EffecthitCalcPage(jsonUrl: ""),
+                          builder: (context) => EffecthitCalcPage(),
                         ),
                       );
                     },

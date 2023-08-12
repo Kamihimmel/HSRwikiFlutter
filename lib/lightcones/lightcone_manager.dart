@@ -4,6 +4,7 @@ import '../components/global_state.dart';
 import '../utils/helper.dart';
 import '../utils/logging.dart';
 import 'lightcone.dart';
+import 'lightcone_entity.dart';
 
 class LightconeManager {
   static final GlobalState _gs = GlobalState();
@@ -41,6 +42,13 @@ class LightconeManager {
 
   static Lightcone getLightcone(String id) {
     return _lightcones[id]!;
+  }
+
+  static Future<Lightcone> loadFromRemoteById(String id) async {
+    if (!_lightcones.containsKey(id)) {
+      await initAllLightcones();
+    }
+    return loadFromRemote(getLightcone(id));
   }
 
   static Future<Lightcone> loadFromRemote(Lightcone d) async {

@@ -57,6 +57,7 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
   Set<PointerDeviceKind> get dragDevices => {
         PointerDeviceKind.touch,
         PointerDeviceKind.mouse,
+        PointerDeviceKind.trackpad,
         // etc.
       };
 }
@@ -296,28 +297,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    final crossAxisCount = screenWidth < 600
-        ? 4
-        : screenWidth < 1000
-            ? 6
-            : 8;
-
-    final crossAxisCount2 = screenWidth < 600
-        ? 2
-        : screenWidth < 1000
-            ? 4
-            : 8;
-
-    final crossAxisCount3 = screenWidth < 600
-        ? 1
-        : screenWidth < 1000
-            ? 1
-            : 2;
-
     // filter lightcone data
-
     _filteredData2 = List.from(_data2);
     List<Map<String, String>> tempData2 = [];
 
@@ -814,9 +794,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             //ANCHOR - Relic
             RelicList(footer: footer, footer2: footer2),
             //ANCHOR - Tools
-            Toolboxpage(screenWidth: screenWidth, crossAxisCount3: crossAxisCount3, footer: footer),
+            Toolboxpage(footer: footer),
             //ANCHOR - Uidimport
-            Uidimportpage(screenWidth: screenWidth, crossAxisCount3: crossAxisCount3, footer: footer),
+            Uidimportpage(footer: footer),
           ],
         ),
         floatingActionButton: FloatingActionButton(

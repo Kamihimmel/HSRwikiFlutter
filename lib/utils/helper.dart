@@ -56,6 +56,19 @@ int getRelicMaxLevel(int rarity) {
   return 0;
 }
 
+Map<int, MaterialColor> _rarityColor = {
+  5: Colors.amber,
+  4: Colors.deepPurple,
+  3: Colors.blue,
+};
+
+MaterialColor getRarityColor(int rarity) {
+  if (_rarityColor.containsKey(rarity)) {
+    return _rarityColor[rarity]!;
+  }
+  return Colors.grey;
+}
+
 var _elementDamage = [
   FightProp.physicalAddedRatio,
   FightProp.fireAddedRatio,
