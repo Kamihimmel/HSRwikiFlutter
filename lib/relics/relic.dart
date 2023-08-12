@@ -105,6 +105,10 @@ enum RelicPart {
     required this.mainAttrs,
   });
 
+  static RelicPart fromName(String name) {
+    return RelicPart.values.firstWhere((r) => r.name == name, orElse: () => RelicPart.unknown);
+  }
+
   static RelicPart fromOrdAndSet(int ord, String xSet) {
     return RelicPart.values.firstWhere((r) => r.ord == ord && r.xSet == xSet, orElse: () => RelicPart.unknown);
   }
@@ -116,4 +120,14 @@ class RelicStats {
   int level = 0;
   FightProp mainAttr = FightProp.none;
   Map<FightProp, double> subAttrValues = {};
+
+  RelicStats() {
+
+  }
+
+  RelicStats.empty(RelicPart part) {
+    this.rarity = 5;
+    this.level = 15;
+    this.mainAttr = part.mainAttrs[0];
+  }
 }

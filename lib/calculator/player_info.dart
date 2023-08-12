@@ -15,7 +15,10 @@ class PlayerInfo {
   String createTime = '';
   List<CharacterStats> characters = [];
 
+  PlayerInfo() {}
+
   PlayerInfo.fromImportJson(Map<String, dynamic> jsonMap) {
+    String now = DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now());
     this.uid = jsonMap['player']['uid'];
     this.nickname = jsonMap['player']['nickname'];
     this.level = jsonMap['player']['level'];
@@ -23,11 +26,21 @@ class PlayerInfo {
     this.friendCount = jsonMap['player']['friend_count'];
     this.avatar = 'starrailres/' + jsonMap['player']['avatar']['icon'];
     this.signature = jsonMap['player']['signature'];
-    this.createTime = DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now());
-    this.characters = (jsonMap['characters'] as List<dynamic>).map((e) => CharacterStats.fromImportJson(e)).toList();
+    this.createTime = now;
+    this.characters = (jsonMap['characters'] as List<dynamic>).map((e) => CharacterStats.fromImportJson(e, updateTime: now)).toList();
   }
 
-  PlayerInfo.fromJson(Map<String, dynamic> jsonMap) {}
+  PlayerInfo.fromJson(Map<String, dynamic> jsonMap) {
+    this.uid = jsonMap['uid'];
+    this.nickname = jsonMap['nickname'];
+    this.level = jsonMap['level'];
+    this.worldLevel = jsonMap['world_level'];
+    this.friendCount = jsonMap['friend_count'];
+    this.avatar = jsonMap['avatar'];
+    this.signature = jsonMap['signature'];
+    this.createTime = jsonMap['create_time'];
+    this.characters = (jsonMap['characters'] as List<dynamic>).map((e) => CharacterStats.fromJson(e)).toList();
+  }
 
   String toJson() {
     Map<String, dynamic> jsonMap = {};
@@ -45,6 +58,6 @@ class PlayerInfo {
 
   @override
   String toString() {
-    return jsonEncode(this);
+    return toJson();
   }
 }

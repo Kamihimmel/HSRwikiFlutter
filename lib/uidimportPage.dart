@@ -9,9 +9,12 @@ import 'package:http/http.dart' as http;
 import 'package:transparent_image/transparent_image.dart';
 
 import 'characters/character_manager.dart';
+import 'characters/character_stats.dart';
 import 'info.dart';
+import 'lightcones/lightcone_manager.dart';
 import 'relics/relic_manager.dart';
 import 'showcasedetail.dart';
+import 'utils/helper.dart';
 import 'utils/logging.dart';
 import 'calculator/player_info.dart';
 
@@ -41,13 +44,9 @@ class Character {
 class Uidimportpage extends StatefulWidget {
   const Uidimportpage({
     super.key,
-    required this.screenWidth,
-    required this.crossAxisCount3,
     required this.footer,
   });
 
-  final double screenWidth;
-  final int crossAxisCount3;
   final Padding footer;
 
   @override
@@ -57,66 +56,72 @@ class Uidimportpage extends StatefulWidget {
 class _UidimportpageState extends State<Uidimportpage> {
   void initState() {
     super.initState();
-
-    _getUid();
+    _getPlayerInfo();
   }
 
   TextEditingController uidController = TextEditingController(text: '');
 
-  String uid = "";
-  String avatarimage = "";
-  String nickname = "";
-  String level = "";
   List<Character> characters = [];
+  PlayerInfo _playerInfo = PlayerInfo();
   final ExpansionTileController expandcontroller = ExpansionTileController();
 
   void addOrUpdateCharacter(Character newCharacter) {
-    setState(() {
-      final existingIndex = characters.indexWhere((c) => c.id == newCharacter.id);
-      if (existingIndex != -1) {
-        characters[existingIndex] = newCharacter;
-      } else {
-        characters.add(newCharacter);
-      }
-    });
+    final existingIndex = characters.indexWhere((c) => c.id == newCharacter.id);
+    if (existingIndex != -1) {
+      characters[existingIndex] = newCharacter;
+    } else {
+      characters.add(newCharacter);
+    }
   }
 
-  Future<void> _getUid() async {
-    if (uid == '') {
-      final prefs = await SharedPreferences.getInstance();
-
-      uidController.text = prefs.getString('uid') ?? '';
-      uid = prefs.getString('uid') ?? '';
-
-      nickname = prefs.getString('nickname') ?? '';
-      if (nickname == '') {
-        expandcontroller.expand();
-      }
-      avatarimage = prefs.getString('avatarimage') ?? '';
-      level = prefs.getString('level') ?? '';
-
-      setState(() {});
+  Future<void> _getPlayerInfo() async {
+    if (LightconeManager.getLightconeIds().isEmpty) {
+      await LightconeManager.initAllLightcones();
     }
-
-    if (characters.isEmpty) {
-      SharedPreferences pref = await SharedPreferences.getInstance();
-      final charactersJson = pref.getString('characters');
-      if (charactersJson != null) {
-        final charactersList = jsonDecode(charactersJson) as List;
-        characters = charactersList.map((json) => Character.fromJson(json)).toList();
-      }
-
-      setState(() {});
+    if (RelicManager.getRelicIds().isEmpty) {
+      await RelicManager.initAllRelics();
     }
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final playerInfoJson = await prefs.getString('playerinfo');
+    if (playerInfoJson != null) {
+      _playerInfo = PlayerInfo.fromJson(jsonDecode(playerInfoJson));
+    } else {
+      _playerInfo.uid = prefs.getString('uid') ?? '';
+      _playerInfo.nickname = prefs.getString('nickname') ?? '';
+      String avatarimage = prefs.getString('avatarimage') ?? '';
+      if (avatarimage != '') {
+        _playerInfo.avatar = avatarimage.substring(avatarimage.indexOf('starrailres/'));
+      }
+      _playerInfo.level = num.tryParse(prefs.getString('level') ?? '')?.toInt() ?? 0;
+      if (characters.isEmpty) {
+        final charactersJson = prefs.getString('characters');
+        if (charactersJson != null) {
+          final charactersList = jsonDecode(charactersJson) as List;
+          characters = charactersList.map((json) => Character.fromJson(json)).toList();
+          _playerInfo.characters = charactersList.map((json) {
+            Map<String, dynamic> info = json['info'];
+            return CharacterStats.fromImportJson(info, updateTime: json['createdate']);
+          }).toList();
+        }
+      }
+      await prefs.setString('playerinfo', _playerInfo.toJson());
+    }
+    logger.i(_playerInfo.toJson());
+    uidController.text = _playerInfo.uid;
+    if (_playerInfo.nickname == '') {
+      expandcontroller.expand();
+    }
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return Column(
       // Column is also a layout widget. It takes a list of children and
 
       mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: widget.screenWidth > 1300 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+      crossAxisAlignment: screenWidth > 1300 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
       children: <Widget>[
         Expanded(
             child: SingleChildScrollView(
@@ -124,7 +129,7 @@ class _UidimportpageState extends State<Uidimportpage> {
             ExpansionTile(
               expandedAlignment: Alignment.center,
               controller: expandcontroller,
-              title: (nickname == "")
+              title: (_playerInfo.nickname == "")
                   ? Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text("You have not imported any character.\nPlease import Using your in game UID.").tr(),
@@ -132,15 +137,12 @@ class _UidimportpageState extends State<Uidimportpage> {
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        if (avatarimage != "")
-                          Image.network(
-                            avatarimage,
-                            width: 80,
-                          ),
+                        if (_playerInfo.avatar != "")
+                          getImageComponent(_playerInfo.avatar, imageWrap: true, width: 80),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            nickname,
+                            _playerInfo.nickname,
                             style: const TextStyle(
                               //fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -150,11 +152,11 @@ class _UidimportpageState extends State<Uidimportpage> {
                             ),
                           ),
                         ),
-                        if (level != "")
+                        if (_playerInfo.level > 0)
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              "LV$level",
+                              "LV${_playerInfo.level}",
                               style: const TextStyle(
                                 //fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -182,7 +184,7 @@ class _UidimportpageState extends State<Uidimportpage> {
                           controller: uidController,
                           onChanged: (value) {
                             setState(() {
-                              uid = value;
+                              _playerInfo.uid = value;
                             });
                           },
                           keyboardType: TextInputType.numberWithOptions(decimal: false),
@@ -194,14 +196,14 @@ class _UidimportpageState extends State<Uidimportpage> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
-                          onPressed: (uid.length == 9)
+                          onPressed: (_playerInfo.uid.length == 9)
                               ? () async {
-                                  if (uid != '') {
+                                  if (_playerInfo.uid != '') {
                                     final prefs = await SharedPreferences.getInstance();
-                                    await prefs.setString('uid', uid);
+                                    await prefs.setString('uid', _playerInfo.uid);
                                   }
                                   String langcode = ('lang'.tr() == 'en') ? 'en' : (('lang'.tr() == 'cn') ? 'cn' : 'jp');
-                                  String url = kIsWeb ? "https://mohomoapi.yunlu18.net/$uid?lang=$langcode" : "https://api.mihomo.me/sr_info_parsed/$uid?lang=$langcode";
+                                  String url = kIsWeb ? "https://mohomoapi.yunlu18.net/${_playerInfo.uid}?lang=$langcode" : "https://api.mihomo.me/sr_info_parsed/${_playerInfo.uid}?lang=$langcode";
                                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                     duration: Duration(days: 1),
                                     content: Text("Loading.....").tr(),
@@ -239,37 +241,27 @@ class _UidimportpageState extends State<Uidimportpage> {
                                     return;
                                   }
                                   Map<String, dynamic> returndata = jsonDecode(utf8.decode(resp.bodyBytes));
-                                  if (RelicManager.getRelicIds().isEmpty) {
-                                    await RelicManager.initAllRelics();
-                                  }
+                                  final prefs = await SharedPreferences.getInstance();
                                   PlayerInfo playerInfo = PlayerInfo.fromImportJson(returndata);
                                   logger.d(playerInfo);
-                                  logger.d(returndata['player']);
-                                  nickname = returndata['player']['nickname'];
-
-                                  level = returndata['player']['level'].toString();
-                                  avatarimage = urlendpoint + "starrailres/" + returndata['player']['avatar']['icon'];
-                                  if (nickname != '' && avatarimage != '' && level != '') {
-                                    final prefs = await SharedPreferences.getInstance();
-                                    await prefs.setString('nickname', nickname);
-                                    await prefs.setString('avatarimage', avatarimage);
-                                    await prefs.setString('level', level);
-                                  }
                                   final List<Character> newCharacters = List<Character>.from(
                                       returndata['characters'].map((json) => Character(json['id'] as String, DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()), json as Map<String, dynamic>)));
-
-                                  newCharacters.forEach((newCharacter) {
-                                    addOrUpdateCharacter(newCharacter);
-                                  });
-
-                                  if (characters.isNotEmpty) {
-                                    final prefs = await SharedPreferences.getInstance();
-
-                                    String chracterinfo = jsonEncode(characters);
-                                    await prefs.setString('characters', chracterinfo);
+                                  if (_playerInfo.uid == playerInfo.uid) {
+                                    if (_playerInfo.characters.isNotEmpty) {
+                                      for (var cs in _playerInfo.characters) {
+                                        if (!playerInfo.characters.any((c) => c.id == cs.id)) {
+                                          playerInfo.characters.add(cs);
+                                        }
+                                      }
+                                    }
+                                    newCharacters.forEach((newCharacter) {
+                                      addOrUpdateCharacter(newCharacter);
+                                    });
                                   }
+                                  _playerInfo = playerInfo;
+                                  await prefs.setString('playerinfo', _playerInfo.toJson());
+                                  await prefs.setString('characters', jsonEncode(characters));
                                   expandcontroller.collapse();
-
                                   setState(() {});
                                 }
                               : null,
@@ -288,9 +280,13 @@ class _UidimportpageState extends State<Uidimportpage> {
                 child: ListView.builder(
                   shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
-                  itemCount: characters.length,
+                  itemCount: _playerInfo.characters.length,
                   itemBuilder: (context, index) {
-                    final character = characters[index];
+                    final CharacterStats characterStats = _playerInfo.characters[index];
+                    final List<int> eidolons = characterStats.eidolons.entries.where((e) => e.value > 0).map((e) => num.parse(e.key).toInt()).toList();
+                    eidolons.sort();
+                    final int rank = eidolons.isEmpty ? 0 : eidolons[eidolons.length - 1];
+                    List<String> relicSets = characterStats.getRelicSets(withDefault: false);
                     return InkWell(
                       onHover: (value) {
                         if (value) {
@@ -308,7 +304,7 @@ class _UidimportpageState extends State<Uidimportpage> {
                           );
                         });
                       },
-                      hoverColor: getcolor(character),
+                      hoverColor: CharacterManager.getCharacter(characterStats.id).elementType.color,
                       child: Container(
                         width: 374,
                         height: 508,
@@ -317,11 +313,8 @@ class _UidimportpageState extends State<Uidimportpage> {
                             Card(
                               color: Colors.grey.withOpacity(0.1),
                               child: Hero(
-                                tag: character.id,
-                                child: Image.network(
-                                  urlendpoint + imagestring(character),
-                                  fit: BoxFit.cover,
-                                ),
+                                tag: characterStats.id,
+                                child: getImageComponent(imagestring(characterStats.id), imageWrap: true),
                               ),
                             ),
                             Positioned(
@@ -335,7 +328,7 @@ class _UidimportpageState extends State<Uidimportpage> {
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.end,
                                       children: [
-                                        if (character.info["light_cone"] != null)
+                                        if (characterStats.lightconeId != '')
                                           Stack(
                                             children: [
                                               Container(
@@ -351,10 +344,10 @@ class _UidimportpageState extends State<Uidimportpage> {
                                                     )),
                                                 child: Padding(
                                                   padding: const EdgeInsets.all(8.0),
-                                                  child: FadeInImage.memoryNetwork(
+                                                  child: getImageComponent(
+                                                    LightconeManager.getLightcone(characterStats.lightconeId).entity.imageurl,
                                                     placeholder: kTransparentImage,
                                                     height: 160,
-                                                    image: urlendpoint + "images/lightcones/" + character.info["light_cone"]['id'] + '.png',
                                                   ),
                                                 ),
                                               ),
@@ -366,7 +359,7 @@ class _UidimportpageState extends State<Uidimportpage> {
                                                     Padding(
                                                       padding: const EdgeInsets.all(10.0),
                                                       child: Text(
-                                                        "R" + character.info["light_cone"]['rank'].toString(),
+                                                        "R${characterStats.lightconeRank}",
                                                         style: const TextStyle(
                                                           //fontWeight: FontWeight.bold,
                                                           color: Colors.white,
@@ -384,7 +377,7 @@ class _UidimportpageState extends State<Uidimportpage> {
                                         SizedBox(
                                           width: 5,
                                         ),
-                                        if (character.info["relic_sets"] != null && character.info["relic_sets"].length != 0)
+                                        if (relicSets[0] != '0')
                                           Container(
                                             width: 83,
                                             height: 83,
@@ -398,8 +391,8 @@ class _UidimportpageState extends State<Uidimportpage> {
                                                 )),
                                             child: Padding(
                                               padding: const EdgeInsets.all(8.0),
-                                              child: FadeInImage.memoryNetwork(
-                                                  placeholder: kTransparentImage, image: urlendpoint + "starrailres/" + character.info["relic_sets"][0]['icon'], filterQuality: FilterQuality.medium),
+                                              child: getImageComponent(RelicManager.getRelic(relicSets[0]).entity.imageurl,
+                                                  placeholder: kTransparentImage),
                                             ),
                                           ),
                                         SizedBox(
@@ -407,7 +400,7 @@ class _UidimportpageState extends State<Uidimportpage> {
                                         ),
                                         Column(
                                           children: [
-                                            if (character.info["relic_sets"] != null && character.info["relic_sets"].length > 2)
+                                            if (relicSets[2] != '0')
                                               Container(
                                                 width: 83,
                                                 height: 83,
@@ -421,16 +414,14 @@ class _UidimportpageState extends State<Uidimportpage> {
                                                     )),
                                                 child: Padding(
                                                   padding: const EdgeInsets.all(8.0),
-                                                  child: FadeInImage.memoryNetwork(
-                                                      placeholder: kTransparentImage,
-                                                      image: urlendpoint + "starrailres/" + character.info["relic_sets"][2]['icon'],
-                                                      filterQuality: FilterQuality.medium),
+                                                  child: getImageComponent(RelicManager.getRelic(relicSets[2]).entity.imageurl,
+                                                      placeholder: kTransparentImage),
                                                 ),
                                               ),
                                             SizedBox(
                                               height: 5,
                                             ),
-                                            if (character.info["relic_sets"] != null && character.info["relic_sets"].length > 1)
+                                            if (relicSets[1] != '0')
                                               Container(
                                                 width: 83,
                                                 height: 83,
@@ -444,10 +435,8 @@ class _UidimportpageState extends State<Uidimportpage> {
                                                     )),
                                                 child: Padding(
                                                   padding: const EdgeInsets.all(8.0),
-                                                  child: FadeInImage.memoryNetwork(
-                                                      placeholder: kTransparentImage,
-                                                      image: urlendpoint + "starrailres/" + character.info["relic_sets"][1]['icon'],
-                                                      filterQuality: FilterQuality.medium),
+                                                  child: getImageComponent(RelicManager.getRelic(relicSets[1]).entity.imageurl,
+                                                      placeholder: kTransparentImage),
                                                 ),
                                               ),
                                           ],
@@ -463,7 +452,7 @@ class _UidimportpageState extends State<Uidimportpage> {
                                         Padding(
                                           padding: const EdgeInsets.all(0.0),
                                           child: Text(
-                                            "LV" + character.info['level'].toString() + " " + character.info['name'],
+                                            "LV${characterStats.level} ${CharacterManager.getCharacter(characterStats.id).getName(getLanguageCode(context))}",
                                             style: const TextStyle(
                                               //fontWeight: FontWeight.bold,
                                               color: Colors.white,
@@ -479,7 +468,7 @@ class _UidimportpageState extends State<Uidimportpage> {
                                   Padding(
                                     padding: const EdgeInsets.all(10.0),
                                     child: Text(
-                                      "Last Update At:".tr() + character.createdate,
+                                      "Last Update At:".tr() + " " + characterStats.updateTime,
                                       style: TextStyle(
                                         //fontWeight: FontWeight.bold,
                                         color: Colors.grey.withOpacity(0.6),
@@ -504,17 +493,15 @@ class _UidimportpageState extends State<Uidimportpage> {
                                       onPressed: () async {
                                         setState(() {
                                           characters.removeAt(index);
+                                          _playerInfo.characters.removeAt(index);
                                           if (characters.isEmpty) {
-                                            nickname = "";
-                                            avatarimage = "";
-                                            level = "";
+                                            _playerInfo.nickname = "";
+                                            _playerInfo.avatar = "";
+                                            _playerInfo.level = 0;
                                             expandcontroller.expand();
                                           }
                                         });
                                         final prefs = await SharedPreferences.getInstance();
-                                        await prefs.setString('nickname', nickname);
-                                        await prefs.setString('avatarimage', avatarimage);
-                                        await prefs.setString('level', level);
                                         String chracterinfo = jsonEncode(characters);
                                         await prefs.setString('characters', chracterinfo);
                                       },
@@ -531,11 +518,11 @@ class _UidimportpageState extends State<Uidimportpage> {
                                   Padding(
                                     padding: const EdgeInsets.all(10.0),
                                     child: Hero(
-                                      tag: character.info['rank'].toString() + index.toString(),
+                                      tag: "$rank$index",
                                       child: DefaultTextStyle(
                                         style: Theme.of(context).textTheme.titleLarge!,
                                         child: Text(
-                                          "E" + character.info['rank'].toString(),
+                                          "E$rank",
                                           style: const TextStyle(
                                             //fontWeight: FontWeight.bold,
                                             color: Colors.white,
@@ -571,21 +558,21 @@ class _UidimportpageState extends State<Uidimportpage> {
     return etocolor[element]!;
   }
 
-  String imagestring(Character character) {
-    if (character.id == '8001' || character.id == '8002') {
+  String imagestring(String cid) {
+    if (cid == '8001' || cid == '8002') {
       if (gender) {
         return "images/characters/mc.webp";
       } else {
         return "images/characters/mcm.webp";
       }
-    } else if (character.id == '8003' || character.id == '8004') {
+    } else if (cid == '8003' || cid == '8004') {
       if (gender) {
         return "images/characters/mcf.webp";
       } else {
         return "images/characters/mcmf.webp";
       }
     } else {
-      return CharacterManager.getCharacter(character.id).entity.imageurl;
+      return CharacterManager.getCharacter(cid).entity.imageurl;
     }
   }
 }

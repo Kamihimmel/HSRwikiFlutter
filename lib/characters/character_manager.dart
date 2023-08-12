@@ -9,7 +9,13 @@ import 'character_entity.dart';
 class CharacterManager {
   static final GlobalState _gs = GlobalState();
   static final Map<String, Character> _characters = {};
-  static final String defaultCharacter = "1013";
+  static final String defaultCharacter = "1005";
+  static final Map<String, String> _defaultLightconeMapping = {
+    "1005": "23006",
+  };
+  static final Map<String, List<String>> _defaultRelicSetsMapping = {
+    "1005": ["109", "109", "306"],
+  };
 
   CharacterManager._();
 
@@ -41,6 +47,14 @@ class CharacterManager {
     return map;
   }
 
+  static String getDefaultLightcone(String characterId) {
+    return _defaultLightconeMapping[characterId]!;
+  }
+
+  static List<String> getDefaultRelicSets(String characterId) {
+    return _defaultRelicSetsMapping[characterId]!;
+  }
+
   /// sorted for side panel
   static Map<String, Character> getSortedCharacters({withDiy = false, filterSupported = false}) {
     Map<String, Character> map = getCharacters(withDiy: withDiy);
@@ -64,14 +78,8 @@ class CharacterManager {
     return getCharacter(defaultCharacter);
   }
 
-  static Future<Character> _loadFromRemoteById(String id) async {
-    Character c = Character();
-    c.entity = CharacterEntity();
-    c.entity.id = id;
-    c.spoiler = false;
-    c.supported = true;
-    c.order = 999;
-    return loadFromRemote(c);
+  static Future<Character> loadFromRemoteById(String id) async {
+    return loadFromRemote(getCharacter(id));
   }
 
   static Future<Character> loadFromRemote(Character c) async {

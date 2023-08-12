@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../characters/character_manager.dart';
+import '../characters/character_stats.dart';
 import '../utils/helper.dart';
 import '../utils/logging.dart';
 
@@ -16,144 +17,27 @@ class GlobalState extends ChangeNotifier {
   factory GlobalState() => _instance;
 
   Map<String, dynamic> toJson() => {
-    'currentCharacter': _currentCharacter,
-    'level': _level,
-    'natkLv': _natkLv,
-    'eskillLv': _eskillLv,
-    'eburstLv': _eburstLv,
-    'cons': _cons,
-    'weaponSelect': _weaponSelect,
-    'weaponLv': _weaponLv,
-    'weaponRef': _weaponRef,
+    'stats': _stats._cStats.toJson(),
   };
 
   /// character
-  String _currentCharacter = CharacterManager.defaultCharacter;
-  int _level = 80; // character level
-  int _natkLv = 8; // normal attack level
-  int _eskillLv = 8; // element skill level
-  int _eburstLv = 8; // element burst level
-  int _cons = 0; // constellation
-
-  /// weapon
-  String _weaponSelect = '15502'; // selected weapon
-  int _weaponLv = 80; // weapon level
-  int _weaponRef = 1; // weapon refinement
-
-  /// artifact
-  String _artifactSetA = 'blizzard';
-  String _artifactSetB = 'blizzard';
-
-  /// enemy
-  int _enemyLevel = 80;
-  int _enemyType = 1;
-  int _enemyDefence = 0;
-  Map<ElementType, int> _enemyResistance = {
-  };
-
-  /// buff
-  int _buffUpdated = 0;
+  CharacterStatsNotify _stats = CharacterStatsNotify();
 
   /// config
   AppConfig _appConfig = AppConfig();
 
-  List<ElementType> getEnemyResistanceTypes() {
-    return _enemyResistance.keys.toList();
-  }
-  int getEnemyResistance(ElementType type) {
-    return _enemyResistance[type] ?? 0;
-  }
-  void setEnemyResistance(ElementType type, int value) {
-    _enemyResistance[type] = value;
-    // updated by other notifier variable, no need to notify listeners
+  CharacterStats get stats => _stats._cStats;
+  set stats(CharacterStats stats) {
+    _stats.cStats = stats;
   }
 
-  int get enemyLevel => _enemyLevel;
-  set enemyLevel(int enemyLevel) {
-    _enemyLevel = enemyLevel;
-    notifyListeners();
+  CharacterStatsNotify getCharacterStats() {
+    return _stats;
   }
 
-  int get enemyType => _enemyType;
-  set enemyType(int enemyType) {
-    _enemyType = enemyType;
-    notifyListeners();
-  }
-
-  int get enemyDefence => _enemyDefence;
-  set enemyDefence(int enemyDefence) {
-    _enemyDefence = enemyDefence;
-    notifyListeners();
-  }
-
-  int getCharacterBaseHp() {
-    return CharacterManager.getCharacter(_currentCharacter).getBaseHp(_level);
-  }
-
-  int getCharacterBaseAtk() {
-    return CharacterManager.getCharacter(_currentCharacter).getBaseAtk(_level);
-  }
-
-  int getCharacterBaseDef() {
-    return CharacterManager.getCharacter(_currentCharacter).getBaseDef(_level);
-  }
-
-  String get artifactSetA => _artifactSetA;
-  set artifactSetA(String artifactSetA) {
-    _artifactSetA = artifactSetA;
-    notifyListeners();
-  }
-  String get artifactSetB => _artifactSetB;
-  set artifactSetB(String artifactSetB) {
-    _artifactSetB = artifactSetB;
-    notifyListeners();
-  }
-
-  String get weaponSelect => _weaponSelect;
-  set weaponSelect(String weaponSelect) {
-    _weaponSelect = weaponSelect;
-    notifyListeners();
-  }
-  int get weaponLv => _weaponLv;
-  set weaponLv(int weaponLv) {
-    _weaponLv = weaponLv;
-    notifyListeners();
-  }
-  int get weaponRef => _weaponRef;
-  set weaponRef(int weaponRef) {
-    _weaponRef = weaponRef;
-    notifyListeners();
-  }
-
-  String get currentCharacter => _currentCharacter;
-  set currentCharacter(currentCharacter) {
-    _currentCharacter = currentCharacter;
-    notifyListeners();
-  }
-  int get level => _level;
-  set level(int level) {
-    _level = level;
-    notifyListeners();
-  }
-  int get natkLv => _natkLv;
-  set natkLv(int natkLv) {
-    _natkLv = natkLv;
-    notifyListeners();
-  }
-  int get eskillLv => _eskillLv;
-  set eskillLv(int eskillLv) {
-    _eskillLv = eskillLv;
-    notifyListeners();
-  }
-  int get eburstLv => _eburstLv;
-  set eburstLv(int eburstLv) {
-    _eburstLv = eburstLv;
-    notifyListeners();
-  }
-  int get cons => _cons;
-  set cons(int cons) {
-    _cons = cons;
-    notifyListeners();
+  CharacterStatsNotify newCharacterStats() {
+    _stats = CharacterStatsNotify();
+    return _stats;
   }
 
   AppConfig getAppConfig() {
@@ -217,6 +101,16 @@ class AppConfig extends ChangeNotifier {
   set test(bool test) {
     _test = test;
     logger.d("change test: $test");
+    notifyListeners();
+  }
+}
+
+class CharacterStatsNotify extends ChangeNotifier {
+  CharacterStats _cStats = CharacterStats.empty();
+
+  CharacterStats get cStats => _cStats;
+  set cStats(CharacterStats cStats) {
+    _cStats = cStats;
     notifyListeners();
   }
 }

@@ -64,6 +64,10 @@ enum FightProp {
     required this.icon,
   });
 
+  bool isPercent() {
+    return this.name.contains("Ratio") || this.name.contains("Resistance") || this.name.contains("Probability") || this.name.contains("critical");
+  }
+
   static FightProp fromName(String name) {
     return FightProp.values.firstWhere((p) => p.name == name, orElse: () => FightProp.none);
   }
