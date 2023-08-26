@@ -24,9 +24,13 @@ class BasicPanelState extends State<BasicPanel> {
     return Row(
       children: [
         Container(
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(5)),
+            border: Border.all(color: Colors.white, width: 0.5),
+            color: color,
+          ),
           width: 10,
           height: 10,
-          color: color,
         ),
         Column(
           children: [
@@ -60,7 +64,10 @@ class BasicPanelState extends State<BasicPanel> {
           duration: Duration(milliseconds: 500),
           width: a * 2 + 0.0,
           height: 20,
-          color: color,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.white, width: 0.5),
+            color: color,
+          ),
         ),
       ],
     );
@@ -76,7 +83,10 @@ class BasicPanelState extends State<BasicPanel> {
           duration: Duration(milliseconds: 500),
           width: a / 7 * _gs.statScale / 10,
           height: 20,
-          color: color,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.white, width: 0.5),
+            color: color,
+          ),
         ),
       ],
     );
@@ -92,7 +102,10 @@ class BasicPanelState extends State<BasicPanel> {
           duration: Duration(milliseconds: 500),
           width: a / 75 * _gs.statScale / 10,
           height: 20,
-          color: color,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.white, width: 0.5),
+            color: color,
+          ),
         ),
       ],
     );
@@ -167,19 +180,107 @@ class BasicPanelState extends State<BasicPanel> {
                                           children: [
                                             buildStatRow(Colors.red, 'level'.tr(), '250'),
                                             buildStatRow(Colors.blue, 'weapon'.tr(), '250'),
-                                            buildStatRow(Colors.red, '${"level".tr()}%(60)', double.parse((0.6 * 250 / 100).toStringAsFixed(1)).toString()),
-                                            buildStatRow(Colors.green, '${"weapon".tr()}%(60)', double.parse((0.6 * 250 / 100).toStringAsFixed(1)).toString()),
+                                            buildStatRow(Colors.red, '${"level".tr()}%(60)', double.parse((60 * 250 / 100).toStringAsFixed(1)).toString()),
+                                            buildStatRow(Colors.green, '${"weapon".tr()}%(60)', double.parse((60 * 250 / 100).toStringAsFixed(1)).toString()),
                                           ],
                                         ),
+                                        SizedBox(
+                                          height: 2,
+                                        ),
                                         //ANCHOR statATK:bar
+                                        Container(
+                                          clipBehavior: Clip.hardEdge,
+                                          decoration: BoxDecoration(
+                                            borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                          ),
+                                          foregroundDecoration: BoxDecoration(
+                                            border: Border.all(color: Colors.white, width: 1),
+                                            borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                          ),
+                                          padding: const EdgeInsets.all(0.5),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              buildstatbar(Colors.red, 250),
+                                              buildstatbar(Colors.blue, 250),
+                                              buildstatbar(Colors.red, 150),
+                                              buildstatbar(Colors.green, 150),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            //ANCHOR HP
+                            SelectableText(
+                              '${"HP".tr()}:5000 + ' + "3000" + ' = ' + "8000",
+                              style: TextStyle(fontSize: 15),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child:
+                                  //level:Colors.red
+                                  //weapon:Colors.blue
+                                  //weapon%:Colors.green
+                                  //a1:Colors.yellow
+                                  //a1%:Colors.yellow[700]
+                                  //a2:Colors.pink
+                                  //a2%:Colors.pink[700]
+                                  //a3%:Colors.blueGrey
+                                  //a3:Colors.blueGrey[700]
+                                  //a4%:Colors.purple
+                                  //a4:Colors.purple[700]
+                                  //a5%:Colors.teal
+                                  //a5:Colors.teal[700]
+                                  //pyro2On:Colors.red
+                                  //gladiator2On:Colors.purple
+                                  //royalflora4On:Colors.purple
+
+                                  FractionallySizedBox(
+                                widthFactor: 1.0,
+                                child: Scrollbar(
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        //ANCHOR statATK:stats
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
-                                            buildstatbar(Colors.red, 250),
-                                            buildstatbar(Colors.blue, 250),
-                                            buildstatbar(Colors.red, (0.6 * 250 / 100)),
-                                            buildstatbar(Colors.green, (0.6 * 250 / 100)),
+                                            buildStatRow(Colors.red, 'level'.tr(), '2500'),
+                                            buildStatRow(Colors.blue, 'weapon'.tr(), '2500'),
+                                            buildStatRow(Colors.red, '${"level".tr()}%(60)', double.parse((60 * 2500 / 100).toStringAsFixed(1)).toString()),
+                                            buildStatRow(Colors.green, '${"weapon".tr()}%(60)', double.parse((60 * 2500 / 100).toStringAsFixed(1)).toString()),
                                           ],
+                                        ),
+                                        SizedBox(
+                                          height: 2,
+                                        ),
+                                        //ANCHOR statATK:bar
+                                        Container(
+                                          clipBehavior: Clip.hardEdge,
+                                          decoration: BoxDecoration(
+                                            borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                          ),
+                                          foregroundDecoration: BoxDecoration(
+                                            border: Border.all(color: Colors.white, width: 1),
+                                            borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                          ),
+                                          padding: const EdgeInsets.all(0.5),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              buildstatbarhp(Colors.red, 2500),
+                                              buildstatbarhp(Colors.blue, 2500),
+                                              buildstatbarhp(Colors.red, 1500),
+                                              buildstatbarhp(Colors.green, 1500),
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ),

@@ -32,7 +32,6 @@ class LightconeRelicState extends State<LightconeRelic> {
         Padding(
           padding: const EdgeInsets.all(1.0),
           child: getImageComponent(prop.icon, placeholder: kTransparentImage, width: 28),
-          child: getImageComponent(prop.icon, placeholder: kTransparentImage, width: 28),
         ),
         Text(
           "${prop.getPropText(value)}",
