@@ -17,8 +17,8 @@ class LightconeEntity {
 	late String wtype = '';
 	late String rarity = '';
 	late String imagelargeurl = '';
-	late List<LightconeLeveldata> leveldata;
-	late List<LightconeSkilldata> skilldata;
+	late List<LightconeLeveldata> leveldata = [];
+	late List<LightconeSkilldata> skilldata = [];
 	late String infourl = '';
 
 	LightconeEntity();
@@ -36,9 +36,9 @@ class LightconeEntity {
 @JsonSerializable()
 class LightconeLeveldata {
 	late String level = '';
-	late int hp = 0;
-	late int atk = 0;
-	late int def = 0;
+	late double hp = 0;
+	late double atk = 0;
+	late double def = 0;
 
 	LightconeLeveldata();
 
@@ -54,6 +54,7 @@ class LightconeLeveldata {
 
 @JsonSerializable()
 class LightconeSkilldata {
+	late String id = '';
 	@JSONField(name: "ENname")
 	late String eNname = '';
 	@JSONField(name: "CNname")

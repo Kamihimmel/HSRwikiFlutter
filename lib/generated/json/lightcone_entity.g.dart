@@ -74,15 +74,15 @@ LightconeLeveldata $LightconeLeveldataFromJson(Map<String, dynamic> json) {
 	if (level != null) {
 		lightconeLeveldata.level = level;
 	}
-	final int? hp = jsonConvert.convert<int>(json['hp']);
+	final double? hp = jsonConvert.convert<double>(json['hp']);
 	if (hp != null) {
 		lightconeLeveldata.hp = hp;
 	}
-	final int? atk = jsonConvert.convert<int>(json['atk']);
+	final double? atk = jsonConvert.convert<double>(json['atk']);
 	if (atk != null) {
 		lightconeLeveldata.atk = atk;
 	}
-	final int? def = jsonConvert.convert<int>(json['def']);
+	final double? def = jsonConvert.convert<double>(json['def']);
 	if (def != null) {
 		lightconeLeveldata.def = def;
 	}
@@ -100,6 +100,10 @@ Map<String, dynamic> $LightconeLeveldataToJson(LightconeLeveldata entity) {
 
 LightconeSkilldata $LightconeSkilldataFromJson(Map<String, dynamic> json) {
 	final LightconeSkilldata lightconeSkilldata = LightconeSkilldata();
+	final String? id = jsonConvert.convert<String>(json['id']);
+	if (id != null) {
+		lightconeSkilldata.eNname = id;
+	}
 	final String? eNname = jsonConvert.convert<String>(json['ENname']);
 	if (eNname != null) {
 		lightconeSkilldata.eNname = eNname;
@@ -153,6 +157,7 @@ LightconeSkilldata $LightconeSkilldataFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> $LightconeSkilldataToJson(LightconeSkilldata entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
+	data['id'] = entity.id;
 	data['ENname'] = entity.eNname;
 	data['CNname'] = entity.cNname;
 	data['JAname'] = entity.jAname;

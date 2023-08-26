@@ -30,16 +30,16 @@ class Lightcone {
     return jsonEncode(this);
   }
 
-  int getBaseHp(int level) {
-    return entity.leveldata.firstWhere((d) => d.level == level.toString(), orElse: () => _emptyLeveldata).hp.toInt();
+  double getBaseHp(int level, {promotion = false}) {
+    return entity.leveldata.firstWhere((d) => d.level == "$level${promotion ? '+' : ''}", orElse: () => _emptyLeveldata).hp;
   }
 
-  int getBaseAtk(int level) {
-    return entity.leveldata.firstWhere((d) => d.level == level.toString(), orElse: () => _emptyLeveldata).atk.toInt();
+  double getBaseAtk(int level, {promotion = false}) {
+    return entity.leveldata.firstWhere((d) => d.level == "$level${promotion ? '+' : ''}", orElse: () => _emptyLeveldata).atk;
   }
 
-  int getBaseDef(int level) {
-    return entity.leveldata.firstWhere((d) => d.level == level.toString(), orElse: () => _emptyLeveldata).def.toInt();
+  double getBaseDef(int level, {promotion = false}) {
+    return entity.leveldata.firstWhere((d) => d.level == "$level${promotion ? '+' : ''}", orElse: () => _emptyLeveldata).def;
   }
 
   String getName(String lang) {

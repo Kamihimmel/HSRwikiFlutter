@@ -78,7 +78,8 @@ var _elementDamage = [
   FightProp.thunderAddedRatio,
   FightProp.windAddedRatio,
   FightProp.thunderAddedRatio,
-  FightProp.imaginaryAddedRatio
+  FightProp.imaginaryAddedRatio,
+  FightProp.quantumAddedRatio,
 ];
 
 double getRelicMainAttrValue(FightProp fightProp, int rarity, int level) {
@@ -214,7 +215,7 @@ const relicMainAttrLevelCurve = {
     4: {"base": 0.08294, "add": 0.02903},
     5: {"base": 0.10368, "add": 0.03629}
   },
-  FightProp.healRatioBase: {
+  FightProp.healRatio: {
     2: {"base": 0.02212, "add": 0.00774},
     3: {"base": 0.03318, "add": 0.01161},
     4: {"base": 0.04424, "add": 0.01548},

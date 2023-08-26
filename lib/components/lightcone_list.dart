@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +15,7 @@ class LightconeListState extends State<LightconeList> {
   final GlobalState _gs = GlobalState();
   final List<Lightcone> _lightcones = [];
   List<Lightcone> _filteredData = [];
+  bool _loading = true;
   bool _cnMode = false;
   Set<String> starFilter = Set();
   Set<String> pathFilter = Set();
@@ -25,11 +28,12 @@ class LightconeListState extends State<LightconeList> {
   }
 
   Future<void> _initLightconeData() async {
-    final Map<String, Lightcone> response = await LightconeManager.initAllLightcones();
+    final Map<String, Lightcone> response = LightconeManager.getLightconeIds().isEmpty ? await LightconeManager.initAllLightcones() : LightconeManager.getLightcones();
     setState(() {
       _lightcones.clear();
       _lightcones.addAll(response.values);
       _filteredData = List.from(_lightcones);
+      _loading = false;
     });
   }
 
@@ -158,7 +162,9 @@ class LightconeListState extends State<LightconeList> {
                     ),
                   ),
                   Expanded(
-                    child: GridView.count(
+                    child:  _loading ? Center(
+                      child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
+                    ) : GridView.count(
                       crossAxisCount: crossAxisCount,
                       childAspectRatio: (374 / 508),
                       children: _filteredData.map((d) {
@@ -239,10 +245,7 @@ class LightconeListState extends State<LightconeList> {
                                       padding: const EdgeInsets.all(5.0),
                                       child: Column(
                                         children: [
-                                          ConstrainedBox(
-                                            constraints: const BoxConstraints(maxWidth: 50),
-                                            child: getImageComponent(d.pathType.icon, imageWrap: true, width: screenWidth / 20),
-                                          ),
+                                          getImageComponent(d.pathType.icon, imageWrap: true, width: min(50, screenWidth / 20)),
                                         ],
                                       ),
                                     ),

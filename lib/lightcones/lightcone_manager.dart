@@ -4,7 +4,6 @@ import '../components/global_state.dart';
 import '../utils/helper.dart';
 import '../utils/logging.dart';
 import 'lightcone.dart';
-import 'lightcone_entity.dart';
 
 class LightconeManager {
   static final GlobalState _gs = GlobalState();

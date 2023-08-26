@@ -448,7 +448,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                                               borderRadius: BorderRadius.circular(5),
                                                                             ),
                                                                             child: Text(
-                                                                                '${(data.effect[index2].multipliertarget as String).tr()}$levelmulti${((data.effect[index2].multipliertarget) != '') ? "%" : ""}',
+                                                                                '${(data.effect[index2].multipliertarget).tr()}$levelmulti${((data.effect[index2].multipliertarget) != '') ? "%" : ""}',
                                                                                 style: const TextStyle(
                                                                                   //fontWeight: FontWeight.bold,
                                                                                   color: Colors.black,
@@ -465,7 +465,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                                               borderRadius: BorderRadius.circular(5),
                                                                             ),
                                                                             child: Text(
-                                                                                '${(data.effect[index2].addtarget as String).tr()}$levelmulti${((data.effect[index2].addtarget) != 'energy') ? "%" : ""}',
+                                                                                '${(data.effect[index2].addtarget).tr()}$levelmulti${((data.effect[index2].addtarget) != 'energy') ? "%" : ""}',
                                                                                 style: const TextStyle(
                                                                                   //fontWeight: FontWeight.bold,
                                                                                   color: Colors.black,

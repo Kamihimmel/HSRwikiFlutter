@@ -21,25 +21,6 @@ extension HexString on String {
   int getHexValue() => int.parse(replaceAll('#', '0xff'));
 }
 
-class Character {
-  final String id;
-  final String createdate;
-  final Map<String, dynamic> info;
-
-  Character(this.id, this.createdate, this.info);
-
-  Character.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        createdate = json['createdate'],
-        info = json['info'];
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'createdate': createdate,
-        'info': info,
-      };
-}
-
 class Uidimportpage extends StatefulWidget {
   const Uidimportpage({
     super.key,
@@ -63,17 +44,7 @@ class _UidimportpageState extends State<Uidimportpage> {
   final TextEditingController uidController = TextEditingController(text: '');
   final ExpansionTileController expandController = ExpansionTileController();
 
-  List<Character> characters = [];
   PlayerInfo _playerInfo = PlayerInfo();
-
-  void addOrUpdateCharacter(Character newCharacter) {
-    final existingIndex = characters.indexWhere((c) => c.id == newCharacter.id);
-    if (existingIndex != -1) {
-      characters[existingIndex] = newCharacter;
-    } else {
-      characters.add(newCharacter);
-    }
-  }
 
   Future<void> _getPlayerInfo() async {
     if (LightconeManager.getLightconeIds().isEmpty) {
@@ -87,6 +58,7 @@ class _UidimportpageState extends State<Uidimportpage> {
     if (playerInfoJson != null) {
       _playerInfo = PlayerInfo.fromJson(jsonDecode(playerInfoJson));
     } else {
+      // compatibility for old version
       _playerInfo.uid = await prefs.getString('uid') ?? '';
       _playerInfo.nickname = await prefs.getString('nickname') ?? '';
       String avatarimage = await prefs.getString('avatarimage') ?? '';
@@ -94,19 +66,15 @@ class _UidimportpageState extends State<Uidimportpage> {
         _playerInfo.avatar = avatarimage.substring(avatarimage.indexOf('starrailres/'));
       }
       _playerInfo.level = num.tryParse(await prefs.getString('level') ?? '')?.toInt() ?? 0;
-      await prefs.setString('playerinfo', _playerInfo.toJson());
-    }
-    if (characters.isEmpty) {
-      // TODO 移除characters依赖
       final charactersJson = await prefs.getString('characters');
       if (charactersJson != null) {
         final charactersList = jsonDecode(charactersJson) as List;
-        characters = charactersList.map((json) => Character.fromJson(json)).toList();
         _playerInfo.characters = charactersList.map((json) {
           Map<String, dynamic> info = json['info'];
           return CharacterStats.fromImportJson(info, updateTime: json['createdate']);
         }).toList();
       }
+      await prefs.setString('playerinfo', _playerInfo.toJson());
     }
     uidController.text = _playerInfo.uid;
     setState(() {
@@ -249,11 +217,6 @@ class _UidimportpageState extends State<Uidimportpage> {
                                   final prefs = await SharedPreferences.getInstance();
                                   PlayerInfo playerInfo = PlayerInfo.fromImportJson(returndata);
                                   logger.d(playerInfo);
-                                  final List<Character> newCharacters = List<Character>.from(returndata['characters']
-                                      .map((json) => Character(
-                                          json['id'] as String,
-                                          DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()),
-                                          json as Map<String, dynamic>)));
                                   if (_playerInfo.uid == playerInfo.uid) {
                                     if (_playerInfo.characters.isNotEmpty) {
                                       for (var cs in _playerInfo.characters) {
@@ -262,13 +225,9 @@ class _UidimportpageState extends State<Uidimportpage> {
                                         }
                                       }
                                     }
-                                    newCharacters.forEach((newCharacter) {
-                                      addOrUpdateCharacter(newCharacter);
-                                    });
                                   }
                                   _playerInfo = playerInfo;
                                   await prefs.setString('playerinfo', _playerInfo.toJson());
-                                  await prefs.setString('characters', jsonEncode(characters));
                                   expandController.collapse();
                                   setState(() {});
                                 }
@@ -309,8 +268,7 @@ class _UidimportpageState extends State<Uidimportpage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ShowcaseDetailPage(
-                                  characterinfo: characters, initialcharacter: index, characterStats: characterStats),
+                              builder: (context) => ShowcaseDetailPage(characterStats: characterStats),
                               settings: RouteSettings(),
                             ),
                           );
@@ -521,9 +479,8 @@ class _UidimportpageState extends State<Uidimportpage> {
                                       icon: Icon(Icons.delete),
                                       onPressed: () async {
                                         setState(() {
-                                          characters.removeAt(index);
                                           _playerInfo.characters.removeAt(index);
-                                          if (characters.isEmpty) {
+                                          if (_playerInfo.characters.isEmpty) {
                                             _playerInfo.nickname = "";
                                             _playerInfo.avatar = "";
                                             _playerInfo.level = 0;
@@ -531,8 +488,7 @@ class _UidimportpageState extends State<Uidimportpage> {
                                           }
                                         });
                                         final prefs = await SharedPreferences.getInstance();
-                                        String chracterinfo = jsonEncode(characters);
-                                        await prefs.setString('characters', chracterinfo);
+                                        await prefs.setString('playerinfo', _playerInfo.toJson());
                                       },
                                     ),
                                   ),
