@@ -22,7 +22,7 @@ class RelicEntity {
 	late String feet = '';
 	late String sphere = '';
 	late String rope = '';
-	late List<RelicSkilldata> skilldata;
+	late List<RelicSkilldata> skilldata = [];
 	late String infourl = '';
 
 	RelicEntity();

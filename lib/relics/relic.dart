@@ -62,6 +62,25 @@ class Relic {
     }
     return '';
   }
+
+  String getPartImageUrl(RelicPart rp) {
+    switch (rp) {
+      case RelicPart.head:
+        return entity.head;
+      case RelicPart.hands:
+        return entity.hands;
+      case RelicPart.body:
+        return entity.body;
+      case RelicPart.feet:
+        return entity.feet;
+      case RelicPart.sphere:
+        return entity.sphere;
+      case RelicPart.rope:
+        return entity.rope;
+      case RelicPart.unknown:
+        return '';
+    }
+  }
 }
 
 enum RelicPart {
@@ -129,5 +148,20 @@ class RelicStats {
     this.rarity = 5;
     this.level = 15;
     this.mainAttr = part.mainAttrs[0];
+  }
+
+  double getMainAttrValue() {
+    return getRelicMainAttrValue(mainAttr, rarity, level);
+  }
+
+  double getMainAttrValueByProp(FightProp prop) {
+    if (mainAttr != prop) {
+      return 0;
+    }
+    return getRelicMainAttrValue(mainAttr, rarity, level);
+  }
+
+  double getSubAttrValueByProp(FightProp prop) {
+    return subAttrValues.containsKey(prop) ? subAttrValues[prop]! : 0;
   }
 }

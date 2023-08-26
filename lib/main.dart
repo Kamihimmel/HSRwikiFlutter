@@ -6,8 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'components/character_list.dart';
@@ -188,62 +186,17 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     });
   }
 
-  List<Map<String, String>> _data2 = [];
-  List<Map<String, String>> _data3 = [];
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 5, vsync: this);
     fetchstaus();
-    _getData2();
-    _getData3();
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
-  }
-
-  Future<void> _getData2() async {
-    final response = await http.get(Uri.parse(urlendpoint + 'lib/lightconelist.json'));
-    final Map<String, dynamic> jsonData = json.decode(response.body);
-
-    setState(() {
-      _data2 = (jsonData['data'] as List<dynamic>)
-          .map((e) => {
-                'enname': e['ENname'] as String,
-                'cnname': e['CNname'] as String,
-                'janame': e['JAname'] as String,
-                'imageUrl': urlendpoint + e['imageurl'],
-                'wtype': e['wtype'] as String,
-                'rarity': e['rarity'] as String,
-                'infoUrl': urlendpoint + e['infourl'],
-                'spoiler': (e['spoiler'] ? "true" : "false")
-              })
-          .toList();
-      _filteredData2 = List.from(_data2);
-    });
-  }
-
-  Future<void> _getData3() async {
-    final response = await http.get(Uri.parse(urlendpoint + 'lib/reliclist.json'));
-    final Map<String, dynamic> jsonData = json.decode(response.body);
-
-    setState(() {
-      _data3 = (jsonData['data'] as List<dynamic>)
-          .map((e) => {
-                'enname': e['ENname'] as String,
-                'cnname': e['CNname'] as String,
-                'janame': e['JAname'] as String,
-                'imageUrl': urlendpoint + e['imageurl'],
-                'set': e['set'] as String,
-                'infoUrl': urlendpoint + e['infourl'],
-                'spoiler': (e['spoiler'] ? "true" : "false")
-              })
-          .toList();
-      _filteredData3 = List.from(_data3);
-    });
   }
 
   Future<void> fetchstaus() async {
@@ -275,113 +228,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     });
   }
 
-  //show control bool
-  bool filterStar5On = false;
-  bool filterStar4On = false;
-  bool filterSet4On = false;
-  bool filterSet2On = false;
-  bool filterStar3On = false;
-  bool filterDestructionOn = false;
-  bool filterEruditionOn = false;
-  bool filterHarmonyOn = false;
-  bool filterThehuntOn = false;
-  bool filterNihilityOn = false;
-  bool filterAbundanceOn = false;
-  bool filterPreservationOn = false;
-  bool showall = true;
-
-  List<Map<String, String>> _filteredData2 = [];
-  List<Map<String, String>> _filteredData3 = [];
-
   late final TabController _tabController;
 
   @override
   Widget build(BuildContext context) {
-    // filter lightcone data
-    _filteredData2 = List.from(_data2);
-    List<Map<String, String>> tempData2 = [];
-
-    if (spoilermode) {
-      tempData2.addAll(_filteredData2.where((item) => item['spoiler'] == 'true').toList());
-      tempData2.addAll(_filteredData2.where((item) => item['spoiler'] == 'false').toList());
-
-      _filteredData2 = List.from(tempData2);
-      tempData2 = [];
-    } else {
-      tempData2.addAll(_filteredData2.where((item) => item['spoiler'] == 'false').toList());
-
-      _filteredData2 = List.from(tempData2);
-      tempData2 = [];
-    }
-
-    if (filterStar4On || filterStar5On || filterStar3On) {
-      if (filterStar4On) {
-        tempData2.addAll(_filteredData2.where((item) => item['rarity'] == '4').toList());
-      }
-      if (filterStar5On) {
-        tempData2.addAll(_filteredData2.where((item) => item['rarity'] == '5').toList());
-      }
-      if (filterStar3On) {
-        tempData2.addAll(_filteredData2.where((item) => item['rarity'] == '3').toList());
-      }
-      _filteredData2 = List.from(tempData2);
-      tempData2 = [];
-    }
-
-    if (filterDestructionOn || filterEruditionOn || filterHarmonyOn || filterThehuntOn || filterNihilityOn || filterAbundanceOn || filterPreservationOn) {
-      if (filterDestructionOn) {
-        tempData2.addAll(_filteredData2.where((item) => item['wtype'] == 'destruction').toList());
-      }
-      if (filterEruditionOn) {
-        tempData2.addAll(_filteredData2.where((item) => item['wtype'] == 'erudition').toList());
-      }
-      if (filterHarmonyOn) {
-        tempData2.addAll(_filteredData2.where((item) => item['wtype'] == 'harmony').toList());
-      }
-      if (filterThehuntOn) {
-        tempData2.addAll(_filteredData2.where((item) => item['wtype'] == 'thehunt').toList());
-      }
-      if (filterNihilityOn) {
-        tempData2.addAll(_filteredData2.where((item) => item['wtype'] == 'nihility').toList());
-      }
-      if (filterAbundanceOn) {
-        tempData2.addAll(_filteredData2.where((item) => item['wtype'] == 'abundance').toList());
-      }
-      if (filterPreservationOn) {
-        tempData2.addAll(_filteredData2.where((item) => item['wtype'] == 'preservation').toList());
-      }
-      _filteredData2 = List.from(tempData2);
-      tempData2 = [];
-    }
-    // filter relic data
-
-    _filteredData3 = List.from(_data3);
-    List<Map<String, String>> tempData3 = [];
-
-    if (spoilermode) {
-      tempData3.addAll(_filteredData3.where((item) => item['spoiler'] == 'true').toList());
-      tempData3.addAll(_filteredData3.where((item) => item['spoiler'] == 'false').toList());
-
-      _filteredData3 = List.from(tempData3);
-      tempData3 = [];
-    } else {
-      tempData3.addAll(_filteredData3.where((item) => item['spoiler'] == 'false').toList());
-
-      _filteredData3 = List.from(tempData3);
-      tempData3 = [];
-    }
-
-    if (filterSet2On || filterSet4On) {
-      if (filterSet4On) {
-        tempData3.addAll(_filteredData3.where((item) => item['set'] == '4').toList());
-      }
-      if (filterSet2On) {
-        tempData3.addAll(_filteredData3.where((item) => item['set'] == '2').toList());
-      }
-      _filteredData3 = List.from(tempData3);
-      tempData3 = [];
-    }
-
     var footer = Padding(
       padding: EdgeInsets.all(8.0),
       child: FittedBox(
@@ -625,18 +475,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           final prefs = await SharedPreferences.getInstance();
                           await prefs.setString('cnmode', "false");
                           _gs.setAppConfig(cn: false);
-
-                          urlendpoint = "https://hsrwikidata.yunlu18.net/";
-                          _getData2();
-                          _getData3();
                         } else {
                           final prefs = await SharedPreferences.getInstance();
                           await prefs.setString('cnmode', "true");
                           _gs.setAppConfig(cn: true);
-
-                          urlendpoint = "https://hsrwikidata.kchlu.com/";
-                          _getData2();
-                          _getData3();
                         }
                       }),
                 Padding(

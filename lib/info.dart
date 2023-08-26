@@ -1,16 +1,5 @@
 import 'package:flutter/material.dart';
 
-const etocolor = {
-  'fire': Colors.red,
-  'ice': Colors.lightBlue,
-  'lightning': Colors.purple,
-  'thunder': Colors.purple,
-  'imaginary': Colors.yellow,
-  'quantum': Colors.indigo,
-  'wind': Colors.green,
-  'physical': Colors.grey,
-};
-
 const stattoimage = {
   'hp': AssetImage('images/IconMaxHP.png'),
   'atk': AssetImage('images/IconAttack.png'),

@@ -13,6 +13,7 @@ class RelicListState extends State<RelicList> {
   final GlobalState _gs = GlobalState();
   final List<Relic> _relics = [];
   List<Relic> _filteredData = [];
+  bool _loading = true;
   bool _cnMode = false;
   Set<String> setFilter = Set();
 
@@ -24,11 +25,12 @@ class RelicListState extends State<RelicList> {
   }
 
   Future<void> _initRelicData() async {
-    final Map<String, Relic> response = await RelicManager.initAllRelics();
+    final Map<String, Relic> response = RelicManager.getRelicIds().isEmpty ? await RelicManager.initAllRelics() : RelicManager.getRelics();
     setState(() {
       _relics.clear();
       _relics.addAll(response.values);
       _filteredData = List.from(_relics);
+      _loading = false;
     });
   }
 
@@ -101,11 +103,13 @@ class RelicListState extends State<RelicList> {
                             ),
                             selected: setFilter.contains("2"),
                             onSelected: (bool value) {
-                              if (value) {
-                                setFilter.add("2");
-                              } else {
-                                setFilter.remove("2");
-                              }
+                              setState(() {
+                                if (value) {
+                                  setFilter.add("2");
+                                } else {
+                                  setFilter.remove("2");
+                                }
+                              });
                             },
                           ),
                         ),
@@ -113,7 +117,9 @@ class RelicListState extends State<RelicList> {
                     ),
                   ),
                   Expanded(
-                    child: GridView.count(
+                    child:  _loading ? Center(
+                      child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
+                    ) : GridView.count(
                       crossAxisCount: crossAxisCount,
                       childAspectRatio: (1 / 1),
                       children: _filteredData.map((r) {
