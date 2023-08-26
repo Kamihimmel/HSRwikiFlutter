@@ -12,9 +12,7 @@ import '../characters/character_manager.dart';
 import '../lightcones/lightcone.dart';
 import '../lightcones/lightcone_entity.dart';
 import '../lightcones/lightcone_manager.dart';
-import '../platformad_stub.dart'
-    if (dart.library.io) '../platformad_stub.dart'
-    if (dart.library.html) '../platformad.dart';
+import '../platformad_stub.dart' if (dart.library.io) '../platformad_stub.dart' if (dart.library.html) '../platformad.dart';
 import '../relics/relic_manager.dart';
 import '../utils/helper.dart';
 import '../utils/logging.dart';
@@ -34,8 +32,7 @@ class LightconeRelicState extends State<LightconeRelic> {
       children: [
         Padding(
           padding: const EdgeInsets.all(1.0),
-          child: getImageComponent(prop.icon,
-              placeholder: kTransparentImage, width: 28),
+          child: getImageComponent(prop.icon, placeholder: kTransparentImage, width: 28),
         ),
         Text(
           "${prop.isPercent() ? (value * 100).toStringAsFixed(1) + '%' : value.toStringAsFixed(0)}",
@@ -69,6 +66,9 @@ class LightconeRelicState extends State<LightconeRelic> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
+                        SizedBox(
+                          height: 10,
+                        ),
                         Container(
                           width: 200,
                           height: 200,
@@ -88,8 +88,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                   Colors.black.withOpacity(0.35),
                                 ]),
                               ),
-                              child: getImageComponent(_lData.entity.imageurl,
-                                  placeholder: kTransparentImage, fit: BoxFit.cover),
+                              child: getImageComponent(_lData.entity.imageurl, placeholder: kTransparentImage, fit: BoxFit.cover),
                             ),
                           ),
                         ),
@@ -98,21 +97,15 @@ class LightconeRelicState extends State<LightconeRelic> {
                           child: Container(
                             clipBehavior: Clip.hardEdge,
                             decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                              borderRadius: BorderRadius.all(Radius.circular(15)),
                             ),
                             child: BackdropFilter(
                               filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                               child: Container(
                                 decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                  borderRadius: const BorderRadius.all(Radius.circular(15)),
                                   border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                  gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        _cData.elementType.color.withOpacity(0.35),
-                                        Colors.black.withOpacity(0.5)
-                                      ]),
+                                  gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                                 ),
                                 child: Column(
                                   children: [
@@ -136,11 +129,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                           ),
                                           Expanded(
                                             child: Slider(
-                                              value: _lData.entity.leveldata
-                                                  .map((e) => e.level)
-                                                  .toList()
-                                                  .indexOf(_gs.stats.lightconeLevel)
-                                                  .toDouble(),
+                                              value: _lData.entity.leveldata.map((e) => e.level).toList().indexOf(_gs.stats.lightconeLevel).toDouble(),
                                               min: 0,
                                               max: _lData.entity.leveldata.length - 1,
                                               divisions: _lData.entity.leveldata.length,
@@ -192,8 +181,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                       width: double.infinity,
                                       margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                                       clipBehavior: Clip.hardEdge,
-                                      decoration:
-                                          const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15))),
+                                      decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15))),
                                       child: BackdropFilter(
                                         filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                                         child: Container(
@@ -201,12 +189,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                             borderRadius: const BorderRadius.all(Radius.circular(15)),
                                             border: Border.all(color: Colors.white.withOpacity(0.13)),
                                             gradient: LinearGradient(
-                                                begin: Alignment.topLeft,
-                                                end: Alignment.bottomRight,
-                                                colors: [
-                                                  _cData.elementType.color.withOpacity(0.35),
-                                                  Colors.black.withOpacity(0.5)
-                                                ]),
+                                                begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                                           ),
                                           child: Row(
                                             children: [
@@ -295,15 +278,12 @@ class LightconeRelicState extends State<LightconeRelic> {
                                     decoration: BoxDecoration(
                                       borderRadius: const BorderRadius.all(Radius.circular(15)),
                                       border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                      gradient:
-                                      LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
+                                      gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
                                         Colors.black12.withOpacity(0.35),
                                         Colors.black.withOpacity(0.35),
                                       ]),
                                     ),
-                                    child: getImageComponent(imageUrl,
-                                        placeholder: kTransparentImage, fit: BoxFit.cover, width: 125)
-                                ),
+                                    child: getImageComponent(imageUrl, placeholder: kTransparentImage, fit: BoxFit.cover, width: 125)),
                               ),
                             );
                           }),
@@ -325,15 +305,10 @@ class LightconeRelicState extends State<LightconeRelic> {
                                   filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                      borderRadius: const BorderRadius.all(Radius.circular(15)),
                                       border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                      gradient: LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            _cData.elementType.color.withOpacity(0.35),
-                                            Colors.black.withOpacity(0.5)
-                                          ]),
+                                      gradient:
+                                          LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                                     ),
                                     child: Column(
                                       children: [
@@ -352,8 +327,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                     maxWidth: 60,
                                                     child: Padding(
                                                       padding: const EdgeInsets.fromLTRB(5, 5, 0, 5),
-                                                      child: getImageComponent(rs.setId == '' ? '' : RelicManager.getRelic(rs.setId).entity.imageurl,
-                                                          placeholder: kTransparentImage, width: 60),
+                                                      child: getImageComponent(rs.setId == '' ? '' : RelicManager.getRelic(rs.setId).entity.imageurl, placeholder: kTransparentImage, width: 60),
                                                     ),
                                                   ),
                                                 ),
@@ -363,8 +337,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                     mainAxisAlignment: MainAxisAlignment.start,
                                                     crossAxisAlignment: CrossAxisAlignment.end,
                                                     children: [
-                                                      getImageComponent(rs.mainAttr.icon,
-                                                        placeholder: kTransparentImage, width: 25),
+                                                      getImageComponent(rs.mainAttr.icon, placeholder: kTransparentImage, width: 25),
                                                       Text(
                                                         "${rs.mainAttr.isPercent() ? (mainAttrValue * 100).toStringAsFixed(1) + '%' : mainAttrValue.toStringAsFixed(0)}",
                                                         style: const TextStyle(

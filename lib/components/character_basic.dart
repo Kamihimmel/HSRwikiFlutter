@@ -10,9 +10,7 @@ import '../characters/character.dart';
 import '../characters/character_entity.dart';
 import '../characters/character_manager.dart';
 import '../info.dart';
-import '../platformad_stub.dart'
-    if (dart.library.io) '../platformad_stub.dart'
-    if (dart.library.html) '../platformad.dart';
+import '../platformad_stub.dart' if (dart.library.io) '../platformad_stub.dart' if (dart.library.html) '../platformad.dart';
 import '../utils/helper.dart';
 import 'global_state.dart';
 
@@ -59,13 +57,10 @@ class CharacterBasicState extends State<CharacterBasic> {
                         decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(15)),
                           border: Border.all(color: Colors.white.withOpacity(0.13)),
-                          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
-                            _cData.elementType.color.withOpacity(0.35),
-                            _cData.elementType.color.withOpacity(0.5)
-                          ]),
+                          gradient:
+                              LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), _cData.elementType.color.withOpacity(0.5)]),
                         ),
-                        child: getImageComponent(_cData.getImageUrl(_gs),
-                            placeholder: kTransparentImage, fit: BoxFit.cover),
+                        child: getImageComponent(_cData.getImageUrl(_gs), placeholder: kTransparentImage, fit: BoxFit.cover),
                       ),
                     ),
                   ),
@@ -74,18 +69,15 @@ class CharacterBasicState extends State<CharacterBasic> {
                     child: Container(
                       clipBehavior: Clip.hardEdge,
                       decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
                       ),
                       child: BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.all(Radius.circular(10)),
+                            borderRadius: const BorderRadius.all(Radius.circular(15)),
                             border: Border.all(color: Colors.white.withOpacity(0.13)),
-                            gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
-                              _cData.elementType.color.withOpacity(0.35),
-                              _cData.elementType.color.withOpacity(0.5)
-                            ]),
+                            gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                           ),
                           child: Column(
                             children: [
@@ -109,11 +101,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                                     ),
                                     Expanded(
                                       child: Slider(
-                                        value: _cData.entity.leveldata
-                                            .map((e) => e.level)
-                                            .toList()
-                                            .indexOf(_gs.stats.level)
-                                            .toDouble(),
+                                        value: _cData.entity.leveldata.map((e) => e.level).toList().indexOf(_gs.stats.level).toDouble(),
                                         min: 0,
                                         max: _cData.entity.leveldata.length - 1,
                                         divisions: _cData.entity.leveldata.length,
@@ -172,19 +160,14 @@ class CharacterBasicState extends State<CharacterBasic> {
                                     decoration: BoxDecoration(
                                       borderRadius: const BorderRadius.all(Radius.circular(15)),
                                       border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                      gradient: LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            _cData.elementType.color.withOpacity(0.35),
-                                            Colors.black.withOpacity(0.5)
-                                          ]),
+                                      gradient:
+                                          LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                                     ),
                                     child: Row(
                                       children: [
                                         Container(
-                                          margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                                          child: getImageComponent(skill.imageurl, imageWrap: true, width: 80),
+                                          margin: const EdgeInsets.fromLTRB(5, 25, 0, 5),
+                                          child: getImageComponent(skill.imageurl, imageWrap: true, width: 60),
                                         ),
                                         Expanded(
                                           child: Padding(
@@ -256,8 +239,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                               width: 110,
                               decoration: BoxDecoration(
                                 color: _cData.elementType.color.withOpacity(0.3),
-                                borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                                borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
                               ),
                               child: Center(
                                 child: Padding(
@@ -299,19 +281,14 @@ class CharacterBasicState extends State<CharacterBasic> {
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.all(Radius.circular(15)),
                                         border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                        gradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                            colors: [
-                                              _cData.elementType.color.withOpacity(0.35),
-                                              Colors.black.withOpacity(0.5)
-                                            ]),
+                                        gradient:
+                                            LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                                       ),
                                       child: Row(
                                         children: [
                                           Container(
-                                            margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                                            child: getImageComponent(trace.imageurl, imageWrap: true, width: 80),
+                                            margin: const EdgeInsets.fromLTRB(5, 25, 0, 5),
+                                            child: getImageComponent(trace.imageurl, imageWrap: true, width: 60),
                                           ),
                                           Expanded(
                                             child: Padding(
@@ -347,8 +324,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                                 width: 110,
                                 decoration: BoxDecoration(
                                   color: _cData.elementType.color.withOpacity(0.3),
-                                  borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
                                 ),
                                 child: Center(
                                   child: Padding(
@@ -443,13 +419,8 @@ class CharacterBasicState extends State<CharacterBasic> {
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.all(Radius.circular(15)),
                                         border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                        gradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                            colors: [
-                                              _cData.elementType.color.withOpacity(0.35),
-                                              Colors.black.withOpacity(0.5)
-                                            ]),
+                                        gradient:
+                                            LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                                       ),
                                       child: Row(
                                         children: [
@@ -460,8 +431,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                                                 children: [
                                                   SwitchListTile(
                                                       activeColor: _cData.elementType.color,
-                                                      secondary: getImageComponent(eidolon.imageurl,
-                                                          imageWrap: true, width: 80),
+                                                      secondary: getImageComponent(eidolon.imageurl, imageWrap: true, width: 70, fit: BoxFit.contain),
                                                       title: Text(
                                                         _cData.getEidolonName(index, getLanguageCode(context)),
                                                         style: const TextStyle(
@@ -470,8 +440,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                                                           fontSize: 18,
                                                         ),
                                                       ),
-                                                      subtitle: Text(_cData.getEidolonDescription(
-                                                          index, getLanguageCode(context))),
+                                                      subtitle: Text(_cData.getEidolonDescription(index, getLanguageCode(context))),
                                                       value: (_gs.stats.eidolons[eidolon.eidolonnum.toString()] ?? 0) > 0,
                                                       onChanged: (bool value) async {
                                                         setState(() {
@@ -499,8 +468,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                               width: 110,
                               decoration: BoxDecoration(
                                 color: _cData.elementType.color.withOpacity(0.3),
-                                borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                                borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
                               ),
                               child: Center(
                                 child: Padding(

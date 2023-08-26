@@ -6,19 +6,17 @@ import '../utils/helper.dart';
 import '../utils/logging.dart';
 
 class GlobalState extends ChangeNotifier {
-
   static final GlobalState _instance = GlobalState._();
 
   GlobalState._() {
-    this.addListener(() {
-    });
+    this.addListener(() {});
   }
 
   factory GlobalState() => _instance;
 
   Map<String, dynamic> toJson() => {
-    'stats': _stats._cStats.toJson(),
-  };
+        'stats': _stats._cStats.toJson(),
+      };
 
   /// character
   CharacterStatsNotify _stats = CharacterStatsNotify();
@@ -26,9 +24,25 @@ class GlobalState extends ChangeNotifier {
   /// config
   AppConfig _appConfig = AppConfig();
 
+  /// footer
+  int _dmgScale = 10; // footer option: damage scale
+  int _statScale = 10; // footer option: stat scale
+
   CharacterStats get stats => _stats._cStats;
   set stats(CharacterStats stats) {
     _stats.cStats = stats;
+  }
+
+  int get dmgScale => _dmgScale;
+  set dmgScale(int dmgScale) {
+    _dmgScale = dmgScale;
+    notifyListeners();
+  }
+
+  int get statScale => _statScale;
+  set statScale(int statScale) {
+    _statScale = statScale;
+    notifyListeners();
   }
 
   CharacterStatsNotify getCharacterStats() {
@@ -48,6 +62,7 @@ class GlobalState extends ChangeNotifier {
     _appConfig = AppConfig.copy(_appConfig);
     return _appConfig;
   }
+
   void setAppConfig({bool? male, bool? spoiler, bool? cn, bool? test}) {
     if (male != null) {
       _appConfig.male = male;
@@ -85,18 +100,21 @@ class AppConfig extends ChangeNotifier {
     logger.d("change male: $male");
     notifyListeners();
   }
+
   bool get spoilerMode => _spoilerMode;
   set spoilerMode(bool spoilerMode) {
     _spoilerMode = spoilerMode;
     logger.d("change spoiler mode: $spoilerMode");
     notifyListeners();
   }
+
   bool get cnMode => _cnMode;
   set cnMode(bool cnMode) {
     _cnMode = cnMode;
     logger.d("change cn mode: $cnMode");
     notifyListeners();
   }
+
   bool get test => _test;
   set test(bool test) {
     _test = test;
