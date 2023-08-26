@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +15,7 @@ class CharacterListState extends State<CharacterList> {
   final GlobalState _gs = GlobalState();
   final List<Character> _characters = [];
   List<Character> _filteredData = [];
+  bool _loading = true;
   bool _cnMode = false;
   Set<String> starFilter = Set();
   Set<String> elementFilter = Set();
@@ -26,11 +29,12 @@ class CharacterListState extends State<CharacterList> {
   }
 
   Future<void> _initCharacterData() async {
-    final Map<String, Character> response = await CharacterManager.initAllCharacters();
+    final Map<String, Character> response = CharacterManager.getCharacterIds().isEmpty ? await CharacterManager.initAllCharacters() : CharacterManager.getCharacters();
     setState(() {
       _characters.clear();
       _characters.addAll(response.values);
       _filteredData = List.from(_characters);
+      _loading = false;
     });
   }
 
@@ -157,7 +161,9 @@ class CharacterListState extends State<CharacterList> {
                         ),
                       ),
                       Expanded(
-                        child: GridView.count(
+                        child: _loading ? Center(
+                          child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
+                        ) : GridView.count(
                           crossAxisCount: crossAxisCount,
                           childAspectRatio: (374 / 508),
                           children: _filteredData.map((c) {
@@ -233,14 +239,8 @@ class CharacterListState extends State<CharacterList> {
                                           padding: const EdgeInsets.all(5.0),
                                           child: Column(
                                             children: [
-                                              ConstrainedBox(
-                                                constraints: const BoxConstraints(maxWidth: 50),
-                                                child: getImageComponent(c.elementType.icon, imageWrap: true, width: screenWidth / 20),
-                                              ),
-                                              ConstrainedBox(
-                                                constraints: const BoxConstraints(maxWidth: 50),
-                                                child: getImageComponent(c.pathType.icon, imageWrap: true, width: screenWidth / 20),
-                                              ),
+                                              getImageComponent(c.elementType.icon, imageWrap: true, width: min(50, screenWidth / 20), fit: BoxFit.contain),
+                                              getImageComponent(c.pathType.icon, imageWrap: true, width: min(50, screenWidth / 20), fit: BoxFit.contain),
                                             ],
                                           ),
                                         ),

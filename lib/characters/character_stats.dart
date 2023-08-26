@@ -1,9 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 
 import '../calculator/basic.dart';
+import '../lightcones/lightcone.dart';
+import '../lightcones/lightcone_manager.dart';
 import '../calculator/effect_entity.dart';
 import '../relics/relic.dart';
 import '../relics/relic_manager.dart';
+import '../utils/helper.dart';
+import 'character.dart';
 import 'character_manager.dart';
 
 class CharacterStats {
@@ -31,7 +35,7 @@ class CharacterStats {
     if (withDefault && relics.isEmpty) {
       return CharacterManager.getDefaultRelicSets(id);
     }
-    List<String> sets = ['0', '0', '0'];
+    List<String> sets = ['', '', ''];
     List<String> setIds4 = relics.entries.where((e) => e.key.xSet == '4').map((e) => e.value.setId).toList();
     Map<String, int> validSet4 = setIds4.fold({}, (value, e) {
       int cnt = value[e] ?? 0;
@@ -53,6 +57,202 @@ class CharacterStats {
       sets[2] = setIds2[0];
     }
     return sets;
+  }
+
+  Map<FightProp, Map<PropSource, double>> calculateStats() {
+    Map<FightProp, Map<PropSource, double>> map = {};
+    map[FightProp.maxHP] = getPropValue(FightProp.maxHP);
+    map[FightProp.attack] = getPropValue(FightProp.attack);
+    map[FightProp.defence] = getPropValue(FightProp.defence);
+    map[FightProp.speed] = getPropValue(FightProp.speed);
+    map[FightProp.criticalChance] = getPropValue(FightProp.criticalChance);
+    map[FightProp.criticalDamage] = getPropValue(FightProp.criticalDamage);
+    map[FightProp.breakDamageAddedRatio] = getPropValue(FightProp.breakDamageAddedRatio);
+    map[FightProp.statusProbability] = getPropValue(FightProp.statusProbability);
+    map[FightProp.statusResistance] = getPropValue(FightProp.statusResistance);
+    ElementType et = CharacterManager.getCharacter(id).elementType;
+    FightProp elementAddProp = FightProp.fromEffectKey(et.key + 'dmg');
+    map[elementAddProp] = getPropValue(elementAddProp);
+    map[FightProp.sPRatio] = getPropValue(FightProp.sPRatio);
+    map[FightProp.aggro] = getPropValue(FightProp.aggro);
+    return map;
+  }
+
+  Map<PropSource, double> getHp() {
+    Map<PropSource, double> result = {};
+
+    Character c = CharacterManager.getCharacter(id);
+    double characterHp = c.getBaseHp(num.tryParse(level.replaceAll('+', 'replace'))?.toInt() ?? 0, promotion: level.contains('+'));
+    result[PropSource.characterBasic(id)] = characterHp;
+
+    Lightcone lc = LightconeManager.getLightcone(lightconeId);
+    double lightconeHp = lc.getBaseHp(num.tryParse(lightconeLevel.replaceAll('+', 'replace'))?.toInt() ?? 0, promotion: lightconeLevel.contains('+'));
+    result[PropSource.lightconeAttr(lightconeId)] = lightconeHp;
+
+    double baseHp = characterHp + lightconeHp;
+
+    _addLightconeSkillValue(result, lc, baseHp, FightProp.hPAddedRatio);
+    _addRelicAttrValue(result, baseHp, [FightProp.hPDelta, FightProp.hPAddedRatio]);
+    _addRelicSetEffectValue(result, baseHp, FightProp.hPAddedRatio);
+    _addCharacterTraceValue(result, c, baseHp, FightProp.hPAddedRatio);
+
+    return result;
+  }
+
+  Map<PropSource, double> getAtk() {
+    Map<PropSource, double> result = {};
+
+    Character c = CharacterManager.getCharacter(id);
+    double characterAtk = c.getBaseAtk(num.tryParse(level.replaceAll('+', 'replace'))?.toInt() ?? 0, promotion: level.contains('+'));
+    result[PropSource.characterBasic(id)] = characterAtk;
+
+    Lightcone lc = LightconeManager.getLightcone(lightconeId);
+    double lightconeAtk = lc.getBaseAtk(num.tryParse(lightconeLevel.replaceAll('+', 'replace'))?.toInt() ?? 0, promotion: lightconeLevel.contains('+'));
+    result[PropSource.lightconeAttr(lightconeId)] = lightconeAtk;
+
+    double baseAtk = characterAtk + lightconeAtk;
+
+    _addLightconeSkillValue(result, lc, baseAtk, FightProp.attackAddedRatio);
+    _addRelicAttrValue(result, baseAtk, [FightProp.attackDelta, FightProp.attackAddedRatio]);
+    _addRelicSetEffectValue(result, baseAtk, FightProp.attackAddedRatio);
+    _addCharacterTraceValue(result, c, baseAtk, FightProp.attackAddedRatio);
+
+    return result;
+  }
+
+  Map<PropSource, double> getDef() {
+    Map<PropSource, double> result = {};
+
+    Character c = CharacterManager.getCharacter(id);
+    double characterDef = c.getBaseDef(num.tryParse(level.replaceAll('+', 'replace'))?.toInt() ?? 0, promotion: level.contains('+'));
+    result[PropSource.characterBasic(id)] = characterDef;
+
+    Lightcone lc = LightconeManager.getLightcone(lightconeId);
+    double lightconeDef = lc.getBaseDef(num.tryParse(lightconeLevel.replaceAll('+', 'replace'))?.toInt() ?? 0, promotion: lightconeLevel.contains('+'));
+    result[PropSource.lightconeAttr(lightconeId)] = lightconeDef;
+
+    double baseDef = characterDef + lightconeDef;
+
+    _addLightconeSkillValue(result, lc, baseDef, FightProp.defenceAddedRatio);
+    _addRelicAttrValue(result, baseDef, [FightProp.defenceDelta, FightProp.defenceAddedRatio]);
+    _addRelicSetEffectValue(result, baseDef, FightProp.defenceAddedRatio);
+    _addCharacterTraceValue(result, c, baseDef, FightProp.defenceAddedRatio);
+
+    return result;
+  }
+
+  Map<PropSource, double> getPropValue(FightProp prop) {
+    if (prop == FightProp.maxHP) {
+      return getHp();
+    } else if (prop == FightProp.attack) {
+      return getAtk();
+    } else if (prop == FightProp.defence) {
+      return getDef();
+    }
+
+    Map<PropSource, double> result = {};
+    Character c = CharacterManager.getCharacter(id);
+    Lightcone lc = LightconeManager.getLightcone(lightconeId);
+
+    if (prop == FightProp.aggro) {
+      result[PropSource.characterBasic(id)] = c.entity.dtaunt.toDouble();
+    } else if (prop == FightProp.speed) {
+      result[PropSource.characterBasic(id)] = c.entity.dspeed.toDouble();
+      prop = FightProp.speedDelta;
+    } else if (prop == FightProp.criticalChance) {
+      result[PropSource.characterBasic(id)] = 0.05;
+    } else if (prop == FightProp.criticalDamage) {
+      result[PropSource.characterBasic(id)] = 0.5;
+    } else if (prop == FightProp.sPRatio) {
+      result[PropSource.characterBasic(id)] = 1;
+    }
+
+    _addLightconeSkillValue(result, lc, 1, prop);
+    _addRelicAttrValue(result, 1, [prop]);
+    _addRelicSetEffectValue(result, 1, prop);
+    _addCharacterTraceValue(result, c, 1, prop);
+    return result;
+  }
+
+  void _addLightconeSkillValue(Map<PropSource, double> result, Lightcone lightcone, double base, FightProp prop) {
+    lightcone.entity.skilldata.forEach((t) {
+      if (t.effect.isEmpty) {
+        return;
+      }
+      // TODO 银狼光锥不进面板特效问题
+      EffectEntity effect = t.effect.firstWhere((e) => e.tag.contains('self') && e.type == 'buff' && FightProp.fromEffectKey(e.addtarget) == prop, orElse: () => EffectEntity());
+      if (effect.multiplier > 0) {
+        double v = t.levelmultiplier[effect.multiplier.toInt() - 1][lightconeRank.toString()] / 100;
+        result[PropSource.lightconeEffect(lightconeId, name: t.id)] = base * v;
+      }
+    });
+  }
+
+  void _addRelicAttrValue(Map<PropSource, double> result, double base, List<FightProp> props) {
+    for (var e in relics.entries) {
+      double mainValue = 0;
+      for (var prop in props) {
+        double v = e.value.getMainAttrValueByProp(prop);
+        if (prop.isPercent()) {
+          mainValue += base * v;
+        } else {
+          mainValue += v;
+        }
+      }
+      result[PropSource.relicAttr(e.key, mainAttr: true)] = mainValue;
+      double subValue = 0;
+      for (var prop in props) {
+        double v = e.value.getSubAttrValueByProp(prop);
+        if (prop.isPercent()) {
+          subValue += base * v;
+        } else {
+          subValue += v;
+        }
+      }
+      result[PropSource.relicAttr(e.key, mainAttr: false)] = subValue;
+    }
+  }
+
+  void _addRelicSetEffectValue(Map<PropSource, double> result, double base, FightProp prop) {
+    List<String> relicSets = getRelicSets(withDefault: false);
+    if (relicSets.length == 3) {
+      for (var i = 0; i < relicSets.length; i++) {
+        if (i == 1) {
+          // 暂时不考虑4件套效果，从元数据无法确定效果是否进面板
+          continue;
+        }
+        String rs = relicSets[i];
+        if (rs == '') {
+          continue;
+        }
+        int skillIndex = 0; // 0: set2; 1: set4
+        String setNum = '2';
+        if (i == 1 && rs == relicSets[0]) {
+          skillIndex = 1;
+          setNum = '4';
+        }
+        Relic relic = RelicManager.getRelic(rs);
+        if (relic.entity.skilldata.isNotEmpty) {
+          // TODO 非固定基础值问题，如命中2件套攻击力效果
+          EffectEntity effect = relic.entity.skilldata[skillIndex].effect.firstWhere((e) => e.tag.contains('self') && e.type == 'buff' && FightProp.fromEffectKey(e.addtarget) == prop, orElse: () => EffectEntity());
+          if (effect.multiplier > 0) {
+            result[PropSource.relicSetEffect(rs, name: setNum)] = base * effect.multiplier / 100;
+          }
+        }
+      }
+    }
+  }
+
+  void _addCharacterTraceValue(Map<PropSource, double> result, Character character, double base, FightProp prop) {
+    character.entity.tracedata.forEach((t) {
+      if (t.effect.isEmpty || !t.tiny || (traceLevels[t.id] ?? 0) == 0) {
+        return;
+      }
+      EffectEntity effect = t.effect.firstWhere((e) => e.tag.contains('self') && e.type == 'buff' && FightProp.fromEffectKey(e.addtarget) == prop, orElse: () => EffectEntity());
+      if (effect.multiplier > 0) {
+        result[PropSource.characterTrace(t.id, self: true)] = base * effect.multiplier / 100;
+      }
+    });
   }
 
   CharacterStats.empty() {

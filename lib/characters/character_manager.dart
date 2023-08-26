@@ -4,7 +4,6 @@ import '../components/global_state.dart';
 import '../utils/helper.dart';
 import '../utils/logging.dart';
 import 'character.dart';
-import 'character_entity.dart';
 
 class CharacterManager {
   static final GlobalState _gs = GlobalState();

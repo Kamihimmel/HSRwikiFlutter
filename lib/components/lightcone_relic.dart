@@ -17,7 +17,6 @@ import '../platformad_stub.dart'
     if (dart.library.html) '../platformad.dart';
 import '../relics/relic_manager.dart';
 import '../utils/helper.dart';
-import '../utils/logging.dart';
 import 'global_state.dart';
 
 /// 光锥遗器选择
@@ -35,10 +34,10 @@ class LightconeRelicState extends State<LightconeRelic> {
         Padding(
           padding: const EdgeInsets.all(1.0),
           child: getImageComponent(prop.icon,
-              placeholder: kTransparentImage, width: 28),
+            placeholder: kTransparentImage, width: 28),
         ),
         Text(
-          "${prop.isPercent() ? (value * 100).toStringAsFixed(1) + '%' : value.toStringAsFixed(0)}",
+          "${prop.getPropText(value)}",
           style: const TextStyle(
             //fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -312,7 +311,6 @@ class LightconeRelicState extends State<LightconeRelic> {
                         Column(
                           children: RelicPart.values.where((e) => e != RelicPart.unknown).map((e) {
                             RelicStats rs = _gs.stats.relics[e] ?? RelicStats.empty(e);
-                            logger.i(rs.mainAttr.name);
                             double mainAttrValue = getRelicMainAttrValue(rs.mainAttr, rs.rarity, rs.level);
                             return Padding(
                               padding: const EdgeInsets.all(10.0),
@@ -366,7 +364,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                       getImageComponent(rs.mainAttr.icon,
                                                         placeholder: kTransparentImage, width: 25),
                                                       Text(
-                                                        "${rs.mainAttr.isPercent() ? (mainAttrValue * 100).toStringAsFixed(1) + '%' : mainAttrValue.toStringAsFixed(0)}",
+                                                        "${rs.mainAttr.getPropText(mainAttrValue)}",
                                                         style: const TextStyle(
                                                           //fontWeight: FontWeight.bold,
                                                           color: Colors.white,

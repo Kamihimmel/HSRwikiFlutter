@@ -44,9 +44,9 @@ class CharacterEntity {
 @JsonSerializable()
 class CharacterLeveldata {
 	late String level = '';
-	late double hp;
-	late double atk;
-	late int def = 0;
+	late double hp = 0;
+	late double atk = 0;
+	late double def = 0;
 
 	CharacterLeveldata();
 

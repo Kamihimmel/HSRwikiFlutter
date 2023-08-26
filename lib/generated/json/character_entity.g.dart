@@ -122,7 +122,7 @@ CharacterLeveldata $CharacterLeveldataFromJson(Map<String, dynamic> json) {
 	if (atk != null) {
 		characterLeveldata.atk = atk;
 	}
-	final int? def = jsonConvert.convert<int>(json['def']);
+	final double? def = jsonConvert.convert<double>(json['def']);
 	if (def != null) {
 		characterLeveldata.def = def;
 	}

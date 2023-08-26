@@ -30,6 +30,7 @@ class DmgCalcPage extends StatefulWidget {
 
 class _DmgCalcPageState extends State<DmgCalcPage> {
   final GlobalState _gs = GlobalState();
+  bool _loading = true;
   BannerAd? _bannerAd;
   bool _isBannerAdReady = false;
 
@@ -60,10 +61,12 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
 
   //get character data
   Character _cData = Character();
-  bool isLoading = true;
 
   Future<void> _initData(String characterId) async {
     _cData = await CharacterManager.loadFromRemoteById(characterId);
+    if (LightconeManager.getLightconeIds().isEmpty) {
+      await LightconeManager.initAllLightcones();
+    }
     String lId = CharacterManager.getDefaultLightcone(characterId);
     await LightconeManager.loadFromRemoteById(lId);
     if (RelicManager.getRelicIds().isEmpty) {
@@ -96,7 +99,7 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
       }
     }
     setState(() {
-      isLoading = false;
+      _loading = false;
     });
   }
 
@@ -141,9 +144,7 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      isLoading
-                          ? Colors.black.withOpacity(0.8)
-                          : _cData.elementType.color.withOpacity(0.35),
+                      _loading ? Colors.grey.withOpacity(0.8) : _cData.elementType.color.withOpacity(0.35),
                       Colors.black.withOpacity(0.8)
                     ]),
               ),
@@ -154,62 +155,62 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
                     "HSR Damage Calculator".tr(),
                   ),
                 ),
-                body: SingleChildScrollView(
+                body: _loading ? Center(
+                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
+                ) : SingleChildScrollView(
                   child: Column(
                     children: [
                       Stack(
                         children: [
-                          isLoading
-                              ? const CircularProgressIndicator()
-                              : Container(
-                                  child: ResponsiveGridRow(
-                                    children: [
-                                      //ANCHOR:  CharacterPage
-                                      ResponsiveGridCol(lg: 3,
-                                        md: 6,
-                                        xs: 12,
-                                        sm: 12,
-                                        child: CharacterBasic(
-                                          isBannerAdReady: _isBannerAdReady,
-                                          bannerAd: _bannerAd,
-                                        )
-                                      ),
-                                      //ANCHOR - Lightcones and Relics
-                                      ResponsiveGridCol(
-                                        lg: 3,
-                                        md: 6,
-                                        xs: 12,
-                                        sm: 12,
-                                        child: LightconeRelic(
-                                          isBannerAdReady: _isBannerAdReady,
-                                          bannerAd: _bannerAd,
-                                        ),
-                                      ),
-                                      //ANCHOR - Character Basic Panel
-                                      ResponsiveGridCol(
-                                        lg: 3,
-                                        md: 6,
-                                        xs: 12,
-                                        sm: 12,
-                                        child: BasicPanel(
-                                          isBannerAdReady: _isBannerAdReady,
-                                          bannerAd: _bannerAd,
-                                        ),
-                                      ),
-                                      //ANCHOR - Damage Panel
-                                      ResponsiveGridCol(
-                                        lg: 3,
-                                        md: 6,
-                                        xs: 12,
-                                        sm: 12,
-                                        child: DamagePanel(
-                                          isBannerAdReady: _isBannerAdReady,
-                                          bannerAd: _bannerAd,
-                                        ),
-                                      ),
-                                    ],
+                          Container(
+                            child: ResponsiveGridRow(
+                              children: [
+                                //ANCHOR:  CharacterPage
+                                ResponsiveGridCol(lg: 3,
+                                  md: 6,
+                                  xs: 12,
+                                  sm: 12,
+                                  child: CharacterBasic(
+                                    isBannerAdReady: _isBannerAdReady,
+                                    bannerAd: _bannerAd,
+                                  )
+                                ),
+                                //ANCHOR - Lightcones and Relics
+                                ResponsiveGridCol(
+                                  lg: 3,
+                                  md: 6,
+                                  xs: 12,
+                                  sm: 12,
+                                  child: LightconeRelic(
+                                    isBannerAdReady: _isBannerAdReady,
+                                    bannerAd: _bannerAd,
                                   ),
                                 ),
+                                //ANCHOR - Character Basic Panel
+                                ResponsiveGridCol(
+                                  lg: 3,
+                                  md: 6,
+                                  xs: 12,
+                                  sm: 12,
+                                  child: BasicPanel(
+                                    isBannerAdReady: _isBannerAdReady,
+                                    bannerAd: _bannerAd,
+                                  ),
+                                ),
+                                //ANCHOR - Damage Panel
+                                ResponsiveGridCol(
+                                  lg: 3,
+                                  md: 6,
+                                  xs: 12,
+                                  sm: 12,
+                                  child: DamagePanel(
+                                    isBannerAdReady: _isBannerAdReady,
+                                    bannerAd: _bannerAd,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                           Stack(
                             children: [
                               Hero(
