@@ -125,7 +125,7 @@ class BasicPanelState extends State<BasicPanel> {
       double base = value[0];
       double add = value[1];
       double all = value[2];
-      if (add <= 0 || all <= 0) {
+      if (base == 0 && (add == 0 || all == 0)) {
         return;
       }
       Map<PropSourceDisplay, double> display = value[3];
