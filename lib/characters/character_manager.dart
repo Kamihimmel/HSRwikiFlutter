@@ -1,6 +1,9 @@
 import 'dart:convert';
 
+import 'package:hsrwikiproject/lightcones/lightcone.dart';
+
 import '../components/global_state.dart';
+import '../lightcones/lightcone_manager.dart';
 import '../utils/helper.dart';
 import '../utils/logging.dart';
 import 'character.dart';
@@ -11,9 +14,15 @@ class CharacterManager {
   static final String defaultCharacter = "1005";
   static final Map<String, String> _defaultLightconeMapping = {
     "1005": "23006",
+    "1102": "23001",
+    "1205": "23009",
+    "1203": "23008",
   };
   static final Map<String, List<String>> _defaultRelicSetsMapping = {
     "1005": ["109", "109", "306"],
+    "1102": ["108", "108", "306"],
+    "1205": ["113", "113", "309"],
+    "1203": ["101", "102", "301"],
   };
 
   CharacterManager._();
@@ -26,14 +35,15 @@ class CharacterManager {
   static Future<void> _initFromLib() async {
     try {
       _characters.clear();
-      String jsonStr = await loadLibJsonString('lib/characterlist.json', cnMode: _gs.getAppConfig().cnMode);
+      String jsonStr = await loadLibJsonString('lib/characterlist.json', cnMode: _gs.cnMode);
       final Map<String, dynamic> allCharacters = json.decode(jsonStr);
-      logger.d(json.encode(allCharacters));
+      // logger.d(json.encode(allCharacters));
       for (var c in allCharacters['data']!) {
         // get brief from list json
         Character character = Character.fromJson(c, spoiler: c['spoiler'], supported: c['supported'] ?? true, order: c['order'] ?? 999);
         _characters[c['id']] = character;
       }
+      logger.d("loaded characters: ${_characters.length}, cnMode: ${_gs.cnMode}");
     } catch (e) {
       logger.e("load characters exception: ${e.toString()}");
     }
@@ -47,10 +57,17 @@ class CharacterManager {
   }
 
   static String getDefaultLightcone(String characterId) {
+    if (!_defaultLightconeMapping.containsKey(characterId)) {
+      Character c = getCharacter(characterId);
+      return LightconeManager.getLightcones().values.firstWhere((lc) => lc.pathType == c.pathType, orElse: () => Lightcone()).entity.id;
+    }
     return _defaultLightconeMapping[characterId]!;
   }
 
   static List<String> getDefaultRelicSets(String characterId) {
+    if (!_defaultRelicSetsMapping.containsKey(characterId)) {
+      return ["108", "108", "306"];
+    }
     return _defaultRelicSetsMapping[characterId]!;
   }
 
@@ -88,9 +105,9 @@ class CharacterManager {
     if (_characters.containsKey(c.entity.id) && _characters[c.entity.id]!.loaded) {
       return _characters[c.entity.id]!;
     }
-    String jsonStr = await loadLibJsonString(c.entity.infourl, cnMode: _gs.getAppConfig().cnMode);
+    String jsonStr = await loadLibJsonString(c.entity.infourl, cnMode: _gs.cnMode);
     final Map<String, dynamic> characterMap = json.decode(jsonStr);
-    logger.d(json.encode(characterMap));
+    // logger.d(json.encode(characterMap));
     Character character = Character.fromJson(characterMap, spoiler: c.spoiler, supported: c.supported, order: c.order);
     character.loaded = true;
     _characters[c.entity.id] = character;

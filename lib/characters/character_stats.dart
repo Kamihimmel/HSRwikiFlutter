@@ -31,7 +31,7 @@ class CharacterStats {
     return lightconeId;
   }
 
-  List<String> getRelicSets({withDefault = true}) {
+  List<String> getRelicSets({withDefault = false}) {
     if (withDefault && relics.isEmpty) {
       return CharacterManager.getDefaultRelicSets(id);
     }
@@ -73,20 +73,30 @@ class CharacterStats {
     ElementType et = CharacterManager.getCharacter(id).elementType;
     FightProp elementAddProp = FightProp.fromEffectKey(et.key + 'dmg');
     map[elementAddProp] = getPropValue(elementAddProp);
+    map[FightProp.healRatio] = getPropValue(FightProp.healRatio);
     map[FightProp.sPRatio] = getPropValue(FightProp.sPRatio);
     map[FightProp.aggro] = getPropValue(FightProp.aggro);
     return map;
+  }
+
+  Map<FightProp, double> calculateSumStats() {
+    Map<FightProp, Map<PropSource, double>> attrValues = calculateStats();
+    Map<FightProp, double> result = {};
+    attrValues.forEach((key, value) {
+      result[key] = value.values.fold(0, (pre, v) => pre + v);
+    });
+    return result;
   }
 
   Map<PropSource, double> getHp() {
     Map<PropSource, double> result = {};
 
     Character c = CharacterManager.getCharacter(id);
-    double characterHp = c.getBaseHp(num.tryParse(level.replaceAll('+', 'replace'))?.toInt() ?? 0, promotion: level.contains('+'));
+    double characterHp = c.getBaseHp(num.tryParse(level.replaceAll('+', ''))?.toInt() ?? 0, promotion: level.contains('+'));
     result[PropSource.characterBasic(id)] = characterHp;
 
     Lightcone lc = LightconeManager.getLightcone(lightconeId);
-    double lightconeHp = lc.getBaseHp(num.tryParse(lightconeLevel.replaceAll('+', 'replace'))?.toInt() ?? 0, promotion: lightconeLevel.contains('+'));
+    double lightconeHp = lc.getBaseHp(num.tryParse(lightconeLevel.replaceAll('+', ''))?.toInt() ?? 0, promotion: lightconeLevel.contains('+'));
     result[PropSource.lightconeAttr(lightconeId)] = lightconeHp;
 
     double baseHp = characterHp + lightconeHp;
@@ -103,11 +113,11 @@ class CharacterStats {
     Map<PropSource, double> result = {};
 
     Character c = CharacterManager.getCharacter(id);
-    double characterAtk = c.getBaseAtk(num.tryParse(level.replaceAll('+', 'replace'))?.toInt() ?? 0, promotion: level.contains('+'));
+    double characterAtk = c.getBaseAtk(num.tryParse(level.replaceAll('+', ''))?.toInt() ?? 0, promotion: level.contains('+'));
     result[PropSource.characterBasic(id)] = characterAtk;
 
     Lightcone lc = LightconeManager.getLightcone(lightconeId);
-    double lightconeAtk = lc.getBaseAtk(num.tryParse(lightconeLevel.replaceAll('+', 'replace'))?.toInt() ?? 0, promotion: lightconeLevel.contains('+'));
+    double lightconeAtk = lc.getBaseAtk(num.tryParse(lightconeLevel.replaceAll('+', ''))?.toInt() ?? 0, promotion: lightconeLevel.contains('+'));
     result[PropSource.lightconeAttr(lightconeId)] = lightconeAtk;
 
     double baseAtk = characterAtk + lightconeAtk;
@@ -124,11 +134,11 @@ class CharacterStats {
     Map<PropSource, double> result = {};
 
     Character c = CharacterManager.getCharacter(id);
-    double characterDef = c.getBaseDef(num.tryParse(level.replaceAll('+', 'replace'))?.toInt() ?? 0, promotion: level.contains('+'));
+    double characterDef = c.getBaseDef(num.tryParse(level.replaceAll('+', ''))?.toInt() ?? 0, promotion: level.contains('+'));
     result[PropSource.characterBasic(id)] = characterDef;
 
     Lightcone lc = LightconeManager.getLightcone(lightconeId);
-    double lightconeDef = lc.getBaseDef(num.tryParse(lightconeLevel.replaceAll('+', 'replace'))?.toInt() ?? 0, promotion: lightconeLevel.contains('+'));
+    double lightconeDef = lc.getBaseDef(num.tryParse(lightconeLevel.replaceAll('+', ''))?.toInt() ?? 0, promotion: lightconeLevel.contains('+'));
     result[PropSource.lightconeAttr(lightconeId)] = lightconeDef;
 
     double baseDef = characterDef + lightconeDef;
@@ -153,11 +163,13 @@ class CharacterStats {
     Map<PropSource, double> result = {};
     Character c = CharacterManager.getCharacter(id);
     Lightcone lc = LightconeManager.getLightcone(lightconeId);
+    double base = 1;
 
     if (prop == FightProp.aggro) {
       result[PropSource.characterBasic(id)] = c.entity.dtaunt.toDouble();
     } else if (prop == FightProp.speed) {
       result[PropSource.characterBasic(id)] = c.entity.dspeed.toDouble();
+      base = c.entity.dspeed.toDouble();
       prop = FightProp.speedDelta;
     } else if (prop == FightProp.criticalChance) {
       result[PropSource.characterBasic(id)] = 0.05;
@@ -165,12 +177,13 @@ class CharacterStats {
       result[PropSource.characterBasic(id)] = 0.5;
     } else if (prop == FightProp.sPRatio) {
       result[PropSource.characterBasic(id)] = 1;
+      prop = FightProp.sPRatio;
     }
 
-    _addLightconeSkillValue(result, lc, 1, prop);
-    _addRelicAttrValue(result, 1, [prop]);
-    _addRelicSetEffectValue(result, 1, prop);
-    _addCharacterTraceValue(result, c, 1, prop);
+    _addLightconeSkillValue(result, lc, base, prop);
+    _addRelicAttrValue(result, base, [prop]);
+    _addRelicSetEffectValue(result, base, prop);
+    _addCharacterTraceValue(result, c, base, prop);
     return result;
   }
 
@@ -214,7 +227,7 @@ class CharacterStats {
   }
 
   void _addRelicSetEffectValue(Map<PropSource, double> result, double base, FightProp prop) {
-    List<String> relicSets = getRelicSets(withDefault: false);
+    List<String> relicSets = getRelicSets();
     if (relicSets.length == 3) {
       for (var i = 0; i < relicSets.length; i++) {
         if (i == 1) {

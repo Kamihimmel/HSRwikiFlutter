@@ -21,7 +21,7 @@ getImageComponent(String path,
     if (path.startsWith('http://') || path.startsWith("https://")) {
       url = path;
     } else {
-      String endpoint = _gs.getAppConfig().cnMode ? cnUrlEndpoint : urlEndpoint;
+      String endpoint = _gs.cnMode ? cnUrlEndpoint : urlEndpoint;
       url = endpoint + path;
     }
     if (placeholder != null) {
@@ -71,7 +71,7 @@ MaterialColor getRarityColor(int rarity) {
   return Colors.grey;
 }
 
-var _elementDamage = [
+var elementDamage = [
   FightProp.physicalAddedRatio,
   FightProp.fireAddedRatio,
   FightProp.iceAddedRatio,
@@ -83,7 +83,7 @@ var _elementDamage = [
 ];
 
 double getRelicMainAttrValue(FightProp fightProp, int rarity, int level) {
-  if (_elementDamage.contains(fightProp)) {
+  if (elementDamage.contains(fightProp)) {
     fightProp = FightProp.allDamageAddRatio;
   }
   if (!relicMainAttrLevelCurve.containsKey(fightProp)) {
@@ -156,13 +156,13 @@ enum PathType {
 
 String imagestring(String cid) {
   if (cid == '8001' || cid == '8002') {
-    if (gender) {
+    if (!_gs.male) {
       return "images/characters/mc.webp";
     } else {
       return "images/characters/mcm.webp";
     }
   } else if (cid == '8003' || cid == '8004') {
-    if (gender) {
+    if (!_gs.male) {
       return "images/characters/mcf.webp";
     } else {
       return "images/characters/mcmf.webp";
@@ -253,4 +253,9 @@ const relicMainAttrLevelCurve = {
   },
 };
 
-const relicLevelCurve1 = {};
+const enemyData = {
+  1: {
+    'name': 'Hilichurl',
+    'resistence': {ElementType.fire: 10, ElementType.ice: 10, ElementType.lightning: 10, ElementType.imaginary: 10, ElementType.quantum: 10, ElementType.wind: 10}
+  }
+};

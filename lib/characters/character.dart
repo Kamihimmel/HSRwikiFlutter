@@ -53,6 +53,8 @@ class Character {
         return entity.eNname;
       case 'zh':
         return entity.cNname;
+      case 'cn':
+        return entity.cNname;
       case 'ja':
         return entity.jAname;
     }
@@ -65,8 +67,25 @@ class Character {
         return entity.skilldata[index].eNname;
       case 'zh':
         return entity.skilldata[index].cNname;
+      case 'cn':
+        return entity.skilldata[index].cNname;
       case 'ja':
         return entity.skilldata[index].jAname;
+    }
+    return '';
+  }
+
+  String getSkillNameById(String skillId, String lang) {
+    CharacterSkilldata skillData = entity.skilldata.firstWhere((skill) => skill.id == skillId, orElse: () => CharacterSkilldata());
+    switch(lang) {
+      case 'en':
+        return skillData.eNname;
+      case 'zh':
+        return skillData.cNname;
+      case 'cn':
+        return skillData.cNname;
+      case 'ja':
+        return skillData.jAname;
     }
     return '';
   }
@@ -76,6 +95,8 @@ class Character {
       case 'en':
         return entity.skilldata[index].descriptionEN;
       case 'zh':
+        return entity.skilldata[index].descriptionCN;
+      case 'cn':
         return entity.skilldata[index].descriptionCN;
       case 'ja':
         return entity.skilldata[index].descriptionJP;
@@ -89,6 +110,8 @@ class Character {
         return entity.tracedata[index].eNname;
       case 'zh':
         return entity.tracedata[index].cNname;
+      case 'cn':
+        return entity.tracedata[index].cNname;
       case 'ja':
         return entity.tracedata[index].jAname;
     }
@@ -100,6 +123,8 @@ class Character {
       case 'en':
         return entity.tracedata[index].descriptionEN;
       case 'zh':
+        return entity.tracedata[index].descriptionCN;
+      case 'cn':
         return entity.tracedata[index].descriptionCN;
       case 'ja':
         return entity.tracedata[index].descriptionJP;
@@ -113,6 +138,8 @@ class Character {
         return entity.eidolon[index].eNname;
       case 'zh':
         return entity.eidolon[index].cNname;
+      case 'cn':
+        return entity.eidolon[index].cNname;
       case 'ja':
         return entity.eidolon[index].jAname;
     }
@@ -125,6 +152,8 @@ class Character {
         return entity.eidolon[index].descriptionEN;
       case 'zh':
         return entity.eidolon[index].descriptionCN;
+      case 'cn':
+        return entity.eidolon[index].descriptionCN;
       case 'ja':
         return entity.eidolon[index].descriptionJP;
     }
@@ -132,10 +161,10 @@ class Character {
   }
 
   String getImageLargeUrl(GlobalState _gs) {
-    return _gs.getAppConfig().male && this.entity.imagelargeurlalter != '' ? this.entity.imagelargeurlalter : this.entity.imagelargeurl;
+    return _gs.male && this.entity.imagelargeurlalter != '' ? this.entity.imagelargeurlalter : this.entity.imagelargeurl;
   }
 
   String getImageUrl(GlobalState _gs) {
-    return _gs.getAppConfig().male && this.entity.imageurlalter != '' ? this.entity.imageurlalter : this.entity.imageurl;
+    return _gs.male && this.entity.imageurlalter != '' ? this.entity.imageurlalter : this.entity.imageurl;
   }
 }

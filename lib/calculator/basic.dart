@@ -1,17 +1,24 @@
+import 'dart:core';
+
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+
+import '../lightcones/lightcone_manager.dart';
 import '../relics/relic.dart';
+import '../relics/relic_manager.dart';
 
 enum FightProp {
   maxHP(desc: 'HP', icon: 'starrailres/icon/property/IconMaxHP.png'),
   attack(desc: 'ATK', icon: 'starrailres/icon/property/IconAttack.png'),
   defence(desc: 'DEF', icon: 'starrailres/icon/property/IconDefence.png'),
-  speed(desc: 'SPD', icon: 'starrailres/icon/property/IconSpeed.png'),
-  criticalChance(desc: 'CRIT Rate', icon: 'starrailres/icon/property/IconCriticalChance.png', effectKey: ['critrate']),
-  criticalDamage(desc: 'CRIT DMG', icon: 'starrailres/icon/property/IconCriticalDamage.png', effectKey: ['critdmg']),
+  speed(desc: 'Speed', icon: 'starrailres/icon/property/IconSpeed.png'),
+  criticalChance(desc: 'critrate', icon: 'starrailres/icon/property/IconCriticalChance.png', effectKey: ['critrate']),
+  criticalDamage(desc: 'critdmg', icon: 'starrailres/icon/property/IconCriticalDamage.png', effectKey: ['critdmg']),
   breakDamageAddedRatio(desc: 'Break Effect', icon: 'starrailres/icon/property/IconBreakUp.png', effectKey: ['breakeffect']),
   breakDamageAddedRatioBase(desc: 'Break Effect', icon: 'starrailres/icon/property/IconBreakUp.png'),
   healRatio(desc: 'Outgoing Healing Boost', icon: 'starrailres/icon/property/IconHealRatio.png'),
   maxSP(desc: 'Max Energy', icon: 'starrailres/icon/property/IconEnergyLimit.png'),
-  sPRatio(desc: 'Energy Regeneration Rate', icon: 'starrailres/icon/property/IconEnergyRecovery.png'),
+  sPRatio(desc: 'energyregenrate', icon: 'starrailres/icon/property/IconEnergyRecovery.png'),
   statusProbability(desc: 'Effect Hit Rate', icon: 'starrailres/icon/property/IconStatusProbability.png', effectKey: ['effecthit']),
   statusResistance(desc: 'Effect RES', icon: 'starrailres/icon/property/IconStatusResistance.png', effectKey: ['effectres']),
   criticalChanceBase(desc: 'CRIT Rate', icon: 'starrailres/icon/property/IconCriticalChance.png'),
@@ -57,6 +64,7 @@ enum FightProp {
   aggro(desc: 'Taunt', icon: 'starrailres/icon/property/IconTaunt.png', effectKey: ['taunt']),
   dotDamageAddRatio(desc: '', icon: '', effectKey: ['dotvulnerability']),
   allDamageAddRatio(desc: '', icon: '', effectKey: ['alldmg']),
+  lostHP(desc: '', icon: ''),
   none(desc: '', icon: '');
 
   final String desc;
@@ -89,6 +97,17 @@ enum FightProp {
     return FightProp.values.firstWhere((p) => p.effectKey.contains(effectKey.toLowerCase()), orElse: () => FightProp.none);
   }
 
+  static FightProp fromEffectMultiplier(String multiplierTarget) {
+    if (multiplierTarget == 'atk') {
+      return FightProp.attack;
+    } else if (multiplierTarget == 'maxhp') {
+      return FightProp.maxHP;
+    } else if (multiplierTarget == 'def') {
+      return FightProp.defence;
+    }
+    return FightProp.none;
+  }
+
   static FightProp fromImportType(String importType) {
     String type = importType.replaceFirst('Base', '').toLowerCase();
     return FightProp.values.firstWhere((p) => p.name.toLowerCase() == type, orElse: () => FightProp.none);
@@ -96,28 +115,30 @@ enum FightProp {
 }
 
 class PropSource {
-  static final int selfBasic = 0;
-  static final int lightconeBasic = 1;
-  static final int selfSkill = 2;
-  static final int selfTrace = 3;
-  static final int selfEidolon = 4;
-  static final int lightconeSkill = 5;
-  static final int relicMain = 6;
-  static final int relicSub = 7;
-  static final int relicSet = 8;
-  static final int otherSkill = 9;
-  static final int otherTrace = 10;
-  static final int otherEidolon = 11;
-  static final int unknown = 99;
+  static const int selfBasic = 0;
+  static const int lightconeBasic = 1;
+  static const int selfSkill = 2;
+  static const int selfTrace = 3;
+  static const int selfEidolon = 4;
+  static const int lightconeSkill = 5;
+  static const int relicMain = 6;
+  static const int relicSub = 7;
+  static const int relicSet = 8;
+  static const int otherSkill = 9;
+  static const int otherTrace = 10;
+  static const int otherEidolon = 11;
+  static const int unknown = 99;
 
   String id = '';
   String name = '';
   String desc = '';
   int source = PropSource.unknown;
+  bool base = false;
 
   PropSource.characterBasic(String id, {name = '', desc = ''}) {
     _setBase(id, name, desc);
     this.source = PropSource.selfBasic;
+    this.base = true;
   }
 
   PropSource.characterSkill(String id, {name = '', desc = '', self = false}) {
@@ -138,6 +159,7 @@ class PropSource {
   PropSource.lightconeAttr(String id, {name = '', desc = ''}) {
     _setBase(id, name, desc);
     this.source = PropSource.lightconeBasic;
+    this.base = true;
   }
 
   PropSource.lightconeEffect(String id, {name = '', desc = ''}) {
@@ -161,6 +183,30 @@ class PropSource {
     this.desc = desc;
   }
 
+  PropSourceDisplay getDisplay() {
+    switch(source) {
+      case selfBasic:
+        return PropSourceDisplay('character'.tr(), Colors.red);
+      case lightconeBasic:
+        return PropSourceDisplay('lightcone'.tr(), Colors.blue);
+      case lightconeSkill:
+        return PropSourceDisplay(LightconeManager.getLightcone(id).getSkillName(0, 'lang'.tr()), Colors.green);
+      case selfSkill:
+        return PropSourceDisplay('skill'.tr(), Colors.grey);
+      case selfTrace:
+        return PropSourceDisplay('trace'.tr(), Colors.yellow);
+      case selfEidolon:
+        return PropSourceDisplay('eidolon'.tr(), Colors.grey);
+      case relicSet:
+        return PropSourceDisplay(RelicManager.getRelic(id).getName('lang'.tr()), Colors.purple);
+      case relicMain:
+        return PropSourceDisplay('relic'.tr(), Colors.teal);
+      case relicSub:
+        return PropSourceDisplay('relic'.tr(), Colors.teal);
+    }
+    return PropSourceDisplay(id.tr(), Colors.grey);
+  }
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
@@ -177,6 +223,36 @@ class PropSource {
     var result = 17;
     result = 37 * result + id.hashCode;
     result = 37 * result + source.hashCode;
+    return result;
+  }
+}
+
+class PropSourceDisplay {
+  String source = '';
+  MaterialColor color = Colors.grey;
+  double? scale;
+
+  PropSourceDisplay(String source, MaterialColor color) {
+    this.source = source;
+    this.color = color;
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is PropSourceDisplay) {
+      return runtimeType == other.runtimeType &&
+          source == other.source &&
+          color.value == other.color.value;
+    } else {
+      return false;
+    }
+  }
+  @override
+  int get hashCode {
+    var result = 17;
+    result = 37 * result + source.hashCode;
+    result = 37 * result + color.value.hashCode;
     return result;
   }
 }

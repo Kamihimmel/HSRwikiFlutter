@@ -19,14 +19,15 @@ class RelicManager {
   static Future<void> _initFromLib() async {
     try {
       _relics.clear();
-      String jsonStr = await loadLibJsonString('lib/reliclist.json', cnMode: _gs.getAppConfig().cnMode);
+      String jsonStr = await loadLibJsonString('lib/reliclist.json', cnMode: _gs.cnMode);
       final Map<String, dynamic> allRelics = json.decode(jsonStr);
-      logger.d(json.encode(allRelics));
+      // logger.d(json.encode(allRelics));
       for (var r in allRelics['data']!) {
         // get brief from list json
         Relic relic = Relic.fromJson(r, spoiler: r['spoiler'], order: r['order'] ?? 999);
         _relics[r['id']] = relic;
       }
+      logger.d("loaded relics: ${_relics.length}, cnMode: ${_gs.cnMode}");
     } catch (e) {
       logger.e("load relics exception: ${e.toString()}");
     }
@@ -56,9 +57,9 @@ class RelicManager {
     if (_relics.containsKey(r.entity.id) && _relics[r.entity.id]!.loaded) {
       return _relics[r.entity.id]!;
     }
-    String jsonStr = await loadLibJsonString(r.entity.infourl, cnMode: _gs.getAppConfig().cnMode);
+    String jsonStr = await loadLibJsonString(r.entity.infourl, cnMode: _gs.cnMode);
     final Map<String, dynamic> lightconeMap = json.decode(jsonStr);
-    logger.d(json.encode(lightconeMap));
+    // logger.d(json.encode(lightconeMap));
     Relic relic = Relic.fromJson(lightconeMap, spoiler: r.spoiler, order: r.order);
     relic.loaded = true;
     _relics[r.entity.id] = relic;

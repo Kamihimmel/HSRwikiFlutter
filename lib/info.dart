@@ -37,11 +37,6 @@ const sicontoimage = {
 
 var typetocolor = {'dmg': Colors.redAccent, 'debuff': Colors.grey[400], 'shield': Colors.blueAccent, 'heal': Colors.lime, 'revive': Colors.green};
 
-bool gender = true;
-bool spoilermode = false;
-bool testmode = false;
-bool cnmode = false;
-
 String urlendpoint = "https://hsrwikidata.yunlu18.net/";
 
 Map<String, String> idtoimage = {};
