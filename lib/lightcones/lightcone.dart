@@ -48,6 +48,8 @@ class Lightcone {
         return entity.eNname;
       case 'zh':
         return entity.cNname;
+      case 'cn':
+        return entity.cNname;
       case 'ja':
         return entity.jAname;
     }
@@ -60,6 +62,8 @@ class Lightcone {
         return entity.skilldata[index].eNname;
       case 'zh':
         return entity.skilldata[index].cNname;
+      case 'cn':
+        return entity.skilldata[index].cNname;
       case 'ja':
         return entity.skilldata[index].jAname;
     }
@@ -71,6 +75,8 @@ class Lightcone {
       case 'en':
         return entity.skilldata[index].descriptionEN;
       case 'zh':
+        return entity.skilldata[index].descriptionCN;
+      case 'cn':
         return entity.skilldata[index].descriptionCN;
       case 'ja':
         return entity.skilldata[index].descriptionJP;

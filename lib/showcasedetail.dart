@@ -69,7 +69,7 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
     final List<int> eidolons = cs.eidolons.entries.where((e) => e.value > 0).map((e) => num.parse(e.key).toInt()).toList();
     eidolons.sort();
     final int rank = eidolons.isEmpty ? 0 : eidolons[eidolons.length - 1];
-    List<String> relicSets = cs.getRelicSets(withDefault: false);
+    List<String> relicSets = cs.getRelicSets();
     Map<FightProp, Map<PropSource, double>> propValue = cs.calculateStats();
     for (var e in propValue.entries) {
       double value = e.value.values.fold(0.0, (pre, v) => pre + v);

@@ -1,97 +1,100 @@
 import 'package:flutter/material.dart';
 
-import '../characters/character_manager.dart';
 import '../characters/character_stats.dart';
 import '../utils/helper.dart';
 import '../utils/logging.dart';
 
 class GlobalState extends ChangeNotifier {
+
   static final GlobalState _instance = GlobalState._();
 
   GlobalState._() {
-    this.addListener(() {});
+    this.addListener(() {
+    });
   }
 
   factory GlobalState() => _instance;
 
   Map<String, dynamic> toJson() => {
-        'stats': _stats._cStats.toJson(),
-      };
+    'stats': _stats.toJson(),
+  };
+
+  /// loading state
+  bool _characterLoaded = false;
+  bool _lightconeLoaded = false;
+  bool _relicLoaded = false;
 
   /// character
-  CharacterStatsNotify _stats = CharacterStatsNotify();
+  CharacterStats _stats = CharacterStats.empty();
+
+  /// enemy
+  int _enemyLevel = 80;
+  int _enemyType = 1;
+  Set<ElementType> _enemyWeakness = Set();
+  int _enemyDefence = 0;
 
   /// config
-  AppConfig _appConfig = AppConfig();
+  bool _male = false;
+  bool _spoilerMode = false;
+  bool _cnMode = false;
+  bool _test = false;
+  bool _debug = true;
 
   /// footer
   int _dmgScale = 10; // footer option: damage scale
   int _statScale = 10; // footer option: stat scale
 
-  CharacterStats get stats => _stats._cStats;
+  void loaded(bool loaded) {
+    _characterLoaded = loaded;
+    _lightconeLoaded = loaded;
+    _relicLoaded = loaded;
+    notifyListeners();
+  }
+  bool get characterLoaded => _characterLoaded;
+  set characterLoaded(bool characterLoaded) {
+    _characterLoaded = characterLoaded;
+    notifyListeners();
+  }
+  bool get lightconeLoaded => _lightconeLoaded;
+  set lightconeLoaded(bool lightconeLoaded) {
+    _lightconeLoaded = lightconeLoaded;
+    notifyListeners();
+  }
+  bool get relicLoaded => _relicLoaded;
+  set relicLoaded(bool relicLoaded) {
+    _relicLoaded = relicLoaded;
+    notifyListeners();
+  }
+
+  CharacterStats get stats => _stats;
   set stats(CharacterStats stats) {
-    _stats.cStats = stats;
-  }
-
-  int get dmgScale => _dmgScale;
-  set dmgScale(int dmgScale) {
-    _dmgScale = dmgScale;
+    _stats = stats;
     notifyListeners();
   }
 
-  int get statScale => _statScale;
-  set statScale(int statScale) {
-    _statScale = statScale;
+  int get enemyLevel => _enemyLevel;
+  set enemyLevel(int enemyLevel) {
+    _enemyLevel = enemyLevel;
     notifyListeners();
   }
-
-  CharacterStatsNotify getCharacterStats() {
-    return _stats;
+  int get enemyType => _enemyType;
+  set enemyType(int enemyType) {
+    _enemyType = enemyType;
+    notifyListeners();
   }
-
-  CharacterStatsNotify newCharacterStats() {
-    _stats = CharacterStatsNotify();
-    return _stats;
+  Set<ElementType> get enemyWeakness => Set.from(_enemyWeakness);
+  void addEnemyWeakness(ElementType type) {
+    _enemyWeakness.add(type);
+    notifyListeners();
   }
-
-  AppConfig getAppConfig() {
-    return _appConfig;
+  void removeEnemyWeakness(ElementType type) {
+    _enemyWeakness.remove(type);
+    notifyListeners();
   }
-
-  AppConfig newAppConfig() {
-    _appConfig = AppConfig.copy(_appConfig);
-    return _appConfig;
-  }
-
-  void setAppConfig({bool? male, bool? spoiler, bool? cn, bool? test}) {
-    if (male != null) {
-      _appConfig.male = male;
-    }
-    if (spoiler != null) {
-      _appConfig.spoilerMode = spoiler;
-    }
-    if (cn != null) {
-      _appConfig.cnMode = cn;
-    }
-    logger.d("change config, male: $male, spoiler: $spoiler, cn: $cn, test: $test");
-  }
-}
-
-class AppConfig extends ChangeNotifier {
-  bool _male = false;
-  bool _spoilerMode = false;
-  bool _cnMode = false;
-  bool _test = false;
-
-  AppConfig();
-
-  static AppConfig copy(AppConfig appConfig) {
-    AppConfig config = AppConfig();
-    config._male = appConfig._male;
-    config._spoilerMode = appConfig._spoilerMode;
-    config._cnMode = appConfig._cnMode;
-    config._test = appConfig._test;
-    return config;
+  int get enemyDefence => _enemyDefence;
+  set enemyDefence(int enemyDefence) {
+    _enemyDefence = enemyDefence;
+    notifyListeners();
   }
 
   bool get male => _male;
@@ -100,35 +103,39 @@ class AppConfig extends ChangeNotifier {
     logger.d("change male: $male");
     notifyListeners();
   }
-
   bool get spoilerMode => _spoilerMode;
   set spoilerMode(bool spoilerMode) {
     _spoilerMode = spoilerMode;
     logger.d("change spoiler mode: $spoilerMode");
     notifyListeners();
   }
-
   bool get cnMode => _cnMode;
   set cnMode(bool cnMode) {
     _cnMode = cnMode;
     logger.d("change cn mode: $cnMode");
     notifyListeners();
   }
-
   bool get test => _test;
   set test(bool test) {
     _test = test;
     logger.d("change test: $test");
     notifyListeners();
   }
-}
+  bool get debug => _debug;
+  set debug(bool debug) {
+    _debug = debug;
+    logger.d("change debug: $debug");
+    notifyListeners();
+  }
 
-class CharacterStatsNotify extends ChangeNotifier {
-  CharacterStats _cStats = CharacterStats.empty();
-
-  CharacterStats get cStats => _cStats;
-  set cStats(CharacterStats cStats) {
-    _cStats = cStats;
+  int get dmgScale => _dmgScale;
+  set dmgScale(int dmgScale) {
+    _dmgScale = dmgScale;
+    notifyListeners();
+  }
+  int get statScale => _statScale;
+  set statScale(int statScale) {
+    _statScale = statScale;
     notifyListeners();
   }
 }

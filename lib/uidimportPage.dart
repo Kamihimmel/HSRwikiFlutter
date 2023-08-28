@@ -45,14 +45,9 @@ class _UidimportpageState extends State<Uidimportpage> {
   final ExpansionTileController expandController = ExpansionTileController();
 
   PlayerInfo _playerInfo = PlayerInfo();
+  String _uid = '';
 
   Future<void> _getPlayerInfo() async {
-    if (LightconeManager.getLightconeIds().isEmpty) {
-      await LightconeManager.initAllLightcones();
-    }
-    if (RelicManager.getRelicIds().isEmpty) {
-      await RelicManager.initAllRelics();
-    }
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final playerInfoJson = await prefs.getString('playerinfo');
     if (playerInfoJson != null) {
@@ -76,7 +71,8 @@ class _UidimportpageState extends State<Uidimportpage> {
       }
       await prefs.setString('playerinfo', _playerInfo.toJson());
     }
-    uidController.text = _playerInfo.uid;
+    _uid = _playerInfo.uid;
+    uidController.text = _uid;
     setState(() {
       _loading = false;
     });
@@ -88,8 +84,6 @@ class _UidimportpageState extends State<Uidimportpage> {
     return _loading ? Center(
       child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
     ) : Column(
-      // Column is also a layout widget. It takes a list of children and
-
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: screenWidth > 1300 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
       children: <Widget>[
@@ -154,7 +148,7 @@ class _UidimportpageState extends State<Uidimportpage> {
                           controller: uidController,
                           onChanged: (value) {
                             setState(() {
-                              _playerInfo.uid = value;
+                              _uid = value;
                             });
                           },
                           keyboardType: TextInputType.numberWithOptions(decimal: false),
@@ -166,17 +160,13 @@ class _UidimportpageState extends State<Uidimportpage> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
-                          onPressed: (_playerInfo.uid.length == 9)
+                          onPressed: (_uid.length == 9)
                               ? () async {
-                                  if (_playerInfo.uid != '') {
-                                    final prefs = await SharedPreferences.getInstance();
-                                    await prefs.setString('uid', _playerInfo.uid);
-                                  }
                                   String langcode =
                                       ('lang'.tr() == 'en') ? 'en' : (('lang'.tr() == 'cn') ? 'cn' : 'jp');
                                   String url = kIsWeb
-                                      ? "https://mohomoapi.yunlu18.net/${_playerInfo.uid}?lang=$langcode"
-                                      : "https://api.mihomo.me/sr_info_parsed/${_playerInfo.uid}?lang=$langcode";
+                                      ? "https://mohomoapi.yunlu18.net/${_uid}?lang=$langcode"
+                                      : "https://api.mihomo.me/sr_info_parsed/${_uid}?lang=$langcode";
                                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                     duration: Duration(days: 1),
                                     content: Text("Loading.....").tr(),
@@ -256,7 +246,7 @@ class _UidimportpageState extends State<Uidimportpage> {
                         .toList();
                     eidolons.sort();
                     final int rank = eidolons.isEmpty ? 0 : eidolons[eidolons.length - 1];
-                    List<String> relicSets = characterStats.getRelicSets(withDefault: false);
+                    List<String> relicSets = characterStats.getRelicSets();
                     return InkWell(
                       onHover: (value) {
                         if (value) {
