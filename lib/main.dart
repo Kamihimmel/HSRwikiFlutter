@@ -6,8 +6,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:url_strategy/url_strategy.dart';
+import 'characters/character_manager.dart';
 import 'components/character_list.dart';
 import 'components/global_state.dart';
 import 'components/lightcone_list.dart';
@@ -23,6 +25,8 @@ import 'firebase_options.dart';
 
 import 'dart:io' show Platform;
 
+import 'lightcones/lightcone_manager.dart';
+import 'relics/relic_manager.dart';
 import 'toolboxPage.dart';
 import 'uidimportPage.dart';
 
@@ -42,7 +46,8 @@ void main() async {
   );
   runApp(EasyLocalization(
       supportedLocales: const [Locale('en'), Locale.fromSubtags(languageCode: 'zh', countryCode: 'CN'), Locale('ja')],
-      path: 'langs', // <-- change the path of the translation files
+      path: 'langs',
+      // <-- change the path of the translation files
       fallbackLocale: const Locale('en'),
       useFallbackTranslations: true,
       useOnlyLangCode: true,
@@ -146,10 +151,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             textColor: Colors.white,
             fontSize: 16.0);
 
-      if (_counter > 4 && testmode == false) {
+      if (_counter > 4 && !_gs.test) {
         _counter = 0;
-        testmode = true;
-        _gs.setAppConfig(test: true);
+        _gs.test = true;
         final snackBar = SnackBar(
           content: const Text('Oops!Test mode activated!'),
           action: SnackBarAction(
@@ -165,10 +169,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
 
-      if (_counter > 4 && testmode == true) {
+      if (_counter > 4 && _gs.test) {
         _counter = 0;
-        testmode = false;
-        _gs.setAppConfig(test: false);
+        _gs.test = false;
         final snackBar = SnackBar(
           content: const Text('Test mode Deactivated!'),
           action: SnackBarAction(
@@ -190,7 +193,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(length: 5, vsync: this);
-    fetchstaus();
+    init();
   }
 
   @override
@@ -199,16 +202,25 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  Future<void> init() async {
+    await fetchstaus();
+    await initData();
+  }
+
+  Future<void> initData() async {
+    _gs.loaded(false);
+    await CharacterManager.initAllCharacters();
+    _gs.characterLoaded = true;
+    await LightconeManager.initAllLightcones();
+    _gs.lightconeLoaded = true;
+    await RelicManager.initAllRelics();
+    _gs.relicLoaded = true;
+  }
+
   Future<void> fetchstaus() async {
     final prefs = await SharedPreferences.getInstance();
     String genderN = prefs.getString('gender') ?? "999";
-    if ('male' == genderN) {
-      gender = false;
-    }
     String spoilerN = prefs.getString('spoilermode') ?? "false";
-    if ('true' == spoilerN) {
-      spoilermode = true;
-    }
     String cnmodeN = '';
     if (!kIsWeb) {
       String deviceCountry = Platform.localeName.substring(Platform.localeName.length - 2);
@@ -218,11 +230,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       }
       cnmodeN = prefs.getString('cnmode') ?? modeString;
       if ('true' == cnmodeN) {
-        cnmode = true;
         urlendpoint = "https://hsrwikidata.kchlu.com/";
       }
     }
-    _gs.setAppConfig(male: 'male' == genderN, spoiler: 'true' == spoilerN, cn: 'true' == cnmodeN);
+    _gs.male = 'male' == genderN;
+    _gs.spoilerMode = 'true' == spoilerN;
+    _gs.cnMode = 'true' == cnmodeN;
     setState(() {
       // Here you can write your code for open new view
     });
@@ -369,173 +382,156 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         drawer: SafeArea(
           bottom: false,
           child: Drawer(
-            child: ListView(
-              // Important: Remove any padding from the ListView.
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
-                  child: Divider(
-                    thickness: 1,
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(22, 0, 22, 5),
-                  child: Text(
-                    "language".tr(),
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.language),
-                  title: const Text('English'),
-                  onTap: () {
-                    setState(() {
-                      EasyLocalization.of(context)?.setLocale(const Locale('en'));
-                    });
-                    // Update the state of the app.
-                    // ...
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.language),
-                  title: const Text('简体中文'),
-                  onTap: () {
-                    // Update the state of the app.
-                    EasyLocalization.of(context)?.setLocale(const Locale.fromSubtags(languageCode: 'zh', countryCode: 'CN'));
-                    // ...
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.language),
-                  title: const Text('日本語'),
-                  onTap: () {
-                    // Update the state of the app.
-                    EasyLocalization.of(context)?.setLocale(const Locale('ja'));
-                    // ...
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
-                  child: Divider(
-                    thickness: 1,
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(22, 0, 22, 5),
-                  child: Text(
-                    "Settings".tr(),
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                ),
-                SwitchListTile(
-                    title: const Text('Trailblazer').tr(),
-                    secondary: (gender ? const Icon(Icons.female) : const Icon(Icons.male)),
-                    value: gender,
-                    onChanged: (bool value) async {
-                      setState(() => gender = value);
+            child: ChangeNotifierProvider.value(
+                value: _gs,
+                child: Consumer<GlobalState>(builder: (context, model, child) {
+                  return ListView(
+                    // Important: Remove any padding from the ListView.
+                    padding: EdgeInsets.zero,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
+                        child: Divider(
+                          thickness: 1,
+                          color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(22, 0, 22, 5),
+                        child: Text(
+                          "language".tr(),
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.language),
+                        title: const Text('English'),
+                        onTap: () {
+                          setState(() {
+                            EasyLocalization.of(context)?.setLocale(const Locale('en'));
+                          });
+                          // Update the state of the app.
+                          // ...
+                        },
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.language),
+                        title: const Text('简体中文'),
+                        onTap: () {
+                          // Update the state of the app.
+                          EasyLocalization.of(context)?.setLocale(const Locale.fromSubtags(languageCode: 'zh', countryCode: 'CN'));
+                          // ...
+                        },
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.language),
+                        title: const Text('日本語'),
+                        onTap: () {
+                          // Update the state of the app.
+                          EasyLocalization.of(context)?.setLocale(const Locale('ja'));
+                          // ...
+                        },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
+                        child: Divider(
+                          thickness: 1,
+                          color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(22, 0, 22, 5),
+                        child: Text(
+                          "Settings".tr(),
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ),
+                      SwitchListTile(
+                          title: const Text('Trailblazer').tr(),
+                          secondary: (!_gs.male ? const Icon(Icons.female) : const Icon(Icons.male)),
+                          value: !_gs.male,
+                          onChanged: (bool value) async {
+                            _gs.male = !value;
+                            final prefs = await SharedPreferences.getInstance();
+                            await prefs.setString('gender', _gs.male ? 'male' : 'female');
+                          }),
+                      if (_gs.test)
+                        SwitchListTile(
+                            title: const Text('Spoiler Mode').tr(),
+                            value: _gs.spoilerMode,
+                            onChanged: (bool value) async {
+                              _gs.spoilerMode = value;
+                              final prefs = await SharedPreferences.getInstance();
+                              await prefs.setString('spoilermode', value.toString());
+                            }),
+                      if (!kIsWeb)
+                        SwitchListTile(
+                            title: _gs.cnMode ? Text('Datasource:China').tr() : Text('Datasource:International').tr(),
+                            value: _gs.cnMode,
+                            onChanged: (bool value) async {
+                              _gs.cnMode = value;
+                              final prefs = await SharedPreferences.getInstance();
+                              await prefs.setString('cnmode', value.toString());
+                              initData();
+                            }),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
+                        child: Divider(
+                          thickness: 1,
+                          color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(22, 0, 22, 5),
+                        child: Text(
+                          "Others".tr(),
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.open_in_new),
+                        title: const Text('Alice Workshop for Genshin').tr(),
+                        onTap: () {
+                          // Update the state of the app.
+                          launchUrlString("https://genshincalc.yunlu18.net/".tr());
 
-                      if (gender == false) {
-                        final prefs = await SharedPreferences.getInstance();
-                        await prefs.setString('gender', "male");
-                        _gs.setAppConfig(male: true);
-                      } else {
-                        final prefs = await SharedPreferences.getInstance();
-                        await prefs.setString('gender', "female");
-                        _gs.setAppConfig(male: false);
-                      }
-                    }),
-                if (testmode == true)
-                  SwitchListTile(
-                      title: const Text('Spoiler Mode').tr(),
-                      value: spoilermode,
-                      onChanged: (bool value) async {
-                        setState(() => spoilermode = value);
+                          // ...
+                        },
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.open_in_new),
+                        title: const Text('Privacy Policy').tr(),
+                        onTap: () {
+                          launchUrlString("https://genshincalc.yunlu18.net/privacy.html");
+                          // Update the state of the app.
 
-                        if (value == false) {
-                          final prefs = await SharedPreferences.getInstance();
-                          await prefs.setString('spoilermode', "false");
-                          _gs.setAppConfig(spoiler: false);
-                        } else {
-                          final prefs = await SharedPreferences.getInstance();
-                          await prefs.setString('spoilermode', "true");
-                          _gs.setAppConfig(spoiler: true);
-                        }
-                      }),
-                if (!kIsWeb)
-                  SwitchListTile(
-                      title: cnmode ? Text('Datasource:China').tr() : Text('Datasource:International').tr(),
-                      value: cnmode,
-                      onChanged: (bool value) async {
-                        setState(() => cnmode = value);
-
-                        if (cnmode == false) {
-                          final prefs = await SharedPreferences.getInstance();
-                          await prefs.setString('cnmode', "false");
-                          _gs.setAppConfig(cn: false);
-                        } else {
-                          final prefs = await SharedPreferences.getInstance();
-                          await prefs.setString('cnmode', "true");
-                          _gs.setAppConfig(cn: true);
-                        }
-                      }),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
-                  child: Divider(
-                    thickness: 1,
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(22, 0, 22, 5),
-                  child: Text(
-                    "Others".tr(),
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.open_in_new),
-                  title: const Text('Alice Workshop for Genshin').tr(),
-                  onTap: () {
-                    // Update the state of the app.
-                    launchUrlString("https://genshincalc.yunlu18.net/".tr());
-
-                    // ...
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.open_in_new),
-                  title: const Text('Privacy Policy').tr(),
-                  onTap: () {
-                    launchUrlString("https://genshincalc.yunlu18.net/privacy.html");
-                    // Update the state of the app.
-
-                    // ...
-                  },
-                ),
-                if (kIsWeb || Platform.isWindows || Platform.isIOS)
-                  ListTile(
-                    leading: Icon(Icons.coffee),
-                    title: Text('Buy Me a Coffee').tr(),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => DonatePage()),
-                      ).then((value) {
-                        setState(() {});
-                      });
-                    },
-                  ),
-              ],
-            ),
+                          // ...
+                        },
+                      ),
+                      if (kIsWeb || Platform.isWindows || Platform.isIOS)
+                        ListTile(
+                          leading: Icon(Icons.coffee),
+                          title: Text('Buy Me a Coffee').tr(),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => DonatePage()),
+                            ).then((value) {
+                              setState(() {});
+                            });
+                          },
+                        ),
+                    ],
+                  );
+                })),
           ),
         ),
         appBar: AppBar(
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
-          title: PreferredSize(preferredSize: const Size.fromHeight(40), child: FittedBox(fit: BoxFit.scaleDown, child: Text(!kIsWeb && Platform.isWindows ? "title_windows".tr() : "title".tr()))),
+          title: PreferredSize(
+              preferredSize: const Size.fromHeight(40),
+              child: FittedBox(fit: BoxFit.scaleDown, child: Text(!kIsWeb && Platform.isWindows ? "title_windows".tr() : "title".tr()))),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(33),
             child: Container(

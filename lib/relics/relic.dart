@@ -33,6 +33,8 @@ class Relic {
         return entity.eNname;
       case 'zh':
         return entity.cNname;
+      case 'cn':
+        return entity.cNname;
       case 'ja':
         return entity.jAname;
     }
@@ -44,6 +46,8 @@ class Relic {
       case 'en':
         return entity.skilldata[index].eNname;
       case 'zh':
+        return entity.skilldata[index].cNname;
+      case 'cn':
         return entity.skilldata[index].cNname;
       case 'ja':
         return entity.skilldata[index].jAname;
