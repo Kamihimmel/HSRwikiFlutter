@@ -38,8 +38,9 @@ class DamagePanelState extends State<DamagePanel> {
                 SelectableText(
                   title,
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: damageResult != null ? 15 : 17,
                     height: 1.1,
+                    fontWeight: damageResult != null ? FontWeight.normal : FontWeight.bold,
                   ),
                 ),
               ]),
@@ -55,9 +56,7 @@ class DamagePanelState extends State<DamagePanel> {
                       ),
                     ),
                     SelectableText(
-                      double.parse(damageResult.nonCrit
-                          .toStringAsFixed(1))
-                          .toString(),
+                      double.parse(damageResult.nonCrit.toStringAsFixed(1)).toString(),
                       style: TextStyle(
                         color: elementType.color[300],
                         fontSize: 15,
@@ -71,9 +70,7 @@ class DamagePanelState extends State<DamagePanel> {
                       ),
                     ),
                     SelectableText(
-                      double.parse(damageResult.expectation
-                          .toStringAsFixed(1))
-                          .toString(),
+                      double.parse(damageResult.expectation.toStringAsFixed(1)).toString(),
                       style: TextStyle(
                         color: elementType.color[500],
                         fontSize: 15,
@@ -87,9 +84,7 @@ class DamagePanelState extends State<DamagePanel> {
                       ),
                     ),
                     SelectableText(
-                      double.parse(damageResult.crit
-                          .toStringAsFixed(1))
-                          .toString(),
+                      double.parse(damageResult.crit.toStringAsFixed(1)).toString(),
                       style: TextStyle(
                         color: elementType.color[700],
                         fontSize: 15,
@@ -118,10 +113,7 @@ class DamagePanelState extends State<DamagePanel> {
                           AnimatedContainer(
                             curve: Curves.easeIn,
                             duration: Duration(milliseconds: 500),
-                            width: damageResult.crit /
-                                50 *
-                                _gs.dmgScale /
-                                10,
+                            width: damageResult.crit / 50 * _gs.dmgScale / 10,
                             height: 20,
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.white, width: 0.5),
@@ -131,10 +123,7 @@ class DamagePanelState extends State<DamagePanel> {
                           AnimatedContainer(
                             curve: Curves.easeIn,
                             duration: Duration(milliseconds: 500),
-                            width: damageResult.expectation /
-                                50 *
-                                _gs.dmgScale /
-                                10,
+                            width: damageResult.expectation / 50 * _gs.dmgScale / 10,
                             height: 20,
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.white, width: 0.5),
@@ -144,10 +133,7 @@ class DamagePanelState extends State<DamagePanel> {
                           AnimatedContainer(
                             curve: Curves.easeIn,
                             duration: Duration(milliseconds: 500),
-                            width: damageResult.nonCrit /
-                                50 *
-                                _gs.dmgScale /
-                                10,
+                            width: damageResult.nonCrit / 50 * _gs.dmgScale / 10,
                             height: 20,
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.white, width: 0.5),
@@ -198,10 +184,7 @@ class DamagePanelState extends State<DamagePanel> {
                           decoration: BoxDecoration(
                             borderRadius: const BorderRadius.all(Radius.circular(15)),
                             border: Border.all(color: Colors.white.withOpacity(0.13)),
-                            gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                            gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                           ),
                           child: Column(
                             children: [
@@ -209,7 +192,7 @@ class DamagePanelState extends State<DamagePanel> {
                                 padding: const EdgeInsets.all(10.0),
                                 child: SelectableText(
                                   'Damage Panel'.tr(),
-                                  style: TextStyle(fontSize: 20),
+                                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                                 ),
                               ),
                               SizedBox(height: 10),
@@ -230,7 +213,8 @@ class DamagePanelState extends State<DamagePanel> {
                                         multiplierValue = double.tryParse(skillData.levelmultiplier[e.multiplier.toInt() - 1][skillLevel.toString()].toString()) ?? 0;
                                       }
                                       String effectTitle = "${e.tag.map((e) => e.tr()).join(" | ")} (${multiplierValue.toStringAsFixed(1)}%)";
-                                      DamageResult dr = calculateDamage(_gs.stats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget), DamageType.fromEffectTags(e.tag), _cData.elementType);
+                                      DamageResult dr =
+                                          calculateDamage(_gs.stats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget), DamageType.fromEffectTags(e.tag), _cData.elementType);
                                       return _buildDamageBar(effectTitle, _cData.elementType, dr);
                                     }).toList(),
                                   );
