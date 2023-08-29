@@ -42,7 +42,10 @@ class GlobalState extends ChangeNotifier {
   int _dmgScale = 10; // footer option: damage scale
   int _statScale = 10; // footer option: stat scale
 
-  void loaded(bool loaded) {
+  bool loaded() {
+    return _characterLoaded && _lightconeLoaded && _relicLoaded;
+  }
+  void setLoaded(bool loaded) {
     _characterLoaded = loaded;
     _lightconeLoaded = loaded;
     _relicLoaded = loaded;

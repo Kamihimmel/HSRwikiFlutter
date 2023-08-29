@@ -16,12 +16,11 @@ import 'global_state.dart';
 /// 侧边栏
 class _SidePanelState extends State<SidePanel> {
   final GlobalState _gs = GlobalState();
-  late Map<String, Character> characterMap;
+  late List<Character> characterList;
 
   @override
   void initState() {
     super.initState();
-    characterMap = CharacterManager.getSortedCharacters(withDiy: false, filterSupported: true);
     if (mounted) {
       setState(() {});
     }
@@ -32,6 +31,11 @@ class _SidePanelState extends State<SidePanel> {
     return ChangeNotifierProvider.value(
         value: _gs,
         child: Consumer<GlobalState>(builder: (context, model, child) {
+          characterList = CharacterManager.getSortedCharacters(withDiy: false, filterSupported: true).values
+              .where((c) => _gs.spoilerMode || !c.spoiler)
+              .toList();
+          characterList.sort((e1, e2) => e1.spoiler == e2.spoiler ? 0 : (e1.spoiler ? -1 : 1));
+
           return ListView(
             // Important: Remove any padding from the ListView.
             padding: EdgeInsets.zero,
@@ -57,8 +61,6 @@ class _SidePanelState extends State<SidePanel> {
                   setState(() {
                     EasyLocalization.of(context)?.setLocale(const Locale('en'));
                   });
-                  // Update the state of the app.
-                  // ...
                 },
               ),
               ListTile(
@@ -111,7 +113,7 @@ class _SidePanelState extends State<SidePanel> {
                       final prefs = await SharedPreferences.getInstance();
                       await prefs.setString('spoilermode', value.toString());
                     }),
-              if (!kIsWeb)
+              if (!kIsWeb && !widget.withCharacter)
                 SwitchListTile(
                     title: _gs.cnMode ? Text('Datasource:China').tr() : Text('Datasource:International').tr(),
                     value: _gs.cnMode,
@@ -129,15 +131,15 @@ class _SidePanelState extends State<SidePanel> {
                     color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
                   ),
                 ),
-              for (var entry in characterMap.entries)
-                if (widget.withCharacter && (entry.value.spoiler == false || _gs.spoilerMode == true))
+              if (widget.withCharacter)
+                for (var c in characterList)
                   ListTile(
-                    leading: getImageComponent(entry.value.entity.imageurl, imageWrap: true),
-                    title: Text(entry.value.getName(getLanguageCode(context))),
+                    leading: getImageComponent(c.getImageUrl(_gs), imageWrap: true),
+                    title: Text(c.getName(getLanguageCode(context))),
                     // enabled: entry.value.loaded,
                     onTap: () {
                       if (widget.switchCharacter != null) {
-                        widget.switchCharacter!(entry.key);
+                        widget.switchCharacter!(c.entity.id);
                       }
                       Navigator.pop(context);
                     },

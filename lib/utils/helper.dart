@@ -15,7 +15,7 @@ final String urlEndpoint = "https://hsrwikidata.yunlu18.net/";
 final String cnUrlEndpoint = "https://hsrwikidata.kchlu.com/";
 
 Future<void> initData() async {
-  _gs.loaded(false);
+  _gs.setLoaded(false);
   await CharacterManager.initAllCharacters();
   _gs.characterLoaded = true;
   await LightconeManager.initAllLightcones();
