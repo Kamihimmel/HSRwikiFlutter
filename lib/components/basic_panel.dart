@@ -117,7 +117,7 @@ class BasicPanelState extends State<BasicPanel> {
         padding: const EdgeInsets.all(10.0),
         child: SelectableText(
           title.tr(),
-          style: TextStyle(fontSize: 20),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
     ];
@@ -140,8 +140,7 @@ class BasicPanelState extends State<BasicPanel> {
       ));
       list.add(Padding(
         padding: const EdgeInsets.all(10.0),
-        child:
-        FractionallySizedBox(
+        child: FractionallySizedBox(
           widthFactor: 1.0,
           child: Scrollbar(
             child: SingleChildScrollView(
@@ -194,320 +193,299 @@ class BasicPanelState extends State<BasicPanel> {
     final columnwidth = screenWidth > 1440
         ? screenWidth / 4
         : screenWidth > 905
-        ? screenWidth / 2
-        : screenWidth;
+            ? screenWidth / 2
+            : screenWidth;
     return ChangeNotifierProvider.value(
         value: _gs,
-        child: Consumer<GlobalState>(
-            builder: (context, model, child) {
-              final Character _cData = CharacterManager.getCharacter(_gs.stats.id);
-              Map<FightProp, Map<PropSource, double>> stats = _gs.stats.calculateStats();
+        child: Consumer<GlobalState>(builder: (context, model, child) {
+          final Character _cData = CharacterManager.getCharacter(_gs.stats.id);
+          Map<FightProp, Map<PropSource, double>> stats = _gs.stats.calculateStats();
 
-              Map<String, List<dynamic>> baseAttrs = {};
-              baseAttrs[FightProp.attack.desc] = _getBaseAttr(stats, FightProp.attack);
-              baseAttrs[FightProp.maxHP.desc] = _getBaseAttr(stats, FightProp.maxHP);
-              baseAttrs[FightProp.defence.desc] = _getBaseAttr(stats, FightProp.defence);
-              baseAttrs[FightProp.speed.desc] = _getBaseAttr(stats, FightProp.speed);
-              baseAttrs[FightProp.sPRatio.desc] = _getBaseAttr(stats, FightProp.sPRatio);
+          Map<String, List<dynamic>> baseAttrs = {};
+          baseAttrs[FightProp.attack.desc] = _getBaseAttr(stats, FightProp.attack);
+          baseAttrs[FightProp.maxHP.desc] = _getBaseAttr(stats, FightProp.maxHP);
+          baseAttrs[FightProp.defence.desc] = _getBaseAttr(stats, FightProp.defence);
+          baseAttrs[FightProp.speed.desc] = _getBaseAttr(stats, FightProp.speed);
+          baseAttrs[FightProp.sPRatio.desc] = _getBaseAttr(stats, FightProp.sPRatio);
 
-              Map<String, List<dynamic>> critAttrs = {};
-              critAttrs[FightProp.criticalChance.desc] = _getBaseAttr(stats, FightProp.criticalChance);
-              critAttrs[FightProp.criticalDamage.desc] = _getBaseAttr(stats, FightProp.criticalDamage);
+          Map<String, List<dynamic>> critAttrs = {};
+          critAttrs[FightProp.criticalChance.desc] = _getBaseAttr(stats, FightProp.criticalChance);
+          critAttrs[FightProp.criticalDamage.desc] = _getBaseAttr(stats, FightProp.criticalDamage);
 
-              Map<String, List<dynamic>> otherAttrs = {};
-              otherAttrs[FightProp.statusResistance.desc] = _getBaseAttr(stats, FightProp.statusResistance);
-              otherAttrs[FightProp.statusProbability.desc] = _getBaseAttr(stats, FightProp.statusProbability);
-              otherAttrs[FightProp.breakDamageAddedRatio.desc] = _getBaseAttr(stats, FightProp.breakDamageAddedRatio);
+          Map<String, List<dynamic>> otherAttrs = {};
+          otherAttrs[FightProp.statusResistance.desc] = _getBaseAttr(stats, FightProp.statusResistance);
+          otherAttrs[FightProp.statusProbability.desc] = _getBaseAttr(stats, FightProp.statusProbability);
+          otherAttrs[FightProp.breakDamageAddedRatio.desc] = _getBaseAttr(stats, FightProp.breakDamageAddedRatio);
 
-              Map<String, List<dynamic>> damageAttrs = {};
-              damageAttrs[FightProp.allDamageAddRatio.desc] = _getBaseAttr(stats, FightProp.allDamageAddRatio);
-              for (FightProp p in elementDamage) {
-                damageAttrs[p.desc] = _getBaseAttr(stats, p);
-              }
+          Map<String, List<dynamic>> damageAttrs = {};
+          damageAttrs[FightProp.allDamageAddRatio.desc] = _getBaseAttr(stats, FightProp.allDamageAddRatio);
+          for (FightProp p in elementDamage) {
+            damageAttrs[p.desc] = _getBaseAttr(stats, p);
+          }
 
-              Map<String, List<dynamic>> healAttrs = {};
-              healAttrs[FightProp.healRatio.desc] = _getBaseAttr(stats, FightProp.healRatio);
+          Map<String, List<dynamic>> healAttrs = {};
+          healAttrs[FightProp.healRatio.desc] = _getBaseAttr(stats, FightProp.healRatio);
 
-              return Container(
-                height: screenWidth > 905 ? screenHeight - 100 : null,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
+          return Container(
+            height: screenWidth > 905 ? screenHeight - 100 : null,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Container(
+                      clipBehavior: Clip.hardEdge,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      ),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                         child: Container(
-                          clipBehavior: Clip.hardEdge,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.all(Radius.circular(15)),
+                            border: Border.all(color: Colors.white.withOpacity(0.13)),
+                            gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                           ),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
-                              ),
-                              child: Column(
-                                children: _getAttrPanel('Basic Panel', baseAttrs),
-                              ),
-                            ),
+                          child: Column(
+                            children: _getAttrPanel('Basic Panel', baseAttrs),
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Container(
+                      clipBehavior: Clip.hardEdge,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      ),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                         child: Container(
-                          clipBehavior: Clip.hardEdge,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.all(Radius.circular(15)),
+                            border: Border.all(color: Colors.white.withOpacity(0.13)),
+                            gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                           ),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
-                              ),
-                              child: Column(
-                                children: _getAttrPanel('Critical Panel', critAttrs),
-                              ),
-                            ),
+                          child: Column(
+                            children: _getAttrPanel('Critical Panel', critAttrs),
                           ),
                         ),
                       ),
-                      if (damageAttrs.values.where((e) => e[2] > 0).isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
+                    ),
+                  ),
+                  if (damageAttrs.values.where((e) => e[2] > 0).isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Container(
+                        clipBehavior: Clip.hardEdge,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                        ),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                           child: Container(
-                            clipBehavior: Clip.hardEdge,
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.all(Radius.circular(15)),
+                              border: Border.all(color: Colors.white.withOpacity(0.13)),
+                              gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                             ),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                  border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                  gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
-                                ),
-                                child: Column(
-                                  children: _getAttrPanel('Damage Bonus Panel', damageAttrs),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      if (healAttrs.values.where((e) => e[2] > 0).isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Container(
-                            clipBehavior: Clip.hardEdge,
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
-                            ),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                  border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                  gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
-                                ),
-                                child: Column(
-                                  children: _getAttrPanel('Heal Bonus Panel', healAttrs),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Container(
-                          clipBehavior: Clip.hardEdge,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                          ),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
-                              ),
-                              child: Column(
-                                children: _getAttrPanel('Other Panel', otherAttrs),
-                              ),
+                            child: Column(
+                              children: _getAttrPanel('Damage Bonus Panel', damageAttrs),
                             ),
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Container(
-                          clipBehavior: Clip.hardEdge,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                    ),
+                  if (healAttrs.values.where((e) => e[2] > 0).isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Container(
+                        clipBehavior: Clip.hardEdge,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                        ),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.all(Radius.circular(15)),
+                              border: Border.all(color: Colors.white.withOpacity(0.13)),
+                              gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                            ),
+                            child: Column(
+                              children: _getAttrPanel('Heal Bonus Panel', healAttrs),
+                            ),
                           ),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                        ),
+                      ),
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Container(
+                      clipBehavior: Clip.hardEdge,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      ),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.all(Radius.circular(15)),
+                            border: Border.all(color: Colors.white.withOpacity(0.13)),
+                            gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                          ),
+                          child: Column(
+                            children: _getAttrPanel('Other Panel', otherAttrs),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Container(
+                      clipBehavior: Clip.hardEdge,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      ),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.all(Radius.circular(15)),
+                            border: Border.all(color: Colors.white.withOpacity(0.13)),
+                            gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                          ),
+                          child: Column(
+                            children: [
+                              SizedBox(height: 10),
+                              SelectableText(
+                                'Enemy Panel'.tr(),
+                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                               ),
-                              child: Column(
-                                children: [
+                              SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
                                   SelectableText(
-                                    'Enemy Panel'.tr(),
-                                    style: TextStyle(fontSize: 20),
+                                    '${"Enemytype".tr()}: ',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                    ),
                                   ),
-                                  SizedBox(height: 10),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      SelectableText(
-                                        '${"Enemytype".tr()}: ',
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                      Container(
-                                        height: 50.0,
-                                        child: DropdownButton(
-                                            value: _gs.enemyType,
-                                            items: [
-                                              for (var k in enemyData.keys)
-                                                DropdownMenuItem(
-                                                  child: Text(
-                                                    (enemyData[k]?['name'] as String).tr(),
-                                                    style: TextStyle(fontSize: 15),
-                                                  ),
-                                                  value: k,
-                                                ),
-                                            ],
-                                            onChanged: (value) {
-                                              _gs.enemyType = value!;
-                                            }),
-                                      ),
-                                    ],
-                                  ),
-                                  FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: List.generate(ElementType.values.where((e) => e != ElementType.diy).length, (index) {
-                                        ElementType et = ElementType.values.where((e) => e != ElementType.diy).toList()[index];
-                                        return Column(
-                                          children: [
-                                            if (index != 0)
-                                              SizedBox(width: 15),
-                                            Column(
-                                              children: [
-                                                getImageComponent(et.icon, imageWrap: true, width: 30),
-                                                SelectableText(
-                                                  '${(enemyData[_gs.enemyType]!['resistence'] as Map<ElementType, int>)[et] ?? 0}',
-                                                  style: TextStyle(
-                                                    fontSize: 30,
-                                                  ),
-                                                ),
-                                              ],
+                                  Container(
+                                    height: 50.0,
+                                    child: DropdownButton(
+                                        value: _gs.enemyType,
+                                        items: [
+                                          for (var k in enemyData.keys)
+                                            DropdownMenuItem(
+                                              child: Text(
+                                                (enemyData[k]?['name'] as String).tr(),
+                                                style: TextStyle(fontSize: 15),
+                                              ),
+                                              value: k,
                                             ),
-                                          ],
-                                        );
-                                      }),
-                                    ),
+                                        ],
+                                        onChanged: (value) {
+                                          _gs.enemyType = value!;
+                                        }),
                                   ),
-                                  FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        SelectableText(
-                                          '${"EnemyLv".tr()}: ${_gs.enemyLevel}',
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            height: 1.1,
-                                          ),
-                                        ),
-                                        Slider(
-                                          min: 1,
-                                          max: 90,
-                                          inactiveColor: Theme.of(context).colorScheme.secondary,
-                                          label: _gs.enemyLevel.toString(),
-                                          value: _gs.enemyLevel.toDouble(),
-                                          onChanged: (value) {
-                                            _gs.enemyLevel = value.toInt();
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        SelectableText(
-                                          '${"EnemyDefenceDebuff".tr()}%: ${_gs.enemyDefence}%',
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            height: 1.1,
-                                          ),
-                                        ),
-                                        Slider(
-                                          min: 0,
-                                          max: 100,
-                                          inactiveColor: Theme.of(context).colorScheme.secondary,
-                                          label: _gs.enemyDefence.toString(),
-                                          value: _gs.enemyDefence.toDouble(),
-                                          onChanged: (value) {
-                                            _gs.enemyDefence = value.toInt();
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  )
                                 ],
                               ),
-                            ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: List.generate(ElementType.values.where((e) => e != ElementType.diy).length, (index) {
+                                  ElementType et = ElementType.values.where((e) => e != ElementType.diy).toList()[index];
+                                  return Column(
+                                    children: [
+                                      if (index != 0) SizedBox(width: 15),
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          getImageComponent(et.icon, imageWrap: true, width: 30),
+                                          SelectableText(
+                                            '${(enemyData[_gs.enemyType]!['resistence'] as Map<ElementType, int>)[et] ?? 0}',
+                                            style: TextStyle(
+                                              fontSize: 30,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  );
+                                }),
+                              ),
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    SelectableText(
+                                      '${"EnemyLv".tr()}: ${_gs.enemyLevel}',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        height: 1.1,
+                                      ),
+                                    ),
+                                    Slider(
+                                      min: 1,
+                                      max: 90,
+                                      inactiveColor: Theme.of(context).colorScheme.secondary,
+                                      label: _gs.enemyLevel.toString(),
+                                      value: _gs.enemyLevel.toDouble(),
+                                      onChanged: (value) {
+                                        _gs.enemyLevel = value.toInt();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    SelectableText(
+                                      '${"EnemyDefenceDebuff".tr()}%: ${_gs.enemyDefence}%',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        height: 1.1,
+                                      ),
+                                    ),
+                                    Slider(
+                                      min: 0,
+                                      max: 100,
+                                      inactiveColor: Theme.of(context).colorScheme.secondary,
+                                      label: _gs.enemyDefence.toString(),
+                                      value: _gs.enemyDefence.toDouble(),
+                                      onChanged: (value) {
+                                        _gs.enemyDefence = value.toInt();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
                           ),
                         ),
                       ),
-                      adsenseAdsView(columnwidth - 20),
-                      if (widget.isBannerAdReady)
-                        Container(
-                          width: widget.bannerAd!.size.width.toDouble(),
-                          height: widget.bannerAd!.size.height.toDouble(),
-                          child: AdWidget(ad: widget.bannerAd!),
-                        ),
-                    ],
+                    ),
                   ),
-                ),
-              );
-            }));
+                  adsenseAdsView(columnwidth - 20),
+                  if (widget.isBannerAdReady)
+                    Container(
+                      width: widget.bannerAd!.size.width.toDouble(),
+                      height: widget.bannerAd!.size.height.toDouble(),
+                      child: AdWidget(ad: widget.bannerAd!),
+                    ),
+                ],
+              ),
+            ),
+          );
+        }));
   }
 }
 

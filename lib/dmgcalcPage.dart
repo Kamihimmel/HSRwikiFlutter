@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 import 'ad_helper.dart';
 import 'calculator/player_info.dart';
@@ -19,9 +20,9 @@ import 'components/global_state.dart';
 import 'components/lightcone_relic.dart';
 import 'lightcones/lightcone_manager.dart';
 import 'relics/relic_manager.dart';
+import 'utils/helper.dart';
 
 class DmgCalcPage extends StatefulWidget {
-
   const DmgCalcPage({super.key});
 
   @override
@@ -135,18 +136,16 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
       ),
       child: Stack(
         children: [
+          if (!_loading)
+            getImageComponent(_cData.entity.imagelargeurl,
+                placeholder: kTransparentImage, fit: BoxFit.cover, alignment: Alignment(0, -0.2), height: MediaQuery.of(context).size.height, width: MediaQuery.of(context).size.width),
           BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            filter: ImageFilter.blur(sigmaX: 0.1, sigmaY: 0.1),
             child: AnimatedContainer(
               duration: const Duration(seconds: 1),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      _loading ? Colors.grey.withOpacity(0.8) : _cData.elementType.color.withOpacity(0.35),
-                      Colors.black.withOpacity(0.8)
-                    ]),
+                    begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_loading ? Colors.grey.withOpacity(0.8) : Colors.black.withOpacity(0.01), Colors.black.withOpacity(0.8)]),
               ),
               child: Scaffold(
                 backgroundColor: Colors.transparent,
@@ -155,62 +154,64 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
                     "HSR Damage Calculator".tr(),
                   ),
                 ),
-                body: _loading ? Center(
-                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
-                ) : SingleChildScrollView(
+                body: SingleChildScrollView(
                   child: Column(
                     children: [
                       Stack(
                         children: [
-                          Container(
-                            child: ResponsiveGridRow(
-                              children: [
-                                //ANCHOR:  CharacterPage
-                                ResponsiveGridCol(lg: 3,
-                                  md: 6,
-                                  xs: 12,
-                                  sm: 12,
-                                  child: CharacterBasic(
-                                    isBannerAdReady: _isBannerAdReady,
-                                    bannerAd: _bannerAd,
-                                  )
-                                ),
-                                //ANCHOR - Lightcones and Relics
-                                ResponsiveGridCol(
-                                  lg: 3,
-                                  md: 6,
-                                  xs: 12,
-                                  sm: 12,
-                                  child: LightconeRelic(
-                                    isBannerAdReady: _isBannerAdReady,
-                                    bannerAd: _bannerAd,
+                          _loading
+                              ? Center(
+                                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
+                                )
+                              : Container(
+                                  child: ResponsiveGridRow(
+                                    children: [
+                                      //ANCHOR:  CharacterPage
+                                      ResponsiveGridCol(
+                                          lg: 3,
+                                          md: 6,
+                                          xs: 12,
+                                          sm: 12,
+                                          child: CharacterBasic(
+                                            isBannerAdReady: _isBannerAdReady,
+                                            bannerAd: _bannerAd,
+                                          )),
+                                      //ANCHOR - Lightcones and Relics
+                                      ResponsiveGridCol(
+                                        lg: 3,
+                                        md: 6,
+                                        xs: 12,
+                                        sm: 12,
+                                        child: LightconeRelic(
+                                          isBannerAdReady: _isBannerAdReady,
+                                          bannerAd: _bannerAd,
+                                        ),
+                                      ),
+                                      //ANCHOR - Character Basic Panel
+                                      ResponsiveGridCol(
+                                        lg: 3,
+                                        md: 6,
+                                        xs: 12,
+                                        sm: 12,
+                                        child: BasicPanel(
+                                          isBannerAdReady: _isBannerAdReady,
+                                          bannerAd: _bannerAd,
+                                        ),
+                                      ),
+                                      //ANCHOR - Damage Panel
+                                      ResponsiveGridCol(
+                                        lg: 3,
+                                        md: 6,
+                                        xs: 12,
+                                        sm: 12,
+                                        child: DamagePanel(
+                                          isBannerAdReady: _isBannerAdReady,
+                                          bannerAd: _bannerAd,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                //ANCHOR - Character Basic Panel
-                                ResponsiveGridCol(
-                                  lg: 3,
-                                  md: 6,
-                                  xs: 12,
-                                  sm: 12,
-                                  child: BasicPanel(
-                                    isBannerAdReady: _isBannerAdReady,
-                                    bannerAd: _bannerAd,
-                                  ),
-                                ),
-                                //ANCHOR - Damage Panel
-                                ResponsiveGridCol(
-                                  lg: 3,
-                                  md: 6,
-                                  xs: 12,
-                                  sm: 12,
-                                  child: DamagePanel(
-                                    isBannerAdReady: _isBannerAdReady,
-                                    bannerAd: _bannerAd,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
                           Stack(
                             children: [
                               Hero(
@@ -234,8 +235,7 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
                                 height: 100,
                                 width: columnwidth - 100,
                                 child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                      25, 25, 110, 25),
+                                  padding: const EdgeInsets.fromLTRB(25, 25, 110, 25),
                                   child: FittedBox(
                                     child: Text(
                                       "HSR Damage Calculator".tr(),
@@ -254,8 +254,7 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
                                           Shadow(
                                             offset: Offset(10.0, 10.0),
                                             blurRadius: 8.0,
-                                            color:
-                                                Color.fromARGB(125, 0, 0, 255),
+                                            color: Color.fromARGB(125, 0, 0, 255),
                                           ),
                                         ],
                                       ),
