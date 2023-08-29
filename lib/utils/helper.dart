@@ -7,11 +7,22 @@ import 'package:http/http.dart' as http;
 import '../calculator/basic.dart';
 import '../characters/character_manager.dart';
 import '../components/global_state.dart';
-import '../info.dart';
+import '../lightcones/lightcone_manager.dart';
+import '../relics/relic_manager.dart';
 
 final GlobalState _gs = GlobalState();
 final String urlEndpoint = "https://hsrwikidata.yunlu18.net/";
 final String cnUrlEndpoint = "https://hsrwikidata.kchlu.com/";
+
+Future<void> initData() async {
+  _gs.loaded(false);
+  await CharacterManager.initAllCharacters();
+  _gs.characterLoaded = true;
+  await LightconeManager.initAllLightcones();
+  _gs.lightconeLoaded = true;
+  await RelicManager.initAllRelics();
+  _gs.relicLoaded = true;
+}
 
 getImageComponent(String path,
     {remote = true, imageWrap = false, fit = BoxFit.cover, alignment = Alignment.center, Uint8List? placeholder, double? width, double? height}) {
@@ -37,8 +48,12 @@ getImageComponent(String path,
       : _imageProvider;
 }
 
+Future<void> mockLoad() async {
+  return Future.delayed(Duration(seconds: 1));
+}
+
 String getLanguageCode(BuildContext context) {
-  return EasyLocalization.of(context)?.currentLocale?.languageCode ?? '';
+  return EasyLocalization.of(context)?.currentLocale?.languageCode ?? 'en';
 }
 
 Future<String> loadLibJsonString(String path, {cnMode = false}) async {
@@ -71,19 +86,18 @@ MaterialColor getRarityColor(int rarity) {
   return Colors.grey;
 }
 
-var elementDamage = [
-  FightProp.physicalAddedRatio,
-  FightProp.fireAddedRatio,
-  FightProp.iceAddedRatio,
-  FightProp.thunderAddedRatio,
-  FightProp.windAddedRatio,
-  FightProp.thunderAddedRatio,
-  FightProp.imaginaryAddedRatio,
-  FightProp.quantumAddedRatio,
-];
+const Map<ElementType, FightProp> elementDamage = {
+  ElementType.physical: FightProp.physicalAddedRatio,
+  ElementType.fire: FightProp.fireAddedRatio,
+  ElementType.ice: FightProp.iceAddedRatio,
+  ElementType.lightning: FightProp.thunderAddedRatio,
+  ElementType.wind: FightProp.windAddedRatio,
+  ElementType.imaginary: FightProp.imaginaryAddedRatio,
+  ElementType.quantum: FightProp.quantumAddedRatio,
+};
 
 double getRelicMainAttrValue(FightProp fightProp, int rarity, int level) {
-  if (elementDamage.contains(fightProp)) {
+  if (elementDamage.values.contains(fightProp)) {
     fightProp = FightProp.allDamageAddRatio;
   }
   if (!relicMainAttrLevelCurve.containsKey(fightProp)) {

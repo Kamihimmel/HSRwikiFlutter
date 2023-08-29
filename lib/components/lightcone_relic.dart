@@ -132,7 +132,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                             value: _lData.entity.leveldata.map((e) => e.level).toList().indexOf(_gs.stats.lightconeLevel).toDouble(),
                                             min: 0,
                                             max: _lData.entity.leveldata.length - 1,
-                                            divisions: _lData.entity.leveldata.length,
+                                            divisions:  _lData.entity.leveldata.length,
                                             activeColor: _cData.elementType.color,
                                             inactiveColor: _cData.elementType.color.withOpacity(0.5),
                                             onChanged: (double value) {

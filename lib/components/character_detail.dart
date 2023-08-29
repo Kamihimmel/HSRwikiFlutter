@@ -66,7 +66,6 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
     super.dispose();
   }
 
-  final ScrollController _scrollController = ScrollController();
   late List<CharacterLeveldata> levelData;
   late List<CharacterSkilldata> skillData;
   late List<CharacterTracedata> traceData;
@@ -74,7 +73,6 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
   late int attributeCount;
   late double _currentSliderValue;
   late List<double> levelnumbers;
-  late List<double> levelnumbers3;
 
   Future<void> _getData() async {
     characterData = await CharacterManager.loadFromRemote(widget.characterBasic);
@@ -84,7 +82,6 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
     eidolonData = characterData.entity.eidolon;
     _currentSliderValue = levelData.length - 1.0;
     levelnumbers = List.generate(skillData.length, (index) => 8);
-    levelnumbers3 = List.generate(eidolonData.length, (index) => 8);
     attributeCount = levelData.length;
     setState(() {
       isLoading = false;
@@ -96,10 +93,6 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
     final String cid = ModalRoute.of(context)!.settings.arguments as String;
     final Character routeCharacter = CharacterManager.getCharacter(cid);
     logger.i("navigate to character: $cid");
-    if (!characterData.loaded) {
-      characterData = routeCharacter;
-      _getData();
-    }
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final columnwidth = screenWidth > 1440
@@ -123,17 +116,16 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
       ),
       child: Stack(
         children: [
-          if (!isLoading)
-            getImageComponent(
-                characterData.getImageLargeUrl(_gs),
-                placeholder: kTransparentImage,
-                fit: BoxFit.fitHeight,
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width),
+          getImageComponent(
+              routeCharacter.getImageLargeUrl(_gs),
+              placeholder: kTransparentImage,
+              fit: BoxFit.fitHeight,
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width),
           Scaffold(
             backgroundColor: Colors.black.withOpacity(0.1),
             appBar: AppBar(
-              title: Text(characterData.getName(getLanguageCode(context))),
+              title: Text(routeCharacter.getName(getLanguageCode(context))),
             ),
             body: SingleChildScrollView(
               child: Column(

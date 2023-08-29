@@ -10,6 +10,7 @@ import '../calculator/calculator.dart';
 import '../characters/character.dart';
 import '../characters/character_entity.dart';
 import '../characters/character_manager.dart';
+import '../enemies/enemy.dart';
 import '../utils/helper.dart';
 import 'character_detail.dart';
 import 'global_state.dart';
@@ -184,7 +185,10 @@ class DamagePanelState extends State<DamagePanel> {
                           decoration: BoxDecoration(
                             borderRadius: const BorderRadius.all(Radius.circular(15)),
                             border: Border.all(color: Colors.white.withOpacity(0.13)),
-                            gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                            gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                           ),
                           child: Column(
                             children: [
@@ -213,8 +217,7 @@ class DamagePanelState extends State<DamagePanel> {
                                         multiplierValue = double.tryParse(skillData.levelmultiplier[e.multiplier.toInt() - 1][skillLevel.toString()].toString()) ?? 0;
                                       }
                                       String effectTitle = "${e.tag.map((e) => e.tr()).join(" | ")} (${multiplierValue.toStringAsFixed(1)}%)";
-                                      DamageResult dr =
-                                          calculateDamage(_gs.stats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget), DamageType.fromEffectTags(e.tag), _cData.elementType);
+                                      DamageResult dr = calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget), DamageType.fromEffectTags(e.tag), _cData.elementType);
                                       return _buildDamageBar(effectTitle, _cData.elementType, dr);
                                     }).toList(),
                                   );

@@ -42,7 +42,7 @@ class Toolboxpage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => DmgCalcPage(),
+                          builder: (context) => DmgCalcPage(characterId: "1102"),
                         ),
                       );
                     },
