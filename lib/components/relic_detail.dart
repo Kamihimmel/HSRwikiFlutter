@@ -98,15 +98,12 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
     }
   }
 
-  final ScrollController _scrollController = ScrollController();
   late List<RelicSkilldata> skillData;
   late int attributeCount;
-  late List<double> levelnumbers;
 
   Future<void> _getData() async {
     relicData = await RelicManager.loadFromRemote(widget.basicRelic);
     skillData = relicData.entity.skilldata;
-    levelnumbers = List.generate(skillData.length, (index) => 5);
     setState(() {
       isLoading = false;
     });
@@ -117,12 +114,8 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
     final String cid = ModalRoute.of(context)!.settings.arguments as String;
     final Relic routeRelic = RelicManager.getRelic(cid);
     logger.i("navigate to relic: $cid");
-    if (!relicData.loaded) {
-      relicData = routeRelic;
-      _getData();
-    }
     if (darkcolor == Colors.black && lightcolor == Colors.black) {
-      _loadPalette(relicData.entity.imageurl);
+      _loadPalette(routeRelic.entity.imageurl);
     }
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -139,12 +132,6 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
       lg: 1440,
     );
 
-    const raritytocolor = {
-      '5': Colors.amber,
-      '4': Colors.deepPurpleAccent,
-      '3': Colors.blueAccent,
-    };
-
     return AnimatedContainer(
       duration: const Duration(seconds: 1),
       constraints: const BoxConstraints.expand(),
@@ -154,7 +141,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: Text(relicData.getName(getLanguageCode(context))),
+          title: Text(routeRelic.getName(getLanguageCode(context))),
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -528,12 +515,12 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                   Stack(
                     children: [
                       Hero(
-                        tag: relicData.entity.imageurl,
+                        tag: routeRelic.entity.imageurl,
                         child: Container(
                           width: columnwidth,
                           height: 100,
                           color: Colors.grey.withOpacity(0.6),
-                          child: getImageComponent(relicData.entity.imageurl, imageWrap: true, fit: BoxFit.none, alignment: const Alignment(1, -0.5)),
+                          child: getImageComponent(routeRelic.entity.imageurl, imageWrap: true, fit: BoxFit.scaleDown, alignment: const Alignment(1, -0.5)),
                         ),
                       ),
                       Container(
@@ -544,7 +531,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                           padding: const EdgeInsets.fromLTRB(25, 25, 110, 25),
                           child: FittedBox(
                             child: Text(
-                              relicData.getName(getLanguageCode(context)),
+                              routeRelic.getName(getLanguageCode(context)),
                               style: const TextStyle(
                                 //fontWeight: FontWeight.bold,
                                 color: Colors.white,

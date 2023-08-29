@@ -65,6 +65,8 @@ enum FightProp {
   dotDamageAddRatio(desc: '', icon: '', effectKey: ['dotvulnerability']),
   allDamageAddRatio(desc: '', icon: '', effectKey: ['alldmg']),
   lostHP(desc: '', icon: ''),
+  defenceIgnore(desc: 'ignoredef', icon: ''),
+  defenceReduce(desc: 'reducedef', icon: ''),
   none(desc: '', icon: '');
 
   final String desc;
@@ -102,6 +104,12 @@ enum FightProp {
       return FightProp.attack;
     } else if (multiplierTarget == 'maxhp') {
       return FightProp.maxHP;
+    } else if (multiplierTarget == 'def') {
+      return FightProp.defence;
+    } else if (multiplierTarget == 'ignoredef') {
+      return FightProp.defenceIgnore;
+    } else if (multiplierTarget == 'reducedef') {
+      return FightProp.defenceReduce;
     } else if (multiplierTarget == 'def') {
       return FightProp.defence;
     }

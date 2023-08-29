@@ -14,6 +14,7 @@ import 'components/character_list.dart';
 import 'components/global_state.dart';
 import 'components/lightcone_list.dart';
 import 'components/relic_list.dart';
+import 'components/side_panel.dart';
 import 'donatePage.dart';
 
 import 'info.dart';
@@ -29,6 +30,7 @@ import 'lightcones/lightcone_manager.dart';
 import 'relics/relic_manager.dart';
 import 'toolboxPage.dart';
 import 'uidimportPage.dart';
+import 'utils/helper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -207,16 +209,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     await initData();
   }
 
-  Future<void> initData() async {
-    _gs.loaded(false);
-    await CharacterManager.initAllCharacters();
-    _gs.characterLoaded = true;
-    await LightconeManager.initAllLightcones();
-    _gs.lightconeLoaded = true;
-    await RelicManager.initAllRelics();
-    _gs.relicLoaded = true;
-  }
-
   Future<void> fetchstaus() async {
     final prefs = await SharedPreferences.getInstance();
     String genderN = prefs.getString('gender') ?? "999";
@@ -382,148 +374,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         drawer: SafeArea(
           bottom: false,
           child: Drawer(
-            child: ChangeNotifierProvider.value(
-                value: _gs,
-                child: Consumer<GlobalState>(builder: (context, model, child) {
-                  return ListView(
-                    // Important: Remove any padding from the ListView.
-                    padding: EdgeInsets.zero,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
-                        child: Divider(
-                          thickness: 1,
-                          color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(22, 0, 22, 5),
-                        child: Text(
-                          "language".tr(),
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.language),
-                        title: const Text('English'),
-                        onTap: () {
-                          setState(() {
-                            EasyLocalization.of(context)?.setLocale(const Locale('en'));
-                          });
-                          // Update the state of the app.
-                          // ...
-                        },
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.language),
-                        title: const Text('简体中文'),
-                        onTap: () {
-                          // Update the state of the app.
-                          EasyLocalization.of(context)?.setLocale(const Locale.fromSubtags(languageCode: 'zh', countryCode: 'CN'));
-                          // ...
-                        },
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.language),
-                        title: const Text('日本語'),
-                        onTap: () {
-                          // Update the state of the app.
-                          EasyLocalization.of(context)?.setLocale(const Locale('ja'));
-                          // ...
-                        },
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
-                        child: Divider(
-                          thickness: 1,
-                          color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(22, 0, 22, 5),
-                        child: Text(
-                          "Settings".tr(),
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                      ),
-                      SwitchListTile(
-                          title: const Text('Trailblazer').tr(),
-                          secondary: (!_gs.male ? const Icon(Icons.female) : const Icon(Icons.male)),
-                          value: !_gs.male,
-                          onChanged: (bool value) async {
-                            _gs.male = !value;
-                            final prefs = await SharedPreferences.getInstance();
-                            await prefs.setString('gender', _gs.male ? 'male' : 'female');
-                          }),
-                      if (_gs.test)
-                        SwitchListTile(
-                            title: const Text('Spoiler Mode').tr(),
-                            value: _gs.spoilerMode,
-                            onChanged: (bool value) async {
-                              _gs.spoilerMode = value;
-                              final prefs = await SharedPreferences.getInstance();
-                              await prefs.setString('spoilermode', value.toString());
-                            }),
-                      if (!kIsWeb)
-                        SwitchListTile(
-                            title: _gs.cnMode ? Text('Datasource:China').tr() : Text('Datasource:International').tr(),
-                            value: _gs.cnMode,
-                            onChanged: (bool value) async {
-                              _gs.cnMode = value;
-                              final prefs = await SharedPreferences.getInstance();
-                              await prefs.setString('cnmode', value.toString());
-                              initData();
-                            }),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
-                        child: Divider(
-                          thickness: 1,
-                          color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(22, 0, 22, 5),
-                        child: Text(
-                          "Others".tr(),
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.open_in_new),
-                        title: const Text('Alice Workshop for Genshin').tr(),
-                        onTap: () {
-                          // Update the state of the app.
-                          launchUrlString("https://genshincalc.yunlu18.net/".tr());
-
-                          // ...
-                        },
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.open_in_new),
-                        title: const Text('Privacy Policy').tr(),
-                        onTap: () {
-                          launchUrlString("https://genshincalc.yunlu18.net/privacy.html");
-                          // Update the state of the app.
-
-                          // ...
-                        },
-                      ),
-                      if (kIsWeb || Platform.isWindows || Platform.isIOS)
-                        ListTile(
-                          leading: Icon(Icons.coffee),
-                          title: Text('Buy Me a Coffee').tr(),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => DonatePage()),
-                            ).then((value) {
-                              setState(() {});
-                            });
-                          },
-                        ),
-                    ],
-                  );
-                })),
+            child: SidePanel(),
           ),
         ),
         appBar: AppBar(

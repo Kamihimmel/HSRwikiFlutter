@@ -95,7 +95,6 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
     }
   }
 
-  final ScrollController _scrollController = ScrollController();
   late List<LightconeLeveldata> levelData;
   late List<LightconeSkilldata> skillData;
   late int attributeCount;
@@ -119,11 +118,6 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
     final String lid = ModalRoute.of(context)!.settings.arguments as String;
     final routeLightcone = LightconeManager.getLightcone(lid);
     logger.i("navigate to lightcone: $lid");
-    if (!lightconeData.loaded) {
-      lightconeData = routeLightcone;
-      _getData();
-    }
-
     if (darkcolor == Colors.black && lightcolor == Colors.black) {
       _loadPalette(routeLightcone.entity.imageurl);
     }
@@ -157,9 +151,8 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
       ),
       child: Stack(
         children: [
-          if (!isLoading)
-            getImageComponent(
-              lightconeData.entity.imagelargeurl,
+          getImageComponent(
+              routeLightcone.entity.imagelargeurl,
               placeholder: kTransparentImage,
               fit: BoxFit.cover,
               height: MediaQuery.of(context).size.height,
@@ -742,7 +735,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                           Stack(
                             children: [
                               Hero(
-                                tag: routeLightcone.entity.imagelargeurl,
+                                tag: routeLightcone.entity.imageurl,
                                 child: Container(
                                   width: columnwidth,
                                   height: 100,

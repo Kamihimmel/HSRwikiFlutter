@@ -268,9 +268,7 @@ class CharacterStats {
     });
   }
 
-  CharacterStats.empty() {
-
-  }
+  CharacterStats.empty();
 
   CharacterStats.fromImportJson(Map<String, dynamic> jsonMap, {String? updateTime}) {
     this.id = jsonMap['id'];

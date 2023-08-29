@@ -18,12 +18,19 @@ import 'components/character_basic.dart';
 import 'components/damage_panel.dart';
 import 'components/global_state.dart';
 import 'components/lightcone_relic.dart';
+import 'components/side_panel.dart';
 import 'lightcones/lightcone_manager.dart';
 import 'relics/relic_manager.dart';
 import 'utils/helper.dart';
+import 'utils/logging.dart';
 
 class DmgCalcPage extends StatefulWidget {
-  const DmgCalcPage({super.key});
+  final String characterId;
+
+  const DmgCalcPage({
+    required this.characterId,
+    super.key
+  });
 
   @override
   State<DmgCalcPage> createState() => _DmgCalcPageState();
@@ -31,9 +38,10 @@ class DmgCalcPage extends StatefulWidget {
 
 class _DmgCalcPageState extends State<DmgCalcPage> {
   final GlobalState _gs = GlobalState();
-  bool _loading = true;
+  late bool _loading;
   BannerAd? _bannerAd;
   bool _isBannerAdReady = false;
+  late String cid;
 
   @override
   void initState() {
@@ -57,13 +65,18 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
       ),
     ).load();
 
-    _initData("1005");
+    cid = widget.characterId;
+    _initData(widget.characterId);
   }
 
   //get character data
   Character _cData = Character();
 
   Future<void> _initData(String characterId) async {
+    setState(() {
+      cid = characterId;
+      _loading = true;
+    });
     _cData = await CharacterManager.loadFromRemoteById(characterId);
     String lId = CharacterManager.getDefaultLightcone(characterId);
     CharacterStats? cs = null;
@@ -128,6 +141,7 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
             ? screenWidth / 2
             : screenWidth;
 
+    logger.i("damage character: $cid, ${CharacterManager.getCharacter(cid).getImageLargeUrl(_gs)}");
     return AnimatedContainer(
       duration: const Duration(seconds: 1),
       constraints: const BoxConstraints.expand(),
@@ -136,9 +150,8 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
       ),
       child: Stack(
         children: [
-          if (!_loading)
-            getImageComponent(_cData.entity.imagelargeurl,
-                placeholder: kTransparentImage, fit: BoxFit.cover, alignment: Alignment(0, -0.2), height: MediaQuery.of(context).size.height, width: MediaQuery.of(context).size.width),
+          getImageComponent(CharacterManager.getCharacter(cid).getImageLargeUrl(_gs),
+            placeholder: kTransparentImage, fit: BoxFit.cover, alignment: Alignment(0, -0.2), height: MediaQuery.of(context).size.height, width: MediaQuery.of(context).size.width),
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 0.1, sigmaY: 0.1),
             child: AnimatedContainer(
@@ -149,6 +162,19 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
               ),
               child: Scaffold(
                 backgroundColor: Colors.transparent,
+                drawer: SafeArea(
+                  bottom: false,
+                  child: Drawer(
+                    child: SidePanel(withCharacter: true, switchCharacter: _initData),
+                  ),
+                ),
+                floatingActionButton: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
                 appBar: AppBar(
                   title: Text(
                     "HSR Damage Calculator".tr(),
@@ -159,59 +185,58 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
                     children: [
                       Stack(
                         children: [
-                          _loading
-                              ? Center(
-                                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
-                                )
-                              : Container(
-                                  child: ResponsiveGridRow(
-                                    children: [
-                                      //ANCHOR:  CharacterPage
-                                      ResponsiveGridCol(
-                                          lg: 3,
-                                          md: 6,
-                                          xs: 12,
-                                          sm: 12,
-                                          child: CharacterBasic(
-                                            isBannerAdReady: _isBannerAdReady,
-                                            bannerAd: _bannerAd,
-                                          )),
-                                      //ANCHOR - Lightcones and Relics
-                                      ResponsiveGridCol(
-                                        lg: 3,
-                                        md: 6,
-                                        xs: 12,
-                                        sm: 12,
-                                        child: LightconeRelic(
-                                          isBannerAdReady: _isBannerAdReady,
-                                          bannerAd: _bannerAd,
-                                        ),
-                                      ),
-                                      //ANCHOR - Character Basic Panel
-                                      ResponsiveGridCol(
-                                        lg: 3,
-                                        md: 6,
-                                        xs: 12,
-                                        sm: 12,
-                                        child: BasicPanel(
-                                          isBannerAdReady: _isBannerAdReady,
-                                          bannerAd: _bannerAd,
-                                        ),
-                                      ),
-                                      //ANCHOR - Damage Panel
-                                      ResponsiveGridCol(
-                                        lg: 3,
-                                        md: 6,
-                                        xs: 12,
-                                        sm: 12,
-                                        child: DamagePanel(
-                                          isBannerAdReady: _isBannerAdReady,
-                                          bannerAd: _bannerAd,
-                                        ),
-                                      ),
-                                    ],
+                          Container(
+                            height: _loading ? screenHeight : null,
+                            child: _loading ? Center(
+                              child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
+                            ) : ResponsiveGridRow(
+                              children: [
+                                //ANCHOR:  CharacterPage
+                                ResponsiveGridCol(lg: 3,
+                                  md: 6,
+                                  xs: 12,
+                                  sm: 12,
+                                  child: CharacterBasic(
+                                    isBannerAdReady: _isBannerAdReady,
+                                    bannerAd: _bannerAd,
+                                  )
+                                ),
+                                //ANCHOR - Lightcones and Relics
+                                ResponsiveGridCol(
+                                  lg: 3,
+                                  md: 6,
+                                  xs: 12,
+                                  sm: 12,
+                                  child: LightconeRelic(
+                                    isBannerAdReady: _isBannerAdReady,
+                                    bannerAd: _bannerAd,
                                   ),
                                 ),
+                                //ANCHOR - Character Basic Panel
+                                ResponsiveGridCol(
+                                  lg: 3,
+                                  md: 6,
+                                  xs: 12,
+                                  sm: 12,
+                                  child: BasicPanel(
+                                    isBannerAdReady: _isBannerAdReady,
+                                    bannerAd: _bannerAd,
+                                  ),
+                                ),
+                                //ANCHOR - Damage Panel
+                                ResponsiveGridCol(
+                                  lg: 3,
+                                  md: 6,
+                                  xs: 12,
+                                  sm: 12,
+                                  child: DamagePanel(
+                                    isBannerAdReady: _isBannerAdReady,
+                                    bannerAd: _bannerAd,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                           Stack(
                             children: [
                               Hero(

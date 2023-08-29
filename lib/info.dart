@@ -39,6 +39,4 @@ var typetocolor = {'dmg': Colors.redAccent, 'debuff': Colors.grey[400], 'shield'
 
 String urlendpoint = "https://hsrwikidata.yunlu18.net/";
 
-Map<String, String> idtoimage = {};
-
 String versionstring = "1.0.1.21";

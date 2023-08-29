@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../characters/character_stats.dart';
+import '../enemies/enemy.dart';
 import '../utils/helper.dart';
 import '../utils/logging.dart';
 
@@ -28,10 +29,7 @@ class GlobalState extends ChangeNotifier {
   CharacterStats _stats = CharacterStats.empty();
 
   /// enemy
-  int _enemyLevel = 80;
-  int _enemyType = 1;
-  Set<ElementType> _enemyWeakness = Set();
-  int _enemyDefence = 0;
+  EnemyStats _enemyStats = EnemyStats.empty();
 
   /// config
   bool _male = false;
@@ -72,28 +70,9 @@ class GlobalState extends ChangeNotifier {
     notifyListeners();
   }
 
-  int get enemyLevel => _enemyLevel;
-  set enemyLevel(int enemyLevel) {
-    _enemyLevel = enemyLevel;
-    notifyListeners();
-  }
-  int get enemyType => _enemyType;
-  set enemyType(int enemyType) {
-    _enemyType = enemyType;
-    notifyListeners();
-  }
-  Set<ElementType> get enemyWeakness => Set.from(_enemyWeakness);
-  void addEnemyWeakness(ElementType type) {
-    _enemyWeakness.add(type);
-    notifyListeners();
-  }
-  void removeEnemyWeakness(ElementType type) {
-    _enemyWeakness.remove(type);
-    notifyListeners();
-  }
-  int get enemyDefence => _enemyDefence;
-  set enemyDefence(int enemyDefence) {
-    _enemyDefence = enemyDefence;
+  EnemyStats get enemyStats => _enemyStats;
+  set enemyStats(EnemyStats enemyStats) {
+    _enemyStats = enemyStats;
     notifyListeners();
   }
 
