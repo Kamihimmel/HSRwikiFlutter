@@ -17,6 +17,7 @@ import 'global_state.dart';
 /// 角色基本属性
 class CharacterBasicState extends State<CharacterBasic> {
   final GlobalState _gs = GlobalState();
+  late List<Character> characterList;
 
   @override
   void initState() {
@@ -38,6 +39,9 @@ class CharacterBasicState extends State<CharacterBasic> {
         child: Consumer<GlobalState>(
           builder: (context, model, child) {
             final Character _cData = CharacterManager.getCharacter(_gs.stats.id);
+
+            characterList = CharacterManager.getSortedCharacters(withDiy: false, filterSupported: true).values.where((c) => _gs.spoilerMode || !c.spoiler).toList();
+            characterList.sort((e1, e2) => e1.spoiler == e2.spoiler ? 0 : (e1.spoiler ? -1 : 1));
             return Container(
               height: screenWidth > 905 ? screenHeight - 100 : null,
               child: SingleChildScrollView(
@@ -46,22 +50,66 @@ class CharacterBasicState extends State<CharacterBasic> {
                     const SizedBox(
                       height: 110,
                     ),
-                    Container(
-                      clipBehavior: Clip.hardEdge,
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
-                      ),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                        child: Container(
-                          margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.all(Radius.circular(15)),
-                            border: Border.all(color: Colors.white.withOpacity(0.13)),
-                            gradient:
-                            LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), _cData.elementType.color.withOpacity(0.5)]),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(15),
+                      onTap: () {
+                        showModalBottomSheet<void>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return SizedBox(
+                              child: Center(
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 15,
+                                    ),
+                                    Expanded(
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            for (var c in characterList)
+                                              ListTile(
+                                                leading: getImageComponent(c.getImageUrl(_gs), imageWrap: true),
+                                                title: Text(c.getName(getLanguageCode(context))),
+                                                // enabled: entry.value.loaded,
+                                                onTap: () {
+                                                  if (widget.switchCharacter != null) {
+                                                    widget.switchCharacter!(c.entity.id);
+                                                  }
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      child: Card(
+                        clipBehavior: Clip.hardEdge,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        elevation: 10,
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                          child: Container(
+                            margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.all(Radius.circular(15)),
+                              border: Border.all(color: Colors.white.withOpacity(0.13)),
+                              gradient:
+                                  LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), _cData.elementType.color.withOpacity(0.5)]),
+                            ),
+                            child: getImageComponent(_cData.getImageUrl(_gs), placeholder: kTransparentImage, fit: BoxFit.cover),
                           ),
-                          child: getImageComponent(_cData.getImageUrl(_gs), placeholder: kTransparentImage, fit: BoxFit.cover),
                         ),
                       ),
                     ),
@@ -161,7 +209,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                                         borderRadius: const BorderRadius.all(Radius.circular(15)),
                                         border: Border.all(color: Colors.white.withOpacity(0.13)),
                                         gradient:
-                                        LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                                            LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                                       ),
                                       child: Row(
                                         children: [
@@ -281,7 +329,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                                           borderRadius: BorderRadius.all(Radius.circular(15)),
                                           border: Border.all(color: Colors.white.withOpacity(0.13)),
                                           gradient:
-                                          LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                                              LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                                         ),
                                         child: Row(
                                           children: [
@@ -418,7 +466,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                                           borderRadius: BorderRadius.all(Radius.circular(15)),
                                           border: Border.all(color: Colors.white.withOpacity(0.13)),
                                           gradient:
-                                          LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                                              LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                                         ),
                                         child: Row(
                                           children: [
@@ -505,9 +553,11 @@ class CharacterBasicState extends State<CharacterBasic> {
 class CharacterBasic extends StatefulWidget {
   final isBannerAdReady;
   final bannerAd;
+  final Function? switchCharacter;
 
   const CharacterBasic({
     Key? key,
+    this.switchCharacter,
     required this.isBannerAdReady,
     required this.bannerAd,
   }) : super(key: key);

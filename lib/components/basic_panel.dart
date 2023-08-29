@@ -117,7 +117,7 @@ class BasicPanelState extends State<BasicPanel> {
         padding: const EdgeInsets.all(10.0),
         child: SelectableText(
           title.tr(),
-          style: TextStyle(fontSize: 20),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
     ];
@@ -226,290 +226,269 @@ class BasicPanelState extends State<BasicPanel> {
           Map<String, List<dynamic>> healAttrs = {};
           healAttrs[FightProp.healRatio.desc] = _getBaseAttr(stats, FightProp.healRatio);
 
-              return Container(
-                height: screenWidth > 905 ? screenHeight - 100 : null,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
+          return Container(
+            height: screenWidth > 905 ? screenHeight - 100 : null,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Container(
+                      clipBehavior: Clip.hardEdge,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      ),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                         child: Container(
-                          clipBehavior: Clip.hardEdge,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.all(Radius.circular(15)),
+                            border: Border.all(color: Colors.white.withOpacity(0.13)),
+                            gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                           ),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
-                              ),
-                              child: Column(
-                                children: _getAttrPanel('Basic Panel', baseAttrs),
-                              ),
+                          child: Column(
+                            children: _getAttrPanel('Basic Panel', baseAttrs),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Container(
+                      clipBehavior: Clip.hardEdge,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      ),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.all(Radius.circular(15)),
+                            border: Border.all(color: Colors.white.withOpacity(0.13)),
+                            gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                          ),
+                          child: Column(
+                            children: _getAttrPanel('Critical Panel', critAttrs),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (damageAttrs.values.where((e) => e[2] > 0).isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Container(
+                        clipBehavior: Clip.hardEdge,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                        ),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.all(Radius.circular(15)),
+                              border: Border.all(color: Colors.white.withOpacity(0.13)),
+                              gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                            ),
+                            child: Column(
+                              children: _getAttrPanel('Damage Bonus Panel', damageAttrs),
                             ),
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Container(
-                          clipBehavior: Clip.hardEdge,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                          ),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
-                              ),
-                              child: Column(
-                                children: _getAttrPanel('Critical Panel', critAttrs),
-                              ),
+                    ),
+                  if (healAttrs.values.where((e) => e[2] > 0).isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Container(
+                        clipBehavior: Clip.hardEdge,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                        ),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.all(Radius.circular(15)),
+                              border: Border.all(color: Colors.white.withOpacity(0.13)),
+                              gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                            ),
+                            child: Column(
+                              children: _getAttrPanel('Heal Bonus Panel', healAttrs),
                             ),
                           ),
                         ),
                       ),
-                      if (damageAttrs.values.where((e) => e[2] > 0).isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
+                    ),
+                  if (otherAttrs.values.where((e) => e[2] > 0).isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Container(
+                        clipBehavior: Clip.hardEdge,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                        ),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                           child: Container(
-                            clipBehavior: Clip.hardEdge,
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.all(Radius.circular(15)),
+                              border: Border.all(color: Colors.white.withOpacity(0.13)),
+                              gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                             ),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                  border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                  gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
-                                ),
-                                child: Column(
-                                  children: _getAttrPanel('Damage Bonus Panel', damageAttrs),
-                                ),
-                              ),
+                            child: Column(
+                              children: _getAttrPanel('Other Panel', otherAttrs),
                             ),
                           ),
                         ),
-                      if (healAttrs.values.where((e) => e[2] > 0).isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Container(
-                            clipBehavior: Clip.hardEdge,
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
-                            ),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                  border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                  gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
-                                ),
-                                child: Column(
-                                  children: _getAttrPanel('Heal Bonus Panel', healAttrs),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      if (otherAttrs.values.where((e) => e[2] > 0).isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Container(
-                            clipBehavior: Clip.hardEdge,
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
-                            ),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                  border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                  gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
-                                ),
-                                child: Column(
-                                  children: _getAttrPanel('Other Panel', otherAttrs),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
+                      ),
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Container(
+                      clipBehavior: Clip.hardEdge,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      ),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                         child: Container(
-                          clipBehavior: Clip.hardEdge,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.all(Radius.circular(15)),
+                            border: Border.all(color: Colors.white.withOpacity(0.13)),
+                            gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                           ),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                          child: Column(
+                            children: [
+                              SizedBox(height: 10),
+                              SelectableText(
+                                'Enemy Panel'.tr(),
+                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                               ),
-                              child: Column(
-                                children: [
+                              SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
                                   SelectableText(
-                                    'Enemy Panel'.tr(),
-                                    style: TextStyle(fontSize: 20),
+                                    '${"Enemytype".tr()}: ',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                    ),
                                   ),
-                                  SizedBox(height: 10),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      SelectableText(
-                                        '${"Enemytype".tr()}: ',
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                      Container(
-                                        height: 50.0,
-                                        child: DropdownButton(
-                                            value: _gs.enemyStats.type,
-                                            items: [
-                                              for (var k in enemyData.keys)
-                                                DropdownMenuItem(
-                                                  child: Text(
-                                                    (enemyData[k]?['name'] as String).tr(),
-                                                    style: TextStyle(fontSize: 15),
-                                                  ),
-                                                  value: k,
-                                                ),
-                                            ],
-                                            onChanged: (value) {
-                                              _gs.enemyStats.type = value!;
-                                              _gs.enemyStats = _gs.enemyStats;
-                                            }),
-                                      ),
-                                    ],
-                                  ),
-                                  FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: List.generate(ElementType.values.where((e) => e != ElementType.diy).length, (index) {
-                                        ElementType et = ElementType.values.where((e) => e != ElementType.diy).toList()[index];
-                                        return Column(
-                                          children: [
-                                            if (index != 0)
-                                              SizedBox(width: 15),
-                                            Column(
-                                              children: [
-                                                getImageComponent(et.icon, imageWrap: true, width: 30),
-                                                SelectableText(
-                                                  '${(enemyData[_gs.enemyStats.type]!['resistence'] as Map<ElementType, int>)[et] ?? 0}',
-                                                  style: TextStyle(
-                                                    fontSize: 30,
-                                                  ),
-                                                ),
-                                              ],
+                                  Container(
+                                    height: 50.0,
+                                    child: DropdownButton(
+                                        value: _gs.enemyStats.type,
+                                        items: [
+                                          for (var k in enemyData.keys)
+                                            DropdownMenuItem(
+                                              child: Text(
+                                                (enemyData[k]?['name'] as String).tr(),
+                                                style: TextStyle(fontSize: 15),
+                                              ),
+                                              value: k,
                                             ),
-                                          ],
-                                        );
-                                      }),
-                                    ),
+                                        ],
+                                        onChanged: (value) {
+                                          _gs.enemyStats.type = value!;
+                                          _gs.enemyStats = _gs.enemyStats;
+                                        }),
                                   ),
-                                  FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        SelectableText(
-                                          '${"EnemyLv".tr()}: ${_gs.enemyStats.level}',
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            height: 1.1,
-                                          ),
-                                        ),
-                                        Slider(
-                                          min: 1,
-                                          max: 90,
-                                          inactiveColor: Theme.of(context).colorScheme.secondary,
-                                          label: _gs.enemyStats.level.toString(),
-                                          value: _gs.enemyStats.level.toDouble(),
-                                          onChanged: (value) {
-                                            _gs.enemyStats.level = value.toInt();
-                                            _gs.enemyStats = _gs.enemyStats;
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        SelectableText(
-                                          '${"EnemyDefenceDebuff".tr()}%: ${_gs.enemyStats.defenceReduce}%',
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            height: 1.1,
-                                          ),
-                                        ),
-                                        Slider(
-                                          min: 0,
-                                          max: 100,
-                                          inactiveColor: Theme.of(context).colorScheme.secondary,
-                                          label: _gs.enemyStats.defenceReduce.toString(),
-                                          value: _gs.enemyStats.defenceReduce.toDouble(),
-                                          onChanged: (value) {
-                                            _gs.enemyStats.defenceReduce = value.toInt();
-                                            _gs.enemyStats = _gs.enemyStats;
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  )
                                 ],
                               ),
-                            ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: List.generate(ElementType.values.where((e) => e != ElementType.diy).length, (index) {
+                                  ElementType et = ElementType.values.where((e) => e != ElementType.diy).toList()[index];
+                                  return Column(
+                                    children: [
+                                      if (index != 0) SizedBox(width: 15),
+                                      Column(
+                                        children: [
+                                          getImageComponent(et.icon, imageWrap: true, width: 30),
+                                          SelectableText(
+                                            '${(enemyData[_gs.enemyStats.type]!['resistence'] as Map<ElementType, int>)[et] ?? 0}',
+                                            style: TextStyle(
+                                              fontSize: 30,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  );
+                                }),
+                              ),
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    SelectableText(
+                                      '${"EnemyLv".tr()}: ${_gs.enemyStats.level}',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        height: 1.1,
+                                      ),
+                                    ),
+                                    Slider(
+                                      min: 1,
+                                      max: 90,
+                                      inactiveColor: Theme.of(context).colorScheme.secondary,
+                                      label: _gs.enemyStats.level.toString(),
+                                      value: _gs.enemyStats.level.toDouble(),
+                                      onChanged: (value) {
+                                        _gs.enemyStats.level = value.toInt();
+                                        _gs.enemyStats = _gs.enemyStats;
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    SelectableText(
+                                      '${"EnemyDefenceDebuff".tr()}%: ${_gs.enemyStats.defenceReduce}%',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        height: 1.1,
+                                      ),
+                                    ),
+                                    Slider(
+                                      min: 0,
+                                      max: 100,
+                                      inactiveColor: Theme.of(context).colorScheme.secondary,
+                                      label: _gs.enemyStats.defenceReduce.toString(),
+                                      value: _gs.enemyStats.defenceReduce.toDouble(),
+                                      onChanged: (value) {
+                                        _gs.enemyStats.defenceReduce = value.toInt();
+                                        _gs.enemyStats = _gs.enemyStats;
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
                           ),
                         ),
                       ),
-                      adsenseAdsView(columnwidth - 20),
-                      if (widget.isBannerAdReady)
-                        Container(
-                          width: widget.bannerAd!.size.width.toDouble(),
-                          height: widget.bannerAd!.size.height.toDouble(),
-                          child: AdWidget(ad: widget.bannerAd!),
-                        ),
-                    ],
+                    ),
                   ),
-                ),
-              );
-            }));
+                  adsenseAdsView(columnwidth - 20),
+                  if (widget.isBannerAdReady)
+                    Container(
+                      width: widget.bannerAd!.size.width.toDouble(),
+                      height: widget.bannerAd!.size.height.toDouble(),
+                      child: AdWidget(ad: widget.bannerAd!),
+                    ),
+                ],
+              ),
+            ),
+          );
+        }));
   }
 }
 
