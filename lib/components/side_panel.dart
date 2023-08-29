@@ -21,9 +21,6 @@ class _SidePanelState extends State<SidePanel> {
   @override
   void initState() {
     super.initState();
-    if (mounted) {
-      setState(() {});
-    }
   }
 
   @override
