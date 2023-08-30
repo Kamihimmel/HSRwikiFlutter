@@ -73,9 +73,10 @@ class CharacterStats {
     map[FightProp.breakDamageAddedRatio] = getPropValue(FightProp.breakDamageAddedRatio);
     map[FightProp.statusProbability] = getPropValue(FightProp.statusProbability);
     map[FightProp.statusResistance] = getPropValue(FightProp.statusResistance);
-    ElementType et = CharacterManager.getCharacter(id).elementType;
-    FightProp elementAddProp = FightProp.fromEffectKey(et.key + 'dmg');
-    map[elementAddProp] = getPropValue(elementAddProp);
+    map[FightProp.allDamageAddRatio] = getPropValue(FightProp.allDamageAddRatio);
+    for (var ed in elementDamage.values) {
+      map[ed] = getPropValue(ed);
+    }
     map[FightProp.healRatio] = getPropValue(FightProp.healRatio);
     map[FightProp.sPRatio] = getPropValue(FightProp.sPRatio);
     map[FightProp.aggro] = getPropValue(FightProp.aggro);
@@ -233,10 +234,6 @@ class CharacterStats {
     List<String> relicSets = getRelicSets();
     if (relicSets.length == 3) {
       for (var i = 0; i < relicSets.length; i++) {
-        if (i == 1) {
-          // 暂时不考虑4件套效果，从元数据无法确定效果是否进面板
-          continue;
-        }
         String rs = relicSets[i];
         if (rs == '') {
           continue;
@@ -246,6 +243,8 @@ class CharacterStats {
         if (i == 1 && rs == relicSets[0]) {
           skillIndex = 1;
           setNum = '4';
+          // 暂时不考虑4件套效果，从元数据无法确定效果是否进面板
+          continue;
         }
         Relic relic = RelicManager.getRelic(rs);
         if (relic.entity.skilldata.isNotEmpty) {

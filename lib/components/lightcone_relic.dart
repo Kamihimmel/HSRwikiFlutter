@@ -15,6 +15,7 @@ import '../lightcones/lightcone_manager.dart';
 import '../platformad_stub.dart' if (dart.library.io) '../platformad_stub.dart' if (dart.library.html) '../platformad.dart';
 import '../relics/relic_manager.dart';
 import '../utils/helper.dart';
+import '../utils/logging.dart';
 import 'global_state.dart';
 
 /// 光锥遗器选择
@@ -393,9 +394,8 @@ class LightconeRelicState extends State<LightconeRelic> {
                       ),
                       //ANCHOR - relics
                       Column(
-                        children: RelicPart.values.where((e) => e != RelicPart.unknown).map((e) {
-                          RelicStats rs = _gs.stats.relics[e]!;
-                          double mainAttrValue = getRelicMainAttrValue(rs.mainAttr, rs.rarity, rs.level);
+                        children: RelicPart.values.where((e) => e != RelicPart.unknown).map((rp) {
+                          RelicStats rs = _gs.stats.relics[rp]!;
                           return Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Container(
@@ -429,7 +429,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                   maxWidth: 60,
                                                   child: Padding(
                                                     padding: const EdgeInsets.fromLTRB(5, 5, 0, 5),
-                                                    child: rs.setId != '' ? getImageComponent(RelicManager.getRelic(rs.setId).getPartImageUrl(e), placeholder: kTransparentImage, width: 60) : SizedBox.shrink(),
+                                                    child: getImageComponent(rp.icon, imageWrap: true, placeholder: kTransparentImage, width: 60, remote: false),
                                                   ),
                                                 ),
                                               ),
@@ -441,7 +441,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                   children: [
                                                     getImageComponent(rs.mainAttr.icon, placeholder: kTransparentImage, width: 25),
                                                     Text(
-                                                      "${rs.mainAttr.getPropText(mainAttrValue)}",
+                                                      "${rs.mainAttr.getPropText(getRelicMainAttrValue(rs.mainAttr, rs.rarity, rs.level))}",
                                                       style: const TextStyle(
                                                         //fontWeight: FontWeight.bold,
                                                         color: Colors.white,

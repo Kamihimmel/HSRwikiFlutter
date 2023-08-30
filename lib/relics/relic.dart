@@ -88,9 +88,9 @@ class Relic {
 }
 
 enum RelicPart {
-  head(ord: 0, xSet: "4", mainAttrs: [FightProp.hPDelta]),
-  hands(ord: 1, xSet: "4", mainAttrs: [FightProp.attackDelta]),
-  body(ord: 2, xSet: "4", mainAttrs: [
+  head(ord: 0, xSet: "4", icon: 'images/IconRelicHead.png', mainAttrs: [FightProp.hPDelta]),
+  hands(ord: 1, xSet: "4", icon: 'images/IconRelicHands.png', mainAttrs: [FightProp.attackDelta]),
+  body(ord: 2, xSet: "4", icon: 'images/IconRelicBody.png', mainAttrs: [
     FightProp.hPAddedRatio,
     FightProp.attackAddedRatio,
     FightProp.defenceAddedRatio,
@@ -100,13 +100,14 @@ enum RelicPart {
     FightProp.criticalChance
   ]),
   feet(
-      ord: 3, xSet: "4",
+      ord: 3, xSet: "4", icon: 'images/IconRelicFoot.png',
       mainAttrs: [FightProp.hPAddedRatio, FightProp.attackAddedRatio, FightProp.defenceAddedRatio, FightProp.breakDamageAddedRatio, FightProp.speedDelta]),
-  sphere(ord: 0, xSet: "2", mainAttrs: [
+  sphere(ord: 0, xSet: "2", icon: 'images/IconRelicNeck.png', mainAttrs: [
     FightProp.hPAddedRatio,
     FightProp.attackAddedRatio,
     FightProp.defenceAddedRatio,
     FightProp.physicalAddedRatio,
+    FightProp.quantumAddedRatio,
     FightProp.fireAddedRatio,
     FightProp.iceAddedRatio,
     FightProp.thunderAddedRatio,
@@ -115,16 +116,18 @@ enum RelicPart {
     FightProp.imaginaryAddedRatio
   ]),
   rope(
-      ord: 1, xSet: "2", mainAttrs: [FightProp.hPAddedRatio, FightProp.attackAddedRatio, FightProp.defenceAddedRatio, FightProp.breakDamageAddedRatio, FightProp.sPRatio]),
-  unknown(ord: -1, xSet: "0", mainAttrs: []);
+      ord: 1, xSet: "2", icon: 'images/IconRelicGoods.png', mainAttrs: [FightProp.hPAddedRatio, FightProp.attackAddedRatio, FightProp.defenceAddedRatio, FightProp.breakDamageAddedRatio, FightProp.sPRatio]),
+  unknown(ord: -1, xSet: "0", icon: '', mainAttrs: []);
 
   final int ord;
   final String xSet;
+  final String icon;
   final List<FightProp> mainAttrs;
 
   const RelicPart({
     required this.ord,
     required this.xSet,
+    required this.icon,
     required this.mainAttrs,
   });
 
