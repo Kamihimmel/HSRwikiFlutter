@@ -422,14 +422,45 @@ class LightconeRelicState extends State<LightconeRelic> {
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
-                                              Container(
-                                                width: 30,
-                                                child: OverflowBox(
-                                                  alignment: Alignment.centerLeft,
-                                                  maxWidth: 60,
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.fromLTRB(5, 5, 0, 5),
-                                                    child: getImageComponent(rp.icon, imageWrap: true, placeholder: kTransparentImage, width: 60, remote: false),
+                                              InkWell(
+                                                borderRadius: BorderRadius.circular(15),
+                                                onTap: () {
+                                                  showModalBottomSheet<void>(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return SizedBox(
+                                                        child: Center(
+                                                          child: Column(
+                                                            children: [
+                                                              SizedBox(
+                                                                height: 15,
+                                                              ),
+                                                              Expanded(
+                                                                child: SingleChildScrollView(
+                                                                  child: Column(
+                                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                                    mainAxisSize: MainAxisSize.min,
+                                                                    // 对应部位主属性: rp.mainAttrs
+                                                                    children: <Widget>[],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                child: Container(
+                                                  width: 30,
+                                                  child: OverflowBox(
+                                                    alignment: Alignment.centerLeft,
+                                                    maxWidth: 60,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.fromLTRB(5, 5, 0, 5),
+                                                      child: getImageComponent(rp.icon, imageWrap: true, placeholder: kTransparentImage, width: 60, remote: false),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
