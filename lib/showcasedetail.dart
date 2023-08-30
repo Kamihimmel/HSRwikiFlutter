@@ -65,11 +65,7 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
     eidolons.sort();
     final int rank = eidolons.isEmpty ? 0 : eidolons[eidolons.length - 1];
     List<String> relicSets = cs.getRelicSets();
-    Map<FightProp, Map<PropSource, double>> propValue = cs.calculateStats();
-    for (var e in propValue.entries) {
-      double value = e.value.values.fold(0.0, (pre, v) => pre + v);
-      logger.d("${e.key.name}: ${e.key.getPropText(value)}");
-    }
+    Map<FightProp, double> propValue = cs.importStats;
     Character c = CharacterManager.getCharacter(cs.id);
 
     final List<FightProp> mainProps = [
@@ -82,23 +78,28 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
     ];
     final Map<FightProp, double> mainPropValues = {};
     for (var p in mainProps) {
-      mainPropValues[p] = cs.getPropValue(p).values.fold(0.0, (pre, v) => pre + v);
+      mainPropValues[p] = propValue[p] ?? 0;
     }
 
-    ElementType et = c.elementType;
-    FightProp elementAddProp = FightProp.fromEffectKey(et.key + 'dmg');
+    FightProp elementAddProp;
+    if (c.pathType == PathType.abundance) {
+      elementAddProp = FightProp.healRatio;
+    } else {
+      elementAddProp = FightProp.fromEffectKey(c.elementType.key + 'dmg');
+    }
     final List<FightProp> additionProps = [
       FightProp.breakDamageAddedRatio,
       FightProp.statusProbability,
       FightProp.statusResistance,
       elementAddProp,
       FightProp.sPRatio,
-      FightProp.aggro
+      FightProp.aggro,
     ];
     final Map<FightProp, double> additionPropValues = {};
     for (var p in additionProps) {
-      additionPropValues[p] = cs.getPropValue(p).values.fold(0.0, (pre, v) => pre + v);
+      additionPropValues[p] = propValue[p] ?? 0;
     }
+    additionPropValues[FightProp.aggro] = c.entity.dtaunt.toDouble();
 
     return AnimatedContainer(
       duration: const Duration(seconds: 1),
@@ -165,30 +166,30 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
                                                         child: Row(
                                                           crossAxisAlignment: CrossAxisAlignment.end,
                                                           children: [
-                                                            if (cs.lightconeId != '')
-                                                              Stack(
-                                                                children: [
-                                                                  Container(
-                                                                    width: 180,
-                                                                    height: 180,
-                                                                    decoration: BoxDecoration(
-                                                                        borderRadius: const BorderRadius.all(Radius.circular(10)),
-                                                                        border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                                        gradient: LinearGradient(
-                                                                          begin: Alignment.topLeft,
-                                                                          end: Alignment.bottomRight,
-                                                                          colors: [Colors.white.withOpacity(0.01), Colors.white.withOpacity(0.1)],
-                                                                        )),
-                                                                    child: Padding(
-                                                                      padding: const EdgeInsets.all(8.0),
-                                                                      child: getImageComponent(
-                                                                        LightconeManager.getLightcone(cs.lightconeId).entity.imageurl,
-                                                                        imageWrap: true,
-                                                                        placeholder: kTransparentImage,
-                                                                        height: 160,
-                                                                      ),
-                                                                    ),
+                                                            Stack(
+                                                              children: [
+                                                                Container(
+                                                                  width: 180,
+                                                                  height: 180,
+                                                                  decoration: BoxDecoration(
+                                                                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                                                      border: Border.all(color: Colors.white.withOpacity(0.13)),
+                                                                      gradient: LinearGradient(
+                                                                        begin: Alignment.topLeft,
+                                                                        end: Alignment.bottomRight,
+                                                                        colors: [Colors.white.withOpacity(0.01), Colors.white.withOpacity(0.1)],
+                                                                      )),
+                                                                  child: Padding(
+                                                                    padding: const EdgeInsets.all(8.0),
+                                                                    child: cs.lightconeId != '' ? getImageComponent(
+                                                                      LightconeManager.getLightcone(cs.lightconeId).entity.imageurl,
+                                                                      imageWrap: true,
+                                                                      placeholder: kTransparentImage,
+                                                                      height: 160,
+                                                                    ) : SizedBox.fromSize(size: Size.fromHeight(160)),
                                                                   ),
+                                                                ),
+                                                                if (cs.lightconeId != '')
                                                                   Positioned(
                                                                     right: 0,
                                                                     bottom: 0,
@@ -210,6 +211,7 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
                                                                       ],
                                                                     ),
                                                                   ),
+                                                                if (cs.lightconeId != '')
                                                                   Positioned(
                                                                     left: 0,
                                                                     top: 0,
@@ -231,11 +233,12 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
                                                                       ],
                                                                     ),
                                                                   ),
-                                                                ],
-                                                              ),
-                                                            SizedBox(
-                                                              width: 5,
+                                                              ],
                                                             ),
+                                                            if (relicSets[0] != '')
+                                                              SizedBox(
+                                                                width: 5,
+                                                              ),
                                                             if (relicSets[0] != '')
                                                               Container(
                                                                 width: 83,
@@ -277,9 +280,10 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
                                                                           placeholder: kTransparentImage),
                                                                     ),
                                                                   ),
-                                                                SizedBox(
-                                                                  height: 5,
-                                                                ),
+                                                                if (relicSets[1] != '')
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
                                                                 if (relicSets[1] != '')
                                                                   Container(
                                                                     width: 83,
@@ -686,7 +690,7 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
                                                               )
                                                             ),
                                                             child: Row(
-                                                              children: [
+                                                              children: rs.setId != '' ? [
                                                                 Container(
                                                                   width: 30,
                                                                   child: OverflowBox(
@@ -694,9 +698,9 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
                                                                     maxWidth: 60,
                                                                     child: Padding(
                                                                       padding: const EdgeInsets.fromLTRB(5, 5, 0, 5),
-                                                                      child: rs.setId != '' ? getImageComponent(
+                                                                      child: getImageComponent(
                                                                         RelicManager.getRelic(rs.setId).getPartImageUrl(rp),
-                                                                        placeholder: kTransparentImage) : SizedBox.shrink(),
+                                                                        placeholder: kTransparentImage),
                                                                     ),
                                                                   ),
                                                                 ),
@@ -812,7 +816,7 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
                                                                     }).toList(),
                                                                   ),
                                                                 ),
-                                                              ],
+                                                              ] : [],
                                                             ),
                                                           ),
                                                         );

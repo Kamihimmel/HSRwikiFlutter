@@ -303,37 +303,37 @@ class _UidimportpageState extends State<Uidimportpage> {
                                               child: Row(
                                                 crossAxisAlignment: CrossAxisAlignment.end,
                                                 children: [
-                                                  if (characterStats.lightconeId != '')
-                                                    Stack(
-                                                      children: [
-                                                        Container(
-                                                          width: 180,
-                                                          height: 180,
-                                                          decoration: BoxDecoration(
-                                                              borderRadius: const BorderRadius.all(
-                                                                  Radius.circular(10)),
-                                                              border: Border.all(
-                                                                  color: Colors.white.withOpacity(0.13)),
-                                                              gradient: LinearGradient(
-                                                                begin: Alignment.topLeft,
-                                                                end: Alignment.bottomRight,
-                                                                colors: [
-                                                                  Colors.white.withOpacity(0.01),
-                                                                  Colors.white.withOpacity(0.1)
-                                                                ],
-                                                              )),
-                                                          child: Padding(
-                                                            padding: const EdgeInsets.all(8.0),
-                                                            child: getImageComponent(
-                                                              LightconeManager
-                                                                  .getLightcone(characterStats.lightconeId)
-                                                                  .entity
-                                                                  .imageurl,
-                                                              placeholder: kTransparentImage,
-                                                              height: 160,
-                                                            ),
-                                                          ),
+                                                  Stack(
+                                                    children: [
+                                                      Container(
+                                                        width: 180,
+                                                        height: 180,
+                                                        decoration: BoxDecoration(
+                                                            borderRadius: const BorderRadius.all(
+                                                                Radius.circular(10)),
+                                                            border: Border.all(
+                                                                color: Colors.white.withOpacity(0.13)),
+                                                            gradient: LinearGradient(
+                                                              begin: Alignment.topLeft,
+                                                              end: Alignment.bottomRight,
+                                                              colors: [
+                                                                Colors.white.withOpacity(0.01),
+                                                                Colors.white.withOpacity(0.1)
+                                                              ],
+                                                            )),
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.all(8.0),
+                                                          child: characterStats.lightconeId != '' ? getImageComponent(
+                                                            LightconeManager
+                                                                .getLightcone(characterStats.lightconeId)
+                                                                .entity
+                                                                .imageurl,
+                                                            placeholder: kTransparentImage,
+                                                            height: 160,
+                                                          ) : SizedBox.fromSize(size: Size.fromHeight(160)),
                                                         ),
+                                                      ),
+                                                      if (characterStats.lightconeId != '')
                                                         Positioned(
                                                           right: 0,
                                                           bottom: 0,
@@ -355,8 +355,8 @@ class _UidimportpageState extends State<Uidimportpage> {
                                                             ],
                                                           ),
                                                         ),
-                                                      ],
-                                                    ),
+                                                    ],
+                                                  ),
                                                   SizedBox(
                                                     width: 5,
                                                   ),
@@ -417,9 +417,10 @@ class _UidimportpageState extends State<Uidimportpage> {
                                                                 placeholder: kTransparentImage),
                                                           ),
                                                         ),
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
+                                                      if (relicSets[1] != '')
+                                                        SizedBox(
+                                                          height: 5,
+                                                        ),
                                                       if (relicSets[1] != '')
                                                         Container(
                                                           width: 83,

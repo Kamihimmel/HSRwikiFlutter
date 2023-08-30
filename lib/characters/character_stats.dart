@@ -24,6 +24,9 @@ class CharacterStats {
   Map<RelicPart, RelicStats> relics = {};
   List<EffectEntity> effects = [];
 
+  /// import stats
+  Map<FightProp, double> importStats = {};
+
   String getLightconeId() {
     if (lightconeId == '') {
       return CharacterManager.getDefaultLightcone(id);
@@ -283,9 +286,11 @@ class CharacterStats {
     for (int i = 0; i <= rank; i++) {
       eidolons[i.toString()] = 1;
     }
-    this.lightconeId = jsonMap['light_cone']['id'];
-    this.lightconeLevel = jsonMap['light_cone']['level'].toString();
-    this.lightconeRank = jsonMap['light_cone']['rank'];
+    if (jsonMap['light_cone'] != null) {
+      this.lightconeId = jsonMap['light_cone']['id'];
+      this.lightconeLevel = jsonMap['light_cone']['level'].toString();
+      this.lightconeRank = jsonMap['light_cone']['rank'];
+    }
     for (var s in jsonMap['skills']) {
       skillLevels[s['id']] = s['level'];
     }
@@ -311,6 +316,27 @@ class CharacterStats {
       }
       this.relics[part] = stats;
     }
+    List<dynamic> attributesList = jsonMap['attributes'] ?? [];
+    List<dynamic> additionsList = jsonMap['additions'] ?? [];
+    for (var e in attributesList) {
+      String field = (e['field'] ?? '').replaceAll('_', '');
+      FightProp fp = FightProp.fromEffectKey(field);
+      this.importStats[fp] = e['value'] ?? 0;
+    }
+    for (var e in additionsList) {
+      String field = (e['field'] ?? '').replaceAll('_', '');
+      FightProp fp = FightProp.fromEffectKey(field);
+      double v = importStats[fp] ?? 0;
+      importStats[fp] = v + (e['value'] ?? 0);
+    }
+    importStats[FightProp.sPRatio] = 1 + (importStats[FightProp.sPRatio] ?? 0);
+    importStats[FightProp.maxHP] = importStats[FightProp.hPAddedRatio] ?? 0;
+    importStats.remove(FightProp.hPAddedRatio);
+    importStats[FightProp.attack] = importStats[FightProp.attackAddedRatio] ?? 0;
+    importStats.remove(FightProp.attackAddedRatio);
+    importStats[FightProp.defence] = importStats[FightProp.defenceAddedRatio] ?? 0;
+    importStats.remove(FightProp.defenceAddedRatio);
+    importStats.remove(FightProp.none);
   }
 
   CharacterStats.fromJson(Map<String, dynamic> jsonMap) {
@@ -344,6 +370,10 @@ class CharacterStats {
       }
       this.relics[rp] = rs;
     }
+    Map<String, dynamic> importStatsMap = jsonMap['import_stats'] ?? {};
+    for (var sub in importStatsMap.entries) {
+      this.importStats[FightProp.fromName(sub.key)] = sub.value;
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -373,6 +403,11 @@ class CharacterStats {
       relicMap[e.key.name] = partMap;
     }
     jsonMap['relics'] = relicMap;
+    Map<String, dynamic> importStatsMap = {};
+    for (var s in importStats.entries) {
+      importStatsMap[s.key.name] = s.value;
+    }
+    jsonMap['import_stats'] = importStatsMap;
     return jsonMap;
   }
 }

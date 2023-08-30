@@ -144,12 +144,9 @@ class RelicStats {
   FightProp mainAttr = FightProp.none;
   Map<FightProp, double> subAttrValues = {};
 
-  RelicStats() {
+  RelicStats();
 
-  }
-
-  RelicStats.empty(RelicPart part, String setId) {
-    this.setId = setId;
+  RelicStats.empty(RelicPart part) {
     this.rarity = 5;
     this.level = 15;
     this.mainAttr = part.mainAttrs[0];

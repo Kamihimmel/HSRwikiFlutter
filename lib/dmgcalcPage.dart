@@ -85,9 +85,13 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
     }
     if (cs != null && cs.id != '') {
       _gs.stats = cs;
+      if (_gs.stats.lightconeId == '') {
+        _gs.stats.lightconeId = lId;
+        _gs.stats.lightconeLevel = '80';
+      }
       for (RelicPart rp in RelicPart.values) {
         if (!_gs.stats.relics.containsKey(rp) && rp != RelicPart.unknown) {
-          _gs.stats.relics[rp] = RelicStats.empty(rp, '');
+          _gs.stats.relics[rp] = RelicStats.empty(rp);
         }
       }
     } else {
@@ -106,25 +110,31 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
       for (var t in _cData.entity.tracedata) {
         _gs.stats.traceLevels[t.id] = 1;
       }
-      for (var i = 0; i < defaultRelicSet.length; i++) {
-        if (i == 0) {
-          _gs.stats.relics[RelicPart.head] = RelicStats.empty(RelicPart.head, defaultRelicSet[i]);
-          _gs.stats.relics[RelicPart.hands] = RelicStats.empty(RelicPart.hands, defaultRelicSet[i]);
-        } else if (i == 1) {
-          _gs.stats.relics[RelicPart.body] = RelicStats.empty(RelicPart.body, defaultRelicSet[i]);
-          _gs.stats.relics[RelicPart.feet] = RelicStats.empty(RelicPart.feet, defaultRelicSet[i]);
-        } else if (i == 2) {
-          _gs.stats.relics[RelicPart.sphere] = RelicStats.empty(RelicPart.sphere, defaultRelicSet[i]);
-          _gs.stats.relics[RelicPart.rope] = RelicStats.empty(RelicPart.rope, defaultRelicSet[i]);
+      for (var rp in RelicPart.values) {
+        if (rp == RelicPart.unknown) {
+          continue;
         }
+        _gs.stats.relics[rp] = RelicStats.empty(rp);
       }
     }
     await LightconeManager.loadFromRemoteById(_gs.stats.lightconeId);
     List<String> relicSets = _gs.stats.getRelicSets();
-    for (String rId in relicSets) {
-      if (rId.isNotEmpty) {
-        await RelicManager.loadFromRemoteById(rId);
+    for (var i = 0; i < 3; i++) {
+      String rid = relicSets[i];
+      if (rid == '') {
+        rid = defaultRelicSet[i];
       }
+      if (i == 0) {
+        _gs.stats.relics[RelicPart.head]!.setId = rid;
+        _gs.stats.relics[RelicPart.hands]!.setId = rid;
+      } else if (i == 1) {
+        _gs.stats.relics[RelicPart.body]!.setId = rid;
+        _gs.stats.relics[RelicPart.feet]!.setId = rid;
+      } else if (i == 2) {
+        _gs.stats.relics[RelicPart.sphere]!.setId = rid;
+        _gs.stats.relics[RelicPart.rope]!.setId = rid;
+      }
+      await RelicManager.loadFromRemoteById(rid);
     }
     setState(() {
       _loading = false;
