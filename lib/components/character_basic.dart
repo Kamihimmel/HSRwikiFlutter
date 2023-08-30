@@ -155,7 +155,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                                           inactiveColor: _cData.elementType.color.withOpacity(0.5),
                                           onChanged: (double value) {
                                             _gs.stats.level = _cData.entity.leveldata[value.toInt()].level;
-                                            _gs.stats = _gs.stats;
+                                            _gs.changeStats();
                                           },
                                         ),
                                       ),
@@ -255,7 +255,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                                                               inactiveColor: _cData.elementType.color.withOpacity(0.5),
                                                               onChanged: (double value) {
                                                                 _gs.stats.skillLevels[skill.id] = value.toInt();
-                                                                _gs.stats = _gs.stats;
+                                                                _gs.changeStats();
                                                               },
                                                             ),
                                                           ),
@@ -423,7 +423,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                                                   value: (_gs.stats.traceLevels[trace.id] ?? 0) > 0,
                                                   onChanged: (bool value) {
                                                     _gs.stats.traceLevels[trace.id] = value ? 1 : 0;
-                                                    _gs.stats = _gs.stats;
+                                                    _gs.changeStats();
                                                   }),
                                             ),
                                           ],
@@ -487,7 +487,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                                                         value: (_gs.stats.eidolons[eidolon.eidolonnum.toString()] ?? 0) > 0,
                                                         onChanged: (bool value) {
                                                           _gs.stats.eidolons[eidolon.eidolonnum.toString()] = value ? 1 : 0;
-                                                          _gs.stats = _gs.stats;
+                                                          _gs.changeStats();
                                                         }),
                                                   ],
                                                 ),

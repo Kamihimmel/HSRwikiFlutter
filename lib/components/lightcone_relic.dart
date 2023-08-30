@@ -105,7 +105,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                   onTap: () async {
                                                     _gs.stats.lightconeId = lc.entity.id;
                                                     await LightconeManager.loadFromRemoteById(lc.entity.id);
-                                                    _gs.stats = _gs.stats;
+                                                    _gs.changeStats();
                                                     Navigator.pop(context);
                                                   },
                                                 ),
@@ -189,7 +189,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                             inactiveColor: _cData.elementType.color.withOpacity(0.5),
                                             onChanged: (double value) {
                                               _gs.stats.lightconeLevel = _lData.entity.leveldata[value.toInt()].level;
-                                              _gs.stats = _gs.stats;
+                                              _gs.changeStats();
                                             },
                                           ),
                                         ),
@@ -277,7 +277,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                               inactiveColor: _cData.elementType.color.withOpacity(0.5),
                                                               onChanged: (double value) {
                                                                 _gs.stats.lightconeRank = value.toInt();
-                                                                _gs.stats = _gs.stats;
+                                                                _gs.changeStats();
                                                               },
                                                             ),
                                                           ),
@@ -352,7 +352,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                           _gs.stats.relics[RelicPart.rope]?.setId = r.entity.id;
                                                         }
                                                         await RelicManager.loadFromRemoteById(r.entity.id);
-                                                        _gs.stats = _gs.stats;
+                                                        _gs.changeStats();
                                                         Navigator.pop(context);
                                                       },
                                                     ),
@@ -441,6 +441,11 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                                     mainAxisSize: MainAxisSize.min,
                                                                     // 对应部位主属性: rp.mainAttrs
+                                                                    // 设置主属性：rs.mainAttr = FightProp.xxx
+                                                                    // 设置副属性：rs.subAttrValues[FightProp.xxx] = xxx
+                                                                    // 设置等级：rs.level = xxx
+                                                                    // 设置星级：rs.rarity = xxx
+                                                                    // 使所有设置在界面生效：_gs.changeStats()
                                                                     children: <Widget>[],
                                                                   ),
                                                                 ),
