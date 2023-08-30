@@ -36,7 +36,10 @@ class GlobalState extends ChangeNotifier {
   bool _spoilerMode = false;
   bool _cnMode = false;
   bool _test = false;
-  bool _debug = true;
+
+  /// debug
+  bool debug = false;
+  Set<String> missingLocalizationKeys = Set();
 
   /// footer
   int _dmgScale = 10; // footer option: damage scale
@@ -101,12 +104,6 @@ class GlobalState extends ChangeNotifier {
   set test(bool test) {
     _test = test;
     logger.d("change test: $test");
-    notifyListeners();
-  }
-  bool get debug => _debug;
-  set debug(bool debug) {
-    _debug = debug;
-    logger.d("change debug: $debug");
     notifyListeners();
   }
 

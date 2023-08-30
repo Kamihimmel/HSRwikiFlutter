@@ -23,7 +23,7 @@ class BasicPanelState extends State<BasicPanel> {
     super.initState();
   }
 
-  //ANCHOR method:statbuilder
+  //ANCHOR method:_buildStatRow
   Row _buildStatRow(Color color, String source, String valueStr) {
     return Row(
       children: [
@@ -58,8 +58,8 @@ class BasicPanelState extends State<BasicPanel> {
     );
   }
 
-  //ANCHOR method:statbarbuilder
-  Column _buildstatbar(Color color, double value, bool percent, double? scale) {
+  //ANCHOR method:_buildStatBar
+  Column _buildStatBar(Color color, double value, bool percent, double? scale) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -172,7 +172,7 @@ class BasicPanelState extends State<BasicPanel> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: display.entries.where((e) => e.value > 0).map((e) {
-                        return _buildstatbar(e.key.color, e.value * (percent ? 100 : 1), percent, e.key.scale);
+                        return _buildStatBar(e.key.color, e.value * (percent ? 100 : 1), percent, e.key.scale);
                       }).toList(),
                     ),
                   ),

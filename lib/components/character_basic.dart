@@ -39,7 +39,6 @@ class CharacterBasicState extends State<CharacterBasic> {
         child: Consumer<GlobalState>(
           builder: (context, model, child) {
             final Character _cData = CharacterManager.getCharacter(_gs.stats.id);
-
             characterList = CharacterManager.getSortedCharacters(withDiy: false, filterSupported: true).values.where((c) => _gs.spoilerMode || !c.spoiler).toList();
             characterList.sort((e1, e2) => e1.spoiler == e2.spoiler ? 0 : (e1.spoiler ? -1 : 1));
             return Container(
@@ -75,9 +74,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                                                 title: Text(c.getName(getLanguageCode(context))),
                                                 // enabled: entry.value.loaded,
                                                 onTap: () {
-                                                  if (widget.switchCharacter != null) {
-                                                    widget.switchCharacter!(c.entity.id);
-                                                  }
+                                                  widget.switchCharacter(c.entity.id);
                                                   Navigator.pop(context);
                                                 },
                                               ),
@@ -553,11 +550,11 @@ class CharacterBasicState extends State<CharacterBasic> {
 class CharacterBasic extends StatefulWidget {
   final isBannerAdReady;
   final bannerAd;
-  final Function? switchCharacter;
+  final void Function(String characterId) switchCharacter;
 
   const CharacterBasic({
     Key? key,
-    this.switchCharacter,
+    required this.switchCharacter,
     required this.isBannerAdReady,
     required this.bannerAd,
   }) : super(key: key);

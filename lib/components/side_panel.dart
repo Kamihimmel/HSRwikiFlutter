@@ -7,16 +7,14 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import '../characters/character.dart';
-import '../characters/character_manager.dart';
 import '../donatePage.dart';
 import '../utils/helper.dart';
+import '../utils/logging.dart';
 import 'global_state.dart';
 
 /// 侧边栏
 class _SidePanelState extends State<SidePanel> {
   final GlobalState _gs = GlobalState();
-  late List<Character> characterList;
 
   @override
   void initState() {
@@ -28,11 +26,6 @@ class _SidePanelState extends State<SidePanel> {
     return ChangeNotifierProvider.value(
         value: _gs,
         child: Consumer<GlobalState>(builder: (context, model, child) {
-          characterList = CharacterManager.getSortedCharacters(withDiy: false, filterSupported: true).values
-              .where((c) => _gs.spoilerMode || !c.spoiler)
-              .toList();
-          characterList.sort((e1, e2) => e1.spoiler == e2.spoiler ? 0 : (e1.spoiler ? -1 : 1));
-
           return ListView(
             // Important: Remove any padding from the ListView.
             padding: EdgeInsets.zero,
@@ -110,7 +103,7 @@ class _SidePanelState extends State<SidePanel> {
                       final prefs = await SharedPreferences.getInstance();
                       await prefs.setString('spoilermode', value.toString());
                     }),
-              if (!kIsWeb && !widget.withCharacter)
+              if (!kIsWeb)
                 SwitchListTile(
                     title: _gs.cnMode ? Text('Datasource:China').tr() : Text('Datasource:International').tr(),
                     value: _gs.cnMode,
@@ -120,7 +113,7 @@ class _SidePanelState extends State<SidePanel> {
                       await prefs.setString('cnmode', value.toString());
                       initData();
                     }),
-              if (widget.withCharacter)
+              if (_gs.debug)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
                   child: Divider(
@@ -128,19 +121,22 @@ class _SidePanelState extends State<SidePanel> {
                     color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
                   ),
                 ),
-              if (widget.withCharacter)
-                for (var c in characterList)
-                  ListTile(
-                    leading: getImageComponent(c.getImageUrl(_gs), imageWrap: true),
-                    title: Text(c.getName(getLanguageCode(context))),
-                    // enabled: entry.value.loaded,
-                    onTap: () {
-                      if (widget.switchCharacter != null) {
-                        widget.switchCharacter!(c.entity.id);
-                      }
-                      Navigator.pop(context);
-                    },
+              if (_gs.debug)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(22, 0, 22, 5),
+                  child: Text(
+                    "Debug",
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
+                ),
+              if (_gs.debug)
+                ListTile(
+                  leading: const Icon(Icons.adb),
+                  title: const Text("Print Debug Info"),
+                  onTap: () {
+                    logger.w("Missing localization keys: ${_gs.missingLocalizationKeys.toList()}");
+                  },
+                ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
                 child: Divider(
@@ -195,12 +191,8 @@ class _SidePanelState extends State<SidePanel> {
 }
 
 class SidePanel extends StatefulWidget {
-  final bool withCharacter;
-  final Function? switchCharacter;
 
   const SidePanel({
-    this.withCharacter = false,
-    this.switchCharacter,
     Key? key
   }) : super(key: key);
 

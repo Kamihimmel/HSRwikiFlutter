@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   http: ^1.0.0
   easy_localization: ^3.0.1
+  easy_logger: ^0.0.2
   url_launcher: ^6.1.11
   responsive_grid: ^2.2.0
   url_strategy: ^0.2.0

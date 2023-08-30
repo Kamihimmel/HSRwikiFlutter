@@ -2,20 +2,18 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:easy_logger/easy_logger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:url_strategy/url_strategy.dart';
-import 'characters/character_manager.dart';
 import 'components/character_list.dart';
 import 'components/global_state.dart';
 import 'components/lightcone_list.dart';
 import 'components/relic_list.dart';
 import 'components/side_panel.dart';
-import 'donatePage.dart';
 
 import 'info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,13 +24,14 @@ import 'firebase_options.dart';
 
 import 'dart:io' show Platform;
 
-import 'lightcones/lightcone_manager.dart';
-import 'relics/relic_manager.dart';
 import 'toolboxPage.dart';
 import 'uidimportPage.dart';
 import 'utils/helper.dart';
+import 'utils/logging.dart';
 
 void main() async {
+  _setDebug();
+  _customEazyLocalization();
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   setPathUrlStrategy();
@@ -54,6 +53,57 @@ void main() async {
       useFallbackTranslations: true,
       useOnlyLangCode: true,
       child: const MyApp()));
+}
+
+void _setDebug() {
+  GlobalState _gs = GlobalState();
+  assert(() {
+    // development env
+    _gs.debug = true;
+    logger.d('debug mode: ${_gs.debug}');
+    return true;
+  }());
+}
+
+void _customEazyLocalization() {
+  RegExp regExp = RegExp(r'ocalization key \[(.*)] not found');
+  GlobalState _gs = GlobalState();
+  var customLogPrinter = (
+      Object object, {
+        String? name,
+        StackTrace? stackTrace,
+        LevelMessages? level,
+      }) {
+    String message = object.toString();
+    if (_gs.debug) {
+      RegExpMatch? match = regExp.firstMatch(message);
+      if (match != null) {
+        String? key = match.group(1);
+        if (key != null) {
+          _gs.missingLocalizationKeys.add(key);
+        }
+      }
+      return;
+    }
+    switch(level) {
+      case LevelMessages.debug:
+        logger.d('$name: $message');
+        break;
+      case LevelMessages.info:
+        logger.i('$name: $message');
+        break;
+      case LevelMessages.warning:
+        logger.w('$name: $message');
+        break;
+      case LevelMessages.error:
+        logger.e('$name: $message');
+        break;
+      case null:
+        logger.d('$name: $message');
+        break;
+    }
+  };
+  EasyLocalization.logger.printer = customLogPrinter;
 }
 
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
