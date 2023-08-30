@@ -58,10 +58,10 @@ String getLanguageCode(BuildContext context) {
 
 Future<String> loadLibJsonString(String path, {cnMode = false}) async {
   if (cnMode) {
-    final response = await http.get(Uri.parse(urlEndpoint + path));
+    final response = await http.get(Uri.parse(cnUrlEndpoint + path));
     return response.body;
   } else {
-    final response = await http.get(Uri.parse(cnUrlEndpoint + path));
+    final response = await http.get(Uri.parse(urlEndpoint + path));
     return response.body;
   }
 }

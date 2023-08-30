@@ -41,16 +41,11 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
   @override
   void initState() {
     super.initState();
-
     _initData();
   }
 
   Future<void> _initData() async {
     await CharacterManager.loadFromRemoteById(widget.characterStats.id);
-    await LightconeManager.loadFromRemoteById(widget.characterStats.lightconeId);
-    for (var r in widget.characterStats.relics.values) {
-      await RelicManager.loadFromRemoteById(r.setId);
-    }
     setState(() {
       _loading = false;
     });
