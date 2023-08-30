@@ -148,7 +148,8 @@ class RelicStats {
 
   }
 
-  RelicStats.empty(RelicPart part) {
+  RelicStats.empty(RelicPart part, String setId) {
+    this.setId = setId;
     this.rarity = 5;
     this.level = 15;
     this.mainAttr = part.mainAttrs[0];

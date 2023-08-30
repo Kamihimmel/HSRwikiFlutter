@@ -20,6 +20,9 @@ import 'global_state.dart';
 /// 光锥遗器选择
 class LightconeRelicState extends State<LightconeRelic> {
   final GlobalState _gs = GlobalState();
+  late List<Lightcone> lightconeList;
+  late List<Relic> relicList;
+
 
   @override
   void initState() {
@@ -61,6 +64,11 @@ class LightconeRelicState extends State<LightconeRelic> {
             builder: (context, model, child) {
               final Character _cData = CharacterManager.getCharacter(_gs.stats.id);
               final Lightcone _lData = LightconeManager.getLightcone(_gs.stats.lightconeId);
+              lightconeList = LightconeManager.getLightcones().values.where((lc) => _gs.spoilerMode || !lc.spoiler).where((lc) => lc.pathType == _cData.pathType).toList();
+              lightconeList.sort((e1, e2) => e2.entity.rarity.compareTo(e1.entity.rarity));
+              lightconeList.sort((e1, e2) => e1.spoiler == e2.spoiler ? 0 : (e1.spoiler ? -1 : 1));
+              relicList = RelicManager.getRelics().values.where((r) => _gs.spoilerMode || !r.spoiler).toList();
+              relicList.sort((e1, e2) => e1.spoiler == e2.spoiler ? 0 : (e1.spoiler ? -1 : 1));
               return Container(
                 height: screenWidth > 905 ? screenHeight - 100 : null,
                 child: SingleChildScrollView(
@@ -69,26 +77,69 @@ class LightconeRelicState extends State<LightconeRelic> {
                       SizedBox(
                         height: 10,
                       ),
-                      Container(
-                        width: 200,
-                        height: 200,
-                        clipBehavior: Clip.hardEdge,
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                        ),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                          child: Container(
-                            margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.all(Radius.circular(15)),
-                              border: Border.all(color: Colors.white.withOpacity(0.13)),
-                              gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
-                                Colors.black12.withOpacity(0.35),
-                                Colors.black.withOpacity(0.35),
-                              ]),
+                      InkWell(
+                        borderRadius: BorderRadius.circular(15),
+                        onTap: () {
+                          showModalBottomSheet<void>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return SizedBox(
+                                child: Center(
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        height: 15,
+                                      ),
+                                      Expanded(
+                                        child: SingleChildScrollView(
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              for (var lc in lightconeList)
+                                                ListTile(
+                                                  leading: getImageComponent(lc.entity.imageurl, imageWrap: true),
+                                                  title: Text(lc.getName(getLanguageCode(context))),
+                                                  // enabled: entry.value.loaded,
+                                                  onTap: () async {
+                                                    _gs.stats.lightconeId = lc.entity.id;
+                                                    await LightconeManager.loadFromRemoteById(lc.entity.id);
+                                                    _gs.stats = _gs.stats;
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: Container(
+                          width: 200,
+                          height: 200,
+                          clipBehavior: Clip.hardEdge,
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                          ),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                            child: Container(
+                              margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.all(Radius.circular(15)),
+                                border: Border.all(color: Colors.white.withOpacity(0.13)),
+                                gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
+                                  Colors.black12.withOpacity(0.35),
+                                  Colors.black.withOpacity(0.35),
+                                ]),
+                              ),
+                              child: getImageComponent(_lData.entity.imageurl, placeholder: kTransparentImage, fit: BoxFit.cover),
                             ),
-                            child: getImageComponent(_lData.entity.imageurl, placeholder: kTransparentImage, fit: BoxFit.cover),
                           ),
                         ),
                       ),
@@ -264,26 +315,78 @@ class LightconeRelicState extends State<LightconeRelic> {
                           } else {
                             imageUrl = '';
                           }
-                          return Container(
-                            clipBehavior: Clip.hardEdge,
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
-                            ),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                              child: Container(
-                                  width: 125,
-                                  height: 125,
-                                  margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                    border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                    gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
-                                      Colors.black12.withOpacity(0.35),
-                                      Colors.black.withOpacity(0.35),
-                                    ]),
-                                  ),
-                                  child: getImageComponent(imageUrl, placeholder: kTransparentImage, fit: BoxFit.cover, width: 125)),
+                          return InkWell(
+                            borderRadius: BorderRadius.circular(15),
+                            onTap: () {
+                              showModalBottomSheet<void>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  List<Relic> relics = relicList.where((r) => index <= 1 && r.entity.xSet == '4' || index == 2 && r.entity.xSet == '2').toList();
+                                  return SizedBox(
+                                    child: Center(
+                                      child: Column(
+                                        children: [
+                                          SizedBox(
+                                            height: 15,
+                                          ),
+                                          Expanded(
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: <Widget>[
+                                                  for (var r in relics)
+                                                    ListTile(
+                                                      leading: getImageComponent(r.entity.imageurl, imageWrap: true),
+                                                      title: Text(r.getName(getLanguageCode(context))),
+                                                      onTap: () async {
+                                                        if (index == 0) {
+                                                          _gs.stats.relics[RelicPart.head]?.setId = r.entity.id;
+                                                          _gs.stats.relics[RelicPart.hands]?.setId = r.entity.id;
+                                                        } else if (index == 1) {
+                                                          _gs.stats.relics[RelicPart.body]?.setId = r.entity.id;
+                                                          _gs.stats.relics[RelicPart.feet]?.setId = r.entity.id;
+                                                        } else if (index == 2) {
+                                                          _gs.stats.relics[RelicPart.sphere]?.setId = r.entity.id;
+                                                          _gs.stats.relics[RelicPart.rope]?.setId = r.entity.id;
+                                                        }
+                                                        await RelicManager.loadFromRemoteById(r.entity.id);
+                                                        _gs.stats = _gs.stats;
+                                                        Navigator.pop(context);
+                                                      },
+                                                    ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            child: Container(
+                              clipBehavior: Clip.hardEdge,
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(15)),
+                              ),
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                                child: Container(
+                                    width: 125,
+                                    height: 125,
+                                    margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.all(Radius.circular(15)),
+                                      border: Border.all(color: Colors.white.withOpacity(0.13)),
+                                      gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
+                                        Colors.black12.withOpacity(0.35),
+                                        Colors.black.withOpacity(0.35),
+                                      ]),
+                                    ),
+                                    child: getImageComponent(imageUrl, placeholder: kTransparentImage, fit: BoxFit.cover, width: 125)),
+                              ),
                             ),
                           );
                         }),
@@ -291,7 +394,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                       //ANCHOR - relics
                       Column(
                         children: RelicPart.values.where((e) => e != RelicPart.unknown).map((e) {
-                          RelicStats rs = _gs.stats.relics[e] ?? RelicStats.empty(e);
+                          RelicStats rs = _gs.stats.relics[e]!;
                           double mainAttrValue = getRelicMainAttrValue(rs.mainAttr, rs.rarity, rs.level);
                           return Padding(
                             padding: const EdgeInsets.all(10.0),
@@ -326,7 +429,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                   maxWidth: 60,
                                                   child: Padding(
                                                     padding: const EdgeInsets.fromLTRB(5, 5, 0, 5),
-                                                    child: getImageComponent(rs.setId == '' ? '' : RelicManager.getRelic(rs.setId).getPartImageUrl(e), placeholder: kTransparentImage, width: 60),
+                                                    child: rs.setId != '' ? getImageComponent(RelicManager.getRelic(rs.setId).getPartImageUrl(e), placeholder: kTransparentImage, width: 60) : SizedBox.shrink(),
                                                   ),
                                                 ),
                                               ),

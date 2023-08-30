@@ -18,11 +18,10 @@ import 'components/character_basic.dart';
 import 'components/damage_panel.dart';
 import 'components/global_state.dart';
 import 'components/lightcone_relic.dart';
-import 'components/side_panel.dart';
 import 'lightcones/lightcone_manager.dart';
+import 'relics/relic.dart';
 import 'relics/relic_manager.dart';
 import 'utils/helper.dart';
-import 'utils/logging.dart';
 
 class DmgCalcPage extends StatefulWidget {
   final String characterId;
@@ -76,6 +75,7 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
     });
     _cData = await CharacterManager.loadFromRemoteById(characterId);
     String lId = CharacterManager.getDefaultLightcone(characterId);
+    List<String> defaultRelicSet = CharacterManager.getDefaultRelicSets(characterId);
     CharacterStats? cs = null;
     final prefs = await SharedPreferences.getInstance();
     String? playerStr = await prefs.getString('playerinfo');
@@ -85,6 +85,11 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
     }
     if (cs != null && cs.id != '') {
       _gs.stats = cs;
+      for (RelicPart rp in RelicPart.values) {
+        if (!_gs.stats.relics.containsKey(rp) && rp != RelicPart.unknown) {
+          _gs.stats.relics[rp] = RelicStats.empty(rp, '');
+        }
+      }
     } else {
       _gs.stats = CharacterStats.empty();
       _gs.stats.id = characterId;
@@ -100,6 +105,18 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
       }
       for (var t in _cData.entity.tracedata) {
         _gs.stats.traceLevels[t.id] = 1;
+      }
+      for (var i = 0; i < defaultRelicSet.length; i++) {
+        if (i == 0) {
+          _gs.stats.relics[RelicPart.head] = RelicStats.empty(RelicPart.head, defaultRelicSet[i]);
+          _gs.stats.relics[RelicPart.hands] = RelicStats.empty(RelicPart.hands, defaultRelicSet[i]);
+        } else if (i == 1) {
+          _gs.stats.relics[RelicPart.body] = RelicStats.empty(RelicPart.body, defaultRelicSet[i]);
+          _gs.stats.relics[RelicPart.feet] = RelicStats.empty(RelicPart.feet, defaultRelicSet[i]);
+        } else if (i == 2) {
+          _gs.stats.relics[RelicPart.sphere] = RelicStats.empty(RelicPart.sphere, defaultRelicSet[i]);
+          _gs.stats.relics[RelicPart.rope] = RelicStats.empty(RelicPart.rope, defaultRelicSet[i]);
+        }
       }
     }
     await LightconeManager.loadFromRemoteById(_gs.stats.lightconeId);
