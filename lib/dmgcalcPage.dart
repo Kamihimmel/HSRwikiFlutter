@@ -37,14 +37,28 @@ class DmgCalcPage extends StatefulWidget {
 
 class _DmgCalcPageState extends State<DmgCalcPage> {
   final GlobalState _gs = GlobalState();
-  late bool _loading;
+  bool _loading = true;
   BannerAd? _bannerAd;
   bool _isBannerAdReady = false;
   late String cid;
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
+
+    Future.delayed(Duration(seconds: 10), () {
+      Timer.periodic(Duration(seconds: 5), (timer) async {
+        _timer = timer;
+        if (!_loading) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('saved_stats', jsonEncode(_gs.stats.toJson()));
+          await prefs.setString('saved_enemy_stats', jsonEncode(_gs.enemyStats.toJson()));
+          logger.d('saved: ${_gs.stats.id}');
+        }
+      });
+    });
+
     BannerAd(
       adUnitId: AdHelper.bannerAdUnitId,
       request: AdRequest(),
@@ -66,15 +80,13 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
 
     cid = widget.characterId;
     _initData(widget.characterId);
+  }
 
-    Future.delayed(Duration(seconds: 10), () {
-      Timer.periodic(Duration(seconds: 5), (timer) async {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('saved_stats', jsonEncode(_gs.stats.toJson()));
-        await prefs.setString('saved_enemy_stats', jsonEncode(_gs.enemyStats.toJson()));
-        logger.d('saved: ${_gs.stats.id}');
-      });
-    });
+  @override
+  void dispose() {
+    super.dispose();
+    _bannerAd?.dispose();
+    _timer?.cancel();
   }
 
   //get character data
@@ -86,7 +98,6 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
         _loading = true;
       });
     }
-    _cData = await CharacterManager.loadFromRemoteById(characterId);
     String lId = CharacterManager.getDefaultLightcone(characterId);
     List<String> defaultRelicSet = CharacterManager.getDefaultRelicSets(characterId);
     CharacterStats? cs = null;
@@ -123,6 +134,7 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
     setState(() {
       cid = _gs.stats.id;
     });
+    _cData = await CharacterManager.loadFromRemoteById(_gs.stats.id);
     _fillFields();
     await LightconeManager.loadFromRemoteById(_gs.stats.lightconeId);
     List<String> relicSets = _gs.stats.getRelicSets();
@@ -198,14 +210,6 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
       return EnemyStats.fromJson(jsonMap);
     }
     return null;
-  }
-
-  @override
-  void dispose() {
-    // TODO: Dispose a BannerAd object
-    _bannerAd?.dispose();
-
-    super.dispose();
   }
 
   @override

@@ -27,7 +27,6 @@ class CharacterBasicState extends State<CharacterBasic> {
   @override
   void initState() {
     super.initState();
-
     _loadImportCharacters();
   }
 
@@ -232,7 +231,6 @@ class CharacterBasicState extends State<CharacterBasic> {
                         } else {
                           fixedText = detailText;
                         }
-
                         return Stack(
                           children: [
                             Column(

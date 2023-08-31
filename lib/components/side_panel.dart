@@ -137,6 +137,19 @@ class _SidePanelState extends State<SidePanel> {
                     logger.w("Missing localization keys: ${_gs.missingLocalizationKeys.toList()}");
                   },
                 ),
+              if (_gs.debug)
+                ListTile(
+                  leading: const Icon(Icons.cleaning_services),
+                  title: const Text("Clean Store"),
+                  onTap: () async {
+                    List<String> keys = ['saved_stats', 'saved_enemy_stats'];
+                    final prefs = await SharedPreferences.getInstance();
+                    for (var k in keys) {
+                      await prefs.remove(k);
+                    }
+                    logger.w("Removed keys: ${keys}");
+                  },
+                ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
                 child: Divider(
