@@ -47,16 +47,13 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
   void initState() {
     super.initState();
 
-    Future.delayed(Duration(seconds: 10), () {
-      Timer.periodic(Duration(seconds: 5), (timer) async {
-        _timer = timer;
-        if (!_loading) {
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('saved_stats', jsonEncode(_gs.stats.toJson()));
-          await prefs.setString('saved_enemy_stats', jsonEncode(_gs.enemyStats.toJson()));
-          logger.d('saved: ${_gs.stats.id}');
-        }
-      });
+    _timer = Timer.periodic(Duration(seconds: 5), (timer) async {
+      if (!_loading) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('saved_stats', jsonEncode(_gs.stats.toJson()));
+        await prefs.setString('saved_enemy_stats', jsonEncode(_gs.enemyStats.toJson()));
+        logger.d('saved: ${_gs.stats.id}');
+      }
     });
 
     BannerAd(
@@ -108,7 +105,6 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
       cs.skillLevels = {};
       cs.traceLevels = {};
       cs.eidolons = {};
-      // only keep relic stats
     }
     if (cs == null) {
       cs = await loadSavedCharacterStats();
@@ -118,6 +114,8 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
     if (fromImport && playerStr != null) {
       Map<String, dynamic> jsonMap = jsonDecode(playerStr);
       cs = PlayerInfo.fromJson(jsonMap).characters.firstWhere((c) => c.id == characterId, orElse: () => CharacterStats.empty());
+      cs.level = '80';
+      cs.lightconeLevel = '80';
     }
     if (cs != null && cs.id != '') {
       _gs.stats = cs;
@@ -171,19 +169,21 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
   }
 
   void _fillFields() {
-    if (_gs.stats.skillLevels.isEmpty) {
-      for (var s in _cData.entity.skilldata) {
-        if (s.maxlevel == 0) {
-          _gs.stats.skillLevels[s.id] = 0;
-        } else {
-          _gs.stats.skillLevels[s.id] = s.maxlevel > 10 ? 8 : 5;
-        }
+    for (var s in _cData.entity.skilldata) {
+      if (_gs.stats.skillLevels.containsKey(s.id)) {
+        continue;
+      }
+      if (s.maxlevel == 0) {
+        _gs.stats.skillLevels[s.id] = 0;
+      } else {
+        _gs.stats.skillLevels[s.id] = s.maxlevel > 10 ? 8 : 5;
       }
     }
-    if (_gs.stats.traceLevels.isEmpty) {
-      for (var t in _cData.entity.tracedata) {
-        _gs.stats.traceLevels[t.id] = 1;
+    for (var t in _cData.entity.tracedata) {
+      if (_gs.stats.traceLevels.containsKey(t.id)) {
+        continue;
       }
+      _gs.stats.traceLevels[t.id] = 1;
     }
     for (RelicPart rp in RelicPart.values) {
       if (!_gs.stats.relics.containsKey(rp) && rp != RelicPart.unknown) {
