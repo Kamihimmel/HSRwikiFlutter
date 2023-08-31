@@ -48,10 +48,7 @@ class EnemyPanelState extends State<EnemyPanel> {
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(15)),
                     border: Border.all(color: Colors.white.withOpacity(0.13)),
-                    gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                    gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                   ),
                   child: Column(
                     children: [
@@ -64,99 +61,112 @@ class EnemyPanelState extends State<EnemyPanel> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          InkWell(
-                            borderRadius: BorderRadius.circular(15),
-                            onTap: () {
-                              showModalBottomSheet<void>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return SizedBox(
-                                    child: Center(
-                                      child: Column(
-                                        children: [
-                                          SizedBox(
-                                            height: 15,
-                                          ),
-                                          Expanded(
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: <Widget>[
-                                                  for (var e in EnemyManager.getEnemies().entries)
-                                                    ListTile(
-                                                      leading: getImageComponent(e.value.entity.imageurl, imageWrap: true),
-                                                      title: Text(e.value.getName(getLanguageCode(context))),
-                                                      trailing: Row(
-                                                        mainAxisSize: MainAxisSize.min,
-                                                        children: [
-                                                          for (var weak in e.value.weakness)
-                                                            getImageComponent(weak.icon, imageWrap: true, width: 30),
-                                                        ],
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(15),
+                              onTap: () {
+                                showModalBottomSheet<void>(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return SizedBox(
+                                      child: Center(
+                                        child: Column(
+                                          children: [
+                                            SizedBox(
+                                              height: 15,
+                                            ),
+                                            Expanded(
+                                              child: SingleChildScrollView(
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: <Widget>[
+                                                    for (var e in EnemyManager.getEnemies().entries)
+                                                      ListTile(
+                                                        leading: getImageComponent(e.value.entity.imageurl, imageWrap: true),
+                                                        title: Text(e.value.getName(getLanguageCode(context))),
+                                                        trailing: Row(
+                                                          mainAxisSize: MainAxisSize.min,
+                                                          children: [
+                                                            for (var weak in e.value.weakness) getImageComponent(weak.icon, imageWrap: true, width: 30),
+                                                          ],
+                                                        ),
+                                                        onTap: () async {
+                                                          _gs.enemyStats.id = e.key;
+                                                          _gs.enemyStats = _gs.enemyStats;
+                                                          Navigator.pop(context);
+                                                        },
                                                       ),
-                                                      onTap: () async {
-                                                        _gs.enemyStats.id = e.key;
-                                                        _gs.enemyStats = _gs.enemyStats;
-                                                        Navigator.pop(context);
-                                                      },
-                                                    ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
+                                    );
+                                  },
+                                );
+                              },
+                              child: Card(
+                                clipBehavior: Clip.hardEdge,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                color: Colors.transparent,
+                                elevation: 10,
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                                  child: Container(
+                                    width: 80,
+                                    height: 80,
+                                    margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.all(Radius.circular(15)),
+                                      border: Border.all(color: Colors.white.withOpacity(0.13)),
+                                      gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
+                                        Colors.black12.withOpacity(0.35),
+                                        Colors.black.withOpacity(0.35),
+                                      ]),
                                     ),
-                                  );
-                                },
-                              );
-                            },
-                            child: Container(
-                              width: 80,
-                              height: 80,
-                              clipBehavior: Clip.hardEdge,
-                              decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(15)),
-                              ),
-                              child: BackdropFilter(
-                                filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                                child: Container(
-                                  margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                    border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                    gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
-                                      Colors.black12.withOpacity(0.35),
-                                      Colors.black.withOpacity(0.35),
-                                    ]),
+                                    child: getImageComponent(enemy.entity.imageurl, placeholder: kTransparentImage, fit: BoxFit.cover, height: 80, imageWrap: true),
                                   ),
-                                  child: getImageComponent(enemy.entity.imageurl, placeholder: kTransparentImage, fit: BoxFit.cover),
                                 ),
                               ),
                             ),
                           ),
-                          SizedBox(width: 30),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: List.generate(ElementType.values.where((e) => e != ElementType.diy).length, (index) {
-                              ElementType et = ElementType.values.where((e) => e != ElementType.diy).toList()[index];
-                              return Column(
-                                children: [
-                                  if (index != 0) SizedBox(width: 15),
-                                  Column(
-                                    children: [
-                                      getImageComponent(et.icon, imageWrap: true, width: 30),
-                                      SelectableText(
-                                        '${enemy.resistence[et] ?? 0}',
-                                        style: TextStyle(
-                                          fontSize: 24,
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: List.generate(ElementType.values.where((e) => e != ElementType.diy).length, (index) {
+                                ElementType et = ElementType.values.where((e) => e != ElementType.diy).toList()[index];
+                                return Column(
+                                  children: [
+                                    if (index != 0) SizedBox(width: 15),
+                                    Column(
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: const BorderRadius.all(Radius.circular(5)),
+                                            gradient: (enemy.weakness.contains(et))
+                                                ? LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.black.withOpacity(0.35), Colors.black.withOpacity(0.5)])
+                                                : null,
+                                          ),
+                                          child: getImageComponent(et.icon, imageWrap: true, width: 30),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              );
-                            }),
+                                        SelectableText(
+                                          '${enemy.resistence[et] ?? 0}',
+                                          style: TextStyle(
+                                            fontSize: 24,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                );
+                              }),
+                            ),
                           ),
                         ],
                       ),

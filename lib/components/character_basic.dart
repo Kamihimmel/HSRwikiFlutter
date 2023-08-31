@@ -77,17 +77,14 @@ class CharacterBasicState extends State<CharacterBasic> {
                               child: Center(
                                 child: Column(
                                   children: [
-                                    SizedBox(
-                                      height: 15,
-                                    ),
                                     Expanded(
                                       child: DefaultTabController(
                                         length: 2,
                                         child: Scaffold(
+                                          backgroundColor: Colors.transparent,
                                           body: Column(
                                             children: [
                                               Container(
-                                                color: Color.fromARGB(0, 55, 1, 0),
                                                 child: TabBar(
                                                   tabs: [
                                                     Tab(text: 'character'.tr()),
@@ -96,29 +93,28 @@ class CharacterBasicState extends State<CharacterBasic> {
                                                 ),
                                               ),
                                               Flexible(
-                                                child: TabBarView(
-                                                  children: {characterList: false, importCharacterList: true}.entries.map((e) {
-                                                    return SingleChildScrollView(
-                                                      child: Column(
-                                                        mainAxisAlignment: MainAxisAlignment.center,
-                                                        mainAxisSize: MainAxisSize.min,
-                                                        children: <Widget>[
-                                                          for (var c in e.key)
-                                                            ListTile(
-                                                              leading: getImageComponent(c.getImageUrl(_gs), imageWrap: true),
-                                                              title: Text(c.getName(getLanguageCode(context))),
-                                                              // enabled: entry.value.loaded,
-                                                              onTap: () {
-                                                                widget.switchCharacter(c.entity.id, isSwitch: true, fromImport: e.value);
-                                                                Navigator.pop(context);
-                                                              },
-                                                            ),
-                                                        ],
-                                                      ),
-                                                    );
-                                                  }).toList(),
-                                                )
-                                              )
+                                                  child: TabBarView(
+                                                children: {characterList: false, importCharacterList: true}.entries.map((e) {
+                                                  return SingleChildScrollView(
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: <Widget>[
+                                                        for (var c in e.key)
+                                                          ListTile(
+                                                            leading: getImageComponent(c.getImageUrl(_gs), imageWrap: true),
+                                                            title: Text(c.getName(getLanguageCode(context))),
+                                                            // enabled: entry.value.loaded,
+                                                            onTap: () {
+                                                              widget.switchCharacter(c.entity.id, isSwitch: true, fromImport: e.value);
+                                                              Navigator.pop(context);
+                                                            },
+                                                          ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                              )),
                                             ],
                                           ),
                                         ),
@@ -136,6 +132,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
+                        color: Colors.transparent,
                         elevation: 10,
                         child: BackdropFilter(
                           filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
