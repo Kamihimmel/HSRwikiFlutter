@@ -98,19 +98,19 @@ class CharacterBasicState extends State<CharacterBasic> {
                                               ),
                                               Flexible(
                                                 child: TabBarView(
-                                                  children: [characterList, importCharacterList].map((list) {
+                                                  children: {characterList: false, importCharacterList: true}.entries.map((e) {
                                                     return SingleChildScrollView(
                                                       child: Column(
                                                         mainAxisAlignment: MainAxisAlignment.center,
                                                         mainAxisSize: MainAxisSize.min,
                                                         children: <Widget>[
-                                                          for (var c in list)
+                                                          for (var c in e.key)
                                                             ListTile(
                                                               leading: getImageComponent(c.getImageUrl(_gs), imageWrap: true),
                                                               title: Text(c.getName(getLanguageCode(context))),
                                                               // enabled: entry.value.loaded,
                                                               onTap: () {
-                                                                widget.switchCharacter(c.entity.id, isSwitch: true);
+                                                                widget.switchCharacter(c.entity.id, isSwitch: true, fromImport: e.value);
                                                                 Navigator.pop(context);
                                                               },
                                                             ),
