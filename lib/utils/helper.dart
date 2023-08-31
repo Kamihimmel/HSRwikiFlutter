@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import '../calculator/basic.dart';
 import '../characters/character_manager.dart';
 import '../components/global_state.dart';
+import '../enemies/enemy_manager.dart';
 import '../lightcones/lightcone_manager.dart';
 import '../relics/relic_manager.dart';
 
@@ -22,6 +23,8 @@ Future<void> initData() async {
   _gs.lightconeLoaded = true;
   await RelicManager.initAllRelics();
   _gs.relicLoaded = true;
+  await EnemyManager.initAllEnemies();
+  _gs.enemyLoaded = true;
 }
 
 getImageComponent(String path,

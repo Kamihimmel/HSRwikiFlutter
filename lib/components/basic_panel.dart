@@ -9,8 +9,7 @@ import '../calculator/basic.dart';
 import '../characters/character.dart';
 import '../characters/character_manager.dart';
 import '../utils/helper.dart';
-import '../utils/logging.dart';
-import 'character_detail.dart';
+import 'enemy_panel.dart';
 import 'global_state.dart';
 import '../platformad_stub.dart' if (dart.library.io) '../platformad_stub.dart' if (dart.library.html) '../platformad.dart';
 
@@ -344,139 +343,8 @@ class BasicPanelState extends State<BasicPanel> {
                         ),
                       ),
                     ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Container(
-                      clipBehavior: Clip.hardEdge,
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
-                      ),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.all(Radius.circular(15)),
-                            border: Border.all(color: Colors.white.withOpacity(0.13)),
-                            gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
-                          ),
-                          child: Column(
-                            children: [
-                              SizedBox(height: 10),
-                              SelectableText(
-                                'Enemy Panel'.tr(),
-                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(height: 10),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  SelectableText(
-                                    '${"Enemytype".tr()}: ',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 50.0,
-                                    child: DropdownButton(
-                                        value: _gs.enemyStats.type,
-                                        items: [
-                                          for (var k in enemyData.keys)
-                                            DropdownMenuItem(
-                                              child: Text(
-                                                (enemyData[k]?['name'] as String).tr(),
-                                                style: TextStyle(fontSize: 15),
-                                              ),
-                                              value: k,
-                                            ),
-                                        ],
-                                        onChanged: (value) {
-                                          _gs.enemyStats.type = value!;
-                                          _gs.enemyStats = _gs.enemyStats;
-                                        }),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: List.generate(ElementType.values.where((e) => e != ElementType.diy).length, (index) {
-                                  ElementType et = ElementType.values.where((e) => e != ElementType.diy).toList()[index];
-                                  return Column(
-                                    children: [
-                                      if (index != 0) SizedBox(width: 15),
-                                      Column(
-                                        children: [
-                                          getImageComponent(et.icon, imageWrap: true, width: 30),
-                                          SelectableText(
-                                            '${(enemyData[_gs.enemyStats.type]!['resistence'] as Map<ElementType, int>)[et] ?? 0}',
-                                            style: TextStyle(
-                                              fontSize: 30,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  );
-                                }),
-                              ),
-                              FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    SelectableText(
-                                      '${"EnemyLv".tr()}: ${_gs.enemyStats.level}',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        height: 1.1,
-                                      ),
-                                    ),
-                                    Slider(
-                                      min: 1,
-                                      max: 90,
-                                      inactiveColor: Theme.of(context).colorScheme.secondary,
-                                      label: _gs.enemyStats.level.toString(),
-                                      value: _gs.enemyStats.level.toDouble(),
-                                      onChanged: (value) {
-                                        _gs.enemyStats.level = value.toInt();
-                                        _gs.enemyStats = _gs.enemyStats;
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    SelectableText(
-                                      '${"EnemyDefenceDebuff".tr()}%: ${_gs.enemyStats.defenceReduce}%',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        height: 1.1,
-                                      ),
-                                    ),
-                                    Slider(
-                                      min: 0,
-                                      max: 100,
-                                      inactiveColor: Theme.of(context).colorScheme.secondary,
-                                      label: _gs.enemyStats.defenceReduce.toString(),
-                                      value: _gs.enemyStats.defenceReduce.toDouble(),
-                                      onChanged: (value) {
-                                        _gs.enemyStats.defenceReduce = value.toInt();
-                                        _gs.enemyStats = _gs.enemyStats;
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  if (_gs.enemyLoaded)
+                    EnemyPanel(),
                   adsenseAdsView(columnwidth - 20),
                   if (widget.isBannerAdReady)
                     Container(

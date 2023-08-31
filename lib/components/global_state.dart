@@ -24,6 +24,7 @@ class GlobalState extends ChangeNotifier {
   bool _characterLoaded = false;
   bool _lightconeLoaded = false;
   bool _relicLoaded = false;
+  bool _enemyLoaded = false;
 
   /// character
   CharacterStats _stats = CharacterStats.empty();
@@ -67,6 +68,11 @@ class GlobalState extends ChangeNotifier {
   bool get relicLoaded => _relicLoaded;
   set relicLoaded(bool relicLoaded) {
     _relicLoaded = relicLoaded;
+    notifyListeners();
+  }
+  bool get enemyLoaded => _enemyLoaded;
+  set enemyLoaded(bool enemyLoaded) {
+    _enemyLoaded = enemyLoaded;
     notifyListeners();
   }
 

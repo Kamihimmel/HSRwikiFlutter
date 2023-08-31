@@ -136,6 +136,9 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
       }
       await RelicManager.loadFromRemoteById(rid);
     }
+    if (_gs.enemyStats.id == '') {
+      _gs.enemyStats.id = '1253';
+    }
     setState(() {
       _loading = false;
     });
