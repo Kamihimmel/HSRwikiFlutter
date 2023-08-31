@@ -8,6 +8,7 @@ import 'package:transparent_image/transparent_image.dart';
 import 'dart:async';
 
 import '../ad_helper.dart';
+import '../calculator/basic.dart';
 import '../info.dart';
 import '../lightcones/lightcone.dart';
 import '../lightcones/lightcone_entity.dart';
@@ -350,7 +351,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                   Row(
                                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                                     children: [
-                                                                      ImageIcon(stattoimage['hp']),
+                                                                      ImageIcon(getImageComponent(FightProp.maxHP.icon), size: 40),
                                                                       Text(
                                                                         "HP".tr(),
                                                                         style: const TextStyle(
@@ -384,7 +385,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                   Row(
                                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                                     children: [
-                                                                      ImageIcon(stattoimage['atk']),
+                                                                      ImageIcon(getImageComponent(FightProp.attack.icon), size: 40),
                                                                       Text(
                                                                         "ATK".tr(),
                                                                         style: const TextStyle(
@@ -418,7 +419,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                   Row(
                                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                                     children: [
-                                                                      ImageIcon(stattoimage['def']),
+                                                                      ImageIcon(getImageComponent(FightProp.defence.icon), size: 40),
                                                                       Text(
                                                                         "DEF".tr(),
                                                                         style: const TextStyle(

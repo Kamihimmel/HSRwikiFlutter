@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
@@ -18,10 +19,12 @@ import 'components/character_basic.dart';
 import 'components/damage_panel.dart';
 import 'components/global_state.dart';
 import 'components/lightcone_relic.dart';
+import 'enemies/enemy.dart';
 import 'lightcones/lightcone_manager.dart';
 import 'relics/relic.dart';
 import 'relics/relic_manager.dart';
 import 'utils/helper.dart';
+import 'utils/logging.dart';
 
 class DmgCalcPage extends StatefulWidget {
   final String characterId;
@@ -63,6 +66,15 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
 
     cid = widget.characterId;
     _initData(widget.characterId);
+
+    Future.delayed(Duration(seconds: 10), () {
+      Timer.periodic(Duration(seconds: 5), (timer) async {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('saved_stats', jsonEncode(_gs.stats.toJson()));
+        await prefs.setString('saved_enemy_stats', jsonEncode(_gs.enemyStats.toJson()));
+        logger.d('saved: ${_gs.stats.id}');
+      });
+    });
   }
 
   //get character data
@@ -76,7 +88,7 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
     _cData = await CharacterManager.loadFromRemoteById(characterId);
     String lId = CharacterManager.getDefaultLightcone(characterId);
     List<String> defaultRelicSet = CharacterManager.getDefaultRelicSets(characterId);
-    CharacterStats? cs = null;
+    CharacterStats? cs = await loadSavedCharacterStats();
     final prefs = await SharedPreferences.getInstance();
     String? playerStr = await prefs.getString('playerinfo');
     if ((cs == null || cs.id == '') && playerStr != null) {
@@ -136,12 +148,36 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
       }
       await RelicManager.loadFromRemoteById(rid);
     }
+    EnemyStats? es = await loadSavedEnemyStats();
+    if (es != null) {
+      _gs.enemyStats = es;
+    }
     if (_gs.enemyStats.id == '') {
       _gs.enemyStats.id = '1253';
     }
     setState(() {
       _loading = false;
     });
+  }
+
+  Future<CharacterStats?> loadSavedCharacterStats() async {
+    final prefs = await SharedPreferences.getInstance();
+    String saved = prefs.getString('saved_stats') ?? '';
+    if (saved != '') {
+      Map<String, dynamic> jsonMap = jsonDecode(saved);
+      return CharacterStats.fromJson(jsonMap);
+    }
+    return null;
+  }
+
+  Future<EnemyStats?> loadSavedEnemyStats() async {
+    final prefs = await SharedPreferences.getInstance();
+    String saved = prefs.getString('saved_enemy_stats') ?? '';
+    if (saved != '') {
+      Map<String, dynamic> jsonMap = jsonDecode(saved);
+      return EnemyStats.fromJson(jsonMap);
+    }
+    return null;
   }
 
   @override

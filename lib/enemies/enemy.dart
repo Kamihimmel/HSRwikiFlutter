@@ -81,4 +81,20 @@ class EnemyStats {
   bool weaknessBreak = false;
 
   EnemyStats.empty();
+
+  EnemyStats.fromJson(Map<String, dynamic> jsonMap) {
+    this.id = jsonMap['id'] ?? '';
+    this.level = jsonMap['level'];
+    this.defenceReduce = jsonMap['defence_reduce'];
+    this.weaknessBreak = jsonMap['weakness_break'];
+  }
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> jsonMap = {};
+    jsonMap['id'] = this.id;
+    jsonMap['level'] = this.level;
+    jsonMap['defence_reduce'] = this.defenceReduce;
+    jsonMap['weakness_break'] = this.weaknessBreak;
+    return jsonMap;
+  }
 }

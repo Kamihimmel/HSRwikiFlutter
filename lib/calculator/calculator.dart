@@ -15,6 +15,8 @@ class DamageResult {
   double expectation = 0;
   double crit = 0;
 
+  DamageResult.zero();
+
   DamageResult(double nonCrit, double expectation, double crit) {
     this.nonCrit = nonCrit;
     this.expectation = expectation;
@@ -43,12 +45,12 @@ enum DamageType {
 
 DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double multiplier, FightProp baseProp, DamageType damageType, ElementType elementType) {
   if (multiplier == 0) {
-    return DamageResult(0, 0, 0);
+    return DamageResult.zero();
   }
   Map<FightProp, double> attrValues = stats.calculateSumStats();
   double base = attrValues[baseProp] ?? 0;
   if (base == 0) {
-    return DamageResult(0, 0, 0);
+    return DamageResult.zero();
   }
 
   // 暴击爆伤

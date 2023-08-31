@@ -6,6 +6,7 @@ import 'package:responsive_grid/responsive_grid.dart';
 import 'dart:async';
 import 'package:transparent_image/transparent_image.dart';
 import '../ad_helper.dart';
+import '../calculator/basic.dart';
 import '../characters/character.dart';
 import '../characters/character_entity.dart';
 import '../characters/character_manager.dart';
@@ -298,7 +299,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                             Row(
                                                               mainAxisAlignment: MainAxisAlignment.center,
                                                               children: [
-                                                                ImageIcon(stattoimage['hp']),
+                                                                ImageIcon(getImageComponent(FightProp.maxHP.icon), size: 40),
                                                                 Text(
                                                                   "HP".tr(),
                                                                   style: const TextStyle(
@@ -332,7 +333,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                             Row(
                                                               mainAxisAlignment: MainAxisAlignment.center,
                                                               children: [
-                                                                ImageIcon(stattoimage['atk']),
+                                                                ImageIcon(getImageComponent(FightProp.attack.icon), size: 40),
                                                                 Text(
                                                                   "ATK".tr(),
                                                                   style: const TextStyle(
@@ -366,7 +367,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                             Row(
                                                               mainAxisAlignment: MainAxisAlignment.center,
                                                               children: [
-                                                                ImageIcon(stattoimage['def']),
+                                                                ImageIcon(getImageComponent(FightProp.defence.icon), size: 40),
                                                                 Text(
                                                                   "DEF".tr(),
                                                                   style: const TextStyle(
@@ -400,7 +401,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                             Row(
                                                               mainAxisAlignment: MainAxisAlignment.center,
                                                               children: [
-                                                                ImageIcon(stattoimage['speed']),
+                                                                ImageIcon(getImageComponent(FightProp.speed.icon), size: 40),
                                                                 Text(
                                                                   "${"Basic".tr()}${"Speed".tr()}",
                                                                   style: const TextStyle(
@@ -434,10 +435,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                             Row(
                                                               mainAxisAlignment: MainAxisAlignment.center,
                                                               children: [
-                                                                ImageIcon(
-                                                                  stattoimage['taunt'],
-                                                                  size: 25,
-                                                                ),
+                                                                ImageIcon(getImageComponent(FightProp.aggro.icon), size: 40),
                                                                 Text(
                                                                   "${"Basic".tr()}${"Taunt".tr()}",
                                                                   style: const TextStyle(
@@ -471,10 +469,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                             Row(
                                                               mainAxisAlignment: MainAxisAlignment.center,
                                                               children: [
-                                                                ImageIcon(
-                                                                  stattoimage['energylimit'],
-                                                                  size: 25,
-                                                                ),
+                                                                ImageIcon(getImageComponent(FightProp.maxSP.icon), size: 40),
                                                                 Text(
                                                                   "${"Basic".tr()}${"Energy Limit".tr()}",
                                                                   style: const TextStyle(
@@ -870,10 +865,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                               child: Row(
                                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                                 children: [
-                                                                  ImageIcon(
-                                                                    stattoimage['energylimit'],
-                                                                    size: 15,
-                                                                  ),
+                                                                  ImageIcon(getImageComponent(FightProp.maxSP.icon), size: 15),
                                                                   Text('${data.energy}',
                                                                       style: const TextStyle(
                                                                         //fontWeight: FontWeight.bold,
@@ -905,10 +897,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                             child: Row(
                                                               mainAxisAlignment: MainAxisAlignment.center,
                                                               children: [
-                                                                ImageIcon(
-                                                                  stattoimage['breakup'],
-                                                                  size: 15,
-                                                                ),
+                                                                ImageIcon(getImageComponent(FightProp.breakDamageAddedRatio.icon), size: 15),
                                                                 Text('${data.weaknessbreak}',
                                                                     style: const TextStyle(
                                                                       //fontWeight: FontWeight.bold,
@@ -921,10 +910,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                 const SizedBox(
                                                                   width: 10,
                                                                 ),
-                                                                ImageIcon(
-                                                                  stattoimage['energyrecovery'],
-                                                                  size: 15,
-                                                                ),
+                                                                ImageIcon(getImageComponent(FightProp.sPRatio.icon), size: 15),
                                                                 Text('${data.energyregen}',
                                                                     style: const TextStyle(
                                                                       //fontWeight: FontWeight.bold,
@@ -1179,10 +1165,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                           children: [
                                                             Padding(
                                                               padding: const EdgeInsets.all(8.0),
-                                                              child: ImageIcon(
-                                                                stattoimage[data.ttype],
-                                                                size: 40,
-                                                              ),
+                                                              child: ImageIcon(getImageComponent(FightProp.fromEffectKey(data.ttype).icon), size: 40),
                                                             ),
                                                             Expanded(
                                                               child: Padding(

@@ -6,10 +6,10 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
+import '../calculator/basic.dart';
 import '../characters/character.dart';
 import '../characters/character_entity.dart';
 import '../characters/character_manager.dart';
-import '../info.dart';
 import '../platformad_stub.dart' if (dart.library.io) '../platformad_stub.dart' if (dart.library.html) '../platformad.dart';
 import '../utils/helper.dart';
 import 'global_state.dart';
@@ -407,10 +407,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                                             Container(
                                               child: SwitchListTile(
                                                   activeColor: _cData.elementType.color,
-                                                  secondary: ImageIcon(
-                                                    stattoimage[trace.ttype]!,
-                                                    size: 30,
-                                                  ),
+                                                  secondary: ImageIcon(getImageComponent(FightProp.fromEffectKey(trace.ttype).icon), size: 30),
                                                   title: Text(
                                                     _cData.getTraceName(index, getLanguageCode(context)),
                                                     style: const TextStyle(

@@ -271,9 +271,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         modeString = "true";
       }
       cnmodeN = prefs.getString('cnmode') ?? modeString;
-      if ('true' == cnmodeN) {
-        urlendpoint = "https://hsrwikidata.kchlu.com/";
-      }
     }
     _gs.male = 'male' == genderN;
     _gs.spoilerMode = 'true' == spoilerN;
@@ -378,7 +375,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       ),
                     ),
                     onTap: () {
-                      launchUrlString(urlendpoint + "downloads/hsrwikiproject-" + versionstring + ".apk");
+                      launchUrlString(getUrlEndpoint() + "downloads/hsrwikiproject-" + versionstring + ".apk");
                     },
                   ),
                   InkWell(
@@ -406,7 +403,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       ),
                     ),
                     onTap: () {
-                      launchUrlString(urlendpoint + "downloads/hsrwikiproject-" + versionstring + ".msix");
+                      launchUrlString(getUrlEndpoint() + "downloads/hsrwikiproject-" + versionstring + ".msix");
                     },
                   ),
                 ],

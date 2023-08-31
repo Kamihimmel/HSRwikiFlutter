@@ -15,6 +15,10 @@ final GlobalState _gs = GlobalState();
 final String urlEndpoint = "https://hsrwikidata.yunlu18.net/";
 final String cnUrlEndpoint = "https://hsrwikidata.kchlu.com/";
 
+String getUrlEndpoint() {
+  return _gs.cnMode ? cnUrlEndpoint : urlEndpoint;
+}
+
 Future<void> initData() async {
   _gs.setLoaded(false);
   await CharacterManager.initAllCharacters();
