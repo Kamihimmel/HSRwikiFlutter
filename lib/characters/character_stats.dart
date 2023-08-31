@@ -77,6 +77,24 @@ class CharacterStats {
     for (var ed in elementDamage.values) {
       map[ed] = getPropValue(ed);
     }
+    for (var er in elementResIgnore.values) {
+      map[er] = getPropValue(er);
+    }
+    map[FightProp.allDamageReceiveRatio] = getPropValue(FightProp.allDamageReceiveRatio);
+    map[FightProp.defenceIgnoreRatio] = getPropValue(FightProp.defenceIgnoreRatio);
+    map[FightProp.defenceReduceRatio] = getPropValue(FightProp.defenceReduceRatio);
+    map[FightProp.basicAttackAddRatio] = getPropValue(FightProp.basicAttackAddRatio);
+    map[FightProp.skillAttackAddRatio] = getPropValue(FightProp.skillAttackAddRatio);
+    map[FightProp.ultimateAttackAddRatio] = getPropValue(FightProp.ultimateAttackAddRatio);
+    map[FightProp.followupAttackAddRatio] = getPropValue(FightProp.followupAttackAddRatio);
+    map[FightProp.basicAttackCriticalChange] = getPropValue(FightProp.basicAttackCriticalChange);
+    map[FightProp.skillAttackCriticalChange] = getPropValue(FightProp.skillAttackCriticalChange);
+    map[FightProp.ultimateAttackCriticalChange] = getPropValue(FightProp.ultimateAttackCriticalChange);
+    map[FightProp.followupAttackCriticalChange] = getPropValue(FightProp.followupAttackCriticalChange);
+    map[FightProp.basicAttackCriticalDamage] = getPropValue(FightProp.basicAttackCriticalDamage);
+    map[FightProp.skillAttackCriticalDamage] = getPropValue(FightProp.skillAttackCriticalDamage);
+    map[FightProp.ultimateAttackCriticalDamage] = getPropValue(FightProp.ultimateAttackCriticalDamage);
+    map[FightProp.followupAttackCriticalDamage] = getPropValue(FightProp.followupAttackCriticalDamage);
     map[FightProp.healRatio] = getPropValue(FightProp.healRatio);
     map[FightProp.sPRatio] = getPropValue(FightProp.sPRatio);
     map[FightProp.aggro] = getPropValue(FightProp.aggro);
@@ -108,7 +126,9 @@ class CharacterStats {
     _addLightconeSkillValue(result, lc, baseHp, FightProp.hPAddedRatio);
     _addRelicAttrValue(result, baseHp, [FightProp.hPDelta, FightProp.hPAddedRatio]);
     _addRelicSetEffectValue(result, baseHp, FightProp.hPAddedRatio);
+    _addCharacterSkillValue(result, c, baseHp, FightProp.hPAddedRatio);
     _addCharacterTraceValue(result, c, baseHp, FightProp.hPAddedRatio);
+    _addCharacterEidolonValue(result, c, baseHp, FightProp.hPAddedRatio);
 
     return result;
   }
@@ -129,7 +149,9 @@ class CharacterStats {
     _addLightconeSkillValue(result, lc, baseAtk, FightProp.attackAddedRatio);
     _addRelicAttrValue(result, baseAtk, [FightProp.attackDelta, FightProp.attackAddedRatio]);
     _addRelicSetEffectValue(result, baseAtk, FightProp.attackAddedRatio);
+    _addCharacterSkillValue(result, c, baseAtk, FightProp.attackAddedRatio);
     _addCharacterTraceValue(result, c, baseAtk, FightProp.attackAddedRatio);
+    _addCharacterEidolonValue(result, c, baseAtk, FightProp.attackAddedRatio);
 
     return result;
   }
@@ -150,7 +172,9 @@ class CharacterStats {
     _addLightconeSkillValue(result, lc, baseDef, FightProp.defenceAddedRatio);
     _addRelicAttrValue(result, baseDef, [FightProp.defenceDelta, FightProp.defenceAddedRatio]);
     _addRelicSetEffectValue(result, baseDef, FightProp.defenceAddedRatio);
+    _addCharacterSkillValue(result, c, baseDef, FightProp.defenceAddedRatio);
     _addCharacterTraceValue(result, c, baseDef, FightProp.defenceAddedRatio);
+    _addCharacterEidolonValue(result, c, baseDef, FightProp.defenceAddedRatio);
 
     return result;
   }
@@ -187,7 +211,9 @@ class CharacterStats {
     _addLightconeSkillValue(result, lc, base, prop);
     _addRelicAttrValue(result, base, [prop]);
     _addRelicSetEffectValue(result, base, prop);
+    _addCharacterSkillValue(result, c, base, prop);
     _addCharacterTraceValue(result, c, base, prop);
+    _addCharacterEidolonValue(result, c, base, prop);
     return result;
   }
 
@@ -196,11 +222,11 @@ class CharacterStats {
       if (t.effect.isEmpty) {
         return;
       }
-      // TODO 银狼光锥不进面板特效问题
-      EffectEntity effect = t.effect.firstWhere((e) => e.tag.contains('self') && e.type == 'buff' && FightProp.fromEffectKey(e.addtarget) == prop, orElse: () => EffectEntity());
-      if (effect.multiplier > 0) {
-        double v = t.levelmultiplier[effect.multiplier.toInt() - 1][lightconeRank.toString()] / 100;
-        result[PropSource.lightconeEffect(lightconeId, name: t.id)] = base * v;
+      List<EffectEntity> effects = t.effect.where((e) => _validEffect(e, prop)).toList();
+      for (var i = 0; i < effects.length; i++) {
+        EffectEntity e = effects[i];
+        double v = t.levelmultiplier[e.multiplier.toInt() - 1][lightconeRank.toString()] / 100;
+        result[PropSource.lightconeEffect(lightconeId, name: "${t.id}-$i")] = base * (e.maxStack > 0 ? e.maxStack : 1) * v;
       }
     });
   }
@@ -243,31 +269,72 @@ class CharacterStats {
         if (i == 1 && rs == relicSets[0]) {
           skillIndex = 1;
           setNum = '4';
-          // 暂时不考虑4件套效果，从元数据无法确定效果是否进面板
-          continue;
         }
         Relic relic = RelicManager.getRelic(rs);
-        if (relic.entity.skilldata.isNotEmpty) {
+        if (relic.entity.skilldata.length > skillIndex) {
           // TODO 非固定基础值问题，如命中2件套攻击力效果
-          EffectEntity effect = relic.entity.skilldata[skillIndex].effect.firstWhere((e) => e.tag.contains('self') && e.type == 'buff' && FightProp.fromEffectKey(e.addtarget) == prop, orElse: () => EffectEntity());
-          if (effect.multiplier > 0) {
-            result[PropSource.relicSetEffect(rs, name: setNum)] = base * effect.multiplier / 100;
+          List<EffectEntity> effects = relic.entity.skilldata[skillIndex].effect.where((e) => _validEffect(e, prop)).toList();
+          for (var i = 0; i < effects.length; i++) {
+            EffectEntity e = effects[i];
+            result[PropSource.relicSetEffect(rs, name: i.toString(), desc: setNum)] = base * (e.maxStack > 0 ? e.maxStack : 1) * e.multiplier / 100;
           }
         }
       }
     }
   }
 
-  void _addCharacterTraceValue(Map<PropSource, double> result, Character character, double base, FightProp prop) {
-    character.entity.tracedata.forEach((t) {
-      if (t.effect.isEmpty || !t.tiny || (traceLevels[t.id] ?? 0) == 0) {
+  void _addCharacterSkillValue(Map<PropSource, double> result, Character character, double base, FightProp prop) {
+    character.entity.skilldata.forEach((s) {
+      if (s.effect.isEmpty || s.maxlevel > 0 && (skillLevels[s.id] ?? 0) == 0) {
         return;
       }
-      EffectEntity effect = t.effect.firstWhere((e) => e.tag.contains('self') && e.type == 'buff' && FightProp.fromEffectKey(e.addtarget) == prop, orElse: () => EffectEntity());
-      if (effect.multiplier > 0) {
-        result[PropSource.characterTrace(t.id, self: true)] = base * effect.multiplier / 100;
+      List<EffectEntity> effects = s.effect.where((e) => _validEffect(e, prop)).toList();
+      for (var i = 0; i < effects.length; i++) {
+        EffectEntity e = effects[i];
+        double v = e.multiplier;
+        if (s.maxlevel > 0 && s.levelmultiplier.isNotEmpty) {
+          v = s.levelmultiplier[e.multiplier.toInt() - 1][skillLevels[s.id].toString()] / 100;
+        }
+        result[PropSource.characterSkill(s.id, name: i.toString(), desc: character.entity.id, self: true)] = base * (e.maxStack > 0 ? e.maxStack : 1) * v;
       }
     });
+  }
+
+  void _addCharacterTraceValue(Map<PropSource, double> result, Character character, double base, FightProp prop) {
+    character.entity.tracedata.forEach((t) {
+      if (t.effect.isEmpty || (traceLevels[t.id] ?? 0) == 0) {
+        return;
+      }
+      List<EffectEntity> effects = t.effect.where((e) => _validEffect(e, prop)).toList();
+      for (var i = 0; i < effects.length; i++) {
+        EffectEntity e = effects[i];
+        result[PropSource.characterTrace(t.id, name: i.toString(), desc: !t.tiny ? character.entity.id : '', self: true)] = base * (e.maxStack > 0 ? e.maxStack : 1) * e.multiplier / 100;
+      }
+    });
+  }
+
+  void _addCharacterEidolonValue(Map<PropSource, double> result, Character character, double base, FightProp prop) {
+    character.entity.eidolon.forEach((e) {
+      if (e.effect.isEmpty || (eidolons[e.eidolonnum.toString()] ?? 0) == 0) {
+        return;
+      }
+      List<EffectEntity> effects = e.effect.where((ef) => _validEffect(ef, prop)).toList();
+      for (var i = 0; i < effects.length; i++) {
+        EffectEntity ef = effects[i];
+        result[PropSource.characterEidolon(e.id, name: i.toString(), desc: e.eidolonnum.toString(), self: true)] = base * (ef.maxStack > 0 ? ef.maxStack : 1) * ef.multiplier / 100;
+      }
+    });
+  }
+
+  bool _validEffect(EffectEntity effect, FightProp prop) {
+    if (effect.multiplier <= 0) {
+      return false;
+    }
+    FightProp fp = FightProp.fromEffectKey(effect.addtarget);
+    if (fp != prop) {
+      return false;
+    }
+    return effect.tag.contains('self') && effect.type == 'buff' || fp.debuff && effect.tag.contains('allenemy') && effect.type == 'debuff';
   }
 
   CharacterStats.empty();

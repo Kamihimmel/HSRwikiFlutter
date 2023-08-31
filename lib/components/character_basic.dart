@@ -104,7 +104,6 @@ class CharacterBasicState extends State<CharacterBasic> {
                                                           ListTile(
                                                             leading: getImageComponent(c.getImageUrl(_gs), imageWrap: true),
                                                             title: Text(c.getName(getLanguageCode(context))),
-                                                            // enabled: entry.value.loaded,
                                                             onTap: () {
                                                               widget.switchCharacter(c.entity.id, isSwitch: true, fromImport: e.value);
                                                               Navigator.pop(context);
@@ -346,7 +345,6 @@ class CharacterBasicState extends State<CharacterBasic> {
                       children: List.generate(_cData.entity.tracedata.length, (index) {
                         final CharacterTracedata trace = _cData.entity.tracedata[index];
                         String detailText = _cData.getTraceDescription(index, getLanguageCode(context));
-
                         if (trace.tiny == false) {
                           return Stack(
                             children: [

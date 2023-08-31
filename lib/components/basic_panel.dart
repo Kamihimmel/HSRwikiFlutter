@@ -210,20 +210,41 @@ class BasicPanelState extends State<BasicPanel> {
           Map<String, List<dynamic>> critAttrs = {};
           critAttrs[FightProp.criticalChance.desc] = _getBaseAttr(stats, FightProp.criticalChance);
           critAttrs[FightProp.criticalDamage.desc] = _getBaseAttr(stats, FightProp.criticalDamage);
-
-          Map<String, List<dynamic>> otherAttrs = {};
-          otherAttrs[FightProp.statusResistance.desc] = _getBaseAttr(stats, FightProp.statusResistance);
-          otherAttrs[FightProp.statusProbability.desc] = _getBaseAttr(stats, FightProp.statusProbability);
-          otherAttrs[FightProp.breakDamageAddedRatio.desc] = _getBaseAttr(stats, FightProp.breakDamageAddedRatio);
+          if (_gs.debug) {
+            critAttrs[FightProp.basicAttackCriticalChange.desc] = _getBaseAttr(stats, FightProp.basicAttackCriticalChange);
+            critAttrs[FightProp.skillAttackCriticalChange.desc] = _getBaseAttr(stats, FightProp.skillAttackCriticalChange);
+            critAttrs[FightProp.ultimateAttackCriticalChange.desc] = _getBaseAttr(stats, FightProp.ultimateAttackCriticalChange);
+            critAttrs[FightProp.followupAttackCriticalChange.desc] = _getBaseAttr(stats, FightProp.followupAttackCriticalChange);
+            critAttrs[FightProp.basicAttackCriticalDamage.desc] = _getBaseAttr(stats, FightProp.basicAttackCriticalDamage);
+            critAttrs[FightProp.skillAttackCriticalDamage.desc] = _getBaseAttr(stats, FightProp.skillAttackCriticalDamage);
+            critAttrs[FightProp.ultimateAttackCriticalDamage.desc] = _getBaseAttr(stats, FightProp.ultimateAttackCriticalDamage);
+            critAttrs[FightProp.followupAttackCriticalDamage.desc] = _getBaseAttr(stats, FightProp.followupAttackCriticalDamage);
+          }
 
           Map<String, List<dynamic>> damageAttrs = {};
           damageAttrs[FightProp.allDamageAddRatio.desc] = _getBaseAttr(stats, FightProp.allDamageAddRatio);
           for (FightProp p in elementDamage.values) {
             damageAttrs[p.desc] = _getBaseAttr(stats, p);
           }
+          damageAttrs[FightProp.basicAttackAddRatio.desc] = _getBaseAttr(stats, FightProp.basicAttackAddRatio);
+          damageAttrs[FightProp.skillAttackAddRatio.desc] = _getBaseAttr(stats, FightProp.skillAttackAddRatio);
+          damageAttrs[FightProp.ultimateAttackAddRatio.desc] = _getBaseAttr(stats, FightProp.ultimateAttackAddRatio);
+          damageAttrs[FightProp.followupAttackAddRatio.desc] = _getBaseAttr(stats, FightProp.followupAttackAddRatio);
+          damageAttrs[FightProp.dotDamageAddRatio.desc] = _getBaseAttr(stats, FightProp.dotDamageAddRatio);
 
           Map<String, List<dynamic>> healAttrs = {};
           healAttrs[FightProp.healRatio.desc] = _getBaseAttr(stats, FightProp.healRatio);
+
+          Map<String, List<dynamic>> otherAttrs = {};
+          otherAttrs[FightProp.statusResistance.desc] = _getBaseAttr(stats, FightProp.statusResistance);
+          otherAttrs[FightProp.statusProbability.desc] = _getBaseAttr(stats, FightProp.statusProbability);
+          otherAttrs[FightProp.breakDamageAddedRatio.desc] = _getBaseAttr(stats, FightProp.breakDamageAddedRatio);
+          otherAttrs[FightProp.allDamageReceiveRatio.desc] = _getBaseAttr(stats, FightProp.allDamageReceiveRatio);
+          otherAttrs[FightProp.defenceIgnoreRatio.desc] = _getBaseAttr(stats, FightProp.defenceIgnoreRatio);
+          otherAttrs[FightProp.defenceReduceRatio.desc] = _getBaseAttr(stats, FightProp.defenceReduceRatio);
+          for (FightProp p in elementResIgnore.values) {
+            otherAttrs[p.desc] = _getBaseAttr(stats, p);
+          }
 
           return Container(
             height: screenWidth > 905 ? screenHeight - 100 : null,

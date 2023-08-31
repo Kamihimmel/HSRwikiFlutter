@@ -10,6 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import 'ad_helper.dart';
+import 'calculator/basic.dart';
+import 'calculator/calculator.dart';
 import 'calculator/player_info.dart';
 import 'characters/character.dart';
 import 'characters/character_manager.dart';
@@ -227,7 +229,6 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
         : screenWidth > 905
             ? screenWidth / 2
             : screenWidth;
-
     String bgImageUrl = CharacterManager.getCharacter(cid).getImageLargeUrl(_gs);
     return AnimatedContainer(
       duration: const Duration(seconds: 1),
@@ -249,6 +250,21 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
               ),
               child: Scaffold(
                 backgroundColor: Colors.transparent,
+                floatingActionButton: _gs.debug ? IconButton(
+                  icon: Icon(Icons.mood),
+                  onPressed: () {
+                    _cData.entity.skilldata.forEach((skillData) {
+                      skillData.effect.where((e) => e.type == 'dmg').forEach((e) {
+                        double multiplierValue = e.multiplier;
+                        if (e.multiplier <= skillData.levelmultiplier.length && e.multiplier == e.multiplier.toInt()) {
+                          multiplierValue = double.tryParse(skillData.levelmultiplier[e.multiplier.toInt() - 1][_gs.stats.skillLevels[skillData.id].toString()].toString()) ?? 0;
+                        }
+                        calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget), skillData.stype, DamageType.fromEffectTags(e.tag), _cData.elementType, debug: true);
+                      });
+                    });
+                  },
+                ) : null,
+                floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
                 appBar: AppBar(
                   title: Text(
                     "HSR Damage Calculator".tr(),

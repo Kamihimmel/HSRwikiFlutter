@@ -118,6 +118,21 @@ class Character {
     return '';
   }
 
+  String getTraceNameById(String traceId, String lang) {
+    CharacterTracedata traceData = entity.tracedata.firstWhere((trace) => trace.id == traceId, orElse: () => CharacterTracedata());
+    switch(lang) {
+      case 'en':
+        return traceData.eNname;
+      case 'zh':
+        return traceData.cNname;
+      case 'cn':
+        return traceData.cNname;
+      case 'ja':
+        return traceData.jAname;
+    }
+    return '';
+  }
+
   String getTraceDescription(int index, String lang) {
     switch(lang) {
       case 'en':

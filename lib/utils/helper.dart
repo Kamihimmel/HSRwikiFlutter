@@ -103,6 +103,16 @@ const Map<ElementType, FightProp> elementDamage = {
   ElementType.quantum: FightProp.quantumAddedRatio,
 };
 
+const Map<ElementType, FightProp> elementResIgnore = {
+  ElementType.physical: FightProp.physicalResistanceIgnore,
+  ElementType.fire: FightProp.fireResistanceIgnore,
+  ElementType.ice: FightProp.iceResistanceIgnore,
+  ElementType.lightning: FightProp.thunderResistanceIgnore,
+  ElementType.wind: FightProp.windResistanceIgnore,
+  ElementType.imaginary: FightProp.imaginaryResistanceIgnore,
+  ElementType.quantum: FightProp.quantumResistanceIgnore,
+};
+
 double getRelicMainAttrValue(FightProp fightProp, int rarity, int level) {
   if (elementDamage.values.contains(fightProp)) {
     fightProp = FightProp.allDamageAddRatio;

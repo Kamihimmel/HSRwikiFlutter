@@ -164,7 +164,6 @@ class DamagePanelState extends State<DamagePanel> {
         value: _gs,
         child: Consumer<GlobalState>(builder: (context, model, child) {
           final Character _cData = CharacterManager.getCharacter(_gs.stats.id);
-
           return Container(
             height: screenWidth > 905 ? screenHeight - 100 : null,
             child: SingleChildScrollView(
@@ -215,7 +214,7 @@ class DamagePanelState extends State<DamagePanel> {
                                         multiplierValue = double.tryParse(skillData.levelmultiplier[e.multiplier.toInt() - 1][skillLevel.toString()].toString()) ?? 0;
                                       }
                                       String effectTitle = "${e.tag.map((e) => e.tr()).join(" | ")} (${multiplierValue.toStringAsFixed(1)}%)";
-                                      DamageResult dr = calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget), DamageType.fromEffectTags(e.tag), _cData.elementType);
+                                      DamageResult dr = calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget), skillData.stype, DamageType.fromEffectTags(e.tag), _cData.elementType);
                                       return _buildDamageBar(effectTitle, _cData.elementType, dr);
                                     }).toList(),
                                   );
