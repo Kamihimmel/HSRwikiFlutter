@@ -80,18 +80,31 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
   //get character data
   Character _cData = Character();
 
-  Future<void> _initData(String characterId) async {
-    setState(() {
-      cid = characterId;
-      _loading = true;
-    });
+  Future<void> _initData(String characterId, {bool isSwitch = false, bool fromImport = false}) async {
+    if (isSwitch || fromImport) {
+      setState(() {
+        _loading = true;
+      });
+    }
     _cData = await CharacterManager.loadFromRemoteById(characterId);
     String lId = CharacterManager.getDefaultLightcone(characterId);
     List<String> defaultRelicSet = CharacterManager.getDefaultRelicSets(characterId);
-    CharacterStats? cs = await loadSavedCharacterStats();
+    CharacterStats? cs = null;
+    if (isSwitch) {
+      cs = _gs.stats;
+      cs.id = characterId;
+      cs.lightconeId = lId;
+      cs.skillLevels = {};
+      cs.traceLevels = {};
+      cs.eidolons = {};
+      // only keep relic stats
+    }
+    if (cs == null) {
+      cs = await loadSavedCharacterStats();
+    }
     final prefs = await SharedPreferences.getInstance();
     String? playerStr = await prefs.getString('playerinfo');
-    if ((cs == null || cs.id == '') && playerStr != null) {
+    if (fromImport && playerStr != null) {
       Map<String, dynamic> jsonMap = jsonDecode(playerStr);
       cs = PlayerInfo.fromJson(jsonMap).characters.firstWhere((c) => c.id == characterId, orElse: () => CharacterStats.empty());
     }
@@ -101,34 +114,16 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
         _gs.stats.lightconeId = lId;
         _gs.stats.lightconeLevel = '80';
       }
-      for (RelicPart rp in RelicPart.values) {
-        if (!_gs.stats.relics.containsKey(rp) && rp != RelicPart.unknown) {
-          _gs.stats.relics[rp] = RelicStats.empty(rp);
-        }
-      }
     } else {
-      _gs.stats = CharacterStats.empty();
       _gs.stats.id = characterId;
       _gs.stats.level = '80';
       _gs.stats.lightconeId = lId;
       _gs.stats.lightconeLevel = '80';
-      for (var s in _cData.entity.skilldata) {
-        if (s.maxlevel == 0) {
-          _gs.stats.skillLevels[s.id] = 0;
-        } else {
-          _gs.stats.skillLevels[s.id] = s.maxlevel > 10 ? 8 : 5;
-        }
-      }
-      for (var t in _cData.entity.tracedata) {
-        _gs.stats.traceLevels[t.id] = 1;
-      }
-      for (var rp in RelicPart.values) {
-        if (rp == RelicPart.unknown) {
-          continue;
-        }
-        _gs.stats.relics[rp] = RelicStats.empty(rp);
-      }
     }
+    setState(() {
+      cid = _gs.stats.id;
+    });
+    _fillFields();
     await LightconeManager.loadFromRemoteById(_gs.stats.lightconeId);
     List<String> relicSets = _gs.stats.getRelicSets();
     for (var i = 0; i < 3; i++) {
@@ -148,7 +143,10 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
       }
       await RelicManager.loadFromRemoteById(rid);
     }
-    EnemyStats? es = await loadSavedEnemyStats();
+    EnemyStats? es = null;
+    if (!isSwitch) {
+      es = await loadSavedEnemyStats();
+    }
     if (es != null) {
       _gs.enemyStats = es;
     }
@@ -158,6 +156,28 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
     setState(() {
       _loading = false;
     });
+  }
+
+  void _fillFields() {
+    if (_gs.stats.skillLevels.isEmpty) {
+      for (var s in _cData.entity.skilldata) {
+        if (s.maxlevel == 0) {
+          _gs.stats.skillLevels[s.id] = 0;
+        } else {
+          _gs.stats.skillLevels[s.id] = s.maxlevel > 10 ? 8 : 5;
+        }
+      }
+    }
+    if (_gs.stats.traceLevels.isEmpty) {
+      for (var t in _cData.entity.tracedata) {
+        _gs.stats.traceLevels[t.id] = 1;
+      }
+    }
+    for (RelicPart rp in RelicPart.values) {
+      if (!_gs.stats.relics.containsKey(rp) && rp != RelicPart.unknown) {
+        _gs.stats.relics[rp] = RelicStats.empty(rp);
+      }
+    }
   }
 
   Future<CharacterStats?> loadSavedCharacterStats() async {

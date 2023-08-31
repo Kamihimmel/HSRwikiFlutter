@@ -1,12 +1,15 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '../calculator/basic.dart';
+import '../calculator/player_info.dart';
 import '../characters/character.dart';
 import '../characters/character_entity.dart';
 import '../characters/character_manager.dart';
@@ -18,10 +21,26 @@ import 'global_state.dart';
 class CharacterBasicState extends State<CharacterBasic> {
   final GlobalState _gs = GlobalState();
   late List<Character> characterList;
+  List<Character> importCharacterList = [];
+  bool importLoaded = false;
 
   @override
   void initState() {
     super.initState();
+
+    _loadImportCharacters();
+  }
+
+  Future<void> _loadImportCharacters() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? playerStr = await prefs.getString('playerinfo');
+    if (playerStr != null) {
+      Map<String, dynamic> jsonMap = jsonDecode(playerStr);
+      importCharacterList = List.from(PlayerInfo.fromJson(jsonMap).characters.map((c) => CharacterManager.getCharacter(c.id)));
+    }
+    setState(() {
+      importLoaded = true;
+    });
   }
 
   @override
@@ -63,22 +82,46 @@ class CharacterBasicState extends State<CharacterBasic> {
                                       height: 15,
                                     ),
                                     Expanded(
-                                      child: SingleChildScrollView(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: <Widget>[
-                                            for (var c in characterList)
-                                              ListTile(
-                                                leading: getImageComponent(c.getImageUrl(_gs), imageWrap: true),
-                                                title: Text(c.getName(getLanguageCode(context))),
-                                                // enabled: entry.value.loaded,
-                                                onTap: () {
-                                                  widget.switchCharacter(c.entity.id);
-                                                  Navigator.pop(context);
-                                                },
+                                      child: DefaultTabController(
+                                        length: 2,
+                                        child: Scaffold(
+                                          body: Column(
+                                            children: [
+                                              Container(
+                                                color: Color.fromARGB(0, 55, 1, 0),
+                                                child: TabBar(
+                                                  tabs: [
+                                                    Tab(text: 'character'.tr()),
+                                                    Tab(text: 'Your Characters'.tr()),
+                                                  ],
+                                                ),
                                               ),
-                                          ],
+                                              Flexible(
+                                                child: TabBarView(
+                                                  children: [characterList, importCharacterList].map((list) {
+                                                    return SingleChildScrollView(
+                                                      child: Column(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: <Widget>[
+                                                          for (var c in list)
+                                                            ListTile(
+                                                              leading: getImageComponent(c.getImageUrl(_gs), imageWrap: true),
+                                                              title: Text(c.getName(getLanguageCode(context))),
+                                                              // enabled: entry.value.loaded,
+                                                              onTap: () {
+                                                                widget.switchCharacter(c.entity.id, isSwitch: true);
+                                                                Navigator.pop(context);
+                                                              },
+                                                            ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                )
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -547,7 +590,7 @@ class CharacterBasicState extends State<CharacterBasic> {
 class CharacterBasic extends StatefulWidget {
   final isBannerAdReady;
   final bannerAd;
-  final void Function(String characterId) switchCharacter;
+  final void Function(String characterId, {bool isSwitch, bool fromImport}) switchCharacter;
 
   const CharacterBasic({
     Key? key,

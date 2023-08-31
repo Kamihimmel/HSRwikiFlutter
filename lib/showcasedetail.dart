@@ -19,7 +19,6 @@ import 'lightcones/lightcone_manager.dart';
 import 'relics/relic.dart';
 import 'relics/relic_manager.dart';
 import 'utils/helper.dart';
-import 'utils/logging.dart';
 
 class ShowcaseDetailPage extends StatefulWidget {
   
@@ -79,6 +78,9 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
     final Map<FightProp, double> mainPropValues = {};
     for (var p in mainProps) {
       mainPropValues[p] = propValue[p] ?? 0;
+    }
+    if (mainPropValues[FightProp.speed] == 0) {
+      mainPropValues[FightProp.speed] = c.entity.dspeed.toDouble();
     }
 
     FightProp elementAddProp;

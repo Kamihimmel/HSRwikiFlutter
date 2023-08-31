@@ -10,9 +10,7 @@ import '../calculator/calculator.dart';
 import '../characters/character.dart';
 import '../characters/character_entity.dart';
 import '../characters/character_manager.dart';
-import '../enemies/enemy.dart';
 import '../utils/helper.dart';
-import 'character_detail.dart';
 import 'global_state.dart';
 import '../platformad_stub.dart' if (dart.library.io) '../platformad_stub.dart' if (dart.library.html) '../platformad.dart';
 
