@@ -100,6 +100,10 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
     damageBonus += attrValues[attackTypeBonusMapping[attackType] ?? FightProp.unknown] ?? 0;
   } else if (damageType == DamageType.dot) {
     damageBonus += attrValues[FightProp.dotDamageAddRatio] ?? 0;
+  } else if (damageType == DamageType.followup) {
+    damageBonus += attrValues[FightProp.followupAttackAddRatio] ?? 0;
+  } else if (damageType == DamageType.breakWeakness) {
+    damageBonus += attrValues[FightProp.breakDamageAddedRatio] ?? 0;
   }
   damageBonus += 1;
 
