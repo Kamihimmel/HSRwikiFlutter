@@ -222,7 +222,7 @@ class CharacterStats {
       for (var i = 0; i < effects.length; i++) {
         EffectEntity e = effects[i];
         double v = t.levelmultiplier[e.multiplier.toInt() - 1][lightconeRank.toString()] / 100;
-        result[PropSource.lightconeEffect(lightconeId, name: "${t.id}-$i")] = base * (e.maxStack > 0 ? e.maxStack : 1) * v;
+        result[PropSource.lightconeEffect(lightconeId, name: "${t.id}-$i")] = base * e.maxStack * v;
       }
     });
   }
@@ -272,7 +272,7 @@ class CharacterStats {
           List<EffectEntity> effects = relic.entity.skilldata[skillIndex].effect.where((e) => _validEffect(e, prop)).toList();
           for (var i = 0; i < effects.length; i++) {
             EffectEntity e = effects[i];
-            result[PropSource.relicSetEffect(rs, name: i.toString(), desc: setNum)] = base * (e.maxStack > 0 ? e.maxStack : 1) * e.multiplier / 100;
+            result[PropSource.relicSetEffect(rs, name: i.toString(), desc: setNum)] = base * e.maxStack * e.multiplier / 100;
           }
         }
       }
@@ -298,7 +298,7 @@ class CharacterStats {
         } else {
           v /= 100;
         }
-        result[PropSource.characterSkill(s.id, name: i.toString(), desc: character.entity.id, self: true)] = base * (e.maxStack > 0 ? e.maxStack : 1) * v;
+        result[PropSource.characterSkill(s.id, name: i.toString(), desc: character.entity.id, self: true)] = base * e.maxStack * v;
       }
     });
   }
@@ -311,7 +311,7 @@ class CharacterStats {
       List<EffectEntity> effects = t.effect.where((e) => _validEffect(e, prop)).toList();
       for (var i = 0; i < effects.length; i++) {
         EffectEntity e = effects[i];
-        result[PropSource.characterTrace(t.id, name: i.toString(), desc: !t.tiny ? character.entity.id : '', self: true)] = base * (e.maxStack > 0 ? e.maxStack : 1) * e.multiplier / 100;
+        result[PropSource.characterTrace(t.id, name: i.toString(), desc: !t.tiny ? character.entity.id : '', self: true)] = base * e.maxStack * e.multiplier / 100;
       }
     });
   }
@@ -324,7 +324,7 @@ class CharacterStats {
       List<EffectEntity> effects = e.effect.where((ef) => _validEffect(ef, prop)).toList();
       for (var i = 0; i < effects.length; i++) {
         EffectEntity ef = effects[i];
-        result[PropSource.characterEidolon(e.id, name: i.toString(), desc: e.eidolonnum.toString(), self: true)] = base * (ef.maxStack > 0 ? ef.maxStack : 1) * ef.multiplier / 100;
+        result[PropSource.characterEidolon(e.id, name: i.toString(), desc: e.eidolonnum.toString(), self: true)] = base * ef.maxStack* ef.multiplier / 100;
       }
     });
   }

@@ -217,10 +217,7 @@ enum PathType {
 
 double getEffectMultiplierValue(EffectEntity e, CharacterSkilldata? skillData, int? skillLevel) {
   double multiplierValue = e.multiplier;
-  if (skillData == null || skillLevel == null) {
-    return multiplierValue;
-  }
-  if (e.multiplier <= skillData.levelmultiplier.length && e.multiplier == e.multiplier.toInt()) {
+  if (skillData != null && skillLevel != null && e.multiplier <= skillData.levelmultiplier.length && e.multiplier == e.multiplier.toInt()) {
     Map<String, dynamic> levelMultiplier = skillData.levelmultiplier[e.multiplier.toInt() - 1];
     if (levelMultiplier.containsKey('default')) {
       multiplierValue = double.tryParse(levelMultiplier['default'].toString()) ?? 0;
@@ -228,6 +225,7 @@ double getEffectMultiplierValue(EffectEntity e, CharacterSkilldata? skillData, i
       multiplierValue = double.tryParse(levelMultiplier[skillLevel.toString()].toString()) ?? 0;
     }
   }
+  multiplierValue *= e.maxStack;
   return multiplierValue;
 }
 

@@ -59,7 +59,7 @@ class CharacterManager {
   static String getDefaultLightcone(String characterId) {
     if (!_defaultLightconeMapping.containsKey(characterId)) {
       Character c = getCharacter(characterId);
-      return LightconeManager.getLightcones().values.firstWhere((lc) => lc.pathType == c.pathType, orElse: () => Lightcone()).entity.id;
+      return LightconeManager.getLightcones().values.firstWhere((lc) => lc.pathType == c.pathType && lc.entity.rarity == '5', orElse: () => Lightcone()).entity.id;
     }
     return _defaultLightconeMapping[characterId]!;
   }
