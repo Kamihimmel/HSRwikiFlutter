@@ -143,7 +143,7 @@ class RelicStats {
   String setId = '';
   int rarity = 0;
   int level = 0;
-  FightProp mainAttr = FightProp.none;
+  FightProp mainAttr = FightProp.unknown;
   Map<FightProp, double> subAttrValues = {};
 
   RelicStats();

@@ -57,8 +57,8 @@ getImageComponent(String path,
       : _imageProvider;
 }
 
-Future<void> mockLoad() async {
-  return Future.delayed(Duration(seconds: 1));
+Future<void> mockLoad(int? seconds) async {
+  return Future.delayed(Duration(seconds: seconds ?? 1));
 }
 
 String getLanguageCode(BuildContext context) {
@@ -215,8 +215,11 @@ enum PathType {
   }
 }
 
-double getSkillEffectMultiplierValue(EffectEntity e, CharacterSkilldata skillData, int skillLevel) {
+double getEffectMultiplierValue(EffectEntity e, CharacterSkilldata? skillData, int? skillLevel) {
   double multiplierValue = e.multiplier;
+  if (skillData == null || skillLevel == null) {
+    return multiplierValue;
+  }
   if (e.multiplier <= skillData.levelmultiplier.length && e.multiplier == e.multiplier.toInt()) {
     Map<String, dynamic> levelMultiplier = skillData.levelmultiplier[e.multiplier.toInt() - 1];
     if (levelMultiplier.containsKey('default')) {
@@ -226,24 +229,6 @@ double getSkillEffectMultiplierValue(EffectEntity e, CharacterSkilldata skillDat
     }
   }
   return multiplierValue;
-}
-
-String imagestring(String cid) {
-  if (cid == '8001' || cid == '8002') {
-    if (!_gs.male) {
-      return "images/characters/mc.webp";
-    } else {
-      return "images/characters/mcm.webp";
-    }
-  } else if (cid == '8003' || cid == '8004') {
-    if (!_gs.male) {
-      return "images/characters/mcf.webp";
-    } else {
-      return "images/characters/mcmf.webp";
-    }
-  } else {
-    return CharacterManager.getCharacter(cid).entity.imageurl;
-  }
 }
 
 const relicMainAttrLevelCurve = {
@@ -325,11 +310,4 @@ const relicMainAttrLevelCurve = {
     4: {"base": 0.08294, "add": 0.02903},
     5: {"base": 0.10368, "add": 0.03629}
   },
-};
-
-const enemyData = {
-  1: {
-    'name': 'Hilichurl',
-    'resistence': {ElementType.fire: 10, ElementType.ice: 10, ElementType.lightning: 10, ElementType.imaginary: 10, ElementType.quantum: 10, ElementType.wind: 10}
-  }
 };

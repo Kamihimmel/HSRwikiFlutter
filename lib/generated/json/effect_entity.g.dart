@@ -39,6 +39,10 @@ EffectEntity $EffectEntityFromJson(Map<String, dynamic> json) {
 	if (maxStack != null) {
 		effectEntity.maxStack = maxStack;
 	}
+	final String? group = jsonConvert.convert<String>(json['group']);
+	if (group != null) {
+		effectEntity.group = group;
+	}
 	final List<String>? tag = jsonConvert.convertListNotNull<String>(json['tag']);
 	if (tag != null) {
 		effectEntity.tag = tag;
@@ -57,6 +61,7 @@ Map<String, dynamic> $EffectEntityToJson(EffectEntity entity) {
 	data['multipliertarget'] = entity.multipliertarget;
 	data['multiplier'] = entity.multiplier;
 	data['maxstack'] = entity.maxStack;
+	data['group'] = entity.group;
 	data['tag'] =  entity.tag;
 	return data;
 }

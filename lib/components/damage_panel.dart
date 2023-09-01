@@ -156,39 +156,65 @@ class DamagePanelState extends State<DamagePanel> {
     );
   }
 
+  /// 将group相同的effect放到一组，展示为一个伤害/治疗/护盾
+  Map<String, List<EffectEntity>> _groupEffect(List<EffectEntity> effects, String type) {
+    Map<String, List<EffectEntity>> effectGroup = {};
+    effects.where((e) => e.type == type).forEach((e) {
+      if (e.group != '') {
+        List<EffectEntity> list = effectGroup[e.group] ?? [];
+        list.add(e);
+        effectGroup[e.group] = list;
+      } else {
+        // key不重复就行，随便构造的
+        effectGroup["${DateTime.now().millisecondsSinceEpoch}-${e.hashCode}"] = [e];
+      }
+    });
+    return effectGroup;
+  }
+
+  void _appendDamageAndTitle(List<EffectEntity> effects, List<String> multiplierTitle, String type, List<DamageResult> drList, String stype, Character character, CharacterSkilldata? skilldata, int? skillLevel) {
+    effects.forEach((e) {
+      double multiplierValue = getEffectMultiplierValue(e, skilldata, skillLevel);
+      if (e.multipliertarget == '') {
+        multiplierTitle.add(multiplierValue.toString());
+      } else {
+        multiplierTitle.add("${multiplierValue.toStringAsFixed(1)}%");
+      }
+      FightProp multiplierProp = FightProp.fromEffectMultiplier(e.multipliertarget);
+      if (type == 'dmg') {
+        drList.add(calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, multiplierProp,
+            stype, DamageType.fromEffectTags(e.tag), character.elementType));
+      } else if (type == 'heal') {
+        drList.add(calculateHeal(_gs.stats, multiplierValue, multiplierProp));
+      } else if (type == 'shield') {
+        drList.add(calculateShield(_gs.stats, multiplierValue, multiplierProp));
+      } else {
+        drList.add(DamageResult.zero());
+      }
+    });
+  }
+
   List<Widget> _getDamageHealPanels(Character character, String type) {
     return character.entity.skilldata.where((skill) => skill.effect.any((e) => e.type == type && e.multiplier > 0)).map((skill) {
       CharacterSkilldata skillData = character.entity.skilldata.firstWhere((s) => s.id == skill.id, orElse: () => CharacterSkilldata());
       int skillLevel = _gs.stats.skillLevels[skill.id] ?? 1;
       String skillName = character.getSkillNameById(skill.id, getLanguageCode(context));
       String title = "${skillName} (Lv${skillLevel})";
+      Map<String, List<EffectEntity>> skillEffectGroup = _groupEffect(skillData.effect, type);
       return ExpansionTile(
         tilePadding: EdgeInsets.only(left: 5, right: 5),
         childrenPadding: EdgeInsets.all(5),
         initiallyExpanded: true,
         title: _buildDamageBar(title, character.elementType, null),
-        children: skillData.effect.where((e) => e.type == type).map((e) {
-          double multiplierValue = getSkillEffectMultiplierValue(e, skillData, skillLevel);
-          String title;
-          if (e.multipliertarget == '') {
-            title = "${e.tag.map((e) => e.tr()).join(" | ")} (${multiplierValue.toString()})";
-          } else {
-            title = "${e.tag.map((e) => e.tr()).join(" | ")} (${multiplierValue.toStringAsFixed(1)}%)";
-          }
-          DamageResult dr;
-          if (type == 'dmg') {
-            dr = calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue,
-                e.multipliertarget == '' ? null : FightProp.fromEffectMultiplier(e.multipliertarget),
-                skillData.stype, DamageType.fromEffectTags(e.tag), character.elementType);
-          } else if (type == 'heal') {
-            dr = calculateHeal(_gs.stats, multiplierValue,
-                e.multipliertarget == '' ? null : FightProp.fromEffectMultiplier(e.multipliertarget));
-          } else if (type == 'shield') {
-            dr = calculateShield(_gs.stats, multiplierValue,
-                e.multipliertarget == '' ? null : FightProp.fromEffectMultiplier(e.multipliertarget));
-          } else {
-            dr = DamageResult.zero();
-          }
+        children: skillEffectGroup.values.map((effects) {
+          EffectEntity effect = effects.first;
+          String title = "${effect.tag.map((e) => e.tr()).join(" | ")}";
+          List<DamageResult> drList = [];
+          List<String> multiplierTitle = [];
+          _appendDamageAndTitle(effects, multiplierTitle, type, drList, skillData.stype, character, skillData, skillLevel);
+          title += " (${multiplierTitle.join(' + ')})";
+          DamageResult dr = drList.fold(DamageResult.zero(), (pre, damage) =>
+              DamageResult(pre.nonCrit + damage.nonCrit, pre.expectation + damage.expectation, pre.crit + damage.crit));
           return _buildDamageBar(title, character.elementType, dr);
         }).toList(),
       );
@@ -196,30 +222,21 @@ class DamagePanelState extends State<DamagePanel> {
       CharacterTracedata traceData = character.entity.tracedata.firstWhere((s) => s.id == trace.id, orElse: () => CharacterTracedata());
       String traceName = character.getTraceNameById(trace.id, getLanguageCode(context));
       String title = "${traceName}";
+      Map<String, List<EffectEntity>> traceEffectGroup = _groupEffect(traceData.effect, type);
       return ExpansionTile(
         tilePadding: EdgeInsets.only(left: 5, right: 5),
         childrenPadding: EdgeInsets.all(5),
         initiallyExpanded: true,
         title: _buildDamageBar(title, character.elementType, null),
-        children: traceData.effect.where((e) => e.type == type).map((e) {
-          double multiplierValue = e.multiplier;
-          String title;
-          if (e.multipliertarget == '') {
-            title = "${e.tag.map((e) => e.tr()).join(" | ")} (${multiplierValue.toString()})";
-          } else {
-            title = "${e.tag.map((e) => e.tr()).join(" | ")} (${multiplierValue.toStringAsFixed(1)}%)";
-          }
-          DamageResult dr;
-          if (type == 'dmg') {
-            dr = calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue,
-                e.multipliertarget == '' ? null : FightProp.fromEffectMultiplier(e.multipliertarget),
-                traceData.stype, DamageType.fromEffectTags(e.tag), character.elementType);
-          } else if (type == 'heal') {
-            dr = calculateHeal(_gs.stats, multiplierValue,
-                e.multipliertarget == '' ? null : FightProp.fromEffectMultiplier(e.multipliertarget));
-          } else {
-            dr = DamageResult.zero();
-          }
+        children: traceEffectGroup.values.map((effects) {
+          EffectEntity effect = effects.first;
+          String title = "${effect.tag.map((e) => e.tr()).join(" | ")}";
+          List<DamageResult> drList = [];
+          List<String> multiplierTitle = [];
+          _appendDamageAndTitle(effects, multiplierTitle, type, drList, traceData.stype, character, null, null);
+          title += " (${multiplierTitle.join(' + ')})";
+          DamageResult dr = drList.fold(DamageResult.zero(), (pre, damage) =>
+              DamageResult(pre.nonCrit + damage.nonCrit, pre.expectation + damage.expectation, pre.crit + damage.crit));
           return _buildDamageBar(title, character.elementType, dr);
         }).toList(),
       );
@@ -240,8 +257,8 @@ class DamagePanelState extends State<DamagePanel> {
         child: Consumer<GlobalState>(builder: (context, model, child) {
           final Character _cData = CharacterManager.getCharacter(_gs.stats.id);
           List<Widget> damagePanels = _getDamageHealPanels(_cData, 'dmg');
-          List<Widget> healPanels = _cData.pathType == PathType.abundance ? _getDamageHealPanels(_cData, 'heal') : [];
-          List<Widget> shieldPanels = _cData.pathType == PathType.preservation ? _getDamageHealPanels(_cData, 'shield') : [];
+          List<Widget> healPanels = _getDamageHealPanels(_cData, 'heal');
+          List<Widget> shieldPanels = _getDamageHealPanels(_cData, 'shield');
           return Container(
             height: screenWidth > 905 ? screenHeight - 100 : null,
             child: SingleChildScrollView(

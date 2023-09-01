@@ -289,7 +289,7 @@ class _UidimportpageState extends State<Uidimportpage> {
                                         color: Colors.grey.withOpacity(0.1),
                                         child: Hero(
                                           tag: characterStats.id,
-                                          child: getImageComponent(imagestring(characterStats.id), imageWrap: true),
+                                          child: getImageComponent(CharacterManager.getCharacter(characterStats.id).getImageUrl(_gs), imageWrap: true),
                                         ),
                                       ),
                                       Positioned(

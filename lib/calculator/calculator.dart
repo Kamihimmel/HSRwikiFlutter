@@ -74,29 +74,22 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
     }
     return DamageResult.zero();
   }
-  if (baseProp == null) {
-    if (debug) {
-      logger.d("$attackType: ${multiplier.toStringAsFixed(3)}");
-    }
-    return DamageResult(multiplier, 0, 0);
-  }
   Map<FightProp, double> attrValues = stats.calculateSumStats();
-  double base = attrValues[baseProp] ?? 0;
+  double base = baseProp == FightProp.none ? 100 : (attrValues[baseProp] ?? 0);
   if (base == 0) {
     if (debug) {
       logger.d("$attackType: base == 0");
     }
     return DamageResult.zero();
   }
-
   Enemy enemy = EnemyManager.getEnemy(enemyStats.id);
 
   // 暴击爆伤
   double critChance = attrValues[FightProp.criticalChance] ?? 0;
   double critDamage = attrValues[FightProp.criticalDamage] ?? 0;
   if (damageType == DamageType.normal) {
-    critChance += attrValues[attackTypeCritMapping[attackType] ?? FightProp.none] ?? 0;
-    critDamage += attrValues[attackTypeCritDamageMapping[attackType] ?? FightProp.none] ?? 0;
+    critChance += attrValues[attackTypeCritMapping[attackType] ?? FightProp.unknown] ?? 0;
+    critDamage += attrValues[attackTypeCritDamageMapping[attackType] ?? FightProp.unknown] ?? 0;
   }
 
   // 增伤
@@ -104,7 +97,7 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
   double allBonus = attrValues[FightProp.allDamageAddRatio] ?? 0;
   double damageBonus = elementBonus + allBonus;
   if (damageType == DamageType.normal) {
-    damageBonus += attrValues[attackTypeBonusMapping[attackType] ?? FightProp.none] ?? 0;
+    damageBonus += attrValues[attackTypeBonusMapping[attackType] ?? FightProp.unknown] ?? 0;
   } else if (damageType == DamageType.dot) {
     damageBonus += attrValues[FightProp.dotDamageAddRatio] ?? 0;
   }
@@ -156,14 +149,8 @@ DamageResult calculateHeal(CharacterStats stats, double multiplier, FightProp? b
     }
     return DamageResult.zero();
   }
-  if (baseProp == null) {
-    if (debug) {
-      logger.d("heal: ${multiplier.toStringAsFixed(3)}");
-    }
-    return DamageResult(multiplier, 0, 0);
-  }
   Map<FightProp, double> attrValues = stats.calculateSumStats();
-  double base = attrValues[baseProp] ?? 0;
+  double base = baseProp == FightProp.none ? 100 : (attrValues[baseProp] ?? 0);
   if (base == 0) {
     if (debug) {
       logger.d("heal: base == 0");
@@ -174,7 +161,6 @@ DamageResult calculateHeal(CharacterStats stats, double multiplier, FightProp? b
   // 治疗加成
   double healRatio = attrValues[FightProp.healRatio] ?? 0;
   double healBonus = 1 + healRatio;
-
 
   double nonCrit = base * multiplier / 100 * healBonus;
   if (debug) {
@@ -191,14 +177,8 @@ DamageResult calculateShield(CharacterStats stats, double multiplier, FightProp?
     }
     return DamageResult.zero();
   }
-  if (baseProp == null) {
-    if (debug) {
-      logger.d("shield: ${multiplier.toStringAsFixed(3)}");
-    }
-    return DamageResult(multiplier, 0, 0);
-  }
   Map<FightProp, double> attrValues = stats.calculateSumStats();
-  double base = attrValues[baseProp] ?? 0;
+  double base = baseProp == FightProp.none ? 100 : (attrValues[baseProp] ?? 0);
   if (base == 0) {
     if (debug) {
       logger.d("shield: base == 0");
@@ -209,7 +189,6 @@ DamageResult calculateShield(CharacterStats stats, double multiplier, FightProp?
   // 护盾加成
   double shieldRatio = attrValues[FightProp.shieldAddRatio] ?? 0;
   double shieldBonus = 1 + shieldRatio;
-
 
   double nonCrit = base * multiplier / 100 * shieldBonus;
   if (debug) {

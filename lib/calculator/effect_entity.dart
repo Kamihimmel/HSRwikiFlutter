@@ -13,6 +13,7 @@ class EffectEntity {
 	late String multipliertarget = '';
 	late double multiplier = 0;
 	late int maxStack = 0;
+	late String group = '';
 	late List<String> tag;
 
 	EffectEntity();

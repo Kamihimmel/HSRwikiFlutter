@@ -255,14 +255,27 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
                   onPressed: () {
                     _cData.entity.skilldata.forEach((skillData) {
                       skillData.effect.forEach((e) {
-                        double multiplierValue = getSkillEffectMultiplierValue(e, skillData, _gs.stats.skillLevels[skillData.id]!);
+                        double multiplierValue = getEffectMultiplierValue(e, skillData, _gs.stats.skillLevels[skillData.id]!);
                         if (e.type == 'dmg') {
-                          calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue,
-                              e.multipliertarget == '' ? null : FightProp.fromEffectMultiplier(e.multipliertarget),
+                          calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget),
                               skillData.stype, DamageType.fromEffectTags(e.tag), _cData.elementType, debug: true);
                         } else if (e.type == 'heal') {
-                          calculateHeal(_gs.stats, multiplierValue,
-                              e.multipliertarget == '' ? null : FightProp.fromEffectMultiplier(e.multipliertarget), debug: true);
+                          calculateHeal(_gs.stats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget), debug: true);
+                        } else if (e.type == 'shield') {
+                          calculateShield(_gs.stats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget), debug: true);
+                        }
+                      });
+                    });
+                    _cData.entity.tracedata.forEach((traceData) {
+                      traceData.effect.forEach((e) {
+                        double multiplierValue = getEffectMultiplierValue(e, null, null);
+                        if (e.type == 'dmg') {
+                          calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget),
+                              traceData.stype, DamageType.fromEffectTags(e.tag), _cData.elementType, debug: true);
+                        } else if (e.type == 'heal') {
+                          calculateHeal(_gs.stats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget), debug: true);
+                        } else if (e.type == 'shield') {
+                          calculateShield(_gs.stats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget), debug: true);
                         }
                       });
                     });

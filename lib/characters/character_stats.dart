@@ -288,8 +288,15 @@ class CharacterStats {
       for (var i = 0; i < effects.length; i++) {
         EffectEntity e = effects[i];
         double v = e.multiplier;
-        if (s.maxlevel > 0 && s.levelmultiplier.isNotEmpty) {
-          v = (s.levelmultiplier[e.multiplier.toInt() - 1][skillLevels[s.id].toString()] ?? 0) / 100;
+        if (e.multiplier <= s.levelmultiplier.length && e.multiplier == e.multiplier.toInt()) {
+          Map<String, dynamic> levelMultiplier = s.levelmultiplier[e.multiplier.toInt() - 1];
+          if (levelMultiplier.containsKey('default')) {
+            v = levelMultiplier['default'] / 100;
+          } else {
+            v = (levelMultiplier[skillLevels[s.id].toString()] ?? 0) / 100;
+          }
+        } else {
+          v /= 100;
         }
         result[PropSource.characterSkill(s.id, name: i.toString(), desc: character.entity.id, self: true)] = base * (e.maxStack > 0 ? e.maxStack : 1) * v;
       }
@@ -403,7 +410,7 @@ class CharacterStats {
     importStats.remove(FightProp.attackAddedRatio);
     importStats[FightProp.defence] = importStats[FightProp.defenceAddedRatio] ?? 0;
     importStats.remove(FightProp.defenceAddedRatio);
-    importStats.remove(FightProp.none);
+    importStats.remove(FightProp.unknown);
   }
 
   CharacterStats.fromJson(Map<String, dynamic> jsonMap) {

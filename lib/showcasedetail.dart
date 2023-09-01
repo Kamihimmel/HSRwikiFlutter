@@ -15,13 +15,13 @@ import 'calculator/basic.dart';
 import 'characters/character.dart';
 import 'characters/character_manager.dart';
 import 'characters/character_stats.dart';
+import 'components/global_state.dart';
 import 'lightcones/lightcone_manager.dart';
 import 'relics/relic.dart';
 import 'relics/relic_manager.dart';
 import 'utils/helper.dart';
 
 class ShowcaseDetailPage extends StatefulWidget {
-  
   final CharacterStats characterStats;
 
   const ShowcaseDetailPage({
@@ -34,6 +34,7 @@ class ShowcaseDetailPage extends StatefulWidget {
 }
 
 class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
+  final GlobalState _gs = GlobalState();
   bool _loading = true;
   ScreenshotController screenshotController = ScreenshotController();
 
@@ -150,7 +151,7 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
                                                   child: Hero(
                                                     tag: cs.id,
                                                     child: getImageComponent(
-                                                      imagestring(cs.id),
+                                                      CharacterManager.getCharacter(cs.id).getImageUrl(_gs),
                                                       imageWrap: true,
                                                       fit: BoxFit.cover,
                                                     ),

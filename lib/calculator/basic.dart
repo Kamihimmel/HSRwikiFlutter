@@ -117,7 +117,8 @@ enum FightProp {
 
   controlResist(desc: 'Control Resist', effectKey: ['controlresist']),
 
-  none(desc: 'Unknown');
+  none(desc: 'No multiplier'),
+  unknown(desc: 'Unknown');
 
   final String desc;
   final String icon;
@@ -140,11 +141,11 @@ enum FightProp {
   }
 
   static FightProp fromName(String name) {
-    return FightProp.values.firstWhere((p) => p.name == name, orElse: () => FightProp.none);
+    return FightProp.values.firstWhere((p) => p.name == name, orElse: () => FightProp.unknown);
   }
 
   static FightProp fromEffectKey(String effectKey) {
-    return FightProp.values.firstWhere((p) => p.effectKey.contains(effectKey.toLowerCase()), orElse: () => FightProp.none);
+    return FightProp.values.firstWhere((p) => p.effectKey.contains(effectKey.toLowerCase()), orElse: () => FightProp.unknown);
   }
 
   static FightProp fromEffectMultiplier(String multiplierTarget) {
@@ -154,8 +155,10 @@ enum FightProp {
       return FightProp.maxHP;
     } else if (multiplierTarget == 'def') {
       return FightProp.defence;
+    } else if (multiplierTarget == '') {
+      return FightProp.none;
     }
-    return FightProp.none;
+    return FightProp.unknown;
   }
 
   static FightProp fromImportType(String importType) {
@@ -163,7 +166,7 @@ enum FightProp {
       return FightProp.lightningAddedRatio;
     }
     String type = importType.replaceFirst('Base', '').toLowerCase();
-    return FightProp.values.firstWhere((p) => p.name.toLowerCase() == type, orElse: () => FightProp.none);
+    return FightProp.values.firstWhere((p) => p.name.toLowerCase() == type, orElse: () => FightProp.unknown);
   }
 }
 
