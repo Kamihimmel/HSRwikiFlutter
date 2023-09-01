@@ -254,12 +254,16 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
                   icon: Icon(Icons.mood),
                   onPressed: () {
                     _cData.entity.skilldata.forEach((skillData) {
-                      skillData.effect.where((e) => e.type == 'dmg').forEach((e) {
-                        double multiplierValue = e.multiplier;
-                        if (e.multiplier <= skillData.levelmultiplier.length && e.multiplier == e.multiplier.toInt()) {
-                          multiplierValue = double.tryParse(skillData.levelmultiplier[e.multiplier.toInt() - 1][_gs.stats.skillLevels[skillData.id].toString()].toString()) ?? 0;
+                      skillData.effect.forEach((e) {
+                        double multiplierValue = getSkillEffectMultiplierValue(e, skillData, _gs.stats.skillLevels[skillData.id]!);
+                        if (e.type == 'dmg') {
+                          calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue,
+                              e.multipliertarget == '' ? null : FightProp.fromEffectMultiplier(e.multipliertarget),
+                              skillData.stype, DamageType.fromEffectTags(e.tag), _cData.elementType, debug: true);
+                        } else if (e.type == 'heal') {
+                          calculateHeal(_gs.stats, multiplierValue,
+                              e.multipliertarget == '' ? null : FightProp.fromEffectMultiplier(e.multipliertarget), debug: true);
                         }
-                        calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget), skillData.stype, DamageType.fromEffectTags(e.tag), _cData.elementType, debug: true);
                       });
                     });
                   },

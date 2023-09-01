@@ -102,14 +102,6 @@ class BasicPanelState extends State<BasicPanel> {
     return [base, add, all, display, prop.isPercent()];
   }
 
-  String _displayText(double value, bool percent) {
-    if (percent) {
-      return "${(value * 100).toStringAsFixed(1)}%";
-    } else {
-      return value.toStringAsFixed(1);
-    }
-  }
-
   List<Widget> _getAttrPanel(String title, Map<String, List<dynamic>> attrValues) {
     List<Widget> list = [
       Padding(
@@ -129,9 +121,9 @@ class BasicPanelState extends State<BasicPanel> {
       }
       Map<PropSourceDisplay, double> display = value[3];
       bool percent = value[4];
-      String title = _displayText(all, percent);
+      String title = getDisplayText(all, percent);
       if (base > 0) {
-        title = "${_displayText(base, percent)} + ${_displayText(add, percent)} = ${_displayText(all, percent)}";
+        title = "${getDisplayText(base, percent)} + ${getDisplayText(add, percent)} = ${getDisplayText(all, percent)}";
       }
       list.add(SelectableText(
         "${key.tr()}: $title",
@@ -151,7 +143,7 @@ class BasicPanelState extends State<BasicPanel> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: display.entries.where((e) => e.value > 0).map((e) {
-                      return _buildStatRow(e.key.color, e.key.source, _displayText(e.value, percent));
+                      return _buildStatRow(e.key.color, e.key.source, getDisplayText(e.value, percent));
                     }).toList(),
                   ),
                   SizedBox(
@@ -223,7 +215,7 @@ class BasicPanelState extends State<BasicPanel> {
 
           Map<String, List<dynamic>> damageAttrs = {};
           damageAttrs[FightProp.allDamageAddRatio.desc] = _getBaseAttr(stats, FightProp.allDamageAddRatio);
-          for (FightProp p in elementDamage.values) {
+          for (FightProp p in ElementType.getElementAddRatioProps()) {
             damageAttrs[p.desc] = _getBaseAttr(stats, p);
           }
           damageAttrs[FightProp.basicAttackAddRatio.desc] = _getBaseAttr(stats, FightProp.basicAttackAddRatio);
@@ -235,15 +227,27 @@ class BasicPanelState extends State<BasicPanel> {
           Map<String, List<dynamic>> healAttrs = {};
           healAttrs[FightProp.healRatio.desc] = _getBaseAttr(stats, FightProp.healRatio);
 
+          Map<String, List<dynamic>> shieldAttrs = {};
+          shieldAttrs[FightProp.shieldAddRatio.desc] = _getBaseAttr(stats, FightProp.shieldAddRatio);
+
           Map<String, List<dynamic>> otherAttrs = {};
           otherAttrs[FightProp.statusResistance.desc] = _getBaseAttr(stats, FightProp.statusResistance);
           otherAttrs[FightProp.statusProbability.desc] = _getBaseAttr(stats, FightProp.statusProbability);
           otherAttrs[FightProp.breakDamageAddedRatio.desc] = _getBaseAttr(stats, FightProp.breakDamageAddedRatio);
-          otherAttrs[FightProp.allDamageReceiveRatio.desc] = _getBaseAttr(stats, FightProp.allDamageReceiveRatio);
-          otherAttrs[FightProp.defenceIgnoreRatio.desc] = _getBaseAttr(stats, FightProp.defenceIgnoreRatio);
-          otherAttrs[FightProp.defenceReduceRatio.desc] = _getBaseAttr(stats, FightProp.defenceReduceRatio);
-          for (FightProp p in elementResIgnore.values) {
+          otherAttrs[FightProp.allResistanceIgnore.desc] = _getBaseAttr(stats, FightProp.allResistanceIgnore);
+          for (FightProp p in ElementType.getElementResistanceIgnoreProps()) {
             otherAttrs[p.desc] = _getBaseAttr(stats, p);
+          }
+          otherAttrs[FightProp.defenceIgnoreRatio.desc] = _getBaseAttr(stats, FightProp.defenceIgnoreRatio);
+
+          Map<String, List<dynamic>> debuffAttrs = {};
+          if (_gs.debug) {
+            debuffAttrs[FightProp.defenceReduceRatio.desc] = _getBaseAttr(stats, FightProp.defenceReduceRatio);
+            debuffAttrs[FightProp.allDamageReceiveRatio.desc] = _getBaseAttr(stats, FightProp.allDamageReceiveRatio);
+            debuffAttrs[FightProp.dotDamageReceiveRatio.desc] = _getBaseAttr(stats, FightProp.dotDamageReceiveRatio);
+            for (FightProp p in ElementType.getElementDamageReceiveRatioProps()) {
+              debuffAttrs[p.desc] = _getBaseAttr(stats, p);
+            }
           }
 
           return Container(
@@ -341,6 +345,29 @@ class BasicPanelState extends State<BasicPanel> {
                         ),
                       ),
                     ),
+                  if (shieldAttrs.values.where((e) => e[2] > 0).isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Container(
+                        clipBehavior: Clip.hardEdge,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                        ),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.all(Radius.circular(15)),
+                              border: Border.all(color: Colors.white.withOpacity(0.13)),
+                              gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                            ),
+                            child: Column(
+                              children: _getAttrPanel('Shield Panel', shieldAttrs),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   if (otherAttrs.values.where((e) => e[2] > 0).isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -359,6 +386,29 @@ class BasicPanelState extends State<BasicPanel> {
                             ),
                             child: Column(
                               children: _getAttrPanel('Other Panel', otherAttrs),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (_gs.debug && debuffAttrs.values.where((e) => e[2] > 0).isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Container(
+                        clipBehavior: Clip.hardEdge,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                        ),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.all(Radius.circular(15)),
+                              border: Border.all(color: Colors.white.withOpacity(0.13)),
+                              gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                            ),
+                            child: Column(
+                              children: _getAttrPanel('Debuff Panel', debuffAttrs),
                             ),
                           ),
                         ),

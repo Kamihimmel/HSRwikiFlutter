@@ -110,9 +110,8 @@ enum RelicPart {
     FightProp.quantumAddedRatio,
     FightProp.fireAddedRatio,
     FightProp.iceAddedRatio,
-    FightProp.thunderAddedRatio,
+    FightProp.lightningAddedRatio,
     FightProp.windAddedRatio,
-    FightProp.thunderAddedRatio,
     FightProp.imaginaryAddedRatio
   ]),
   rope(

@@ -7,88 +7,117 @@ import '../characters/character_manager.dart';
 import '../lightcones/lightcone_manager.dart';
 import '../relics/relic.dart';
 import '../relics/relic_manager.dart';
+import '../utils/helper.dart';
 
 enum FightProp {
-  maxHP(desc: 'HP', icon: 'starrailres/icon/property/IconMaxHP.png'),
-  attack(desc: 'ATK', icon: 'starrailres/icon/property/IconAttack.png'),
-  defence(desc: 'DEF', icon: 'starrailres/icon/property/IconDefence.png'),
-  speed(desc: 'Speed', icon: 'starrailres/icon/property/IconSpeed.png', effectKey: ['spd']),
-  criticalChance(desc: 'critrate', icon: 'starrailres/icon/property/IconCriticalChance.png', effectKey: ['critrate']),
-  criticalDamage(desc: 'critdmg', icon: 'starrailres/icon/property/IconCriticalDamage.png', effectKey: ['critdmg']),
-  breakDamageAddedRatio(desc: 'Break Effect', icon: 'starrailres/icon/property/IconBreakUp.png', effectKey: ['breakeffect', 'breakdmg']),
-  breakDamageAddedRatioBase(desc: 'Break Effect', icon: 'starrailres/icon/property/IconBreakUp.png'),
-  healRatio(desc: 'Outgoing Healing Boost', icon: 'starrailres/icon/property/IconHealRatio.png', effectKey: ['healrate']),
-  maxSP(desc: 'Max Energy', icon: 'starrailres/icon/property/IconEnergyLimit.png'),
-  sPRatio(desc: 'energyregenrate', icon: 'starrailres/icon/property/IconEnergyRecovery.png', effectKey: ['sprate']),
-  statusProbability(desc: 'Effect Hit Rate', icon: 'starrailres/icon/property/IconStatusProbability.png', effectKey: ['effecthit']),
-  statusResistance(desc: 'Effect RES', icon: 'starrailres/icon/property/IconStatusResistance.png', effectKey: ['effectres']),
-  criticalChanceBase(desc: 'CRIT Rate', icon: 'starrailres/icon/property/IconCriticalChance.png'),
-  criticalDamageBase(desc: 'CRIT DMG', icon: 'starrailres/icon/property/IconCriticalDamage.png'),
-  healRatioBase(desc: 'Outgoing Healing Boost', icon: 'starrailres/icon/property/IconHealRatio.png'),
-  stanceBreakAddedRatio(desc: '', icon: ''),
-  sPRatioBase(desc: 'Energy Regeneration Rate', icon: 'starrailres/icon/property/IconEnergyRecovery.png', effectKey: ['energyregenrate']),
-  statusProbabilityBase(desc: 'Effect Hit Rate', icon: 'starrailres/icon/property/IconStatusProbability.png'),
-  statusResistanceBase(desc: 'Effect RES', icon: 'starrailres/icon/property/IconStatusResistance.png'),
-  physicalAddedRatio(desc: 'Physical DMG Boost', icon: 'starrailres/icon/property/IconPhysicalAddedRatio.png', effectKey: ['physicaldmg']),
-  physicalResistance(desc: 'Physical RES Boost', icon: 'starrailres/icon/property/IconPhysicalResistanceDelta.png'),
-  physicalResistanceIgnore(desc: 'Physical RES Ignore', icon: '', effectKey: ['physicalpen']),
-  fireAddedRatio(desc: 'Fire DMG Boost', icon: 'starrailres/icon/property/IconFireAddedRatio.png', effectKey: ['firedmg']),
-  fireResistance(desc: 'Fire RES Boost', icon: 'starrailres/icon/property/IconFireResistanceDelta.png'),
-  fireResistanceIgnore(desc: 'Fire RES Ignore', icon: '', effectKey: ['firepen']),
-  iceAddedRatio(desc: 'Ice DMG Boost', icon: 'starrailres/icon/property/IconIceAddedRatio.png', effectKey: ['icedmg']),
-  iceResistance(desc: 'Ice RES Boost', icon: 'starrailres/icon/property/IconIceResistanceDelta.png'),
-  iceResistanceIgnore(desc: 'Ice RES Ignore', icon: '', effectKey: ['icepen']),
-  thunderAddedRatio(desc: 'Lightning DMG Boost', icon: 'starrailres/icon/property/IconThunderAddedRatio.png', effectKey: ['lightningdmg']),
-  thunderResistance(desc: 'Lightning RES Boost', icon: 'starrailres/icon/property/IconThunderResistanceDelta.png'),
-  thunderResistanceIgnore(desc: 'Lightning RES Ignore', icon: '', effectKey: ['lightningpen']),
-  windAddedRatio(desc: 'Wind DMG Boost', icon: 'starrailres/icon/property/IconWindAddedRatio.png', effectKey: ['winddmg']),
-  windResistance(desc: 'Wind RES Boost', icon: 'starrailres/icon/property/IconWindResistanceDelta.png'),
-  windResistanceIgnore(desc: 'Wind RES Ignore', icon: '', effectKey: ['windpen']),
-  quantumAddedRatio(desc: 'Quantum DMG Boost', icon: 'starrailres/icon/property/IconQuantumAddedRatio.png', effectKey: ['quantumdmg']),
-  quantumResistance(desc: 'Quantum RES Boost', icon: 'starrailres/icon/property/IconQuantumResistanceDelta.png'),
-  quantumResistanceIgnore(desc: 'Quantum RES Ignore', icon: '', effectKey: ['quantumpen']),
-  imaginaryAddedRatio(desc: 'Imaginary DMG Boost', icon: 'starrailres/icon/property/IconImaginaryAddedRatio.png', effectKey: ['imaginarydmg']),
-  imaginaryResistance(desc: 'Imaginary RES Boost', icon: 'starrailres/icon/property/IconImaginaryResistanceDelta.png'),
-  imaginaryResistanceIgnore(desc: 'Imaginary RES Ignore', icon: '', effectKey: ['imaginarypen']),
+  maxHP(desc: 'HP', icon: 'starrailres/icon/property/IconMaxHP.png', effectKey: ['maxhp']),
   baseHP(desc: 'Base HP', icon: 'starrailres/icon/property/IconMaxHP.png'),
   hPDelta(desc: 'HP', icon: 'starrailres/icon/property/IconMaxHP.png'),
-  hPAddedRatio(desc: 'HP', icon: 'starrailres/icon/property/IconMaxHP.png', effectKey: ['hp', 'maxhp']),
+  hPAddedRatio(desc: 'HP', icon: 'starrailres/icon/property/IconMaxHP.png', effectKey: ['hp']),
+  lostHP(desc: 'Lost HP', effectKey: ['losthp']),
+
+  attack(desc: 'ATK', icon: 'starrailres/icon/property/IconAttack.png', effectKey: ['allatk']),
   baseAttack(desc: 'Base ATK', icon: 'starrailres/icon/property/IconAttack.png'),
   attackDelta(desc: 'ATK', icon: 'starrailres/icon/property/IconAttack.png'),
   attackAddedRatio(desc: 'ATK', icon: 'starrailres/icon/property/IconAttack.png', effectKey: ['atk']),
+
+  defence(desc: 'DEF', icon: 'starrailres/icon/property/IconDefence.png', effectKey: ['alldef']),
   baseDefence(desc: 'Base DEF', icon: 'starrailres/icon/property/IconDefence.png'),
   defenceDelta(desc: 'DEF', icon: 'starrailres/icon/property/IconDefence.png'),
   defenceAddedRatio(desc: 'DEF', icon: 'starrailres/icon/property/IconDefence.png', effectKey: ['def']),
+
+  maxSP(desc: 'Max Energy', icon: 'starrailres/icon/property/IconEnergyLimit.png'),
+  sPRatio(desc: 'energyregenrate', icon: 'starrailres/icon/property/IconEnergyRecovery.png', effectKey: ['sprate']),
+  sPRatioBase(desc: 'Energy Regeneration Rate', icon: 'starrailres/icon/property/IconEnergyRecovery.png', effectKey: ['energyregenrate']),
+
+  speed(desc: 'Speed', icon: 'starrailres/icon/property/IconSpeed.png', effectKey: ['spd']),
   baseSpeed(desc: 'SPD', icon: 'starrailres/icon/property/IconSpeed.png'),
+  speedDelta(desc: 'SPD', icon: 'starrailres/icon/property/IconSpeed.png', effectKey: ['speed']),
+
+  aggro(desc: 'Taunt', icon: 'starrailres/icon/property/IconTaunt.png', effectKey: ['taunt']),
+  stanceBreakAddedRatio(desc: ''),
+
+  healRatio(desc: 'Outgoing Healing Boost', icon: 'starrailres/icon/property/IconHealRatio.png', effectKey: ['healrate']),
+  healRatioBase(desc: 'Outgoing Healing Boost', icon: 'starrailres/icon/property/IconHealRatio.png'),
   healTakenRatio(desc: 'Incoming Healing Boost', icon: 'starrailres/icon/property/IconHealRatio.png'),
+  shieldAddRatio(desc: 'Shield Boost', effectKey: ['shielddmgabsorb']),
+
+  statusProbability(desc: 'Effect Hit Rate', icon: 'starrailres/icon/property/IconStatusProbability.png', effectKey: ['effecthit']),
+  statusProbabilityBase(desc: 'Effect Hit Rate', icon: 'starrailres/icon/property/IconStatusProbability.png'),
+  statusResistance(desc: 'Effect RES', icon: 'starrailres/icon/property/IconStatusResistance.png', effectKey: ['effectres']),
+  statusResistanceBase(desc: 'Effect RES', icon: 'starrailres/icon/property/IconStatusResistance.png'),
+
+  criticalChance(desc: 'critrate', icon: 'starrailres/icon/property/IconCriticalChance.png', effectKey: ['critrate']),
+  criticalChanceBase(desc: 'CRIT Rate', icon: 'starrailres/icon/property/IconCriticalChance.png'),
+  criticalDamage(desc: 'critdmg', icon: 'starrailres/icon/property/IconCriticalDamage.png', effectKey: ['critdmg']),
+  criticalDamageBase(desc: 'CRIT DMG', icon: 'starrailres/icon/property/IconCriticalDamage.png'),
+  basicAttackCriticalChange(desc: 'Basic Critical Change', effectKey: ['basiccrit', 'normalcrit']),
+  skillAttackCriticalChange(desc: 'Skill Critical Change', effectKey: ['skillcrit']),
+  ultimateAttackCriticalChange(desc: 'Ultimate Critical Change', effectKey: ['ultcrit']),
+  followupAttackCriticalChange(desc: 'Followup Critical Change', effectKey: ['followupcrit']),
+  basicAttackCriticalDamage(desc: 'Basic Critical Damage', effectKey: ['basiccritdmg', 'normalcritdmg']),
+  skillAttackCriticalDamage(desc: 'Skill Critical Damage', effectKey: ['skillcritdmg']),
+  ultimateAttackCriticalDamage(desc: 'Ultimate Critical Damage', effectKey: ['ultcritdmg']),
+  followupAttackCriticalDamage(desc: 'Followup Critical Damage', effectKey: ['followupcritdmg']),
+
+  breakDamageAddedRatio(desc: 'Break Effect', icon: 'starrailres/icon/property/IconBreakUp.png', effectKey: ['breakeffect', 'breakdmg']),
+  breakDamageAddedRatioBase(desc: 'Break Effect', icon: 'starrailres/icon/property/IconBreakUp.png'),
+
+  allDamageAddRatio(desc: 'All DMG Boost', effectKey: ['alldmg']),
+  physicalAddedRatio(desc: 'Physical DMG Boost', icon: 'starrailres/icon/property/IconPhysicalAddedRatio.png', effectKey: ['physicaldmg']),
+  fireAddedRatio(desc: 'Fire DMG Boost', icon: 'starrailres/icon/property/IconFireAddedRatio.png', effectKey: ['firedmg']),
+  iceAddedRatio(desc: 'Ice DMG Boost', icon: 'starrailres/icon/property/IconIceAddedRatio.png', effectKey: ['icedmg']),
+  lightningAddedRatio(desc: 'Lightning DMG Boost', icon: 'starrailres/icon/property/IconThunderAddedRatio.png', effectKey: ['lightningdmg']),
+  windAddedRatio(desc: 'Wind DMG Boost', icon: 'starrailres/icon/property/IconWindAddedRatio.png', effectKey: ['winddmg']),
+  quantumAddedRatio(desc: 'Quantum DMG Boost', icon: 'starrailres/icon/property/IconQuantumAddedRatio.png', effectKey: ['quantumdmg']),
+  imaginaryAddedRatio(desc: 'Imaginary DMG Boost', icon: 'starrailres/icon/property/IconImaginaryAddedRatio.png', effectKey: ['imaginarydmg']),
+  dotDamageAddRatio(desc: 'Dot ATK Boost', effectKey: ['dotatk']),
+  basicAttackAddRatio(desc: 'Basic ATK Boost', effectKey: ['basicatk', 'normalatk']),
+  skillAttackAddRatio(desc: 'Skill ATK Boost', effectKey: ['skillatk']),
+  ultimateAttackAddRatio(desc: 'Ultimate ATK Boost', effectKey: ['ultatk']),
+  followupAttackAddRatio(desc: 'Followup ATK Boost', effectKey: ['followupatk']),
+
+  physicalResistance(desc: 'Physical RES Boost', icon: 'starrailres/icon/property/IconPhysicalResistanceDelta.png'),
+  fireResistance(desc: 'Fire RES Boost', icon: 'starrailres/icon/property/IconFireResistanceDelta.png'),
+  iceResistance(desc: 'Ice RES Boost', icon: 'starrailres/icon/property/IconIceResistanceDelta.png'),
+  lightningResistance(desc: 'Lightning RES Boost', icon: 'starrailres/icon/property/IconThunderResistanceDelta.png'),
+  windResistance(desc: 'Wind RES Boost', icon: 'starrailres/icon/property/IconWindResistanceDelta.png'),
+  quantumResistance(desc: 'Quantum RES Boost', icon: 'starrailres/icon/property/IconQuantumResistanceDelta.png'),
+  imaginaryResistance(desc: 'Imaginary RES Boost', icon: 'starrailres/icon/property/IconImaginaryResistanceDelta.png'),
+
+  allResistanceIgnore(desc: 'All RES Ignore', effectKey: ['allres']),
+  physicalResistanceIgnore(desc: 'Physical RES Ignore', effectKey: ['physicalpen']),
+  fireResistanceIgnore(desc: 'Fire RES Ignore', effectKey: ['firepen']),
+  iceResistanceIgnore(desc: 'Ice RES Ignore', effectKey: ['icepen']),
+  lightningResistanceIgnore(desc: 'Lightning RES Ignore', effectKey: ['lightningpen']),
+  windResistanceIgnore(desc: 'Wind RES Ignore', effectKey: ['windpen']),
+  quantumResistanceIgnore(desc: 'Quantum RES Ignore', effectKey: ['quantumpen']),
+  imaginaryResistanceIgnore(desc: 'Imaginary RES Ignore', effectKey: ['imaginarypen']),
+
   physicalResistanceDelta(desc: 'Physical RES Boost', icon: 'starrailres/icon/property/IconPhysicalResistanceDelta.png'),
   fireResistanceDelta(desc: 'Fire RES Boost', icon: 'starrailres/icon/property/IconFireResistanceDelta.png'),
   iceResistanceDelta(desc: 'Ice RES Boost', icon: 'starrailres/icon/property/IconIceResistanceDelta.png'),
-  thunderResistanceDelta(desc: 'Lightning RES Boost', icon: 'starrailres/icon/property/IconThunderResistanceDelta.png'),
+  lightningResistanceDelta(desc: 'Lightning RES Boost', icon: 'starrailres/icon/property/IconThunderResistanceDelta.png'),
   windResistanceDelta(desc: 'Wind RES Boost', icon: 'starrailres/icon/property/IconWindResistanceDelta.png'),
   quantumResistanceDelta(desc: 'Quantum RES Boost', icon: 'starrailres/icon/property/IconQuantumResistanceDelta.png'),
   imaginaryResistanceDelta(desc: 'Imaginary RES Boost', icon: 'starrailres/icon/property/IconImaginaryResistanceDelta.png'),
-  speedDelta(desc: 'SPD', icon: 'starrailres/icon/property/IconSpeed.png', effectKey: ['speed']),
-  aggro(desc: 'Taunt', icon: 'starrailres/icon/property/IconTaunt.png', effectKey: ['taunt']),
-  dotDamageAddRatio(desc: 'Dot Boost', icon: '', effectKey: ['dotvulnerability']),
-  allDamageAddRatio(desc: 'All DMG Boost', icon: '', effectKey: ['alldmg']),
-  lostHP(desc: 'Lost HP', icon: ''),
-  allDamageReceiveRatio(desc: 'Damage Receive', icon: '', debuff: true, effectKey: ['dmgreceive']),
-  defenceIgnoreRatio(desc: 'Defence Ignore', icon: '', effectKey: ['ignoredef']),
-  defenceReduceRatio(desc: 'Defence Reduce', icon: '', debuff: true, effectKey: ['reducedef']),
-  basicAttackAddRatio(desc: 'Basic ATK Boost', icon: '', effectKey: ['basicatk', 'normalatk']),
-  skillAttackAddRatio(desc: 'Skill ATK Boost', icon: '', effectKey: ['skillatk']),
-  ultimateAttackAddRatio(desc: 'Ultimate ATK Boost', icon: '', effectKey: ['ultatk']),
-  followupAttackAddRatio(desc: 'Followup ATK Boost', icon: '', effectKey: ['followupatk']),
-  basicAttackCriticalChange(desc: 'Basic Critical Change', icon: '', effectKey: ['basiccrit', 'normalcrit']),
-  skillAttackCriticalChange(desc: 'Skill Critical Change', icon: '', effectKey: ['skillcrit']),
-  ultimateAttackCriticalChange(desc: 'Ultimate Critical Change', icon: '', effectKey: ['ultcrit']),
-  followupAttackCriticalChange(desc: 'Followup Critical Change', icon: '', effectKey: ['followupcrit']),
-  basicAttackCriticalDamage(desc: 'Basic Critical Damage', icon: '', effectKey: ['basiccritdmg', 'normalcritdmg']),
-  skillAttackCriticalDamage(desc: 'Skill Critical Damage', icon: '', effectKey: ['skillcritdmg']),
-  ultimateAttackCriticalDamage(desc: 'Ultimate Critical Damage', icon: '', effectKey: ['ultcritdmg']),
-  followupAttackCriticalDamage(desc: 'Followup Critical Damage', icon: '', effectKey: ['followupcritdmg']),
-  none(desc: '', icon: '');
+
+  allDamageReceiveRatio(desc: 'All Damage Receive', debuff: true, effectKey: ['dmgreceive']),
+  physicalDamageReceiveRatio(desc: 'Physical Damage Receive', debuff: true, effectKey: ['physicaldmgreceive']),
+  fireDamageReceiveRatio(desc: 'Fire Damage Receive', debuff: true, effectKey: ['firedmgreceive']),
+  iceDamageReceiveRatio(desc: 'Ice Damage Receive', debuff: true, effectKey: ['icedmgreceive']),
+  lightningDamageReceiveRatio(desc: 'Lightning Damage Receive', debuff: true, effectKey: ['lightningdmgreceive']),
+  windDamageReceiveRatio(desc: 'Wind Damage Receive', debuff: true, effectKey: ['winddmgreceive']),
+  quantumDamageReceiveRatio(desc: 'Quantum Damage Receive', debuff: true, effectKey: ['quantumdmgreceive']),
+  imaginaryDamageReceiveRatio(desc: 'Imaginary Damage Receive', debuff: true, effectKey: ['imaginarydmgreceive']),
+  dotDamageReceiveRatio(desc: 'Dot Damage Receive', debuff: true, effectKey: ['dotdmgreceive']),
+
+  defenceIgnoreRatio(desc: 'Defence Ignore', effectKey: ['ignoredef']),
+  defenceReduceRatio(desc: 'Defence Reduce', debuff: true, effectKey: ['reducedef']),
+
+  controlResist(desc: 'Control Resist', effectKey: ['controlresist']),
+
+  none(desc: 'Unknown');
 
   final String desc;
   final String icon;
@@ -97,7 +126,7 @@ enum FightProp {
 
   const FightProp({
     required this.desc,
-    required this.icon,
+    this.icon = '',
     this.debuff = false,
     this.effectKey = const [],
   });
@@ -107,11 +136,7 @@ enum FightProp {
   }
 
   String getPropText(double value) {
-    if (isPercent()) {
-      return ((value * 1000).floor() / 10).toStringAsFixed(1) + '%';
-    } else {
-      return value.floor().toString();
-    }
+    return getDisplayText(value, isPercent());
   }
 
   static FightProp fromName(String name) {
@@ -134,6 +159,9 @@ enum FightProp {
   }
 
   static FightProp fromImportType(String importType) {
+    if (importType == 'ThunderAddedRatio') {
+      return FightProp.lightningAddedRatio;
+    }
     String type = importType.replaceFirst('Base', '').toLowerCase();
     return FightProp.values.firstWhere((p) => p.name.toLowerCase() == type, orElse: () => FightProp.none);
   }

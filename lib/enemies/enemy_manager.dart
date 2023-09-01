@@ -21,7 +21,7 @@ class EnemyManager {
       _enemies.clear();
       String jsonStr = await loadLibJsonString('lib/enemylist.json', cnMode: _gs.cnMode);
       final Map<String, dynamic> allEnemies = json.decode(jsonStr);
-      logger.d(json.encode(allEnemies));
+      // logger.d(json.encode(allEnemies));
       for (var c in allEnemies['data']!) {
         // get brief from list json
         Enemy enemy = Enemy.fromJson(c, spoiler: c['spoiler'] ?? false, order: c['order'] ?? 999);

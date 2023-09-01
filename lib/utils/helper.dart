@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../calculator/basic.dart';
+import '../calculator/effect_entity.dart';
+import '../characters/character_entity.dart';
 import '../characters/character_manager.dart';
 import '../components/global_state.dart';
 import '../enemies/enemy_manager.dart';
@@ -73,6 +75,14 @@ Future<String> loadLibJsonString(String path, {cnMode = false}) async {
   }
 }
 
+String getDisplayText(double value, bool percent) {
+  if (percent) {
+    return ((value * 1000).floor() / 10).toStringAsFixed(1) + '%';
+  } else {
+    return value.toStringAsFixed(1);
+  }
+}
+
 int getRelicMaxLevel(int rarity) {
   if (rarity >= 2 && rarity <= 5) {
     return rarity * 3;
@@ -93,28 +103,8 @@ MaterialColor getRarityColor(int rarity) {
   return Colors.grey;
 }
 
-const Map<ElementType, FightProp> elementDamage = {
-  ElementType.physical: FightProp.physicalAddedRatio,
-  ElementType.fire: FightProp.fireAddedRatio,
-  ElementType.ice: FightProp.iceAddedRatio,
-  ElementType.lightning: FightProp.thunderAddedRatio,
-  ElementType.wind: FightProp.windAddedRatio,
-  ElementType.imaginary: FightProp.imaginaryAddedRatio,
-  ElementType.quantum: FightProp.quantumAddedRatio,
-};
-
-const Map<ElementType, FightProp> elementResIgnore = {
-  ElementType.physical: FightProp.physicalResistanceIgnore,
-  ElementType.fire: FightProp.fireResistanceIgnore,
-  ElementType.ice: FightProp.iceResistanceIgnore,
-  ElementType.lightning: FightProp.thunderResistanceIgnore,
-  ElementType.wind: FightProp.windResistanceIgnore,
-  ElementType.imaginary: FightProp.imaginaryResistanceIgnore,
-  ElementType.quantum: FightProp.quantumResistanceIgnore,
-};
-
 double getRelicMainAttrValue(FightProp fightProp, int rarity, int level) {
-  if (elementDamage.values.contains(fightProp)) {
+  if (ElementType.getElementAddRatioProps().contains(fightProp)) {
     fightProp = FightProp.allDamageAddRatio;
   }
   if (!relicMainAttrLevelCurve.containsKey(fightProp)) {
@@ -156,6 +146,46 @@ enum ElementType {
   static ElementType fromKey(String key) {
     return ElementType.values.firstWhere((e) => e.key == key, orElse: () => ElementType.diy);
   }
+
+  FightProp getElementAddRatioProp() {
+    return FightProp.fromName("${this.name}AddedRatio");
+  }
+
+  static List<FightProp> getElementAddRatioProps() {
+    return ElementType.values.where((e) => e != ElementType.diy).map((e) => e.getElementAddRatioProp()).toList();
+  }
+
+  FightProp getElementResistanceProp() {
+    return FightProp.fromName("${this.name}Resistance");
+  }
+
+  static List<FightProp> getElementResistanceProps() {
+    return ElementType.values.where((e) => e != ElementType.diy).map((e) => e.getElementResistanceProp()).toList();
+  }
+
+  FightProp getElementResistanceIgnoreProp() {
+    return FightProp.fromName("${this.name}ResistanceIgnore");
+  }
+
+  static List<FightProp> getElementResistanceIgnoreProps() {
+    return ElementType.values.where((e) => e != ElementType.diy).map((e) => e.getElementResistanceIgnoreProp()).toList();
+  }
+
+  FightProp getElementResistanceDeltaProp() {
+    return FightProp.fromName("${this.name}ResistanceDelta");
+  }
+
+  static List<FightProp> getElementResistanceDeltaProps() {
+    return ElementType.values.where((e) => e != ElementType.diy).map((e) => e.getElementResistanceDeltaProp()).toList();
+  }
+
+  FightProp getElementDamageReceiveRatioProp() {
+    return FightProp.fromName("${this.name}DamageReceiveRatio");
+  }
+
+  static List<FightProp> getElementDamageReceiveRatioProps() {
+    return ElementType.values.where((e) => e != ElementType.diy).map((e) => e.getElementDamageReceiveRatioProp()).toList();
+  }
 }
 
 enum PathType {
@@ -183,6 +213,19 @@ enum PathType {
   static PathType fromKey(String key) {
     return PathType.values.firstWhere((p) => p.key == key, orElse: () => PathType.diy);
   }
+}
+
+double getSkillEffectMultiplierValue(EffectEntity e, CharacterSkilldata skillData, int skillLevel) {
+  double multiplierValue = e.multiplier;
+  if (e.multiplier <= skillData.levelmultiplier.length && e.multiplier == e.multiplier.toInt()) {
+    Map<String, dynamic> levelMultiplier = skillData.levelmultiplier[e.multiplier.toInt() - 1];
+    if (levelMultiplier.containsKey('default')) {
+      multiplierValue = double.tryParse(levelMultiplier['default'].toString()) ?? 0;
+    } else {
+      multiplierValue = double.tryParse(levelMultiplier[skillLevel.toString()].toString()) ?? 0;
+    }
+  }
+  return multiplierValue;
 }
 
 String imagestring(String cid) {

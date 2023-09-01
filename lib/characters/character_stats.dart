@@ -68,25 +68,14 @@ class CharacterStats {
     map[FightProp.attack] = getPropValue(FightProp.attack);
     map[FightProp.defence] = getPropValue(FightProp.defence);
     map[FightProp.speed] = getPropValue(FightProp.speed);
+    map[FightProp.sPRatio] = getPropValue(FightProp.sPRatio);
+    map[FightProp.aggro] = getPropValue(FightProp.aggro);
+
+    map[FightProp.healRatio] = getPropValue(FightProp.healRatio);
+    map[FightProp.shieldAddRatio] = getPropValue(FightProp.shieldAddRatio);
+
     map[FightProp.criticalChance] = getPropValue(FightProp.criticalChance);
     map[FightProp.criticalDamage] = getPropValue(FightProp.criticalDamage);
-    map[FightProp.breakDamageAddedRatio] = getPropValue(FightProp.breakDamageAddedRatio);
-    map[FightProp.statusProbability] = getPropValue(FightProp.statusProbability);
-    map[FightProp.statusResistance] = getPropValue(FightProp.statusResistance);
-    map[FightProp.allDamageAddRatio] = getPropValue(FightProp.allDamageAddRatio);
-    for (var ed in elementDamage.values) {
-      map[ed] = getPropValue(ed);
-    }
-    for (var er in elementResIgnore.values) {
-      map[er] = getPropValue(er);
-    }
-    map[FightProp.allDamageReceiveRatio] = getPropValue(FightProp.allDamageReceiveRatio);
-    map[FightProp.defenceIgnoreRatio] = getPropValue(FightProp.defenceIgnoreRatio);
-    map[FightProp.defenceReduceRatio] = getPropValue(FightProp.defenceReduceRatio);
-    map[FightProp.basicAttackAddRatio] = getPropValue(FightProp.basicAttackAddRatio);
-    map[FightProp.skillAttackAddRatio] = getPropValue(FightProp.skillAttackAddRatio);
-    map[FightProp.ultimateAttackAddRatio] = getPropValue(FightProp.ultimateAttackAddRatio);
-    map[FightProp.followupAttackAddRatio] = getPropValue(FightProp.followupAttackAddRatio);
     map[FightProp.basicAttackCriticalChange] = getPropValue(FightProp.basicAttackCriticalChange);
     map[FightProp.skillAttackCriticalChange] = getPropValue(FightProp.skillAttackCriticalChange);
     map[FightProp.ultimateAttackCriticalChange] = getPropValue(FightProp.ultimateAttackCriticalChange);
@@ -95,9 +84,33 @@ class CharacterStats {
     map[FightProp.skillAttackCriticalDamage] = getPropValue(FightProp.skillAttackCriticalDamage);
     map[FightProp.ultimateAttackCriticalDamage] = getPropValue(FightProp.ultimateAttackCriticalDamage);
     map[FightProp.followupAttackCriticalDamage] = getPropValue(FightProp.followupAttackCriticalDamage);
-    map[FightProp.healRatio] = getPropValue(FightProp.healRatio);
-    map[FightProp.sPRatio] = getPropValue(FightProp.sPRatio);
-    map[FightProp.aggro] = getPropValue(FightProp.aggro);
+
+    map[FightProp.breakDamageAddedRatio] = getPropValue(FightProp.breakDamageAddedRatio);
+    map[FightProp.statusProbability] = getPropValue(FightProp.statusProbability);
+    map[FightProp.statusResistance] = getPropValue(FightProp.statusResistance);
+    map[FightProp.allDamageAddRatio] = getPropValue(FightProp.allDamageAddRatio);
+    for (var ed in ElementType.getElementAddRatioProps()) {
+      map[ed] = getPropValue(ed);
+    }
+    map[FightProp.basicAttackAddRatio] = getPropValue(FightProp.basicAttackAddRatio);
+    map[FightProp.skillAttackAddRatio] = getPropValue(FightProp.skillAttackAddRatio);
+    map[FightProp.ultimateAttackAddRatio] = getPropValue(FightProp.ultimateAttackAddRatio);
+    map[FightProp.followupAttackAddRatio] = getPropValue(FightProp.followupAttackAddRatio);
+    map[FightProp.dotDamageAddRatio] = getPropValue(FightProp.dotDamageAddRatio);
+
+    map[FightProp.allResistanceIgnore] = getPropValue(FightProp.allResistanceIgnore);
+    for (var eri in ElementType.getElementResistanceIgnoreProps()) {
+      map[eri] = getPropValue(eri);
+    }
+
+    map[FightProp.allDamageReceiveRatio] = getPropValue(FightProp.allDamageReceiveRatio);
+    map[FightProp.dotDamageReceiveRatio] = getPropValue(FightProp.dotDamageReceiveRatio);
+    for (var edr in ElementType.getElementDamageReceiveRatioProps()) {
+      map[edr] = getPropValue(edr);
+    }
+
+    map[FightProp.defenceIgnoreRatio] = getPropValue(FightProp.defenceIgnoreRatio);
+    map[FightProp.defenceReduceRatio] = getPropValue(FightProp.defenceReduceRatio);
     return map;
   }
 
@@ -122,14 +135,7 @@ class CharacterStats {
     result[PropSource.lightconeAttr(lightconeId)] = lightconeHp;
 
     double baseHp = characterHp + lightconeHp;
-
-    _addLightconeSkillValue(result, lc, baseHp, FightProp.hPAddedRatio);
-    _addRelicAttrValue(result, baseHp, [FightProp.hPDelta, FightProp.hPAddedRatio]);
-    _addRelicSetEffectValue(result, baseHp, FightProp.hPAddedRatio);
-    _addCharacterSkillValue(result, c, baseHp, FightProp.hPAddedRatio);
-    _addCharacterTraceValue(result, c, baseHp, FightProp.hPAddedRatio);
-    _addCharacterEidolonValue(result, c, baseHp, FightProp.hPAddedRatio);
-
+    _addAttrValue(result, c, lc, baseHp, [FightProp.hPAddedRatio, FightProp.hPDelta]);
     return result;
   }
 
@@ -145,14 +151,7 @@ class CharacterStats {
     result[PropSource.lightconeAttr(lightconeId)] = lightconeAtk;
 
     double baseAtk = characterAtk + lightconeAtk;
-
-    _addLightconeSkillValue(result, lc, baseAtk, FightProp.attackAddedRatio);
-    _addRelicAttrValue(result, baseAtk, [FightProp.attackDelta, FightProp.attackAddedRatio]);
-    _addRelicSetEffectValue(result, baseAtk, FightProp.attackAddedRatio);
-    _addCharacterSkillValue(result, c, baseAtk, FightProp.attackAddedRatio);
-    _addCharacterTraceValue(result, c, baseAtk, FightProp.attackAddedRatio);
-    _addCharacterEidolonValue(result, c, baseAtk, FightProp.attackAddedRatio);
-
+    _addAttrValue(result, c, lc, baseAtk, [FightProp.attackAddedRatio, FightProp.attackDelta]);
     return result;
   }
 
@@ -168,14 +167,7 @@ class CharacterStats {
     result[PropSource.lightconeAttr(lightconeId)] = lightconeDef;
 
     double baseDef = characterDef + lightconeDef;
-
-    _addLightconeSkillValue(result, lc, baseDef, FightProp.defenceAddedRatio);
-    _addRelicAttrValue(result, baseDef, [FightProp.defenceDelta, FightProp.defenceAddedRatio]);
-    _addRelicSetEffectValue(result, baseDef, FightProp.defenceAddedRatio);
-    _addCharacterSkillValue(result, c, baseDef, FightProp.defenceAddedRatio);
-    _addCharacterTraceValue(result, c, baseDef, FightProp.defenceAddedRatio);
-    _addCharacterEidolonValue(result, c, baseDef, FightProp.defenceAddedRatio);
-
+    _addAttrValue(result, c, lc, baseDef, [FightProp.defenceAddedRatio, FightProp.defence]);
     return result;
   }
 
@@ -208,13 +200,17 @@ class CharacterStats {
       prop = FightProp.sPRatio;
     }
 
-    _addLightconeSkillValue(result, lc, base, prop);
-    _addRelicAttrValue(result, base, [prop]);
-    _addRelicSetEffectValue(result, base, prop);
-    _addCharacterSkillValue(result, c, base, prop);
-    _addCharacterTraceValue(result, c, base, prop);
-    _addCharacterEidolonValue(result, c, base, prop);
+    _addAttrValue(result, c, lc, base, [prop]);
     return result;
+  }
+
+  void _addAttrValue(Map<PropSource, double> result, Character character, Lightcone lightcone, double base, List<FightProp> props) {
+    _addLightconeSkillValue(result, lightcone, base, props[0]);
+    _addRelicAttrValue(result, base, props);
+    _addRelicSetEffectValue(result, base, props[0]);
+    _addCharacterSkillValue(result, character, base, props[0]);
+    _addCharacterTraceValue(result, character, base, props[0]);
+    _addCharacterEidolonValue(result, character, base, props[0]);
   }
 
   void _addLightconeSkillValue(Map<PropSource, double> result, Lightcone lightcone, double base, FightProp prop) {
@@ -293,7 +289,7 @@ class CharacterStats {
         EffectEntity e = effects[i];
         double v = e.multiplier;
         if (s.maxlevel > 0 && s.levelmultiplier.isNotEmpty) {
-          v = s.levelmultiplier[e.multiplier.toInt() - 1][skillLevels[s.id].toString()] / 100;
+          v = (s.levelmultiplier[e.multiplier.toInt() - 1][skillLevels[s.id].toString()] ?? 0) / 100;
         }
         result[PropSource.characterSkill(s.id, name: i.toString(), desc: character.entity.id, self: true)] = base * (e.maxStack > 0 ? e.maxStack : 1) * v;
       }
@@ -334,7 +330,12 @@ class CharacterStats {
     if (fp != prop) {
       return false;
     }
-    return effect.tag.contains('self') && effect.type == 'buff' || fp.debuff && effect.tag.contains('allenemy') && effect.type == 'debuff';
+    if (effect.type == 'buff') {
+      return effect.tag.contains('allally') || effect.tag.contains('self');
+    } else if (effect.type == 'debuff') {
+      return effect.tag.contains('allenemy') || effect.tag.contains('singleenemy');
+    }
+    return false;
   }
 
   CharacterStats.empty();
