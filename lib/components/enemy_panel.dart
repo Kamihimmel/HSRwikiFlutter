@@ -221,7 +221,29 @@ class EnemyPanelState extends State<EnemyPanel> {
                             ),
                           ],
                         ),
-                      )
+                      ),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            SelectableText(
+                              '${"WeaknessBreak".tr()}:',
+                              style: TextStyle(
+                                fontSize: 15,
+                                height: 1.1,
+                              ),
+                            ),
+                            Switch(
+                              value: _gs.enemyStats.weaknessBreak,
+                              onChanged: (bool value) {
+                                _gs.enemyStats.weaknessBreak = value;
+                                _gs.enemyStats = _gs.enemyStats;
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
