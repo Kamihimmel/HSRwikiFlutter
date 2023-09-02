@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 
 import 'dmgcalcPage.dart';
 import 'effecthitcalc.dart';
+import 'enemylistPage.dart';
 
 class Toolboxpage extends StatelessWidget {
   const Toolboxpage({
@@ -18,8 +19,8 @@ class Toolboxpage extends StatelessWidget {
     final crossAxisCount = screenWidth < 600
         ? 1
         : screenWidth < 1000
-        ? 1
-        : 2;
+            ? 1
+            : 2;
     return Center(
       // Center is a layout widget. It takes a single child and positions it
       // in the middle of the parent.
@@ -27,9 +28,7 @@ class Toolboxpage extends StatelessWidget {
         // Column is also a layout widget. It takes a list of children and
 
         mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: screenWidth > 1300
-            ? CrossAxisAlignment.start
-            : CrossAxisAlignment.center,
+        crossAxisAlignment: screenWidth > 1300 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
         children: <Widget>[
           Expanded(
             child: GridView.count(
@@ -51,10 +50,7 @@ class Toolboxpage extends StatelessWidget {
                     child: Card(
                       color: Colors.grey.withOpacity(0.1),
                       clipBehavior: Clip.hardEdge,
-                      shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(12),
-                              topRight: Radius.circular(12))),
+                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))),
                       child: Stack(
                         children: [
                           Hero(
@@ -72,8 +68,7 @@ class Toolboxpage extends StatelessWidget {
                             left: 0,
                             right: 0,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 16),
+                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                               color: Colors.black54,
                               child: Text(
                                 "HSR Damage Calculator".tr(),
@@ -104,10 +99,7 @@ class Toolboxpage extends StatelessWidget {
                     child: Card(
                       color: Colors.grey.withOpacity(0.1),
                       clipBehavior: Clip.hardEdge,
-                      shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(12),
-                              topRight: Radius.circular(12))),
+                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))),
                       child: Stack(
                         children: [
                           Hero(
@@ -124,11 +116,58 @@ class Toolboxpage extends StatelessWidget {
                             left: 0,
                             right: 0,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 16),
+                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                               color: Colors.black54,
                               child: Text(
                                 "Effect Hit & Effect Res Calculator".tr(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Material(
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EnemyListPage(),
+                        ),
+                      );
+                    },
+                    onHover: (value) {},
+                    hoverColor: Colors.grey,
+                    child: Card(
+                      color: Colors.grey.withOpacity(0.1),
+                      clipBehavior: Clip.hardEdge,
+                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))),
+                      child: Stack(
+                        children: [
+                          Hero(
+                            tag: "enemylist",
+                            child: Image(
+                              image: AssetImage('images/monster.jpg'),
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                              color: Colors.black54,
+                              child: Text(
+                                "Enemy List".tr(),
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
