@@ -337,7 +337,7 @@ class CharacterStats {
   }
 
   void _addOtherSkillValue(Map<PropSource, double> result, Character character, double base, FightProp prop) {
-    EffectManager.getEffects().values.where((e) => e.validAllyBuffEffect(prop)).forEach((effect) {
+    EffectManager.getEffects().values.where((e) => e.majorId != character.entity.id && e.validAllyBuffEffect(prop)).forEach((effect) {
       String effectKey = effect.getKey();
       if (!otherEffect.containsKey(effectKey) || !otherEffect[effectKey]!.on) {
         return;
