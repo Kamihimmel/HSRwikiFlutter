@@ -364,7 +364,7 @@ class BuffPanelState extends State<BuffPanel> {
                                                       Wrap(
                                                         spacing: 10,
                                                         runSpacing: 10,
-                                                        children: EffectManager.getEffects().values.where((e) => e.validAllyBuffEffect(null)).map((effect) {
+                                                        children: EffectManager.getEffects().values.where((e) => _cData.entity.id != e.majorId && e.validAllyBuffEffect(null)).map((effect) {
                                                           EffectEntity ee = effect.entity;
                                                           String effectKey = effect.getKey();
                                                           String propText = FightProp.fromEffectKey(ee.addtarget).desc.tr();
