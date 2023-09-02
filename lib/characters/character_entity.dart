@@ -1,8 +1,7 @@
+import 'package:hsrwikiproject/calculator/skill_data.dart';
 import 'package:hsrwikiproject/generated/json/base/json_field.dart';
 import 'package:hsrwikiproject/generated/json/character_entity.g.dart';
 import 'dart:convert';
-
-import '../calculator/effect_entity.dart';
 
 @JsonSerializable()
 class CharacterEntity {
@@ -61,30 +60,11 @@ class CharacterLeveldata {
 }
 
 @JsonSerializable()
-class CharacterSkilldata {
-	late String id = '';
-	@JSONField(name: "ENname")
-	late String eNname = '';
-	@JSONField(name: "CNname")
-	late String cNname = '';
-	@JSONField(name: "JAname")
-	late String jAname = '';
+class CharacterSkilldata extends SkillData {
 	late String imageurl = '';
-	@JSONField(name: "DescriptionEN")
-	late String descriptionEN = '';
-	@JSONField(name: "DescriptionCN")
-	late String descriptionCN = '';
-	@JSONField(name: "DescriptionJP")
-	late String descriptionJP = '';
 	late String stype = '';
-	late int maxlevel = 0;
-	late bool buffskill = false;
-	late bool teamskill = false;
 	late int weaknessbreak = 0;
 	late int energyregen = 0;
-	late List<Map<String, dynamic>> levelmultiplier = [];
-	late List<String> tags = [];
-	late List<EffectEntity> effect = [];
 	late int energy = 0;
 
 	CharacterSkilldata();
@@ -100,27 +80,10 @@ class CharacterSkilldata {
 }
 
 @JsonSerializable()
-class CharacterTracedata {
-	late String id = '';
+class CharacterTracedata extends SkillData {
 	late bool tiny = false;
-	@JSONField(name: "ENname")
-	late String eNname = '';
-	@JSONField(name: "CNname")
-	late String cNname = '';
-	@JSONField(name: "JAname")
-	late String jAname = '';
-	@JSONField(name: "DescriptionEN")
-	late String descriptionEN = '';
-	@JSONField(name: "DescriptionCN")
-	late String descriptionCN = '';
-	@JSONField(name: "DescriptionJP")
-	late String descriptionJP = '';
 	late String imageurl = '';
 	late String stype = '';
-	late bool buffskill = false;
-	late bool teamskill = false;
-	late List<String> tags = [];
-	late List<EffectEntity> effect = [];
 	late String ttype = '';
 
 	CharacterTracedata();
@@ -136,27 +99,10 @@ class CharacterTracedata {
 }
 
 @JsonSerializable()
-class CharacterEidolon {
-	late String id = '';
+class CharacterEidolon extends SkillData {
 	late int eidolonnum = 0;
-	@JSONField(name: "ENname")
-	late String eNname = '';
-	@JSONField(name: "CNname")
-	late String cNname = '';
-	@JSONField(name: "JAname")
-	late String jAname = '';
 	late String imageurl = '';
-	@JSONField(name: "DescriptionEN")
-	late String descriptionEN = '';
-	@JSONField(name: "DescriptionCN")
-	late String descriptionCN = '';
-	@JSONField(name: "DescriptionJP")
-	late String descriptionJP = '';
 	late String stype = '';
-	late bool buffskill = false;
-	late bool teamskill = false;
-	late List<String> tags = [];
-	late List<EffectEntity> effect = [];
 
 	CharacterEidolon();
 

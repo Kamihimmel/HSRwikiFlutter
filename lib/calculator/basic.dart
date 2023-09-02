@@ -266,8 +266,10 @@ class PropSource {
         return PropSourceDisplay('relic'.tr(), Colors.teal);
       case relicSub:
         return PropSourceDisplay('relic'.tr(), Colors.teal);
+      case otherSkill:
+        return PropSourceDisplay(effect.getSkillName('lang'.tr()), Colors.cyan);
     }
-    return PropSourceDisplay(id.tr(), Colors.grey);
+    return PropSourceDisplay(id, Colors.grey);
   }
 
   @override

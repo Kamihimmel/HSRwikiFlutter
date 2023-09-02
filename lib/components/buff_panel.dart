@@ -2,17 +2,19 @@ import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:hsrwikiproject/calculator/basic.dart';
-import 'package:hsrwikiproject/calculator/effect_entity.dart';
-import 'package:hsrwikiproject/characters/character_entity.dart';
 import 'package:provider/provider.dart';
-import 'package:transparent_image/transparent_image.dart';
 
+import '../calculator/basic.dart';
 import '../calculator/effect.dart';
+import '../calculator/effect_entity.dart';
+import '../calculator/effect_manager.dart';
 import '../characters/character.dart';
+import '../characters/character_entity.dart';
 import '../characters/character_manager.dart';
+import '../lightcones/lightcone.dart';
+import '../lightcones/lightcone_entity.dart';
+import '../lightcones/lightcone_manager.dart';
 import '../utils/helper.dart';
-import '../utils/logging.dart';
 import 'global_state.dart';
 
 /// buff面板
@@ -37,6 +39,7 @@ class BuffPanelState extends State<BuffPanel> {
         child: Consumer<GlobalState>(
           builder: (context, model, child) {
             final Character _cData = CharacterManager.getCharacter(_gs.stats.id);
+            final Lightcone _lData = LightconeManager.getLightcone(_gs.stats.lightconeId);
             return Padding(
               padding: const EdgeInsets.all(10.0),
               child: Container(
@@ -60,37 +63,346 @@ class BuffPanelState extends State<BuffPanel> {
                           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 10),
-                        Wrap(
-                          spacing: 10,
-                          runSpacing: 10,
-                          children: _cData.entity.skilldata.expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, skill.id))
-                              .where((e) => e.validSelfBuffEffect(null)).map((e) => [skill, e])).map((pair) {
-                            CharacterSkilldata skillData = pair[0] as CharacterSkilldata;
-                            Effect effect = pair[1] as Effect;
-                            EffectEntity ee = effect.entity;
-                            String effectKey = _cData.getEffectKey(skillData.id, ee.iid);
-                            String propText = FightProp.fromEffectKey(ee.addtarget).desc.tr();
-                            double multiplierValue = effect.getEffectMultiplierValue(skillData, _gs.stats.skillLevels[skillData.id]);
-                            String text = "${_cData.getSkillNameById(skillData.id, getLanguageCode(context))} $propText ${multiplierValue.toStringAsFixed(1)}%";
-                            return FilterChip(
-                              label: Tooltip(
-                                message: text,
-                                child: Text(text),
-                                preferBelow: false,
-                              ),
-                              selected: !_gs.stats.selfSkillEffect.containsKey(effectKey) || _gs.stats.selfSkillEffect[effectKey]!.on,
-                              onSelected: (bool value) {
-                                if (_gs.stats.selfSkillEffect.containsKey(effectKey)) {
-                                  _gs.stats.selfSkillEffect[effectKey]!.on = value;
-                                } else {
-                                  EffectConfig ec = EffectConfig();
-                                  ec.on = value;
-                                  _gs.stats.selfSkillEffect[effectKey] = ec;
-                                }
-                                _gs.changeStats();
+                        InkWell(
+                          borderRadius: BorderRadius.circular(15),
+                          onTap: () {
+                            showModalBottomSheet<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return ChangeNotifierProvider.value(
+                                    value: _gs,
+                                    child: Consumer<GlobalState>(builder: (context, model, child) {
+                                      return SizedBox(
+                                        child: Center(
+                                          child: Column(
+                                            children: [
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              Expanded(
+                                                child: SingleChildScrollView(
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Wrap(
+                                                        spacing: 10,
+                                                        runSpacing: 10,
+                                                        children: _cData.entity.skilldata.expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, skill.id))
+                                                            .where((e) => e.validSelfBuffEffect(null)).map((e) => [skill, e])).map((pair) {
+                                                          CharacterSkilldata skillData = pair[0] as CharacterSkilldata;
+                                                          Effect effect = pair[1] as Effect;
+                                                          EffectEntity ee = effect.entity;
+                                                          String effectKey = effect.getKey();
+                                                          String propText = FightProp.fromEffectKey(ee.addtarget).desc.tr();
+                                                          double multiplierValue = effect.getEffectMultiplierValue(skillData, _gs.stats.skillLevels[skillData.id]);
+                                                          String text = "${_cData.getSkillNameById(skillData.id, getLanguageCode(context))} $propText ${multiplierValue.toStringAsFixed(1)}%";
+                                                          return FilterChip(
+                                                            label: Tooltip(
+                                                              message: text,
+                                                              child: Text(text),
+                                                              preferBelow: false,
+                                                            ),
+                                                            selected: !_gs.stats.selfSkillEffect.containsKey(effectKey) || _gs.stats.selfSkillEffect[effectKey]!.on,
+                                                            onSelected: (bool value) {
+                                                              if (_gs.stats.selfSkillEffect.containsKey(effectKey)) {
+                                                                _gs.stats.selfSkillEffect[effectKey]!.on = value;
+                                                              } else {
+                                                                EffectConfig ec = EffectConfig();
+                                                                ec.on = value;
+                                                                _gs.stats.selfSkillEffect[effectKey] = ec;
+                                                              }
+                                                              _gs.changeStats();
+                                                            },
+                                                          );
+                                                        }).toList(),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }));
                               },
                             );
-                          }).toList(),
+                          },
+                          child: Text("Character Skill Buff"),
+                        ),
+                        SizedBox(height: 30),
+                        InkWell(
+                          borderRadius: BorderRadius.circular(15),
+                          onTap: () {
+                            showModalBottomSheet<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return ChangeNotifierProvider.value(
+                                    value: _gs,
+                                    child: Consumer<GlobalState>(builder: (context, model, child) {
+                                      return SizedBox(
+                                        child: Center(
+                                          child: Column(
+                                            children: [
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              Expanded(
+                                                child: SingleChildScrollView(
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Wrap(
+                                                        spacing: 10,
+                                                        runSpacing: 10,
+                                                        children: _cData.entity.tracedata.expand((trace) => trace.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, trace.id))
+                                                            .where((e) => !trace.tiny && e.validSelfBuffEffect(null)).map((e) => [trace, e])).map((pair) {
+                                                          CharacterTracedata traceData = pair[0] as CharacterTracedata;
+                                                          Effect effect = pair[1] as Effect;
+                                                          EffectEntity ee = effect.entity;
+                                                          String effectKey = effect.getKey();
+                                                          String propText = FightProp.fromEffectKey(ee.addtarget).desc.tr();
+                                                          double multiplierValue = effect.getEffectMultiplierValue(null, null);
+                                                          String text = "${_cData.getTraceNameById(traceData.id, getLanguageCode(context))} $propText ${multiplierValue.toStringAsFixed(1)}%";
+                                                          return FilterChip(
+                                                            label: Tooltip(
+                                                              message: text,
+                                                              child: Text(text),
+                                                              preferBelow: false,
+                                                            ),
+                                                            selected: !_gs.stats.selfTraceEffect.containsKey(effectKey) || _gs.stats.selfTraceEffect[effectKey]!.on,
+                                                            onSelected: (bool value) {
+                                                              if (_gs.stats.selfTraceEffect.containsKey(effectKey)) {
+                                                                _gs.stats.selfTraceEffect[effectKey]!.on = value;
+                                                              } else {
+                                                                EffectConfig ec = EffectConfig();
+                                                                ec.on = value;
+                                                                _gs.stats.selfTraceEffect[effectKey] = ec;
+                                                              }
+                                                              _gs.changeStats();
+                                                            },
+                                                          );
+                                                        }).toList(),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }));
+                              },
+                            );
+                          },
+                          child: Text("Character Trace Buff"),
+                        ),
+                        SizedBox(height: 30),
+                        InkWell(
+                          borderRadius: BorderRadius.circular(15),
+                          onTap: () {
+                            showModalBottomSheet<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return ChangeNotifierProvider.value(
+                                    value: _gs,
+                                    child: Consumer<GlobalState>(builder: (context, model, child) {
+                                      return SizedBox(
+                                        child: Center(
+                                          child: Column(
+                                            children: [
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              Expanded(
+                                                child: SingleChildScrollView(
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Wrap(
+                                                        spacing: 10,
+                                                        runSpacing: 10,
+                                                        children: _cData.entity.eidolon.expand((eidolon) => eidolon.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, eidolon.eidolonnum.toString()))
+                                                            .where((e) => (_gs.stats.eidolons[eidolon.eidolonnum.toString().toString()] ?? 0) > 0 && e.validSelfBuffEffect(null)).map((e) => [eidolon, e])).map((pair) {
+                                                          CharacterEidolon eidolon = pair[0] as CharacterEidolon;
+                                                          Effect effect = pair[1] as Effect;
+                                                          EffectEntity ee = effect.entity;
+                                                          String effectKey = effect.getKey();
+                                                          String propText = FightProp.fromEffectKey(ee.addtarget).desc.tr();
+                                                          double multiplierValue = effect.getEffectMultiplierValue(null, null);
+                                                          String text = "${_cData.getEidolonName(eidolon.eidolonnum - 1, getLanguageCode(context))} $propText ${multiplierValue.toStringAsFixed(1)}%";
+                                                          return FilterChip(
+                                                            label: Tooltip(
+                                                              message: text,
+                                                              child: Text(text),
+                                                              preferBelow: false,
+                                                            ),
+                                                            selected: !_gs.stats.selfEidolonEffect.containsKey(effectKey) || _gs.stats.selfEidolonEffect[effectKey]!.on,
+                                                            onSelected: (bool value) {
+                                                              if (_gs.stats.selfEidolonEffect.containsKey(effectKey)) {
+                                                                _gs.stats.selfEidolonEffect[effectKey]!.on = value;
+                                                              } else {
+                                                                EffectConfig ec = EffectConfig();
+                                                                ec.on = value;
+                                                                _gs.stats.selfEidolonEffect[effectKey] = ec;
+                                                              }
+                                                              _gs.changeStats();
+                                                            },
+                                                          );
+                                                        }).toList(),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }));
+                              },
+                            );
+                          },
+                          child: Text("Character Eidolon Buff"),
+                        ),
+                        SizedBox(height: 30),
+                        InkWell(
+                          borderRadius: BorderRadius.circular(15),
+                          onTap: () {
+                            showModalBottomSheet<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return ChangeNotifierProvider.value(
+                                    value: _gs,
+                                    child: Consumer<GlobalState>(builder: (context, model, child) {
+                                      return SizedBox(
+                                        child: Center(
+                                          child: Column(
+                                            children: [
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              Expanded(
+                                                child: SingleChildScrollView(
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Wrap(
+                                                        spacing: 10,
+                                                        runSpacing: 10,
+                                                        children: _lData.entity.skilldata.expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _lData.entity.id, ''))
+                                                            .where((e) => e.validSelfBuffEffect(null)).map((e) => [skill, e])).map((pair) {
+                                                          LightconeSkilldata skillData = pair[0] as LightconeSkilldata;
+                                                          Effect effect = pair[1] as Effect;
+                                                          EffectEntity ee = effect.entity;
+                                                          String effectKey = effect.getKey();
+                                                          String propText = FightProp.fromEffectKey(ee.addtarget).desc.tr();
+                                                          double multiplierValue = effect.getEffectMultiplierValue(skillData, _gs.stats.lightconeRank);
+                                                          String text = "${_lData.getSkillName(0, getLanguageCode(context))} $propText ${multiplierValue.toStringAsFixed(1)}%";
+                                                          return FilterChip(
+                                                            label: Tooltip(
+                                                              message: text,
+                                                              child: Text(text),
+                                                              preferBelow: false,
+                                                            ),
+                                                            selected: !_gs.stats.lightconeEffect.containsKey(effectKey) || _gs.stats.lightconeEffect[effectKey]!.on,
+                                                            onSelected: (bool value) {
+                                                              if (_gs.stats.lightconeEffect.containsKey(effectKey)) {
+                                                                _gs.stats.lightconeEffect[effectKey]!.on = value;
+                                                              } else {
+                                                                EffectConfig ec = EffectConfig();
+                                                                ec.on = value;
+                                                                _gs.stats.lightconeEffect[effectKey] = ec;
+                                                              }
+                                                              _gs.changeStats();
+                                                            },
+                                                          );
+                                                        }).toList(),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }));
+                              },
+                            );
+                          },
+                          child: Text("Lightcone Skill Buff"),
+                        ),
+                        SizedBox(height: 30),
+                        InkWell(
+                          borderRadius: BorderRadius.circular(15),
+                          onTap: () {
+                            showModalBottomSheet<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return ChangeNotifierProvider.value(
+                                    value: _gs,
+                                    child: Consumer<GlobalState>(builder: (context, model, child) {
+                                      return SizedBox(
+                                        child: Center(
+                                          child: Column(
+                                            children: [
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              Expanded(
+                                                child: SingleChildScrollView(
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Wrap(
+                                                        spacing: 10,
+                                                        runSpacing: 10,
+                                                        children: EffectManager.getEffects().values.where((e) => e.validAllyBuffEffect(null)).map((effect) {
+                                                          EffectEntity ee = effect.entity;
+                                                          String effectKey = effect.getKey();
+                                                          String propText = FightProp.fromEffectKey(ee.addtarget).desc.tr();
+                                                          double multiplierValue = effect.getEffectMultiplierValue(effect.skillData, effect.skillData.maxlevel);
+                                                          String text = "${effect.getSkillName(getLanguageCode(context))} $propText ${multiplierValue.toStringAsFixed(1)}%";
+                                                          return FilterChip(
+                                                            label: Tooltip(
+                                                              message: text,
+                                                              child: Text(text),
+                                                              preferBelow: false,
+                                                            ),
+                                                            selected: _gs.stats.otherEffect.containsKey(effectKey) && _gs.stats.otherEffect[effectKey]!.on,
+                                                            onSelected: (bool value) {
+                                                              if (_gs.stats.otherEffect.containsKey(effectKey)) {
+                                                                _gs.stats.otherEffect[effectKey]!.on = value;
+                                                              } else {
+                                                                EffectConfig ec = EffectConfig();
+                                                                ec.on = value;
+                                                                _gs.stats.otherEffect[effectKey] = ec;
+                                                              }
+                                                              _gs.changeStats();
+                                                            },
+                                                          );
+                                                        }).toList(),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }));
+                              },
+                            );
+                          },
+                          child: Text("Other Buff"),
                         ),
                       ]
                     ),

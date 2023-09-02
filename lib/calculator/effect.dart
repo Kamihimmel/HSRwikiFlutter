@@ -2,6 +2,7 @@
 import '../characters/character_entity.dart';
 import 'basic.dart';
 import 'effect_entity.dart';
+import 'skill_data.dart';
 
 class Effect {
   /// 角色id、光锥id、遗器id
@@ -11,9 +12,11 @@ class Effect {
   /// effect.iid
   String effectId = '';
   late EffectEntity entity;
+  late CharacterSkilldata skillData;
 
   Effect.empty() {
     this.entity = EffectEntity();
+    this.skillData = CharacterSkilldata();
   }
 
   Effect.fromEntity(EffectEntity entity, String majorId, String minorId) {
@@ -43,6 +46,22 @@ class Effect {
     return false;
   }
 
+  bool validAllyBuffEffect(FightProp? prop) {
+    if (this.entity.multiplier <= 0 || this.entity.iid == '') {
+      return false;
+    }
+    FightProp fp = FightProp.fromEffectKey(this.entity.addtarget);
+    if (fp == FightProp.unknown || prop != null && fp != prop) {
+      return false;
+    }
+    if (this.entity.type == 'buff') {
+      return this.entity.tag.contains('allally') || this.entity.tag.contains('singleally');
+    } else if (this.entity.type == 'debuff') {
+      return this.entity.tag.contains('allenemy') || this.entity.tag.contains('singleenemy');
+    }
+    return false;
+  }
+
   bool validDamageHealEffect(String type) {
     if (this.entity.multiplier <= 0 || this.entity.iid == '') {
       return false;
@@ -50,7 +69,7 @@ class Effect {
     return this.entity.type == type;
   }
 
-  double getEffectMultiplierValue(CharacterSkilldata? skillData, int? skillLevel) {
+  double getEffectMultiplierValue(SkillData? skillData, int? skillLevel) {
     double multiplierValue = this.entity.multiplier;
     if (skillData != null && skillLevel != null && multiplierValue <= skillData.levelmultiplier.length && multiplierValue == multiplierValue.toInt()) {
       Map<String, dynamic> levelMultiplier = skillData.levelmultiplier[multiplierValue.toInt() - 1];
@@ -62,6 +81,20 @@ class Effect {
     }
     multiplierValue *= this.entity.maxStack;
     return multiplierValue;
+  }
+
+  String getSkillName(String lang) {
+    switch(lang) {
+      case 'en':
+        return skillData.eNname;
+      case 'zh':
+        return skillData.cNname;
+      case 'cn':
+        return skillData.cNname;
+      case 'ja':
+        return skillData.jAname;
+    }
+    return '';
   }
 }
 

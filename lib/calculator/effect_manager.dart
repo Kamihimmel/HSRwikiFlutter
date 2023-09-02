@@ -30,6 +30,7 @@ class EffectManager {
         for (var i = 0; i < skillData.effect.length; i++) {
           EffectEntity effectEntity = skillData.effect[i];
           Effect effect = Effect.fromEntity(effectEntity, s['characterid'], skillData.id);
+          effect.skillData = skillData;
           _effects[effect.getKey()] = effect;
         }
       }
