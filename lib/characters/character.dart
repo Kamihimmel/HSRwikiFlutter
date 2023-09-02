@@ -30,11 +30,6 @@ class Character {
     return character;
   }
 
-  @override
-  String toString() {
-    return jsonEncode(this);
-  }
-
   double getBaseHp(int level, {promotion = false}) {
     return entity.leveldata.firstWhere((d) => d.level == "$level${promotion ? '+' : ''}", orElse: () => _emptyLeveldata).hp;
   }
@@ -181,5 +176,9 @@ class Character {
 
   String getImageUrl(GlobalState _gs) {
     return _gs.male && this.entity.imageurlalter != '' ? this.entity.imageurlalter : this.entity.imageurl;
+  }
+
+  String getEffectKey(String skillId, String iid) {
+    return "${entity.id}-$skillId-$iid";
   }
 }

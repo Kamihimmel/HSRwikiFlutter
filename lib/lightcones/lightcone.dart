@@ -25,11 +25,6 @@ class Lightcone {
     return lightcone;
   }
 
-  @override
-  String toString() {
-    return jsonEncode(this);
-  }
-
   double getBaseHp(int level, {promotion = false}) {
     return entity.leveldata.firstWhere((d) => d.level == "$level${promotion ? '+' : ''}", orElse: () => _emptyLeveldata).hp;
   }
@@ -82,5 +77,9 @@ class Lightcone {
         return entity.skilldata[index].descriptionJP;
     }
     return '';
+  }
+
+  String getEffectKey(String iid) {
+    return "${entity.id}-$iid";
   }
 }

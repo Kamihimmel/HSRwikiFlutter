@@ -9,6 +9,7 @@ import '../calculator/basic.dart';
 import '../characters/character.dart';
 import '../characters/character_manager.dart';
 import '../utils/helper.dart';
+import 'buff_panel.dart';
 import 'enemy_panel.dart';
 import 'global_state.dart';
 import '../platformad_stub.dart' if (dart.library.io) '../platformad_stub.dart' if (dart.library.html) '../platformad.dart';
@@ -416,6 +417,7 @@ class BasicPanelState extends State<BasicPanel> {
                     ),
                   if (_gs.enemyLoaded)
                     EnemyPanel(),
+                  BuffPanel(),
                   adsenseAdsView(columnwidth - 20),
                   if (widget.isBannerAdReady)
                     Container(

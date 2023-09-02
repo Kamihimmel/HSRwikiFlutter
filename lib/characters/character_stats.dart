@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 
 import '../calculator/basic.dart';
+import '../calculator/effect.dart';
 import '../lightcones/lightcone.dart';
 import '../lightcones/lightcone_manager.dart';
 import '../calculator/effect_entity.dart';
@@ -22,7 +23,11 @@ class CharacterStats {
   String lightconeLevel = '1';
   int lightconeRank = 1;
   Map<RelicPart, RelicStats> relics = {};
-  List<EffectEntity> effects = [];
+  Map<String, EffectConfig> selfSkillEffect = {};
+  Map<String, EffectConfig> selfTraceEffect = {};
+  Map<String, EffectConfig> selfEidolonEffect = {};
+  Map<String, EffectConfig> lightconeEffect = {};
+  Map<String, EffectConfig> otherEffect = {};
 
   /// import stats
   Map<FightProp, double> importStats = {};
@@ -218,12 +223,11 @@ class CharacterStats {
       if (t.effect.isEmpty) {
         return;
       }
-      List<EffectEntity> effects = t.effect.where((e) => _validEffect(e, prop)).toList();
-      for (var i = 0; i < effects.length; i++) {
-        EffectEntity e = effects[i];
-        double v = t.levelmultiplier[e.multiplier.toInt() - 1][lightconeRank.toString()] / 100;
-        result[PropSource.lightconeEffect(lightconeId, name: "${t.id}-$i")] = base * e.maxStack * v;
-      }
+      t.effect.map((e) => Effect.fromEntity(e, lightconeId, '')).where((e) => e.validSelfBuffEffect(prop)).take(1).forEach((effect) {
+        EffectEntity ee = effect.entity;
+        double v = t.levelmultiplier[ee.multiplier.toInt() - 1][lightconeRank.toString()] * 1.0;
+        result[PropSource.lightconeEffect(lightconeId, effect)] = base * ee.maxStack * v / 100;
+      });
     });
   }
 
@@ -269,11 +273,10 @@ class CharacterStats {
         Relic relic = RelicManager.getRelic(rs);
         if (relic.entity.skilldata.length > skillIndex) {
           // TODO 非固定基础值问题，如命中2件套攻击力效果
-          List<EffectEntity> effects = relic.entity.skilldata[skillIndex].effect.where((e) => _validEffect(e, prop)).toList();
-          for (var i = 0; i < effects.length; i++) {
-            EffectEntity e = effects[i];
-            result[PropSource.relicSetEffect(rs, name: i.toString(), desc: setNum)] = base * e.maxStack * e.multiplier / 100;
-          }
+          relic.entity.skilldata[skillIndex].effect.map((e) => Effect.fromEntity(e, rs, setNum)).where((e) => e.validSelfBuffEffect(prop)).forEach((effect) {
+            EffectEntity ee = effect.entity;
+            result[PropSource.relicSetEffect(rs, effect)] = base * ee.maxStack * ee.multiplier / 100;
+          });
         }
       }
     }
@@ -284,22 +287,23 @@ class CharacterStats {
       if (s.effect.isEmpty || s.maxlevel > 0 && (skillLevels[s.id] ?? 0) == 0) {
         return;
       }
-      List<EffectEntity> effects = s.effect.where((e) => _validEffect(e, prop)).toList();
-      for (var i = 0; i < effects.length; i++) {
-        EffectEntity e = effects[i];
-        double v = e.multiplier;
-        if (e.multiplier <= s.levelmultiplier.length && e.multiplier == e.multiplier.toInt()) {
-          Map<String, dynamic> levelMultiplier = s.levelmultiplier[e.multiplier.toInt() - 1];
-          if (levelMultiplier.containsKey('default')) {
-            v = levelMultiplier['default'] / 100;
-          } else {
-            v = (levelMultiplier[skillLevels[s.id].toString()] ?? 0) / 100;
-          }
-        } else {
-          v /= 100;
+      s.effect.map((e) => Effect.fromEntity(e, character.entity.id, s.id)).where((e) => e.validSelfBuffEffect(prop)).forEach((effect) {
+        String effectKey = effect.getKey();
+        if (selfSkillEffect.containsKey(effectKey) && !selfSkillEffect[effectKey]!.on) {
+          return;
         }
-        result[PropSource.characterSkill(s.id, name: i.toString(), desc: character.entity.id, self: true)] = base * e.maxStack * v;
-      }
+        EffectEntity ee = effect.entity;
+        double v = ee.multiplier;
+        if (ee.multiplier <= s.levelmultiplier.length && ee.multiplier == ee.multiplier.toInt()) {
+          Map<String, dynamic> levelMultiplier = s.levelmultiplier[ee.multiplier.toInt() - 1];
+          if (levelMultiplier.containsKey('default')) {
+            v = levelMultiplier['default'] * 1.0;
+          } else {
+            v = (levelMultiplier[skillLevels[s.id].toString()] ?? 0) * 1.0;
+          }
+        }
+        result[PropSource.characterSkill(effect.getKey(), effect, self: true)] = base * ee.maxStack * v / 100;
+      });
     });
   }
 
@@ -308,11 +312,14 @@ class CharacterStats {
       if (t.effect.isEmpty || (traceLevels[t.id] ?? 0) == 0) {
         return;
       }
-      List<EffectEntity> effects = t.effect.where((e) => _validEffect(e, prop)).toList();
-      for (var i = 0; i < effects.length; i++) {
-        EffectEntity e = effects[i];
-        result[PropSource.characterTrace(t.id, name: i.toString(), desc: !t.tiny ? character.entity.id : '', self: true)] = base * e.maxStack * e.multiplier / 100;
-      }
+      t.effect.map((e) => Effect.fromEntity(e, character.entity.id, t.id)).where((e) => e.validSelfBuffEffect(prop)).forEach((effect) {
+        String effectKey = effect.getKey();
+        if (selfTraceEffect.containsKey(effectKey) && !selfTraceEffect[effectKey]!.on) {
+          return;
+        }
+        EffectEntity ee = effect.entity;
+        result[PropSource.characterTrace(t.id, effect, name: t.tiny ? 'tiny' : '', self: true)] = base * ee.maxStack * ee.multiplier / 100;
+      });
     });
   }
 
@@ -321,28 +328,15 @@ class CharacterStats {
       if (e.effect.isEmpty || (eidolons[e.eidolonnum.toString()] ?? 0) == 0) {
         return;
       }
-      List<EffectEntity> effects = e.effect.where((ef) => _validEffect(ef, prop)).toList();
-      for (var i = 0; i < effects.length; i++) {
-        EffectEntity ef = effects[i];
-        result[PropSource.characterEidolon(e.id, name: i.toString(), desc: e.eidolonnum.toString(), self: true)] = base * ef.maxStack* ef.multiplier / 100;
-      }
+      e.effect.map((ef) => Effect.fromEntity(ef, character.entity.id, e.eidolonnum.toString())).where((ef) => ef.validSelfBuffEffect(prop)).forEach((effect) {
+        String effectKey = effect.getKey();
+        if (selfEidolonEffect.containsKey(effectKey) && !selfEidolonEffect[effectKey]!.on) {
+          return;
+        }
+        EffectEntity ee = effect.entity;
+        result[PropSource.characterEidolon(e.id, effect, self: true)] = base * ee.maxStack * ee.multiplier / 100;
+      });
     });
-  }
-
-  bool _validEffect(EffectEntity effect, FightProp prop) {
-    if (effect.multiplier <= 0) {
-      return false;
-    }
-    FightProp fp = FightProp.fromEffectKey(effect.addtarget);
-    if (fp != prop) {
-      return false;
-    }
-    if (effect.type == 'buff') {
-      return effect.tag.contains('allally') || effect.tag.contains('self');
-    } else if (effect.type == 'debuff') {
-      return effect.tag.contains('allenemy') || effect.tag.contains('singleenemy');
-    }
-    return false;
   }
 
   CharacterStats.empty();
@@ -386,7 +380,7 @@ class CharacterStats {
       stats.level = r['level'];
       stats.mainAttr = FightProp.fromImportType(r['main_affix']['type']);
       for (var sub in r['sub_affix']) {
-        stats.subAttrValues[FightProp.fromImportType(sub['type'])] = sub['value'];
+        stats.subAttrValues.add(Record.of(FightProp.fromImportType(sub['type']), sub['value']));
       }
       this.relics[part] = stats;
     }
@@ -438,9 +432,9 @@ class CharacterStats {
       rs.rarity = statsMap['rarity'];
       rs.level = statsMap['level'];
       rs.mainAttr = FightProp.fromName(statsMap['main_attr']);
-      Map<String, dynamic> subValueMap = statsMap['sub_attr_values'];
-      for (var sub in subValueMap.entries) {
-        rs.subAttrValues[FightProp.fromName(sub.key)] = sub.value;
+      List<dynamic> subValueMap = statsMap['sub_attr_values'];
+      for (var sub in subValueMap) {
+        rs.subAttrValues.add(Record.of(FightProp.fromName(sub['key']), sub['value']));
       }
       this.relics[rp] = rs;
     }
@@ -469,11 +463,14 @@ class CharacterStats {
       partMap['rarity'] = e.value.rarity;
       partMap['level'] = e.value.level;
       partMap['main_attr'] = e.value.mainAttr.name;
-      Map<String, double> subMap = {};
-      for (var s in e.value.subAttrValues.entries) {
-        subMap[s.key.name] = s.value;
+      List<Map<String, dynamic>> subList = [];
+      for (var s in e.value.subAttrValues) {
+        Map<String, dynamic> subRecordMap = {};
+        subRecordMap['key'] = s.key.name;
+        subRecordMap['value'] = s.value;
+        subList.add(subRecordMap);
       }
-      partMap['sub_attr_values'] = subMap;
+      partMap['sub_attr_values'] = subList;
       relicMap[e.key.name] = partMap;
     }
     jsonMap['relics'] = relicMap;

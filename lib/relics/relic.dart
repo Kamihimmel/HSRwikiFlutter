@@ -22,11 +22,6 @@ class Relic {
     return relic;
   }
 
-  @override
-  String toString() {
-    return jsonEncode(this);
-  }
-
   String getName(String lang) {
     switch (lang) {
       case 'en':
@@ -84,6 +79,10 @@ class Relic {
       case RelicPart.unknown:
         return '';
     }
+  }
+
+  String getEffectKey(String xSet, String iid) {
+    return "${entity.id}-$xSet-$iid";
   }
 }
 
@@ -144,7 +143,7 @@ class RelicStats {
   int rarity = 0;
   int level = 0;
   FightProp mainAttr = FightProp.unknown;
-  Map<FightProp, double> subAttrValues = {};
+  List<Record<FightProp, double>> subAttrValues = [];
 
   RelicStats();
 
@@ -166,6 +165,6 @@ class RelicStats {
   }
 
   double getSubAttrValueByProp(FightProp prop) {
-    return subAttrValues.containsKey(prop) ? subAttrValues[prop]! : 0;
+    return subAttrValues.firstWhere((record) => record.key == prop, orElse: () => Record.of(prop, 0)).value;
   }
 }

@@ -8,6 +8,7 @@ import '../lightcones/lightcone_manager.dart';
 import '../relics/relic.dart';
 import '../relics/relic_manager.dart';
 import '../utils/helper.dart';
+import 'effect.dart';
 
 enum FightProp {
   maxHP(desc: 'HP', icon: 'starrailres/icon/property/IconMaxHP.png', effectKey: ['maxhp']),
@@ -42,9 +43,9 @@ enum FightProp {
   healTakenRatio(desc: 'Incoming Healing Boost', icon: 'starrailres/icon/property/IconHealRatio.png'),
   shieldAddRatio(desc: 'Shield Boost', effectKey: ['shielddmgabsorb']),
 
-  statusProbability(desc: 'Effect Hit Rate', icon: 'starrailres/icon/property/IconStatusProbability.png', effectKey: ['effecthit']),
+  statusProbability(desc: 'effecthit', icon: 'starrailres/icon/property/IconStatusProbability.png', effectKey: ['effecthit']),
   statusProbabilityBase(desc: 'Effect Hit Rate', icon: 'starrailres/icon/property/IconStatusProbability.png'),
-  statusResistance(desc: 'Effect RES', icon: 'starrailres/icon/property/IconStatusResistance.png', effectKey: ['effectres']),
+  statusResistance(desc: 'effectres', icon: 'starrailres/icon/property/IconStatusResistance.png', effectKey: ['effectres']),
   statusResistanceBase(desc: 'Effect RES', icon: 'starrailres/icon/property/IconStatusResistance.png'),
 
   criticalChance(desc: 'critrate', icon: 'starrailres/icon/property/IconCriticalChance.png', effectKey: ['critrate']),
@@ -60,7 +61,7 @@ enum FightProp {
   ultimateAttackCriticalDamage(desc: 'Ultimate Critical Damage', effectKey: ['ultcritdmg']),
   followupAttackCriticalDamage(desc: 'Followup Critical Damage', effectKey: ['followupcritdmg']),
 
-  breakDamageAddedRatio(desc: 'Break Effect', icon: 'starrailres/icon/property/IconBreakUp.png', effectKey: ['breakeffect', 'breakdmg']),
+  breakDamageAddedRatio(desc: 'breakeffect', icon: 'starrailres/icon/property/IconBreakUp.png', effectKey: ['breakeffect', 'breakdmg']),
   breakDamageAddedRatioBase(desc: 'Break Effect', icon: 'starrailres/icon/property/IconBreakUp.png'),
 
   allDamageAddRatio(desc: 'All DMG Boost', effectKey: ['alldmg']),
@@ -86,13 +87,13 @@ enum FightProp {
   imaginaryResistance(desc: 'Imaginary RES Boost', icon: 'starrailres/icon/property/IconImaginaryResistanceDelta.png'),
 
   allResistanceIgnore(desc: 'All RES Ignore', effectKey: ['allres']),
-  physicalResistanceIgnore(desc: 'Physical RES Ignore', effectKey: ['physicalpen']),
-  fireResistanceIgnore(desc: 'Fire RES Ignore', effectKey: ['firepen']),
-  iceResistanceIgnore(desc: 'Ice RES Ignore', effectKey: ['icepen']),
-  lightningResistanceIgnore(desc: 'Lightning RES Ignore', effectKey: ['lightningpen']),
-  windResistanceIgnore(desc: 'Wind RES Ignore', effectKey: ['windpen']),
-  quantumResistanceIgnore(desc: 'Quantum RES Ignore', effectKey: ['quantumpen']),
-  imaginaryResistanceIgnore(desc: 'Imaginary RES Ignore', effectKey: ['imaginarypen']),
+  physicalResistanceIgnore(desc: 'physicalpen', effectKey: ['physicalpen']),
+  fireResistanceIgnore(desc: 'firepen', effectKey: ['firepen']),
+  iceResistanceIgnore(desc: 'icepen', effectKey: ['icepen']),
+  lightningResistanceIgnore(desc: 'lightningpen', effectKey: ['lightningpen']),
+  windResistanceIgnore(desc: 'windpen', effectKey: ['windpen']),
+  quantumResistanceIgnore(desc: 'quantumpen', effectKey: ['quantumpen']),
+  imaginaryResistanceIgnore(desc: 'imaginarypen', effectKey: ['imaginarypen']),
 
   physicalResistanceDelta(desc: 'Physical RES Boost', icon: 'starrailres/icon/property/IconPhysicalResistanceDelta.png'),
   fireResistanceDelta(desc: 'Fire RES Boost', icon: 'starrailres/icon/property/IconFireResistanceDelta.png'),
@@ -188,6 +189,7 @@ class PropSource {
   String id = '';
   String name = '';
   String desc = '';
+  Effect effect = Effect.empty();
   int source = PropSource.unknown;
   bool base = false;
 
@@ -197,18 +199,21 @@ class PropSource {
     this.base = true;
   }
 
-  PropSource.characterSkill(String id, {name = '', desc = '', self = false}) {
+  PropSource.characterSkill(String id, Effect effect, {name = '', desc = '', self = false}) {
     _setBase(id, name, desc);
+    this.effect = effect;
     this.source = self ? PropSource.selfSkill : PropSource.otherSkill;
   }
 
-  PropSource.characterTrace(String id, {name = '', desc = '', self = false}) {
+  PropSource.characterTrace(String id, Effect effect, {name = '', desc = '', self = false}) {
     _setBase(id, name, desc);
+    this.effect = effect;
     this.source = self ? PropSource.selfTrace : PropSource.otherTrace;
   }
 
-  PropSource.characterEidolon(String id, {name = '', desc = '', self = false}) {
+  PropSource.characterEidolon(String id, Effect effect, {name = '', desc = '', self = false}) {
     _setBase(id, name, desc);
+    this.effect = effect;
     this.source = self ? PropSource.selfEidolon : PropSource.otherEidolon;
   }
 
@@ -218,8 +223,9 @@ class PropSource {
     this.base = true;
   }
 
-  PropSource.lightconeEffect(String id, {name = '', desc = ''}) {
+  PropSource.lightconeEffect(String id, Effect effect, {name = '', desc = ''}) {
     _setBase(id, name, desc);
+    this.effect = effect;
     this.source = PropSource.lightconeSkill;
   }
 
@@ -228,8 +234,9 @@ class PropSource {
     this.source = mainAttr ? PropSource.relicMain : PropSource.relicSub;
   }
 
-  PropSource.relicSetEffect(String id, {name = '', desc = ''}) {
+  PropSource.relicSetEffect(String id, Effect effect, {name = '', desc = ''}) {
     _setBase(id, name, desc);
+    this.effect = effect;
     this.source = PropSource.relicSet;
   }
 
@@ -246,15 +253,15 @@ class PropSource {
       case lightconeBasic:
         return PropSourceDisplay('lightcone'.tr(), Colors.blue);
       case lightconeSkill:
-        return PropSourceDisplay(LightconeManager.getLightcone(id).getSkillName(0, 'lang'.tr()), Colors.green);
+        return PropSourceDisplay(LightconeManager.getLightcone(effect.majorId).getSkillName(0, 'lang'.tr()), Colors.green);
       case selfSkill:
-        return PropSourceDisplay(CharacterManager.getCharacter(desc).getSkillNameById(id, 'lang'.tr()), Colors.lime);
+        return PropSourceDisplay(CharacterManager.getCharacter(effect.majorId).getSkillNameById(effect.minorId, 'lang'.tr()), Colors.lime);
       case selfTrace:
-        return PropSourceDisplay(desc == '' ? 'trace'.tr() : CharacterManager.getCharacter(desc).getTraceNameById(id, 'lang'.tr()), Colors.amber);
+        return PropSourceDisplay(name == 'tiny' ? 'trace'.tr() : CharacterManager.getCharacter(effect.majorId).getTraceNameById(effect.minorId, 'lang'.tr()), Colors.amber);
       case selfEidolon:
-        return PropSourceDisplay('eidolon'.tr() + desc, Colors.indigo);
+        return PropSourceDisplay('eidolon'.tr() + effect.minorId, Colors.indigo);
       case relicSet:
-        return PropSourceDisplay(RelicManager.getRelic(id).getName('lang'.tr()) + desc, Colors.purple);
+        return PropSourceDisplay(RelicManager.getRelic(effect.majorId).getName('lang'.tr()) + effect.minorId, Colors.purple);
       case relicMain:
         return PropSourceDisplay('relic'.tr(), Colors.teal);
       case relicSub:
@@ -270,7 +277,7 @@ class PropSource {
       return runtimeType == other.runtimeType &&
           id == other.id &&
           source == other.source &&
-          name == other.name;
+          effect.getKey() == other.effect.getKey();
     } else {
       return false;
     }
@@ -280,7 +287,7 @@ class PropSource {
     var result = 17;
     result = 37 * result + id.hashCode;
     result = 37 * result + source.hashCode;
-    result = 37 * result + name.hashCode;
+    result = 37 * result + effect.getKey().hashCode;
     return result;
   }
 }

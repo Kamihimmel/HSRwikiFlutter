@@ -3,6 +3,10 @@ import 'package:hsrwikiproject/calculator/effect_entity.dart';
 
 EffectEntity $EffectEntityFromJson(Map<String, dynamic> json) {
 	final EffectEntity effectEntity = EffectEntity();
+	final String? iid = jsonConvert.convert<String>(json['iid']);
+	if (iid != null) {
+		effectEntity.iid = iid;
+	}
 	final String? type = jsonConvert.convert<String>(json['type']);
 	if (type != null) {
 		effectEntity.type = type;
@@ -52,6 +56,7 @@ EffectEntity $EffectEntityFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> $EffectEntityToJson(EffectEntity entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
+	data['iid'] = entity.iid;
 	data['type'] = entity.type;
 	data['addtarget'] = entity.addtarget;
 	data['referencetarget'] = entity.referencetarget;

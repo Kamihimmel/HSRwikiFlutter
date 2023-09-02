@@ -8,6 +8,7 @@ import 'package:hsrwikiproject/calculator/effect_entity.dart';
 import 'package:provider/provider.dart';
 
 import '../calculator/calculator.dart';
+import '../calculator/effect.dart';
 import '../characters/character.dart';
 import '../characters/character_entity.dart';
 import '../characters/character_manager.dart';
@@ -157,13 +158,13 @@ class DamagePanelState extends State<DamagePanel> {
   }
 
   /// 将group相同的effect放到一组，展示为一个伤害/治疗/护盾
-  Map<String, List<EffectEntity>> _groupEffect(List<EffectEntity> effects, String type) {
-    Map<String, List<EffectEntity>> effectGroup = {};
-    effects.where((e) => e.type == type).forEach((e) {
-      if (e.group != '') {
-        List<EffectEntity> list = effectGroup[e.group] ?? [];
+  Map<String, List<Effect>> _groupEffect(List<Effect> effects, String type) {
+    Map<String, List<Effect>> effectGroup = {};
+    effects.where((e) => e.entity.type == type).forEach((e) {
+      if (e.entity.group != '') {
+        List<Effect> list = effectGroup[e.entity.group] ?? [];
         list.add(e);
-        effectGroup[e.group] = list;
+        effectGroup[e.entity.group] = list;
       } else {
         // key不重复就行，随便构造的
         effectGroup["${DateTime.now().millisecondsSinceEpoch}-${e.hashCode}"] = [e];
@@ -172,18 +173,18 @@ class DamagePanelState extends State<DamagePanel> {
     return effectGroup;
   }
 
-  void _appendDamageAndTitle(List<EffectEntity> effects, List<String> multiplierTitle, String type, List<DamageResult> drList, String stype, Character character, CharacterSkilldata? skilldata, int? skillLevel) {
+  void _appendDamageAndTitle(List<Effect> effects, List<String> multiplierTitle, String type, List<DamageResult> drList, String stype, Character character, CharacterSkilldata? skilldata, int? skillLevel) {
     effects.forEach((e) {
-      double multiplierValue = getEffectMultiplierValue(e, skilldata, skillLevel);
-      if (e.multipliertarget == '') {
+      double multiplierValue = e.getEffectMultiplierValue(skilldata, skillLevel);
+      if (e.entity.multipliertarget == '') {
         multiplierTitle.add(multiplierValue.toString());
       } else {
         multiplierTitle.add("${multiplierValue.toStringAsFixed(1)}%");
       }
-      FightProp multiplierProp = FightProp.fromEffectMultiplier(e.multipliertarget);
+      FightProp multiplierProp = FightProp.fromEffectMultiplier(e.entity.multipliertarget);
       if (type == 'dmg') {
         drList.add(calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, multiplierProp,
-            stype, DamageType.fromEffectTags(e.tag), character.elementType));
+            stype, DamageType.fromEffectTags(e.entity.tag), character.elementType));
       } else if (type == 'heal') {
         drList.add(calculateHeal(_gs.stats, multiplierValue, multiplierProp));
       } else if (type == 'shield') {
@@ -200,14 +201,14 @@ class DamagePanelState extends State<DamagePanel> {
       int skillLevel = _gs.stats.skillLevels[skill.id] ?? 1;
       String skillName = character.getSkillNameById(skill.id, getLanguageCode(context));
       String title = "${skillName} (Lv${skillLevel})";
-      Map<String, List<EffectEntity>> skillEffectGroup = _groupEffect(skillData.effect, type);
+      Map<String, List<Effect>> skillEffectGroup = _groupEffect(skillData.effect.map((e) => Effect.fromEntity(e, character.entity.id, skillData.id)).toList(), type);
       return ExpansionTile(
         tilePadding: EdgeInsets.only(left: 5, right: 5),
         childrenPadding: EdgeInsets.all(5),
         initiallyExpanded: true,
         title: _buildDamageBar(title, character.elementType, null),
         children: skillEffectGroup.values.map((effects) {
-          EffectEntity effect = effects.first;
+          EffectEntity effect = effects.first.entity;
           String title = "${effect.tag.map((e) => e.tr()).join(" | ")}";
           List<DamageResult> drList = [];
           List<String> multiplierTitle = [];
@@ -222,14 +223,14 @@ class DamagePanelState extends State<DamagePanel> {
       CharacterTracedata traceData = character.entity.tracedata.firstWhere((s) => s.id == trace.id, orElse: () => CharacterTracedata());
       String traceName = character.getTraceNameById(trace.id, getLanguageCode(context));
       String title = "${traceName}";
-      Map<String, List<EffectEntity>> traceEffectGroup = _groupEffect(traceData.effect, type);
+      Map<String, List<Effect>> traceEffectGroup = _groupEffect(traceData.effect.map((e) => Effect.fromEntity(e, character.entity.id, traceData.id)).toList(), type);
       return ExpansionTile(
         tilePadding: EdgeInsets.only(left: 5, right: 5),
         childrenPadding: EdgeInsets.all(5),
         initiallyExpanded: true,
         title: _buildDamageBar(title, character.elementType, null),
         children: traceEffectGroup.values.map((effects) {
-          EffectEntity effect = effects.first;
+          EffectEntity effect = effects.first.entity;
           String title = "${effect.tag.map((e) => e.tr()).join(" | ")}";
           List<DamageResult> drList = [];
           List<String> multiplierTitle = [];

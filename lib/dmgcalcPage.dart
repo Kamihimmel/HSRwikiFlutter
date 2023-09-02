@@ -12,6 +12,7 @@ import 'package:transparent_image/transparent_image.dart';
 import 'ad_helper.dart';
 import 'calculator/basic.dart';
 import 'calculator/calculator.dart';
+import 'calculator/effect.dart';
 import 'calculator/player_info.dart';
 import 'characters/character.dart';
 import 'characters/character_manager.dart';
@@ -255,7 +256,7 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
                   onPressed: () {
                     _cData.entity.skilldata.forEach((skillData) {
                       skillData.effect.forEach((e) {
-                        double multiplierValue = getEffectMultiplierValue(e, skillData, _gs.stats.skillLevels[skillData.id]!);
+                        double multiplierValue = Effect.fromEntity(e, _cData.entity.id, skillData.id).getEffectMultiplierValue(skillData, _gs.stats.skillLevels[skillData.id]!);
                         if (e.type == 'dmg') {
                           calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget),
                               skillData.stype, DamageType.fromEffectTags(e.tag), _cData.elementType, debug: true);
@@ -268,7 +269,7 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
                     });
                     _cData.entity.tracedata.forEach((traceData) {
                       traceData.effect.forEach((e) {
-                        double multiplierValue = getEffectMultiplierValue(e, null, null);
+                        double multiplierValue = Effect.fromEntity(e, _cData.entity.id, traceData.id).getEffectMultiplierValue(null, null);
                         if (e.type == 'dmg') {
                           calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget),
                               traceData.stype, DamageType.fromEffectTags(e.tag), _cData.elementType, debug: true);
@@ -293,8 +294,8 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
                       Stack(
                         children: [
                           Container(
-                            height: _loading ? screenHeight : null,
-                            child: _loading
+                            height: _loading || !_gs.loaded() ? screenHeight : null,
+                            child: _loading || !_gs.loaded()
                                 ? Center(
                                     child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
                                   )

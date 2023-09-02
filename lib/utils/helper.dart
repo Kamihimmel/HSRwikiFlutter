@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 
 import '../calculator/basic.dart';
 import '../calculator/effect_entity.dart';
+import '../calculator/effect_manager.dart';
 import '../characters/character_entity.dart';
 import '../characters/character_manager.dart';
 import '../components/global_state.dart';
@@ -31,6 +32,8 @@ Future<void> initData() async {
   _gs.relicLoaded = true;
   await EnemyManager.initAllEnemies();
   _gs.enemyLoaded = true;
+  await EffectManager.initAllEffects();
+  _gs.effectLoaded = true;
 }
 
 getImageComponent(String path,
@@ -215,20 +218,6 @@ enum PathType {
   }
 }
 
-double getEffectMultiplierValue(EffectEntity e, CharacterSkilldata? skillData, int? skillLevel) {
-  double multiplierValue = e.multiplier;
-  if (skillData != null && skillLevel != null && e.multiplier <= skillData.levelmultiplier.length && e.multiplier == e.multiplier.toInt()) {
-    Map<String, dynamic> levelMultiplier = skillData.levelmultiplier[e.multiplier.toInt() - 1];
-    if (levelMultiplier.containsKey('default')) {
-      multiplierValue = double.tryParse(levelMultiplier['default'].toString()) ?? 0;
-    } else {
-      multiplierValue = double.tryParse(levelMultiplier[skillLevel.toString()].toString()) ?? 0;
-    }
-  }
-  multiplierValue *= e.maxStack;
-  return multiplierValue;
-}
-
 const relicMainAttrLevelCurve = {
   FightProp.hPDelta: {
     2: {"base": 45.1584, "add": 15.80544},
@@ -309,3 +298,32 @@ const relicMainAttrLevelCurve = {
     5: {"base": 0.10368, "add": 0.03629}
   },
 };
+
+class Record<K, V> {
+  late K key;
+  late V value;
+
+  Record.of(K key, V value) {
+    this.key = key;
+    this.value = value;
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is Record) {
+      return runtimeType == other.runtimeType &&
+          key == other.key &&
+          value == other.value;
+    } else {
+      return false;
+    }
+  }
+  @override
+  int get hashCode {
+    var result = 17;
+    result = 37 * result + key.hashCode;
+    result = 37 * result + value.hashCode;
+    return result;
+  }
+}

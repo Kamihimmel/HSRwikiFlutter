@@ -763,16 +763,16 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
                                                                   child: Column(
                                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                                     crossAxisAlignment: CrossAxisAlignment.start,
-                                                                    children: rs.subAttrValues.entries.take(2).map((sub) {
-                                                                      String subText = sub.key.getPropText(sub.value);
+                                                                    children: rs.subAttrValues.take(2).map((record) {
+                                                                      String subText = record.key.getPropText(record.value);
                                                                       return Row(
                                                                         children: [
                                                                           Padding(
                                                                             padding: const EdgeInsets.all(1.0),
                                                                             child: getImageComponent(
-                                                                              sub.key.icon,
-                                                                              width: 28,
-                                                                              placeholder: kTransparentImage),
+                                                                                record.key.icon,
+                                                                                width: 28,
+                                                                                placeholder: kTransparentImage),
                                                                           ),
                                                                           Text(
                                                                             subText,
@@ -794,16 +794,16 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
                                                                   child: Column(
                                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                                     crossAxisAlignment: CrossAxisAlignment.start,
-                                                                    children: rs.subAttrValues.entries.skip(2).take(2).map((sub) {
-                                                                      String subText = sub.key.getPropText(sub.value);
+                                                                    children: rs.subAttrValues.skip(2).take(2).map((record) {
+                                                                      String subText = record.key.getPropText(record.value);
                                                                       return Row(
                                                                         children: [
                                                                           Padding(
                                                                             padding: const EdgeInsets.all(1.0),
                                                                             child: getImageComponent(
-                                                                              sub.key.icon,
-                                                                              width: 28,
-                                                                              placeholder: kTransparentImage),
+                                                                                record.key.icon,
+                                                                                width: 28,
+                                                                                placeholder: kTransparentImage),
                                                                           ),
                                                                           Text(
                                                                             subText,

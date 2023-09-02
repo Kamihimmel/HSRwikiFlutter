@@ -4,6 +4,7 @@ import 'dart:convert';
 
 @JsonSerializable()
 class EffectEntity {
+	late String iid = '';
 	late String type = '';
 	late String addtarget = '';
 	late String referencetarget = '';
