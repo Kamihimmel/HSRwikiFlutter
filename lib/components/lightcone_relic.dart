@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -392,523 +393,512 @@ class LightconeRelicState extends State<LightconeRelic> {
                             showModalBottomSheet<void>(
                               context: context,
                               builder: (BuildContext context) {
-                                return SizedBox(
-                                  child: Center(
-                                    child: Column(
-                                      children: [
-                                        SizedBox(
-                                          height: 15,
-                                        ),
-                                        Expanded(
-                                          child: SingleChildScrollView(
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              mainAxisSize: MainAxisSize.min,
-                                              // 对应部位主属性: rp.mainAttrs
-                                              // 设置主属性：rs.mainAttr = FightProp.xxx
-                                              // 设置副属性：rs.subAttrValues[FightProp.xxx] = xxx
-                                              // 设置等级：rs.level = xxx
-                                              // 设置星级：rs.rarity = xxx
-                                              // 使所有设置在界面生效：_gs.changeStats()
-                                              children: <Widget>[
-                                                Padding(
-                                                  padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      SizedBox(
-                                                        width: 100,
-                                                        child: Text(
-                                                          "Rarity:${rs.rarity}",
-                                                          style: const TextStyle(
-                                                            //fontWeight: FontWeight.bold,
-                                                            color: Colors.white,
-                                                            fontSize: 15,
-                                                            height: 1.1,
+                                return ChangeNotifierProvider.value(
+                                value: _gs,
+                                child: Consumer<GlobalState>(builder: (context, model, child) {
+                                  return SizedBox(
+                                    child: Center(
+                                      child: Column(
+                                        children: [
+                                          SizedBox(
+                                            height: 15,
+                                          ),
+                                          Expanded(
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                mainAxisSize: MainAxisSize.min,
+                                                // 对应部位主属性: rp.mainAttrs
+                                                // 设置主属性：rs.mainAttr = FightProp.xxx
+                                                // 设置副属性：rs.subAttrValues[FightProp.xxx] = xxx
+                                                // 设置等级：rs.level = xxx
+                                                // 设置星级：rs.rarity = xxx
+                                                // 使所有设置在界面生效：_gs.changeStats()
+                                                children: <Widget>[
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        SizedBox(
+                                                          width: 100,
+                                                          child: Text(
+                                                            "Rarity:${rs.rarity}",
+                                                            style: const TextStyle(
+                                                              //fontWeight: FontWeight.bold,
+                                                              color: Colors.white,
+                                                              fontSize: 15,
+                                                              height: 1.1,
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
-                                                      Expanded(
-                                                        child: Slider(
-                                                          value: rs.rarity.toDouble(),
-                                                          min: 3,
-                                                          max: 5,
-                                                          divisions: 3,
-                                                          activeColor: _cData.elementType.color,
-                                                          inactiveColor: _cData.elementType.color.withOpacity(0.5),
-                                                          onChanged: (double value) {
-                                                            rs.rarity = value.toInt();
-                                                            _gs.changeStats();
-                                                            setState(() {});
-                                                          },
+                                                        Expanded(
+                                                          child: Slider(
+                                                            value: rs.rarity.toDouble(),
+                                                            min: 3,
+                                                            max: 5,
+                                                            divisions: 3,
+                                                            activeColor: _cData.elementType.color,
+                                                            inactiveColor: _cData.elementType.color.withOpacity(0.5),
+                                                            onChanged: (double value) {
+                                                              rs.rarity = value.toInt();
+                                                              _gs.changeStats();
+                                                              setState(() {});
+                                                            },
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ],
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      SizedBox(
-                                                        width: 100,
-                                                        child: Text(
-                                                          "Level:${rs.level}",
-                                                          style: const TextStyle(
-                                                            //fontWeight: FontWeight.bold,
-                                                            color: Colors.white,
-                                                            fontSize: 15,
-                                                            height: 1.1,
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        SizedBox(
+                                                          width: 100,
+                                                          child: Text(
+                                                            "Level:${rs.level}",
+                                                            style: const TextStyle(
+                                                              //fontWeight: FontWeight.bold,
+                                                              color: Colors.white,
+                                                              fontSize: 15,
+                                                              height: 1.1,
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
-                                                      Expanded(
-                                                        child: Slider(
-                                                          value: rs.level.toDouble(),
-                                                          min: 1,
-                                                          max: 15,
-                                                          divisions: 15,
-                                                          activeColor: _cData.elementType.color,
-                                                          inactiveColor: _cData.elementType.color.withOpacity(0.5),
-                                                          onChanged: (double value) {
-                                                            rs.level = value.toInt();
-                                                            _gs.changeStats();
-                                                          },
+                                                        Expanded(
+                                                          child: Slider(
+                                                            value: rs.level.toDouble(),
+                                                            min: 1,
+                                                            max: 15,
+                                                            divisions: 15,
+                                                            activeColor: _cData.elementType.color,
+                                                            inactiveColor: _cData.elementType.color.withOpacity(0.5),
+                                                            onChanged: (double value) {
+                                                              rs.level = value.toInt();
+                                                              _gs.changeStats();
+                                                            },
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ],
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      SizedBox(
-                                                        width: 100,
-                                                        child: Text(
-                                                          "Main Stat:",
-                                                          style: const TextStyle(
-                                                            //fontWeight: FontWeight.bold,
-                                                            color: Colors.white,
-                                                            fontSize: 15,
-                                                            height: 1.1,
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        SizedBox(
+                                                          width: 100,
+                                                          child: Text(
+                                                            "Main Stat:",
+                                                            style: const TextStyle(
+                                                              //fontWeight: FontWeight.bold,
+                                                              color: Colors.white,
+                                                              fontSize: 15,
+                                                              height: 1.1,
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
-                                                      Expanded(
-                                                          child: DropdownButton(
-                                                        items: const [
-                                                          DropdownMenuItem(
-                                                            value: 1,
-                                                            child: Text('あ'),
-                                                          ),
-                                                          DropdownMenuItem(
-                                                            value: 2,
-                                                            child: Text('い'),
-                                                          ),
-                                                          DropdownMenuItem(
-                                                            value: 3,
-                                                            child: Text('う'),
-                                                          ),
-                                                          DropdownMenuItem(
-                                                            value: 4,
-                                                            child: Text('え'),
-                                                          ),
-                                                          DropdownMenuItem(
-                                                            value: 5,
-                                                            child: Text('お'),
-                                                          ),
-                                                        ],
-                                                        value: 1,
-                                                        onChanged: (value) {
-                                                          setState(() {});
-                                                        },
-                                                      )),
-                                                    ],
+                                                        Expanded(
+                                                            child: DropdownButton(
+                                                              items: rp.mainAttrs.map((attr) {
+                                                                return DropdownMenuItem(
+                                                                  value: attr.name,
+                                                                  child: Text(attr.desc.tr()),
+                                                                );
+                                                              }).toList(),
+                                                              value: rs.mainAttr.name,
+                                                              onChanged: (value) {
+                                                                rs.mainAttr = FightProp.fromName(value.toString());
+                                                                _gs.changeStats();
+                                                              },
+                                                            )),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      SizedBox(
-                                                        width: 100,
-                                                        child: Text(
-                                                          "Sub Stat1:",
-                                                          style: const TextStyle(
-                                                            //fontWeight: FontWeight.bold,
-                                                            color: Colors.white,
-                                                            fontSize: 15,
-                                                            height: 1.1,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Expanded(
-                                                          child: DropdownButton(
-                                                        items: const [
-                                                          DropdownMenuItem(
-                                                            value: 1,
-                                                            child: Text('あ'),
-                                                          ),
-                                                          DropdownMenuItem(
-                                                            value: 2,
-                                                            child: Text('い'),
-                                                          ),
-                                                          DropdownMenuItem(
-                                                            value: 3,
-                                                            child: Text('う'),
-                                                          ),
-                                                          DropdownMenuItem(
-                                                            value: 4,
-                                                            child: Text('え'),
-                                                          ),
-                                                          DropdownMenuItem(
-                                                            value: 5,
-                                                            child: Text('お'),
-                                                          ),
-                                                        ],
-                                                        value: 1,
-                                                        onChanged: (value) {
-                                                          setState(() {});
-                                                        },
-                                                      )),
-                                                    ],
+                                                  SizedBox(
+                                                    height: 10,
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      SizedBox(
-                                                        width: 100,
-                                                        child: Text(
-                                                          "Value1:",
-                                                          style: const TextStyle(
-                                                            //fontWeight: FontWeight.bold,
-                                                            color: Colors.white,
-                                                            fontSize: 15,
-                                                            height: 1.1,
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        SizedBox(
+                                                          width: 100,
+                                                          child: Text(
+                                                            "Sub Stat1:",
+                                                            style: const TextStyle(
+                                                              //fontWeight: FontWeight.bold,
+                                                              color: Colors.white,
+                                                              fontSize: 15,
+                                                              height: 1.1,
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
-                                                      Expanded(
-                                                          child: TextFormField(
-                                                        keyboardType: TextInputType.numberWithOptions(
-                                                          decimal: true,
-                                                          signed: false,
-                                                        ),
-                                                        onChanged: (value) {
-                                                          setState(() {});
-                                                        },
-                                                        inputFormatters: [
-                                                          FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
-                                                          TextInputFormatter.withFunction((oldValue, newValue) {
-                                                            final text = newValue.text;
-                                                            return text.isEmpty
-                                                                ? newValue
-                                                                : double.tryParse(text) == null
-                                                                    ? oldValue
-                                                                    : newValue;
-                                                          }),
-                                                        ],
-                                                      )),
-                                                    ],
+                                                        Expanded(
+                                                            child: DropdownButton(
+                                                              items: const [
+                                                                DropdownMenuItem(
+                                                                  value: 1,
+                                                                  child: Text('あ'),
+                                                                ),
+                                                                DropdownMenuItem(
+                                                                  value: 2,
+                                                                  child: Text('い'),
+                                                                ),
+                                                                DropdownMenuItem(
+                                                                  value: 3,
+                                                                  child: Text('う'),
+                                                                ),
+                                                                DropdownMenuItem(
+                                                                  value: 4,
+                                                                  child: Text('え'),
+                                                                ),
+                                                                DropdownMenuItem(
+                                                                  value: 5,
+                                                                  child: Text('お'),
+                                                                ),
+                                                              ],
+                                                              value: 1,
+                                                              onChanged: (value) {
+                                                                setState(() {});
+                                                              },
+                                                            )),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      SizedBox(
-                                                        width: 100,
-                                                        child: Text(
-                                                          "Sub Stat2:",
-                                                          style: const TextStyle(
-                                                            //fontWeight: FontWeight.bold,
-                                                            color: Colors.white,
-                                                            fontSize: 15,
-                                                            height: 1.1,
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        SizedBox(
+                                                          width: 100,
+                                                          child: Text(
+                                                            "Value1:",
+                                                            style: const TextStyle(
+                                                              //fontWeight: FontWeight.bold,
+                                                              color: Colors.white,
+                                                              fontSize: 15,
+                                                              height: 1.1,
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
-                                                      Expanded(
-                                                          child: DropdownButton(
-                                                        items: const [
-                                                          DropdownMenuItem(
-                                                            value: 1,
-                                                            child: Text('あ'),
-                                                          ),
-                                                          DropdownMenuItem(
-                                                            value: 2,
-                                                            child: Text('い'),
-                                                          ),
-                                                          DropdownMenuItem(
-                                                            value: 3,
-                                                            child: Text('う'),
-                                                          ),
-                                                          DropdownMenuItem(
-                                                            value: 4,
-                                                            child: Text('え'),
-                                                          ),
-                                                          DropdownMenuItem(
-                                                            value: 5,
-                                                            child: Text('お'),
-                                                          ),
-                                                        ],
-                                                        value: 1,
-                                                        onChanged: (value) {
-                                                          setState(() {});
-                                                        },
-                                                      )),
-                                                    ],
+                                                        Expanded(
+                                                            child: TextFormField(
+                                                              keyboardType: TextInputType.numberWithOptions(
+                                                                decimal: true,
+                                                                signed: false,
+                                                              ),
+                                                              onChanged: (value) {
+                                                                setState(() {});
+                                                              },
+                                                              inputFormatters: [
+                                                                FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
+                                                                TextInputFormatter.withFunction((oldValue, newValue) {
+                                                                  final text = newValue.text;
+                                                                  return text.isEmpty
+                                                                      ? newValue
+                                                                      : double.tryParse(text) == null
+                                                                      ? oldValue
+                                                                      : newValue;
+                                                                }),
+                                                              ],
+                                                            )),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      SizedBox(
-                                                        width: 100,
-                                                        child: Text(
-                                                          "Value2:",
-                                                          style: const TextStyle(
-                                                            //fontWeight: FontWeight.bold,
-                                                            color: Colors.white,
-                                                            fontSize: 15,
-                                                            height: 1.1,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Expanded(
-                                                          child: TextFormField(
-                                                        keyboardType: TextInputType.numberWithOptions(
-                                                          decimal: true,
-                                                          signed: false,
-                                                        ),
-                                                        onChanged: (value) {
-                                                          setState(() {});
-                                                        },
-                                                        inputFormatters: [
-                                                          FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
-                                                          TextInputFormatter.withFunction((oldValue, newValue) {
-                                                            final text = newValue.text;
-                                                            return text.isEmpty
-                                                                ? newValue
-                                                                : double.tryParse(text) == null
-                                                                    ? oldValue
-                                                                    : newValue;
-                                                          }),
-                                                        ],
-                                                      )),
-                                                    ],
+                                                  SizedBox(
+                                                    height: 10,
                                                   ),
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      SizedBox(
-                                                        width: 100,
-                                                        child: Text(
-                                                          "Sub Stat3:",
-                                                          style: const TextStyle(
-                                                            //fontWeight: FontWeight.bold,
-                                                            color: Colors.white,
-                                                            fontSize: 15,
-                                                            height: 1.1,
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        SizedBox(
+                                                          width: 100,
+                                                          child: Text(
+                                                            "Sub Stat2:",
+                                                            style: const TextStyle(
+                                                              //fontWeight: FontWeight.bold,
+                                                              color: Colors.white,
+                                                              fontSize: 15,
+                                                              height: 1.1,
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
-                                                      Expanded(
-                                                          child: DropdownButton(
-                                                        items: const [
-                                                          DropdownMenuItem(
-                                                            value: 1,
-                                                            child: Text('あ'),
-                                                          ),
-                                                          DropdownMenuItem(
-                                                            value: 2,
-                                                            child: Text('い'),
-                                                          ),
-                                                          DropdownMenuItem(
-                                                            value: 3,
-                                                            child: Text('う'),
-                                                          ),
-                                                          DropdownMenuItem(
-                                                            value: 4,
-                                                            child: Text('え'),
-                                                          ),
-                                                          DropdownMenuItem(
-                                                            value: 5,
-                                                            child: Text('お'),
-                                                          ),
-                                                        ],
-                                                        value: 1,
-                                                        onChanged: (value) {
-                                                          setState(() {});
-                                                        },
-                                                      )),
-                                                    ],
+                                                        Expanded(
+                                                            child: DropdownButton(
+                                                              items: const [
+                                                                DropdownMenuItem(
+                                                                  value: 1,
+                                                                  child: Text('あ'),
+                                                                ),
+                                                                DropdownMenuItem(
+                                                                  value: 2,
+                                                                  child: Text('い'),
+                                                                ),
+                                                                DropdownMenuItem(
+                                                                  value: 3,
+                                                                  child: Text('う'),
+                                                                ),
+                                                                DropdownMenuItem(
+                                                                  value: 4,
+                                                                  child: Text('え'),
+                                                                ),
+                                                                DropdownMenuItem(
+                                                                  value: 5,
+                                                                  child: Text('お'),
+                                                                ),
+                                                              ],
+                                                              value: 1,
+                                                              onChanged: (value) {
+                                                                setState(() {});
+                                                              },
+                                                            )),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      SizedBox(
-                                                        width: 100,
-                                                        child: Text(
-                                                          "Value3:",
-                                                          style: const TextStyle(
-                                                            //fontWeight: FontWeight.bold,
-                                                            color: Colors.white,
-                                                            fontSize: 15,
-                                                            height: 1.1,
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        SizedBox(
+                                                          width: 100,
+                                                          child: Text(
+                                                            "Value2:",
+                                                            style: const TextStyle(
+                                                              //fontWeight: FontWeight.bold,
+                                                              color: Colors.white,
+                                                              fontSize: 15,
+                                                              height: 1.1,
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
-                                                      Expanded(
-                                                          child: TextFormField(
-                                                        keyboardType: TextInputType.numberWithOptions(
-                                                          decimal: true,
-                                                          signed: false,
-                                                        ),
-                                                        onChanged: (value) {
-                                                          setState(() {});
-                                                        },
-                                                        inputFormatters: [
-                                                          FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
-                                                          TextInputFormatter.withFunction((oldValue, newValue) {
-                                                            final text = newValue.text;
-                                                            return text.isEmpty
-                                                                ? newValue
-                                                                : double.tryParse(text) == null
-                                                                    ? oldValue
-                                                                    : newValue;
-                                                          }),
-                                                        ],
-                                                      )),
-                                                    ],
+                                                        Expanded(
+                                                            child: TextFormField(
+                                                              keyboardType: TextInputType.numberWithOptions(
+                                                                decimal: true,
+                                                                signed: false,
+                                                              ),
+                                                              onChanged: (value) {
+                                                                setState(() {});
+                                                              },
+                                                              inputFormatters: [
+                                                                FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
+                                                                TextInputFormatter.withFunction((oldValue, newValue) {
+                                                                  final text = newValue.text;
+                                                                  return text.isEmpty
+                                                                      ? newValue
+                                                                      : double.tryParse(text) == null
+                                                                      ? oldValue
+                                                                      : newValue;
+                                                                }),
+                                                              ],
+                                                            )),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      SizedBox(
-                                                        width: 100,
-                                                        child: Text(
-                                                          "Sub Stat4:",
-                                                          style: const TextStyle(
-                                                            //fontWeight: FontWeight.bold,
-                                                            color: Colors.white,
-                                                            fontSize: 15,
-                                                            height: 1.1,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Expanded(
-                                                          child: DropdownButton(
-                                                        items: const [
-                                                          DropdownMenuItem(
-                                                            value: 1,
-                                                            child: Text('あ'),
-                                                          ),
-                                                          DropdownMenuItem(
-                                                            value: 2,
-                                                            child: Text('い'),
-                                                          ),
-                                                          DropdownMenuItem(
-                                                            value: 3,
-                                                            child: Text('う'),
-                                                          ),
-                                                          DropdownMenuItem(
-                                                            value: 4,
-                                                            child: Text('え'),
-                                                          ),
-                                                          DropdownMenuItem(
-                                                            value: 5,
-                                                            child: Text('お'),
-                                                          ),
-                                                        ],
-                                                        value: 1,
-                                                        onChanged: (value) {
-                                                          setState(() {});
-                                                        },
-                                                      )),
-                                                    ],
+                                                  SizedBox(
+                                                    height: 10,
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      SizedBox(
-                                                        width: 100,
-                                                        child: Text(
-                                                          "Value4:",
-                                                          style: const TextStyle(
-                                                            //fontWeight: FontWeight.bold,
-                                                            color: Colors.white,
-                                                            fontSize: 15,
-                                                            height: 1.1,
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        SizedBox(
+                                                          width: 100,
+                                                          child: Text(
+                                                            "Sub Stat3:",
+                                                            style: const TextStyle(
+                                                              //fontWeight: FontWeight.bold,
+                                                              color: Colors.white,
+                                                              fontSize: 15,
+                                                              height: 1.1,
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
-                                                      Expanded(
-                                                          child: TextFormField(
-                                                        keyboardType: TextInputType.numberWithOptions(
-                                                          decimal: true,
-                                                          signed: false,
-                                                        ),
-                                                        onChanged: (value) {
-                                                          setState(() {});
-                                                        },
-                                                        inputFormatters: [
-                                                          FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
-                                                          TextInputFormatter.withFunction((oldValue, newValue) {
-                                                            final text = newValue.text;
-                                                            return text.isEmpty
-                                                                ? newValue
-                                                                : double.tryParse(text) == null
-                                                                    ? oldValue
-                                                                    : newValue;
-                                                          }),
-                                                        ],
-                                                      )),
-                                                    ],
+                                                        Expanded(
+                                                            child: DropdownButton(
+                                                              items: const [
+                                                                DropdownMenuItem(
+                                                                  value: 1,
+                                                                  child: Text('あ'),
+                                                                ),
+                                                                DropdownMenuItem(
+                                                                  value: 2,
+                                                                  child: Text('い'),
+                                                                ),
+                                                                DropdownMenuItem(
+                                                                  value: 3,
+                                                                  child: Text('う'),
+                                                                ),
+                                                                DropdownMenuItem(
+                                                                  value: 4,
+                                                                  child: Text('え'),
+                                                                ),
+                                                                DropdownMenuItem(
+                                                                  value: 5,
+                                                                  child: Text('お'),
+                                                                ),
+                                                              ],
+                                                              value: 1,
+                                                              onChanged: (value) {
+                                                                setState(() {});
+                                                              },
+                                                            )),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        SizedBox(
+                                                          width: 100,
+                                                          child: Text(
+                                                            "Value3:",
+                                                            style: const TextStyle(
+                                                              //fontWeight: FontWeight.bold,
+                                                              color: Colors.white,
+                                                              fontSize: 15,
+                                                              height: 1.1,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                            child: TextFormField(
+                                                              keyboardType: TextInputType.numberWithOptions(
+                                                                decimal: true,
+                                                                signed: false,
+                                                              ),
+                                                              onChanged: (value) {
+                                                                setState(() {});
+                                                              },
+                                                              inputFormatters: [
+                                                                FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
+                                                                TextInputFormatter.withFunction((oldValue, newValue) {
+                                                                  final text = newValue.text;
+                                                                  return text.isEmpty
+                                                                      ? newValue
+                                                                      : double.tryParse(text) == null
+                                                                      ? oldValue
+                                                                      : newValue;
+                                                                }),
+                                                              ],
+                                                            )),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        SizedBox(
+                                                          width: 100,
+                                                          child: Text(
+                                                            "Sub Stat4:",
+                                                            style: const TextStyle(
+                                                              //fontWeight: FontWeight.bold,
+                                                              color: Colors.white,
+                                                              fontSize: 15,
+                                                              height: 1.1,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                            child: DropdownButton(
+                                                              items: const [
+                                                                DropdownMenuItem(
+                                                                  value: 1,
+                                                                  child: Text('あ'),
+                                                                ),
+                                                                DropdownMenuItem(
+                                                                  value: 2,
+                                                                  child: Text('い'),
+                                                                ),
+                                                                DropdownMenuItem(
+                                                                  value: 3,
+                                                                  child: Text('う'),
+                                                                ),
+                                                                DropdownMenuItem(
+                                                                  value: 4,
+                                                                  child: Text('え'),
+                                                                ),
+                                                                DropdownMenuItem(
+                                                                  value: 5,
+                                                                  child: Text('お'),
+                                                                ),
+                                                              ],
+                                                              value: 1,
+                                                              onChanged: (value) {
+                                                                setState(() {});
+                                                              },
+                                                            )),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        SizedBox(
+                                                          width: 100,
+                                                          child: Text(
+                                                            "Value4:",
+                                                            style: const TextStyle(
+                                                              //fontWeight: FontWeight.bold,
+                                                              color: Colors.white,
+                                                              fontSize: 15,
+                                                              height: 1.1,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                            child: TextFormField(
+                                                              keyboardType: TextInputType.numberWithOptions(
+                                                                decimal: true,
+                                                                signed: false,
+                                                              ),
+                                                              onChanged: (value) {
+                                                                setState(() {});
+                                                              },
+                                                              inputFormatters: [
+                                                                FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
+                                                                TextInputFormatter.withFunction((oldValue, newValue) {
+                                                                  final text = newValue.text;
+                                                                  return text.isEmpty
+                                                                      ? newValue
+                                                                      : double.tryParse(text) == null
+                                                                      ? oldValue
+                                                                      : newValue;
+                                                                }),
+                                                              ],
+                                                            )),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                );
+                                  );
+                                }));
                               },
                             );
                           },
