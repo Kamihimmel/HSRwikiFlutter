@@ -87,13 +87,12 @@ class GlobalState extends ChangeNotifier {
     _stats = stats;
     notifyListeners();
   }
-  void changeStats() {
-    notifyListeners();
-  }
-
   EnemyStats get enemyStats => _enemyStats;
   set enemyStats(EnemyStats enemyStats) {
     _enemyStats = enemyStats;
+    notifyListeners();
+  }
+  void changeStats() {
     notifyListeners();
   }
 

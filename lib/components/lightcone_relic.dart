@@ -33,7 +33,7 @@ class LightconeRelicState extends State<LightconeRelic> {
 
   Row _getSubAttrRow(FightProp prop, double value) {
     return Row(
-      children: [
+      children: prop != FightProp.unknown ? [
         Padding(
           padding: const EdgeInsets.all(1.0),
           child: getImageComponent(prop.icon, placeholder: kTransparentImage, width: 28),
@@ -47,7 +47,7 @@ class LightconeRelicState extends State<LightconeRelic> {
             height: 1,
           ),
         ),
-      ],
+      ] : [],
     );
   }
 
@@ -383,7 +383,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                   ),
                   //ANCHOR - relics
                   Column(
-                    children: RelicPart.values.where((e) => e != RelicPart.unknown).map((rp) {
+                    children: RelicPart.values.where((rp) => rp != RelicPart.unknown).map((rp) {
                       RelicStats rs = _gs.stats.relics[rp]!;
                       List<Record<FightProp, double>> subAttrValues = rs.subAttrValues;
                       for (var i = 0; i < 4 - subAttrValues.length; i++) {
@@ -400,6 +400,8 @@ class LightconeRelicState extends State<LightconeRelic> {
                                 return ChangeNotifierProvider.value(
                                 value: _gs,
                                 child: Consumer<GlobalState>(builder: (context, model, child) {
+                                  RelicStats rs = _gs.stats.relics[rp]!;
+                                  List<Record<FightProp, double>> subAttrValues = rs.subAttrValues;
                                   return SizedBox(
                                     child: Center(
                                       child: Column(
@@ -412,12 +414,6 @@ class LightconeRelicState extends State<LightconeRelic> {
                                               child: Column(
                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                 mainAxisSize: MainAxisSize.min,
-                                                // 对应部位主属性: rp.mainAttrs
-                                                // 设置主属性：rs.mainAttr = FightProp.xxx
-                                                // 设置副属性：rs.subAttrValues[FightProp.xxx] = xxx
-                                                // 设置等级：rs.level = xxx
-                                                // 设置星级：rs.rarity = xxx
-                                                // 使所有设置在界面生效：_gs.changeStats()
                                                 children: <Widget>[
                                                   Padding(
                                                     padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
@@ -446,8 +442,11 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                             inactiveColor: _cData.elementType.color.withOpacity(0.5),
                                                             onChanged: (double value) {
                                                               rs.rarity = value.toInt();
+                                                              int maxLevel = getRelicMaxLevel(rs.rarity);
+                                                              if (rs.level > maxLevel) {
+                                                                rs.level = maxLevel;
+                                                              }
                                                               _gs.changeStats();
-                                                              setState(() {});
                                                             },
                                                           ),
                                                         ),
@@ -475,8 +474,8 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                           child: Slider(
                                                             value: rs.level.toDouble(),
                                                             min: 1,
-                                                            max: 15,
-                                                            divisions: 15,
+                                                            max: getRelicMaxLevel(rs.rarity).toDouble(),
+                                                            divisions: getRelicMaxLevel(rs.rarity),
                                                             activeColor: _cData.elementType.color,
                                                             inactiveColor: _cData.elementType.color.withOpacity(0.5),
                                                             onChanged: (double value) {
@@ -510,12 +509,17 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                               items: rp.mainAttrs.map((attr) {
                                                                 return DropdownMenuItem(
                                                                   value: attr.name,
-                                                                  child: Text(attr.desc.tr()),
+                                                                  child: Text("${attr.desc.tr()}${attr.isPercent() ? ' %' : ''}"),
                                                                 );
                                                               }).toList(),
                                                               value: rs.mainAttr.name,
                                                               onChanged: (value) {
                                                                 rs.mainAttr = FightProp.fromName(value.toString());
+                                                                for (var record in rs.subAttrValues) {
+                                                                  if (record.key == rs.mainAttr) {
+                                                                    record.key = FightProp.unknown;
+                                                                  }
+                                                                }
                                                                 _gs.changeStats();
                                                               },
                                                             )),
@@ -547,34 +551,18 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                               ),
                                                               Expanded(
                                                                   child: DropdownButton(
-                                                                    items: const [
-                                                                      DropdownMenuItem(
-                                                                        value: 1,
-                                                                        child: Text('あ'),
-                                                                      ),
-                                                                      DropdownMenuItem(
-                                                                        value: 2,
-                                                                        child: Text('い'),
-                                                                      ),
-                                                                      DropdownMenuItem(
-                                                                        value: 3,
-                                                                        child: Text('う'),
-                                                                      ),
-                                                                      DropdownMenuItem(
-                                                                        value: 4,
-                                                                        child: Text('え'),
-                                                                      ),
-                                                                      DropdownMenuItem(
-                                                                        value: 5,
-                                                                        child: Text('お'),
-                                                                      ),
-                                                                    ],
-                                                                    value: 1,
+                                                                    items: relicSubAttrs.where((attr) => attr != rs.mainAttr).map((attr) {
+                                                                      return  DropdownMenuItem(
+                                                                        value: attr.name,
+                                                                        child: Text("${attr.desc.tr()}${attr.isPercent() ? ' %' : ''}"),
+                                                                      );
+                                                                    }).toList(),
+                                                                    value: subAttrValues[index].key.name,
                                                                     onChanged: (value) {
-                                                                      // FightProp prop = FightProp.fromName(value.toString());
-                                                                      // Record<FightProp, double> subAttr = subAttrValues[index];
-                                                                      // subAttrValues[index] = Record.of(prop, subAttr.value);
-                                                                      // _gs.changeStats();
+                                                                      FightProp prop = FightProp.fromName(value.toString());
+                                                                      Record<FightProp, double> subAttr = subAttrValues[index];
+                                                                      subAttrValues[index] = Record.of(prop, subAttr.value);
+                                                                      _gs.changeStats();
                                                                     },
                                                                   )),
                                                             ],
@@ -599,6 +587,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                               ),
                                                               Expanded(
                                                                   child: TextFormField(
+                                                                    initialValue: subAttrValues[index].key.getPropText(subAttrValues[index].value).replaceFirst('%', ''),
                                                                     keyboardType: TextInputType.numberWithOptions(
                                                                       decimal: true,
                                                                       signed: false,

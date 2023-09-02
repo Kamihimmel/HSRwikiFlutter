@@ -14,6 +14,8 @@ import '../characters/character_manager.dart';
 import '../lightcones/lightcone.dart';
 import '../lightcones/lightcone_entity.dart';
 import '../lightcones/lightcone_manager.dart';
+import '../relics/relic.dart';
+import '../relics/relic_manager.dart';
 import '../utils/helper.dart';
 import 'global_state.dart';
 
@@ -40,6 +42,7 @@ class BuffPanelState extends State<BuffPanel> {
           builder: (context, model, child) {
             final Character _cData = CharacterManager.getCharacter(_gs.stats.id);
             final Lightcone _lData = LightconeManager.getLightcone(_gs.stats.lightconeId);
+            final List<Relic> _rList = _gs.stats.getRelicSets().where((r) => r != '').map((r) => RelicManager.getRelic(r)).toList();
             return Padding(
               padding: const EdgeInsets.all(10.0),
               child: Container(
@@ -94,9 +97,10 @@ class BuffPanelState extends State<BuffPanel> {
                                                           Effect effect = pair[1] as Effect;
                                                           EffectEntity ee = effect.entity;
                                                           String effectKey = effect.getKey();
-                                                          String propText = FightProp.fromEffectKey(ee.addtarget).desc.tr();
-                                                          double multiplierValue = effect.getEffectMultiplierValue(skillData, _gs.stats.skillLevels[skillData.id]);
-                                                          String text = "${_cData.getSkillNameById(skillData.id, getLanguageCode(context))} $propText ${multiplierValue.toStringAsFixed(1)}%";
+                                                          FightProp prop = FightProp.fromEffectKey(ee.addtarget);
+                                                          String propText = prop.desc.tr();
+                                                          double multiplierValue = effect.getEffectMultiplierValue(skillData, _gs.stats.skillLevels[skillData.id]) / 100;
+                                                          String text = "${_cData.getSkillNameById(skillData.id, getLanguageCode(context))} $propText ${prop.getPropText(multiplierValue)}";
                                                           return FilterChip(
                                                             label: Tooltip(
                                                               message: text,
@@ -163,9 +167,10 @@ class BuffPanelState extends State<BuffPanel> {
                                                           Effect effect = pair[1] as Effect;
                                                           EffectEntity ee = effect.entity;
                                                           String effectKey = effect.getKey();
-                                                          String propText = FightProp.fromEffectKey(ee.addtarget).desc.tr();
-                                                          double multiplierValue = effect.getEffectMultiplierValue(null, null);
-                                                          String text = "${_cData.getTraceNameById(traceData.id, getLanguageCode(context))} $propText ${multiplierValue.toStringAsFixed(1)}%";
+                                                          FightProp prop = FightProp.fromEffectKey(ee.addtarget);
+                                                          String propText = prop.desc.tr();
+                                                          double multiplierValue = effect.getEffectMultiplierValue(null, null) / 100;
+                                                          String text = "${_cData.getTraceNameById(traceData.id, getLanguageCode(context))} $propText ${prop.getPropText(multiplierValue)}";
                                                           return FilterChip(
                                                             label: Tooltip(
                                                               message: text,
@@ -232,9 +237,10 @@ class BuffPanelState extends State<BuffPanel> {
                                                           Effect effect = pair[1] as Effect;
                                                           EffectEntity ee = effect.entity;
                                                           String effectKey = effect.getKey();
-                                                          String propText = FightProp.fromEffectKey(ee.addtarget).desc.tr();
-                                                          double multiplierValue = effect.getEffectMultiplierValue(null, null);
-                                                          String text = "${_cData.getEidolonName(eidolon.eidolonnum - 1, getLanguageCode(context))} $propText ${multiplierValue.toStringAsFixed(1)}%";
+                                                          FightProp prop = FightProp.fromEffectKey(ee.addtarget);
+                                                          String propText = prop.desc.tr();
+                                                          double multiplierValue = effect.getEffectMultiplierValue(null, null) / 100;
+                                                          String text = "${_cData.getEidolonName(eidolon.eidolonnum - 1, getLanguageCode(context))} $propText ${prop.getPropText(multiplierValue)}";
                                                           return FilterChip(
                                                             label: Tooltip(
                                                               message: text,
@@ -301,9 +307,10 @@ class BuffPanelState extends State<BuffPanel> {
                                                           Effect effect = pair[1] as Effect;
                                                           EffectEntity ee = effect.entity;
                                                           String effectKey = effect.getKey();
-                                                          String propText = FightProp.fromEffectKey(ee.addtarget).desc.tr();
-                                                          double multiplierValue = effect.getEffectMultiplierValue(skillData, _gs.stats.lightconeRank);
-                                                          String text = "${_lData.getSkillName(0, getLanguageCode(context))} $propText ${multiplierValue.toStringAsFixed(1)}%";
+                                                          FightProp prop = FightProp.fromEffectKey(ee.addtarget);
+                                                          String propText = prop.desc.tr();
+                                                          double multiplierValue = effect.getEffectMultiplierValue(skillData, _gs.stats.lightconeRank) / 100;
+                                                          String text = "${_lData.getSkillName(0, getLanguageCode(context))} $propText ${prop.getPropText(multiplierValue)}";
                                                           return FilterChip(
                                                             label: Tooltip(
                                                               message: text,
@@ -364,12 +371,55 @@ class BuffPanelState extends State<BuffPanel> {
                                                       Wrap(
                                                         spacing: 10,
                                                         runSpacing: 10,
+                                                        children: [],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }));
+                              },
+                            );
+                          },
+                          child: Text("Relic Skill Buff"),
+                        ),
+                        SizedBox(height: 30),
+                        InkWell(
+                          borderRadius: BorderRadius.circular(15),
+                          onTap: () {
+                            showModalBottomSheet<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return ChangeNotifierProvider.value(
+                                    value: _gs,
+                                    child: Consumer<GlobalState>(builder: (context, model, child) {
+                                      return SizedBox(
+                                        child: Center(
+                                          child: Column(
+                                            children: [
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              Expanded(
+                                                child: SingleChildScrollView(
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Wrap(
+                                                        spacing: 10,
+                                                        runSpacing: 10,
                                                         children: EffectManager.getEffects().values.where((e) => _cData.entity.id != e.majorId && e.validAllyBuffEffect(null)).map((effect) {
                                                           EffectEntity ee = effect.entity;
                                                           String effectKey = effect.getKey();
-                                                          String propText = FightProp.fromEffectKey(ee.addtarget).desc.tr();
-                                                          double multiplierValue = effect.getEffectMultiplierValue(effect.skillData, effect.skillData.maxlevel);
-                                                          String text = "${effect.getSkillName(getLanguageCode(context))} $propText ${multiplierValue.toStringAsFixed(1)}%";
+                                                          FightProp prop = FightProp.fromEffectKey(ee.addtarget);
+                                                          String propText = prop.desc.tr();
+                                                          double multiplierValue = effect.getEffectMultiplierValue(effect.skillData, effect.skillData.maxlevel) / 100;
+                                                          String text = "${effect.getSkillName(getLanguageCode(context))} $propText ${prop.getPropText(multiplierValue)}";
                                                           return FilterChip(
                                                             label: Tooltip(
                                                               message: text,

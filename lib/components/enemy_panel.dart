@@ -94,7 +94,7 @@ class EnemyPanelState extends State<EnemyPanel> {
                                                         ),
                                                         onTap: () async {
                                                           _gs.enemyStats.id = e.key;
-                                                          _gs.enemyStats = _gs.enemyStats;
+                                                          _gs.changeStats();
                                                           Navigator.pop(context);
                                                         },
                                                       ),
@@ -190,7 +190,7 @@ class EnemyPanelState extends State<EnemyPanel> {
                               value: _gs.enemyStats.level.toDouble(),
                               onChanged: (value) {
                                 _gs.enemyStats.level = value.toInt();
-                                _gs.enemyStats = _gs.enemyStats;
+                                _gs.changeStats();
                               },
                             ),
                           ],
@@ -216,7 +216,7 @@ class EnemyPanelState extends State<EnemyPanel> {
                               value: _gs.enemyStats.defenceReduce.toDouble(),
                               onChanged: (value) {
                                 _gs.enemyStats.defenceReduce = value.toInt();
-                                _gs.enemyStats = _gs.enemyStats;
+                                _gs.changeStats();
                               },
                             ),
                           ],
@@ -238,7 +238,7 @@ class EnemyPanelState extends State<EnemyPanel> {
                               value: _gs.enemyStats.weaknessBreak,
                               onChanged: (bool value) {
                                 _gs.enemyStats.weaknessBreak = value;
-                                _gs.enemyStats = _gs.enemyStats;
+                                _gs.changeStats();
                               },
                             ),
                           ],

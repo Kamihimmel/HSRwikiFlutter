@@ -86,13 +86,6 @@ String getDisplayText(double value, bool percent) {
   }
 }
 
-int getRelicMaxLevel(int rarity) {
-  if (rarity >= 2 && rarity <= 5) {
-    return rarity * 3;
-  }
-  return 0;
-}
-
 Map<int, MaterialColor> _rarityColor = {
   5: Colors.amber,
   4: Colors.deepPurple,
@@ -104,22 +97,6 @@ MaterialColor getRarityColor(int rarity) {
     return _rarityColor[rarity]!;
   }
   return Colors.grey;
-}
-
-double getRelicMainAttrValue(FightProp fightProp, int rarity, int level) {
-  if (ElementType.getElementAddRatioProps().contains(fightProp)) {
-    fightProp = FightProp.allDamageAddRatio;
-  }
-  if (!relicMainAttrLevelCurve.containsKey(fightProp)) {
-    return 0;
-  }
-  var startCurve = relicMainAttrLevelCurve[fightProp]!;
-  if (!startCurve.containsKey(rarity)) {
-    return 0;
-  }
-  double base = startCurve[rarity]!['base']!.toDouble();
-  double add = startCurve[rarity]!['add']!.toDouble();
-  return base + level * add;
 }
 
 enum ElementType {
@@ -218,87 +195,6 @@ enum PathType {
   }
 }
 
-const relicMainAttrLevelCurve = {
-  FightProp.hPDelta: {
-    2: {"base": 45.1584, "add": 15.80544},
-    3: {"base": 67.7376, "add": 23.70816},
-    4: {"base": 90.3168, "add": 31.61088},
-    5: {"base": 112.896, "add": 39.5136}
-  },
-  FightProp.attackDelta: {
-    2: {"base": 22.5792, "add": 7.90272},
-    3: {"base": 33.8688, "add": 11.85408},
-    4: {"base": 45.1584, "add": 15.80544},
-    5: {"base": 56.448, "add": 19.7568}
-  },
-  FightProp.hPAddedRatio: {
-    2: {"base": 0.02765, "add": 0.00968},
-    3: {"base": 0.04147, "add": 0.01452},
-    4: {"base": 0.0553, "add": 0.01935},
-    5: {"base": 0.06912, "add": 0.02419}
-  },
-  FightProp.attackAddedRatio: {
-    2: {"base": 0.02765, "add": 0.00968},
-    3: {"base": 0.04147, "add": 0.01452},
-    4: {"base": 0.0553, "add": 0.01935},
-    5: {"base": 0.06912, "add": 0.02419}
-  },
-  FightProp.defenceAddedRatio: {
-    2: {"base": 0.03456, "add": 0.0121},
-    3: {"base": 0.05184, "add": 0.01814},
-    4: {"base": 0.06912, "add": 0.02419},
-    5: {"base": 0.0864, "add": 0.03024}
-  },
-  FightProp.criticalChance: {
-    2: {"base": 0.02074, "add": 0.00726},
-    3: {"base": 0.0311, "add": 0.01089},
-    4: {"base": 0.04147, "add": 0.01452},
-    5: {"base": 0.05184, "add": 0.01814}
-  },
-  FightProp.criticalDamage: {
-    2: {"base": 0.04147, "add": 0.01452},
-    3: {"base": 0.06221, "add": 0.02177},
-    4: {"base": 0.08294, "add": 0.02903},
-    5: {"base": 0.10368, "add": 0.03629}
-  },
-  FightProp.healRatio: {
-    2: {"base": 0.02212, "add": 0.00774},
-    3: {"base": 0.03318, "add": 0.01161},
-    4: {"base": 0.04424, "add": 0.01548},
-    5: {"base": 0.0553, "add": 0.01935}
-  },
-  FightProp.statusProbability: {
-    2: {"base": 0.02765, "add": 0.00968},
-    3: {"base": 0.04147, "add": 0.01452},
-    4: {"base": 0.0553, "add": 0.01935},
-    5: {"base": 0.06912, "add": 0.02419}
-  },
-  FightProp.speedDelta: {
-    2: {"base": 1.6128, "add": 1},
-    3: {"base": 2.4192, "add": 1},
-    4: {"base": 3.2256, "add": 1.1},
-    5: {"base": 4.032, "add": 1.4}
-  },
-  FightProp.allDamageAddRatio: {
-    2: {"base": 0.02488, "add": 0.00871},
-    3: {"base": 0.03732, "add": 0.01306},
-    4: {"base": 0.04977, "add": 0.01742},
-    5: {"base": 0.06221, "add": 0.02177}
-  },
-  FightProp.sPRatio: {
-    2: {"base": 0.01244, "add": 0.00436},
-    3: {"base": 0.01866, "add": 0.00653},
-    4: {"base": 0.02488, "add": 0.00871},
-    5: {"base": 0.0311, "add": 0.01089}
-  },
-  FightProp.breakDamageAddedRatio: {
-    2: {"base": 0.04147, "add": 0.01452},
-    3: {"base": 0.06221, "add": 0.02177},
-    4: {"base": 0.08294, "add": 0.02903},
-    5: {"base": 0.10368, "add": 0.03629}
-  },
-};
-
 class Record<K, V> {
   late K key;
   late V value;
@@ -306,6 +202,11 @@ class Record<K, V> {
   Record.of(K key, V value) {
     this.key = key;
     this.value = value;
+  }
+
+  @override
+  String toString() {
+    return "${key.toString()},${value.toString()}";
   }
 
   @override
