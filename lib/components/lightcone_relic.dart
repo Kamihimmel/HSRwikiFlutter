@@ -33,21 +33,23 @@ class LightconeRelicState extends State<LightconeRelic> {
 
   Row _getSubAttrRow(FightProp prop, double value) {
     return Row(
-      children: prop != FightProp.unknown ? [
-        Padding(
-          padding: const EdgeInsets.all(1.0),
-          child: getImageComponent(prop.icon, placeholder: kTransparentImage, width: 28),
-        ),
-        Text(
-          "${prop.getPropText(value)}",
-          style: const TextStyle(
-            //fontWeight: FontWeight.bold,
-            color: Colors.white,
-            fontSize: 20,
-            height: 1,
-          ),
-        ),
-      ] : [],
+      children: prop != FightProp.unknown
+          ? [
+              Padding(
+                padding: const EdgeInsets.all(1.0),
+                child: getImageComponent(prop.icon, placeholder: kTransparentImage, width: 28),
+              ),
+              Text(
+                "${prop.getPropText(value)}",
+                style: const TextStyle(
+                  //fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 20,
+                  height: 1,
+                ),
+              ),
+            ]
+          : [],
     );
   }
 
@@ -398,114 +400,114 @@ class LightconeRelicState extends State<LightconeRelic> {
                               context: context,
                               builder: (BuildContext context) {
                                 return ChangeNotifierProvider.value(
-                                value: _gs,
-                                child: Consumer<GlobalState>(builder: (context, model, child) {
-                                  RelicStats rs = _gs.stats.relics[rp]!;
-                                  List<Record<FightProp, double>> subAttrValues = rs.subAttrValues;
-                                  return SizedBox(
-                                    child: Center(
-                                      child: Column(
-                                        children: [
-                                          SizedBox(
-                                            height: 15,
-                                          ),
-                                          Expanded(
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: <Widget>[
-                                                  Padding(
-                                                    padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                    child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      children: [
-                                                        SizedBox(
-                                                          width: 100,
-                                                          child: Text(
-                                                            "Rarity:${rs.rarity}",
-                                                            style: const TextStyle(
-                                                              //fontWeight: FontWeight.bold,
-                                                              color: Colors.white,
-                                                              fontSize: 15,
-                                                              height: 1.1,
+                                    value: _gs,
+                                    child: Consumer<GlobalState>(builder: (context, model, child) {
+                                      RelicStats rs = _gs.stats.relics[rp]!;
+                                      List<Record<FightProp, double>> subAttrValues = rs.subAttrValues;
+                                      return SizedBox(
+                                        child: Center(
+                                          child: Column(
+                                            children: [
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              Expanded(
+                                                child: SingleChildScrollView(
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      Padding(
+                                                        padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            SizedBox(
+                                                              width: 100,
+                                                              child: Text(
+                                                                "Rarity:${rs.rarity}",
+                                                                style: const TextStyle(
+                                                                  //fontWeight: FontWeight.bold,
+                                                                  color: Colors.white,
+                                                                  fontSize: 15,
+                                                                  height: 1.1,
+                                                                ),
+                                                              ),
                                                             ),
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                          child: Slider(
-                                                            value: rs.rarity.toDouble(),
-                                                            min: 3,
-                                                            max: 5,
-                                                            divisions: 3,
-                                                            activeColor: _cData.elementType.color,
-                                                            inactiveColor: _cData.elementType.color.withOpacity(0.5),
-                                                            onChanged: (double value) {
-                                                              rs.rarity = value.toInt();
-                                                              int maxLevel = getRelicMaxLevel(rs.rarity);
-                                                              if (rs.level > maxLevel) {
-                                                                rs.level = maxLevel;
-                                                              }
-                                                              _gs.changeStats();
-                                                            },
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                    child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      children: [
-                                                        SizedBox(
-                                                          width: 100,
-                                                          child: Text(
-                                                            "Level:${rs.level}",
-                                                            style: const TextStyle(
-                                                              //fontWeight: FontWeight.bold,
-                                                              color: Colors.white,
-                                                              fontSize: 15,
-                                                              height: 1.1,
+                                                            Expanded(
+                                                              child: Slider(
+                                                                value: rs.rarity.toDouble(),
+                                                                min: 3,
+                                                                max: 5,
+                                                                divisions: 2,
+                                                                activeColor: _cData.elementType.color,
+                                                                inactiveColor: _cData.elementType.color.withOpacity(0.5),
+                                                                onChanged: (double value) {
+                                                                  rs.rarity = value.toInt();
+                                                                  int maxLevel = getRelicMaxLevel(rs.rarity);
+                                                                  if (rs.level > maxLevel) {
+                                                                    rs.level = maxLevel;
+                                                                  }
+                                                                  _gs.changeStats();
+                                                                },
+                                                              ),
                                                             ),
-                                                          ),
+                                                          ],
                                                         ),
-                                                        Expanded(
-                                                          child: Slider(
-                                                            value: rs.level.toDouble(),
-                                                            min: 1,
-                                                            max: getRelicMaxLevel(rs.rarity).toDouble(),
-                                                            divisions: getRelicMaxLevel(rs.rarity),
-                                                            activeColor: _cData.elementType.color,
-                                                            inactiveColor: _cData.elementType.color.withOpacity(0.5),
-                                                            onChanged: (double value) {
-                                                              rs.level = value.toInt();
-                                                              _gs.changeStats();
-                                                            },
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                    child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      children: [
-                                                        SizedBox(
-                                                          width: 100,
-                                                          child: Text(
-                                                            "Main Stat:",
-                                                            style: const TextStyle(
-                                                              //fontWeight: FontWeight.bold,
-                                                              color: Colors.white,
-                                                              fontSize: 15,
-                                                              height: 1.1,
+                                                      ),
+                                                      Padding(
+                                                        padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            SizedBox(
+                                                              width: 100,
+                                                              child: Text(
+                                                                "Level:${rs.level}",
+                                                                style: const TextStyle(
+                                                                  //fontWeight: FontWeight.bold,
+                                                                  color: Colors.white,
+                                                                  fontSize: 15,
+                                                                  height: 1.1,
+                                                                ),
+                                                              ),
                                                             ),
-                                                          ),
+                                                            Expanded(
+                                                              child: Slider(
+                                                                value: rs.level.toDouble(),
+                                                                min: 1,
+                                                                max: getRelicMaxLevel(rs.rarity).toDouble(),
+                                                                divisions: getRelicMaxLevel(rs.rarity),
+                                                                activeColor: _cData.elementType.color,
+                                                                inactiveColor: _cData.elementType.color.withOpacity(0.5),
+                                                                onChanged: (double value) {
+                                                                  rs.level = value.toInt();
+                                                                  _gs.changeStats();
+                                                                },
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
-                                                        Expanded(
-                                                            child: DropdownButton(
+                                                      ),
+                                                      Padding(
+                                                        padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            SizedBox(
+                                                              width: 100,
+                                                              child: Text(
+                                                                "Main Stat:",
+                                                                style: const TextStyle(
+                                                                  //fontWeight: FontWeight.bold,
+                                                                  color: Colors.white,
+                                                                  fontSize: 15,
+                                                                  height: 1.1,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Expanded(
+                                                                child: DropdownButton(
                                                               items: rp.mainAttrs.map((attr) {
                                                                 return DropdownMenuItem(
                                                                   value: attr.name,
@@ -523,36 +525,36 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                                 _gs.changeStats();
                                                               },
                                                             )),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  for (var index = 0; index < 4; index++)
-                                                    Column(
-                                                      children: [
-                                                        SizedBox(
-                                                          height: 10,
+                                                          ],
                                                         ),
-                                                        Padding(
-                                                          padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                          child: Row(
-                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                            children: [
-                                                              SizedBox(
-                                                                width: 100,
-                                                                child: Text(
-                                                                  "Sub Stat${index + 1}:",
-                                                                  style: const TextStyle(
-                                                                    //fontWeight: FontWeight.bold,
-                                                                    color: Colors.white,
-                                                                    fontSize: 15,
-                                                                    height: 1.1,
+                                                      ),
+                                                      for (var index = 0; index < 4; index++)
+                                                        Column(
+                                                          children: [
+                                                            SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            Padding(
+                                                              padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                              child: Row(
+                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 100,
+                                                                    child: Text(
+                                                                      "Sub Stat${index + 1}:",
+                                                                      style: const TextStyle(
+                                                                        //fontWeight: FontWeight.bold,
+                                                                        color: Colors.white,
+                                                                        fontSize: 15,
+                                                                        height: 1.1,
+                                                                      ),
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                              ),
-                                                              Expanded(
-                                                                  child: DropdownButton(
+                                                                  Expanded(
+                                                                      child: DropdownButton(
                                                                     items: relicSubAttrs.where((attr) => attr != rs.mainAttr).map((attr) {
-                                                                      return  DropdownMenuItem(
+                                                                      return DropdownMenuItem(
                                                                         value: attr.name,
                                                                         child: Text("${attr.desc.tr()}${attr.isPercent() ? ' %' : ''}"),
                                                                       );
@@ -565,28 +567,28 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                                       _gs.changeStats();
                                                                     },
                                                                   )),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                                          child: Row(
-                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                            children: [
-                                                              SizedBox(
-                                                                width: 100,
-                                                                child: Text(
-                                                                  "Value${index + 1}:",
-                                                                  style: const TextStyle(
-                                                                    //fontWeight: FontWeight.bold,
-                                                                    color: Colors.white,
-                                                                    fontSize: 15,
-                                                                    height: 1.1,
-                                                                  ),
-                                                                ),
+                                                                ],
                                                               ),
-                                                              Expanded(
-                                                                  child: TextFormField(
+                                                            ),
+                                                            Padding(
+                                                              padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                                              child: Row(
+                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 100,
+                                                                    child: Text(
+                                                                      "Value${index + 1}:",
+                                                                      style: const TextStyle(
+                                                                        //fontWeight: FontWeight.bold,
+                                                                        color: Colors.white,
+                                                                        fontSize: 15,
+                                                                        height: 1.1,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                      child: TextFormField(
                                                                     initialValue: subAttrValues[index].key.getPropText(subAttrValues[index].value).replaceFirst('%', ''),
                                                                     keyboardType: TextInputType.numberWithOptions(
                                                                       decimal: true,
@@ -608,25 +610,25 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                                         return text.isEmpty
                                                                             ? newValue
                                                                             : double.tryParse(text) == null
-                                                                            ? oldValue
-                                                                            : newValue;
+                                                                                ? oldValue
+                                                                                : newValue;
                                                                       }),
                                                                     ],
                                                                   )),
-                                                            ],
-                                                          ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
-                                                      ],
-                                                    ),
-                                                ],
+                                                    ],
+                                                  ),
+                                                ),
                                               ),
-                                            ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                }));
+                                        ),
+                                      );
+                                    }));
                               },
                             );
                           },
