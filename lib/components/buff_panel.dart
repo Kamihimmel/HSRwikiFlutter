@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../calculator/basic.dart';
@@ -46,7 +47,8 @@ class BuffPanelState extends State<BuffPanel> {
     }
     bool alwaysOn = ee.type != 'buff' && ee.type != 'debuff';
     double multiplierValue = effect.getEffectMultiplierValue(effect.skillData, skillLevel, effectConfig[effectKey]) / 100;
-    String text = [effect.getSkillName(getLanguageCode(context)), propText, prop != FightProp.unknown ? prop.getPropText(multiplierValue) : ''].join(' ');
+    String propValue = prop != FightProp.unknown ? prop.getPropText(multiplierValue) : '';
+    String text = [effect.getSkillName(getLanguageCode(context)), propText, propValue].join(' ');
     EffectConfig ec = effectConfig[effectKey] ?? (defaultOn ? EffectConfig.defaultOn() : EffectConfig.defaultOff());
     int stack = ec.stack == 0 ? ee.maxStack : ec.stack;
     FilterChip chip = FilterChip(
@@ -63,46 +65,79 @@ class BuffPanelState extends State<BuffPanel> {
       },
     );
     if (effect.hasBuffConfig()) {
-      Widget widget = SizedBox.shrink();
-      if (ee.maxStack >= 5) {
-        widget = Slider(
-          min: 1,
-          max: ee.maxStack.toDouble(),
-          divisions: ee.maxStack,
-          value: stack.toDouble(),
-          onChanged: (value) {
-            ec.stack = value.toInt();
-            effectConfig[effectKey] = ec;
-            _gs.changeStats();
-          },
-        );
-      } else {
-        widget = Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            for (var i = 1; i <= ee.maxStack; i++)
-              ChoiceChip(
-                label: Text(i.toString()),
-                selected: stack == i,
-                onSelected: (value) {
-                  ec.stack = i;
-                  effectConfig[effectKey] = ec;
-                  _gs.changeStats();
-                },
+      List<Widget> widgets = [];
+      if (effect.type == Effect.manualType) {
+        widgets = [
+          Flexible(
+            child: TextFormField(
+              initialValue: ec.value.toStringAsFixed(1),
+              keyboardType: TextInputType.numberWithOptions(
+                decimal: true,
+                signed: false,
               ),
-          ],
-        );
+              onChanged: (value) {
+                ec.value = double.tryParse(value) ?? 0;
+                effectConfig[effectKey] = ec;
+                _gs.changeStats();
+              },
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
+                TextInputFormatter.withFunction((oldValue, newValue) {
+                  final text = newValue.text;
+                  return text.isEmpty
+                      ? newValue
+                      : double.tryParse(text) == null
+                      ? oldValue
+                      : newValue;
+                }),
+              ],
+            ),
+          ),
+        ];
+      } else {
+        if (ee.maxStack >= 5) {
+          widgets = [
+            Text("${'Stacks'.tr()}:$stack"),
+            Slider(
+              min: 1,
+              max: ee.maxStack.toDouble(),
+              divisions: ee.maxStack,
+              value: stack.toDouble(),
+              onChanged: (value) {
+                ec.stack = value.toInt();
+                effectConfig[effectKey] = ec;
+                _gs.changeStats();
+              },
+            ),
+          ];
+        } else {
+          widgets = [
+            Text("${'Stacks'.tr()}:$stack"),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                for (var i = 1; i <= ee.maxStack; i++)
+                  ChoiceChip(
+                    label: Text(i.toString()),
+                    selected: stack == i,
+                    onSelected: (value) {
+                      ec.stack = i;
+                      effectConfig[effectKey] = ec;
+                      _gs.changeStats();
+                    },
+                  ),
+              ],
+            ),
+          ];
+        }
       }
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           chip,
           Row(
-            children: [
-              Text("${'Stacks'.tr()}:$stack"),
-              widget,
-            ],
-          )
+            children: widgets,
+          ),
         ],
       );
     } else {
@@ -312,6 +347,23 @@ class BuffPanelState extends State<BuffPanel> {
                             runSpacing: 10,
                             children: EffectManager.getEffects().values.where((e) => _cData.entity.id != e.majorId && e.validAllyBuffEffect(null)).map((effect) {
                               return _getEffectChip(_gs.stats.otherEffect, effect, defaultOn: false);
+                            }).toList())
+                      ],
+                    ),
+                    ExpansionTile(
+                      tilePadding: EdgeInsets.only(left: 10, right: 5),
+                      childrenPadding: EdgeInsets.all(5),
+                      initiallyExpanded: false,
+                      title: Text(
+                        "Manual Buff",
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                      children: [
+                        Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            children: EffectManager.getManualEffects().map((effect) {
+                              return _getEffectChip(_gs.stats.manualEffect, effect, defaultOn: false);
                             }).toList())
                       ],
                     ),

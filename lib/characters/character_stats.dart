@@ -5,10 +5,10 @@ import '../calculator/effect.dart';
 import '../calculator/effect_manager.dart';
 import '../lightcones/lightcone.dart';
 import '../lightcones/lightcone_manager.dart';
-import '../calculator/effect_entity.dart';
 import '../relics/relic.dart';
 import '../relics/relic_manager.dart';
 import '../utils/helper.dart';
+import '../utils/logging.dart';
 import 'character.dart';
 import 'character_manager.dart';
 
@@ -33,6 +33,7 @@ class CharacterStats {
   Map<String, EffectConfig> lightconeEffect = {};
   Map<String, EffectConfig> relicEffect = {};
   Map<String, EffectConfig> otherEffect = {};
+  Map<String, EffectConfig> manualEffect = {};
 
   /// import stats
   Map<FightProp, double> importStats = {};
@@ -121,6 +122,8 @@ class CharacterStats {
 
     map[FightProp.defenceIgnoreRatio] = getPropValue(FightProp.defenceIgnoreRatio);
     map[FightProp.defenceReduceRatio] = getPropValue(FightProp.defenceReduceRatio);
+
+    map[FightProp.lostHP] = getPropValue(FightProp.lostHP);
     return map;
   }
 
@@ -208,6 +211,9 @@ class CharacterStats {
     } else if (prop == FightProp.sPRatio) {
       result[PropSource.characterBasic(id)] = 1;
       prop = FightProp.sPRatio;
+    } else if (prop == FightProp.lostHP) {
+      // TODO 已损失生命值
+      result[PropSource.characterBasic(id)] = 6000;
     }
 
     _addAttrValue(result, c, lc, base, [prop]);
@@ -222,6 +228,7 @@ class CharacterStats {
     _addCharacterTraceValue(result, character, base, props[0]);
     _addCharacterEidolonValue(result, character, base, props[0]);
     _addOtherSkillValue(result, character, base, props[0]);
+    _addManualEffectValue(result, character, base, props[0]);
   }
 
   void _addLightconeSkillValue(Map<PropSource, double> result, Lightcone lightcone, double base, FightProp prop) {
@@ -355,8 +362,26 @@ class CharacterStats {
       if (!effectConfig.on) {
         return;
       }
-      double multiplierValue = effect.getEffectMultiplierValue(effect.skillData, effect.skillData.maxlevel, effectConfig);
+      int skillLevel = effect.skillData.maxlevel;
+      if (effect.skillData.maxlevel > 10) {
+        skillLevel = 10;
+      } else if (effect.skillData.maxlevel > 1) {
+        skillLevel = 6;
+      }
+      double multiplierValue = effect.getEffectMultiplierValue(effect.skillData, skillLevel, effectConfig);
       result[PropSource.characterSkill(effectKey, effect, self: false)] = base * multiplierValue / 100;
+    });
+  }
+
+  void _addManualEffectValue(Map<PropSource, double> result, Character character, double base, FightProp prop) {
+    EffectManager.getManualEffects().where((e) => e.validSelfBuffEffect(prop)).forEach((effect) {
+      String effectKey = effect.getKey();
+      EffectConfig effectConfig = manualEffect[effectKey] ?? EffectConfig.defaultOff();
+      if (!effectConfig.on) {
+        return;
+      }
+      double multiplierValue = effect.getEffectMultiplierValue(null, null, effectConfig);
+      result[PropSource.manualEffect(effectKey, effect)] = base * multiplierValue / 100;
     });
   }
 

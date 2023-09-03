@@ -7,6 +7,7 @@ class Effect {
   static final characterType = 1;
   static final lightconeType = 2;
   static final relicType = 3;
+  static final manualType = 4;
 
   /// 默认来自角色
   int type = 1;
@@ -24,6 +25,20 @@ class Effect {
     this.skillData = SkillData();
   }
 
+  Effect.manualBuff(FightProp prop) {
+    this.type = 4;
+    this.majorId = 'manual';
+    this.effectId = prop.name;
+    this.entity = EffectEntity();
+    this.entity.iid = this.effectId;
+    this.entity.type = 'buff';
+    this.entity.addtarget = prop.effectKey.isNotEmpty ? prop.effectKey[0] : '';
+    this.entity.multiplier = 0;
+    this.entity.tag = ['self', this.entity.addtarget];
+    this.skillData = SkillData();
+    this.skillData.maxlevel = -1;
+  }
+
   Effect.fromEntity(EffectEntity entity, String majorId, String minorId, {int? type}) {
     if (type != null) {
       this.type = type;
@@ -39,11 +54,11 @@ class Effect {
   }
 
   bool hasBuffConfig() {
-    return this.entity.maxStack > 1;
+    return this.entity.maxStack > 1 || this.type == manualType;
   }
 
   bool validSelfBuffEffect(FightProp? prop) {
-    if (this.entity.multiplier <= 0 || this.entity.iid == '') {
+    if (this.type != manualType && this.entity.multiplier <= 0 || this.entity.iid == '') {
       return false;
     }
     FightProp fp = FightProp.fromEffectKey(this.entity.addtarget);
@@ -92,7 +107,7 @@ class Effect {
 
   double getEffectMultiplierValue(SkillData? skillData, int? skillLevel, EffectConfig? effectConfig) {
     double multiplierValue = this.entity.multiplier;
-    if (skillData != null && skillLevel != null && multiplierValue <= skillData.levelmultiplier.length && multiplierValue == multiplierValue.toInt()) {
+    if (skillData != null && skillLevel != null && multiplierValue <= skillData.levelmultiplier.length && multiplierValue == multiplierValue.toInt() && skillData.maxlevel >= 0) {
       Map<String, dynamic> levelMultiplier = skillData.levelmultiplier[multiplierValue.toInt() - 1];
       if (levelMultiplier.containsKey('default')) {
         multiplierValue = double.tryParse(levelMultiplier['default'].toString()) ?? 0;
@@ -101,8 +116,13 @@ class Effect {
       }
     }
     int stack = this.entity.maxStack;
-    if (effectConfig != null && effectConfig.stack > 0) {
-      stack = effectConfig.stack;
+    if (effectConfig != null) {
+      if (effectConfig.stack > 0) {
+        stack = effectConfig.stack;
+      }
+      if (effectConfig.value > 0) {
+        multiplierValue = effectConfig.value;
+      }
     }
     multiplierValue *= stack;
     return multiplierValue;
@@ -119,6 +139,7 @@ class Effect {
 class EffectConfig {
   bool on = false;
   int stack = 0;
+  double value = 0;
 
   EffectConfig.defaultOn() {
     this.on = true;

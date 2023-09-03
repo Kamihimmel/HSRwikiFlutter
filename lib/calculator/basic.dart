@@ -145,10 +145,12 @@ enum FightProp {
     return FightProp.values.firstWhere((p) => p.name == name, orElse: () => FightProp.unknown);
   }
 
+  /// 对应effect中addtarget
   static FightProp fromEffectKey(String effectKey) {
     return FightProp.values.firstWhere((p) => p.effectKey.contains(effectKey.toLowerCase()), orElse: () => FightProp.unknown);
   }
 
+  /// 对应effect中multipliertarget
   static FightProp fromEffectMultiplier(String multiplierTarget) {
     if (multiplierTarget == 'atk') {
       return FightProp.attack;
@@ -156,6 +158,8 @@ enum FightProp {
       return FightProp.maxHP;
     } else if (multiplierTarget == 'def') {
       return FightProp.defence;
+    } else if (multiplierTarget == 'losthp') {
+      return FightProp.lostHP;
     } else if (multiplierTarget == '') {
       return FightProp.none;
     }
@@ -184,6 +188,7 @@ class PropSource {
   static const int otherSkill = 9;
   static const int otherTrace = 10;
   static const int otherEidolon = 11;
+  static const int manualBuff = 12;
   static const int unknown = 99;
 
   String id = '';
@@ -240,6 +245,12 @@ class PropSource {
     this.source = PropSource.relicSet;
   }
 
+  PropSource.manualEffect(String id, Effect effect, {name = '', desc = ''}) {
+    _setBase(id, name, desc);
+    this.effect = effect;
+    this.source = PropSource.manualBuff;
+  }
+
   _setBase(String id, String name, String desc) {
     this.id = id;
     this.name = name;
@@ -268,6 +279,8 @@ class PropSource {
         return PropSourceDisplay('relic'.tr(), Colors.teal);
       case otherSkill:
         return PropSourceDisplay(effect.getSkillName('lang'.tr()), Colors.cyan);
+      case manualBuff:
+        return PropSourceDisplay('manual'.tr(), Colors.brown);
     }
     return PropSourceDisplay(id, Colors.grey);
   }

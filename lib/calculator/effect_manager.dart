@@ -5,6 +5,7 @@ import '../characters/character_entity.dart';
 import '../components/global_state.dart';
 import '../utils/helper.dart';
 import '../utils/logging.dart';
+import 'basic.dart';
 import 'effect.dart';
 import 'effect_entity.dart';
 
@@ -47,4 +48,20 @@ class EffectManager {
   static Effect getEffect(String key) {
     return _effects[key]!;
   }
+
+  static List<Effect> getManualEffects() {
+    return _manualProps.where((attr) => attr.effectKey.isNotEmpty).map((attr) => Effect.manualBuff(attr)).toList();
+  }
 }
+
+List<FightProp> _manualProps = [
+  FightProp.hPAddedRatio,
+  FightProp.attackAddedRatio,
+  FightProp.defenceAddedRatio,
+  FightProp.criticalChance,
+  FightProp.criticalDamage,
+  FightProp.allDamageAddRatio,
+  FightProp.statusProbability,
+  FightProp.statusResistance,
+  FightProp.allResistanceIgnore,
+];
