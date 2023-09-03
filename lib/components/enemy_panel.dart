@@ -185,7 +185,8 @@ class EnemyPanelState extends State<EnemyPanel> {
                             Slider(
                               min: 1,
                               max: 90,
-                              inactiveColor: Theme.of(context).colorScheme.secondary,
+                              inactiveColor: _cData.elementType.color.withOpacity(0.35),
+                              activeColor: _cData.elementType.color,
                               label: _gs.enemyStats.level.toString(),
                               value: _gs.enemyStats.level.toDouble(),
                               onChanged: (value) {
@@ -211,7 +212,8 @@ class EnemyPanelState extends State<EnemyPanel> {
                             Slider(
                               min: 0,
                               max: 100,
-                              inactiveColor: Theme.of(context).colorScheme.secondary,
+                              inactiveColor: _cData.elementType.color.withOpacity(0.35),
+                              activeColor: _cData.elementType.color,
                               label: _gs.enemyStats.defenceReduce.toString(),
                               value: _gs.enemyStats.defenceReduce.toDouble(),
                               onChanged: (value) {
@@ -234,10 +236,11 @@ class EnemyPanelState extends State<EnemyPanel> {
                                 height: 1.1,
                               ),
                             ),
-                            Switch(
+                            Checkbox(
+                              activeColor: _cData.elementType.color,
                               value: _gs.enemyStats.weaknessBreak,
-                              onChanged: (bool value) {
-                                _gs.enemyStats.weaknessBreak = value;
+                              onChanged: (bool? value) {
+                                _gs.enemyStats.weaknessBreak = value!;
                                 _gs.changeStats();
                               },
                             ),

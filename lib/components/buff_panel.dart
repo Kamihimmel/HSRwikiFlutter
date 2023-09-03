@@ -29,6 +29,7 @@ class BuffPanelState extends State<BuffPanel> {
   }
 
   Widget _getEffectChip(Map<String, EffectConfig> effectConfig, Effect effect, {defaultOn = true}) {
+    final Character _cData = CharacterManager.getCharacter(_gs.stats.id);
     EffectEntity ee = effect.entity;
     String effectKey = effect.getKey();
     FightProp prop = FightProp.fromEffectKey(ee.addtarget);
@@ -52,6 +53,8 @@ class BuffPanelState extends State<BuffPanel> {
     EffectConfig ec = effectConfig[effectKey] ?? (defaultOn ? EffectConfig.defaultOn() : EffectConfig.defaultOff());
     int stack = ec.stack == 0 ? ee.maxStack : ec.stack;
     FilterChip chip = FilterChip(
+      backgroundColor: _cData.elementType.color.withOpacity(0.3),
+      selectedColor: _cData.elementType.color.withOpacity(0.5),
       label: Tooltip(
         message: '',
         child: Text(text),
@@ -68,7 +71,8 @@ class BuffPanelState extends State<BuffPanel> {
       List<Widget> widgets = [];
       if (effect.type == Effect.manualType) {
         widgets = [
-          Flexible(
+          SizedBox(
+            width: 200,
             child: TextFormField(
               initialValue: ec.value.toStringAsFixed(1),
               keyboardType: TextInputType.numberWithOptions(
@@ -87,8 +91,8 @@ class BuffPanelState extends State<BuffPanel> {
                   return text.isEmpty
                       ? newValue
                       : double.tryParse(text) == null
-                      ? oldValue
-                      : newValue;
+                          ? oldValue
+                          : newValue;
                 }),
               ],
             ),
@@ -151,8 +155,8 @@ class BuffPanelState extends State<BuffPanel> {
     final crossAxisCount = screenWidth < 600
         ? 4
         : screenWidth < 1000
-        ? 6
-        : 8;
+            ? 6
+            : 8;
     return ChangeNotifierProvider.value(
         value: _gs,
         child: Consumer<GlobalState>(builder: (context, model, child) {
@@ -210,8 +214,9 @@ class BuffPanelState extends State<BuffPanel> {
                           Wrap(
                             spacing: 10,
                             runSpacing: 10,
-                            children: _cData.entity.skilldata.expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, skill.id))
-                                .where((e) => e.validDamageHealEffect('dmg') && e.hasBuffConfig())).map((effect) {
+                            children: _cData.entity.skilldata
+                                .expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, skill.id)).where((e) => e.validDamageHealEffect('dmg') && e.hasBuffConfig()))
+                                .map((effect) {
                               effect.skillData = CharacterManager.getCharacter(effect.majorId).getSkillById(effect.minorId);
                               return _getEffectChip(_gs.stats.damageEffect, effect);
                             }).toList(),
@@ -222,8 +227,9 @@ class BuffPanelState extends State<BuffPanel> {
                           Wrap(
                             spacing: 10,
                             runSpacing: 10,
-                            children: _cData.entity.skilldata.expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, skill.id))
-                                .where((e) => e.validSelfBuffEffect(null))).map((effect) {
+                            children: _cData.entity.skilldata
+                                .expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, skill.id)).where((e) => e.validSelfBuffEffect(null)))
+                                .map((effect) {
                               effect.skillData = CharacterManager.getCharacter(effect.majorId).getSkillById(effect.minorId);
                               return _getEffectChip(_gs.stats.selfSkillEffect, effect);
                             }).toList(),
@@ -247,8 +253,9 @@ class BuffPanelState extends State<BuffPanel> {
                           Wrap(
                             spacing: 10,
                             runSpacing: 10,
-                            children: _cData.entity.tracedata.expand((trace) => trace.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, trace.id))
-                                .where((e) => !trace.tiny && e.validSelfBuffEffect(null))).map((effect) {
+                            children: _cData.entity.tracedata
+                                .expand((trace) => trace.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, trace.id)).where((e) => !trace.tiny && e.validSelfBuffEffect(null)))
+                                .map((effect) {
                               effect.skillData = CharacterManager.getCharacter(effect.majorId).getTraceById(effect.minorId);
                               return _getEffectChip(_gs.stats.selfTraceEffect, effect);
                             }).toList(),
@@ -272,8 +279,11 @@ class BuffPanelState extends State<BuffPanel> {
                           Wrap(
                             spacing: 10,
                             runSpacing: 10,
-                            children: _cData.entity.eidolon.expand((eidolon) => eidolon.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, eidolon.eidolonnum.toString()))
-                                .where((e) => (_gs.stats.eidolons[eidolon.eidolonnum.toString().toString()] ?? 0) > 0 && e.validSelfBuffEffect(null))).map((effect) {
+                            children: _cData.entity.eidolon
+                                .expand((eidolon) => eidolon.effect
+                                    .map((e) => Effect.fromEntity(e, _cData.entity.id, eidolon.eidolonnum.toString()))
+                                    .where((e) => (_gs.stats.eidolons[eidolon.eidolonnum.toString().toString()] ?? 0) > 0 && e.validSelfBuffEffect(null)))
+                                .map((effect) {
                               effect.skillData = CharacterManager.getCharacter(effect.majorId).getEidolonById(int.tryParse(effect.minorId) ?? 0);
                               return _getEffectChip(_gs.stats.selfEidolonEffect, effect);
                             }).toList(),
@@ -291,8 +301,9 @@ class BuffPanelState extends State<BuffPanel> {
                         Wrap(
                           spacing: 10,
                           runSpacing: 10,
-                          children: _lData.entity.skilldata.expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _lData.entity.id, '', type: Effect.lightconeType))
-                              .where((e) => e.validSelfBuffEffect(null))).map((effect) {
+                          children: _lData.entity.skilldata
+                              .expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _lData.entity.id, '', type: Effect.lightconeType)).where((e) => e.validSelfBuffEffect(null)))
+                              .map((effect) {
                             effect.skillData = LightconeManager.getLightcone(effect.majorId).getSkill();
                             return _getEffectChip(_gs.stats.lightconeEffect, effect);
                           }).toList(),
@@ -325,8 +336,10 @@ class BuffPanelState extends State<BuffPanel> {
                               }
                             }
                             return Record.of(skillData, Record.of(setId, xSet));
-                          }).expand((record) => record.key.effect.map((e) => Effect.fromEntity(e, record.value.key, record.value.value, type: Effect.relicType)))
-                              .where((e) => e.validSelfBuffEffect(null)).map((effect) {
+                          })
+                              .expand((record) => record.key.effect.map((e) => Effect.fromEntity(e, record.value.key, record.value.value, type: Effect.relicType)))
+                              .where((e) => e.validSelfBuffEffect(null))
+                              .map((effect) {
                             effect.skillData = RelicManager.getRelic(effect.majorId).getSkill(effect.minorId == '2' ? 0 : 1);
                             return _getEffectChip(_gs.stats.relicEffect, effect);
                           }).toList(),
@@ -377,7 +390,6 @@ class BuffPanelState extends State<BuffPanel> {
 }
 
 class BuffPanel extends StatefulWidget {
-
   const BuffPanel({
     Key? key,
   }) : super(key: key);
