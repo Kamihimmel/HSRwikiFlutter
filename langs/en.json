@@ -180,5 +180,20 @@
     "silverwolf9": "Can you let me have some fun this time?",
     "silverwolf10": "Time for a buzz.",
     "bleed": "[bleed]",
-    "losthp": "LostHP"
+    "losthp": "LostHP",
+    "HSR Damage Calculator": "HSR Damage Calculator",
+    "Enemy List": "Enemy List",
+    "Stat scale": "Stat scale",
+    "Dmg scale": "Dmg scale",
+    "Basic Panel": "Basic Panel",
+    "Critical Panel": "Critical Panel",
+    "Damage Bonus Panel": "Damage Bonus Panel",
+    "Other Panel": "Other Panel",
+    "Lost HP": "Lost HP",
+    "Enemy Panel": "Enemy Panel",
+    "EnemyLv": "EnemyLv",
+    "EnemyDefenceDebuff": "EnemyDefenceDebuff",
+    "WeaknessBreak": "WeaknessBreak",
+    "Buff Panel": "Buff Panel",
+    "Stacks": "Stacks"
 }
