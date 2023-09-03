@@ -13,6 +13,8 @@ class EffectEntity {
 	late String referencetargetJP = '';
 	late String multipliertarget = '';
 	late double multiplier = 0;
+	late String multipliervalue = '';
+	late String multipliermax = '';
 	late int maxStack = 1;
 	late String group = '';
 	late List<String> tag = [];

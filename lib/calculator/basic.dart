@@ -33,7 +33,8 @@ enum FightProp {
 
   speed(desc: 'Speed', icon: 'starrailres/icon/property/IconSpeed.png', effectKey: ['spd']),
   baseSpeed(desc: 'SPD', icon: 'starrailres/icon/property/IconSpeed.png'),
-  speedDelta(desc: 'SPD', icon: 'starrailres/icon/property/IconSpeed.png', effectKey: ['speed']),
+  speedDelta(desc: 'speed', icon: 'starrailres/icon/property/IconSpeed.png'),
+  speedAddedRatio(desc: 'speed', icon: 'starrailres/icon/property/IconSpeed.png', effectKey: ['speed']),
 
   aggro(desc: 'Taunt', icon: 'starrailres/icon/property/IconTaunt.png', effectKey: ['taunt']),
   stanceBreakAddedRatio(desc: ''),
@@ -134,11 +135,13 @@ enum FightProp {
   });
 
   bool isPercent() {
-    return this.name.contains("Ratio") || this.name.contains("Resistance") || this.name.contains("Probability") || this.name.contains("critical") || this.name.contains("Critical");
+    return this.name.contains("Ratio") || this.name.endsWith("ResistanceIgnore") || this.name.endsWith("Resistance")
+        || this.name.contains("Probability") || this.name.toLowerCase().contains("critical")
+        || this.name == 'controlResist';
   }
 
-  String getPropText(double value) {
-    return getDisplayText(value, isPercent());
+  String getPropText(double value, {bool? percent}) {
+    return getDisplayText(value, percent ?? isPercent());
   }
 
   static FightProp fromName(String name) {

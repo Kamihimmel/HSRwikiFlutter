@@ -1,9 +1,13 @@
+import 'package:math_expressions/math_expressions.dart';
+
 import '../relics/relic_manager.dart';
 import 'basic.dart';
 import 'effect_entity.dart';
 import 'skill_data.dart';
 
 class Effect {
+  static final Parser formulaParser = Parser();
+  static final ContextModel cm = ContextModel();
   static final characterType = 1;
   static final lightconeType = 2;
   static final relicType = 3;
@@ -106,13 +110,19 @@ class Effect {
   }
 
   double getEffectMultiplierValue(SkillData? skillData, int? skillLevel, EffectConfig? effectConfig) {
-    double multiplierValue = this.entity.multiplier;
-    if (skillData != null && skillLevel != null && multiplierValue <= skillData.levelmultiplier.length && multiplierValue == multiplierValue.toInt() && skillData.maxlevel >= 0) {
-      Map<String, dynamic> levelMultiplier = skillData.levelmultiplier[multiplierValue.toInt() - 1];
-      if (levelMultiplier.containsKey('default')) {
-        multiplierValue = double.tryParse(levelMultiplier['default'].toString()) ?? 0;
-      } else {
-        multiplierValue = double.tryParse(levelMultiplier[skillLevel.toString()].toString()) ?? 0;
+    double multiplier = this.entity.multiplier;
+    String multiplierValue = this.entity.multipliervalue;
+    if (multiplierValue != '') {
+      Expression expr = formulaParser.parse(multiplierValue);
+      multiplier = expr.evaluate(EvaluationType.REAL, cm);
+    } else {
+      if (skillData != null && skillLevel != null && multiplier <= skillData.levelmultiplier.length && multiplier == multiplier.toInt() && skillData.maxlevel >= 0) {
+        Map<String, dynamic> levelMultiplier = skillData.levelmultiplier[multiplier.toInt() - 1];
+        if (levelMultiplier.containsKey('default')) {
+          multiplier = double.tryParse(levelMultiplier['default'].toString()) ?? 0;
+        } else {
+          multiplier = double.tryParse(levelMultiplier[skillLevel.toString()].toString()) ?? 0;
+        }
       }
     }
     int stack = this.entity.maxStack;
@@ -121,11 +131,11 @@ class Effect {
         stack = effectConfig.stack;
       }
       if (effectConfig.value > 0) {
-        multiplierValue = effectConfig.value;
+        multiplier = effectConfig.value;
       }
     }
-    multiplierValue *= stack;
-    return multiplierValue;
+    multiplier *= stack;
+    return multiplier;
   }
 
   String getSkillName(String lang) {

@@ -17,6 +17,7 @@ import '../lightcones/lightcone_manager.dart';
 import '../relics/relic.dart';
 import '../relics/relic_manager.dart';
 import '../utils/helper.dart';
+import '../utils/logging.dart';
 import 'global_state.dart';
 
 /// buff面板
@@ -33,7 +34,6 @@ class BuffPanelState extends State<BuffPanel> {
     EffectEntity ee = effect.entity;
     String effectKey = effect.getKey();
     FightProp prop = FightProp.fromEffectKey(ee.addtarget);
-    String propText = prop != FightProp.unknown ? prop.desc.tr() : '';
     int skillLevel = effect.skillData.maxlevel;
     if (effect.type == Effect.characterType) {
       if (effect.majorId == _gs.stats.id && _gs.stats.skillLevels.containsKey(effect.minorId)) {
@@ -46,9 +46,14 @@ class BuffPanelState extends State<BuffPanel> {
         }
       }
     }
-    bool alwaysOn = ee.type != 'buff' && ee.type != 'debuff';
-    double multiplierValue = effect.getEffectMultiplierValue(effect.skillData, skillLevel, effectConfig[effectKey]) / 100;
-    String propValue = prop != FightProp.unknown ? prop.getPropText(multiplierValue) : '';
+    String propText = '';
+    String propValue = '';
+    bool isBuffOrDebuff = ['buff', 'debuff'].contains(ee.type); // 否则是dmg、heal、shield
+    if (isBuffOrDebuff) {
+      propText = prop.desc.tr();
+      double multiplierValue = effect.getEffectMultiplierValue(effect.skillData, skillLevel, effectConfig[effectKey]) / 100;
+      propValue = prop.getPropText(multiplierValue, percent: prop == FightProp.lostHP ? true : null);
+    }
     String text = [effect.getSkillName(getLanguageCode(context)), propText, propValue].join(' ');
     EffectConfig ec = effectConfig[effectKey] ?? (defaultOn ? EffectConfig.defaultOn() : EffectConfig.defaultOff());
     int stack = ec.stack == 0 ? ee.maxStack : ec.stack;
@@ -60,7 +65,7 @@ class BuffPanelState extends State<BuffPanel> {
         child: Text(text),
         preferBelow: false,
       ),
-      selected: alwaysOn || ec.on,
+      selected: !isBuffOrDebuff || ec.on,
       onSelected: (bool value) {
         ec.on = value;
         effectConfig[effectKey] = ec;
@@ -332,19 +337,19 @@ class BuffPanelState extends State<BuffPanel> {
                           spacing: 10,
                           runSpacing: 10,
                           children: List.generate(3, (index) {
-                            String setId = _rList[index].entity.id;
+                            Relic relic = _rList[index];
+                            String setId = relic.entity.id;
                             SkillData skillData = SkillData();
-                            String xSet = '';
-                            if (setId != '') {
-                              if ((index == 0 || index == 2) && _rList[index].entity.skilldata.length > 0) {
-                                skillData = _rList[index].getSkill(0);
-                                xSet = '2';
-                              } else if (_rList[index].entity.skilldata.length > 1) {
-                                skillData = _rList[index].getSkill(1);
-                                xSet = '4';
-                              }
+                            int skillIndex = 0; // 0: set2; 1: set4
+                            String setNum = '2';
+                            if (index == 1 && setId == _rList[0].entity.id) {
+                              skillIndex = 1;
+                              setNum = '4';
                             }
-                            return Record.of(skillData, Record.of(setId, xSet));
+                            if (relic.entity.skilldata.length > skillIndex) {
+                              skillData = relic.getSkill(skillIndex);
+                            }
+                            return Record.of(skillData, Record.of(setId, setNum));
                           })
                               .expand((record) => record.key.effect.map((e) => Effect.fromEntity(e, record.value.key, record.value.value, type: Effect.relicType)))
                               .where((e) => e.validSelfBuffEffect(null))

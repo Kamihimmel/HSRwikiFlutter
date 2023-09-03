@@ -61,7 +61,7 @@ List<FightProp> _manualProps = [
   FightProp.criticalChance,
   FightProp.criticalDamage,
   FightProp.allDamageAddRatio,
+  FightProp.allResistanceIgnore,
   FightProp.statusProbability,
   FightProp.statusResistance,
-  FightProp.allResistanceIgnore,
 ];

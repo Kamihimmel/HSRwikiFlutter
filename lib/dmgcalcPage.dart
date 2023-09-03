@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -316,73 +317,78 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
                                         md: 12,
                                         xs: 12,
                                         sm: 12,
-                                        child: Container(
-                                          height: screenWidth > 905 ? 48 : null,
-                                          color: Colors.black45,
-                                          width: double.infinity,
-                                          alignment: Alignment.centerRight,
-                                          child: Column(mainAxisAlignment: MainAxisAlignment.end, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                            Wrap(runSpacing: 10, alignment: WrapAlignment.start, crossAxisAlignment: WrapCrossAlignment.center, children: [
-                                              Container(
-                                                width: 300,
-                                                child: FittedBox(
-                                                  fit: BoxFit.scaleDown,
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                        'Stat scale'.tr(),
-                                                        style: TextStyle(
-                                                            //fontWeight: FontWeight.bold,
+                                        child: ChangeNotifierProvider.value(
+                                          value: _gs,
+                                          child: Consumer<GlobalState>(
+                                            builder: (context, model, child) => Container(
+                                              height: screenWidth > 905 ? 48 : null,
+                                              color: Colors.black45,
+                                              width: double.infinity,
+                                              alignment: Alignment.centerRight,
+                                              child: Column(mainAxisAlignment: MainAxisAlignment.end, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                                Wrap(runSpacing: 10, alignment: WrapAlignment.start, crossAxisAlignment: WrapCrossAlignment.center, children: [
+                                                  Container(
+                                                    width: 300,
+                                                    child: FittedBox(
+                                                      fit: BoxFit.scaleDown,
+                                                      child: Row(
+                                                        children: [
+                                                          Text(
+                                                            'Stat scale'.tr(),
+                                                            style: TextStyle(
+                                                                //fontWeight: FontWeight.bold,
 
-                                                            ),
+                                                                ),
+                                                          ),
+                                                          Slider(
+                                                            min: 1,
+                                                            max: 10,
+                                                            divisions: 9,
+                                                            activeColor: Colors.grey,
+                                                            inactiveColor: Colors.grey[200]!,
+                                                            label: _gs.statScale.toString(),
+                                                            value: _gs.statScale.toDouble(),
+                                                            onChanged: (value) {
+                                                              _gs.statScale = value.toInt();
+                                                            },
+                                                          ),
+                                                        ],
                                                       ),
-                                                      Slider(
-                                                        min: 1,
-                                                        max: 10,
-                                                        divisions: 9,
-                                                        activeColor: Colors.grey,
-                                                        inactiveColor: Colors.grey[200]!,
-                                                        label: _gs.statScale.toString(),
-                                                        value: _gs.statScale.toDouble(),
-                                                        onChanged: (value) {
-                                                          _gs.statScale = value.toInt();
-                                                        },
-                                                      ),
-                                                    ],
+                                                    ),
                                                   ),
-                                                ),
-                                              ),
-                                              Container(
-                                                width: 300,
-                                                child: FittedBox(
-                                                  fit: BoxFit.scaleDown,
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                        'Dmg scale'.tr(),
-                                                        style: TextStyle(
-                                                            //fontWeight: FontWeight.bold,
+                                                  Container(
+                                                    width: 300,
+                                                    child: FittedBox(
+                                                      fit: BoxFit.scaleDown,
+                                                      child: Row(
+                                                        children: [
+                                                          Text(
+                                                            'Dmg scale'.tr(),
+                                                            style: TextStyle(
+                                                                //fontWeight: FontWeight.bold,
 
-                                                            ),
+                                                                ),
+                                                          ),
+                                                          Slider(
+                                                            min: 1,
+                                                            max: 10,
+                                                            divisions: 9,
+                                                            activeColor: Colors.grey,
+                                                            inactiveColor: Colors.grey[200]!,
+                                                            label: _gs.dmgScale.toString(),
+                                                            value: _gs.dmgScale.toDouble(),
+                                                            onChanged: (value) {
+                                                              _gs.dmgScale = value.toInt();
+                                                            },
+                                                          ),
+                                                        ],
                                                       ),
-                                                      Slider(
-                                                        min: 1,
-                                                        max: 10,
-                                                        divisions: 9,
-                                                        activeColor: Colors.grey,
-                                                        inactiveColor: Colors.grey[200]!,
-                                                        label: _gs.dmgScale.toString(),
-                                                        value: _gs.dmgScale.toDouble(),
-                                                        onChanged: (value) {
-                                                          _gs.dmgScale = value.toInt();
-                                                        },
-                                                      ),
-                                                    ],
+                                                    ),
                                                   ),
-                                                ),
-                                              ),
-                                            ]),
-                                          ]),
+                                                ]),
+                                              ]),
+                                            ),
+                                          )
                                         ),
                                       ),
                                     ],

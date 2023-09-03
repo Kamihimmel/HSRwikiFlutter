@@ -197,26 +197,25 @@ class CharacterStats {
     Character c = CharacterManager.getCharacter(id);
     Lightcone lc = LightconeManager.getLightcone(lightconeId);
     double base = 1;
+    List<FightProp> props = [prop];
 
     if (prop == FightProp.aggro) {
       result[PropSource.characterBasic(id)] = c.entity.dtaunt.toDouble();
     } else if (prop == FightProp.speed) {
       result[PropSource.characterBasic(id)] = c.entity.dspeed.toDouble();
       base = c.entity.dspeed.toDouble();
-      prop = FightProp.speedDelta;
+      props = [FightProp.speedAddedRatio, FightProp.speedDelta];
     } else if (prop == FightProp.criticalChance) {
       result[PropSource.characterBasic(id)] = 0.05;
     } else if (prop == FightProp.criticalDamage) {
       result[PropSource.characterBasic(id)] = 0.5;
     } else if (prop == FightProp.sPRatio) {
       result[PropSource.characterBasic(id)] = 1;
-      prop = FightProp.sPRatio;
     } else if (prop == FightProp.lostHP) {
-      // TODO 已损失生命值
-      result[PropSource.characterBasic(id)] = 6000;
+      base = getPropValue(FightProp.maxHP).values.fold(0, (pre, v) => pre + v);
     }
 
-    _addAttrValue(result, c, lc, base, [prop]);
+    _addAttrValue(result, c, lc, base, props);
     return result;
   }
 
