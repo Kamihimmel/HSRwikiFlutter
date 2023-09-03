@@ -205,7 +205,7 @@ class BuffPanelState extends State<BuffPanel> {
                         childrenPadding: EdgeInsets.all(5),
                         initiallyExpanded: true,
                         title: Text(
-                          "Character Buff",
+                          "Character Buff".tr(),
                           style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                         ),
                         children: [
@@ -215,7 +215,7 @@ class BuffPanelState extends State<BuffPanel> {
                                 width: 10,
                               ),
                               Text(
-                                "Character Skill Buff",
+                                "Character Skill Buff".tr(),
                                 style: TextStyle(
                                   fontSize: 15,
                                 ),
@@ -254,7 +254,7 @@ class BuffPanelState extends State<BuffPanel> {
                                 width: 10,
                               ),
                               Text(
-                                "Character Trace Buff",
+                                "Character Trace Buff".tr(),
                                 style: TextStyle(
                                   fontSize: 15,
                                 ),
@@ -280,7 +280,7 @@ class BuffPanelState extends State<BuffPanel> {
                                 width: 10,
                               ),
                               Text(
-                                "Character Eidolon Buff",
+                                "Character Eidolon Buff".tr(),
                                 style: TextStyle(
                                   fontSize: 15,
                                 ),
@@ -308,7 +308,7 @@ class BuffPanelState extends State<BuffPanel> {
                       childrenPadding: EdgeInsets.all(5),
                       initiallyExpanded: true,
                       title: Text(
-                        "Lightcone Skill Buff",
+                        "Lightcone Skill Buff".tr(),
                         style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                       children: [
@@ -329,7 +329,7 @@ class BuffPanelState extends State<BuffPanel> {
                       childrenPadding: EdgeInsets.all(5),
                       initiallyExpanded: true,
                       title: Text(
-                        "Relic Skill Buff",
+                        "Relic Skill Buff".tr(),
                         style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                       children: [
@@ -365,7 +365,7 @@ class BuffPanelState extends State<BuffPanel> {
                       childrenPadding: EdgeInsets.all(5),
                       initiallyExpanded: false,
                       title: Text(
-                        "Other Buff",
+                        "Other Buff".tr(),
                         style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                       children: [
@@ -382,7 +382,7 @@ class BuffPanelState extends State<BuffPanel> {
                       childrenPadding: EdgeInsets.all(5),
                       initiallyExpanded: false,
                       title: Text(
-                        "Manual Buff",
+                        "Manual Buff".tr(),
                         style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                       children: [

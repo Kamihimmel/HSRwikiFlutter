@@ -425,7 +425,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                             SizedBox(
                                                               width: 100,
                                                               child: Text(
-                                                                "Rarity:${rs.rarity}",
+                                                                "★${rs.rarity}",
                                                                 style: const TextStyle(
                                                                   //fontWeight: FontWeight.bold,
                                                                   color: Colors.white,
@@ -463,7 +463,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                             SizedBox(
                                                               width: 100,
                                                               child: Text(
-                                                                "Level:${rs.level}",
+                                                                "LV:${rs.level}",
                                                                 style: const TextStyle(
                                                                   //fontWeight: FontWeight.bold,
                                                                   color: Colors.white,
@@ -497,7 +497,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                             SizedBox(
                                                               width: 100,
                                                               child: Text(
-                                                                "Main Stat:",
+                                                                "Main Stat".tr() + ":",
                                                                 style: const TextStyle(
                                                                   //fontWeight: FontWeight.bold,
                                                                   color: Colors.white,
@@ -542,7 +542,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                                   SizedBox(
                                                                     width: 100,
                                                                     child: Text(
-                                                                      "Sub Stat${index + 1}:",
+                                                                      "Sub Stat".tr() + "${index + 1}:",
                                                                       style: const TextStyle(
                                                                         //fontWeight: FontWeight.bold,
                                                                         color: Colors.white,
@@ -578,7 +578,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                                   SizedBox(
                                                                     width: 100,
                                                                     child: Text(
-                                                                      "Value${index + 1}:",
+                                                                      "Value".tr() + "${index + 1}:",
                                                                       style: const TextStyle(
                                                                         //fontWeight: FontWeight.bold,
                                                                         color: Colors.white,
