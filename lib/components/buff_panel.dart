@@ -71,8 +71,8 @@ class BuffPanelState extends State<BuffPanel> {
       List<Widget> widgets = [];
       if (effect.type == Effect.manualType) {
         widgets = [
-          SizedBox(
-            width: 200,
+          Container(
+            width: 150,
             child: TextFormField(
               initialValue: ec.value.toStringAsFixed(1),
               keyboardType: TextInputType.numberWithOptions(
@@ -103,6 +103,8 @@ class BuffPanelState extends State<BuffPanel> {
           widgets = [
             Text("${'Stacks'.tr()}:$stack"),
             Slider(
+              inactiveColor: _cData.elementType.color.withOpacity(0.35),
+              activeColor: _cData.elementType.color,
               min: 1,
               max: ee.maxStack.toDouble(),
               divisions: ee.maxStack,
@@ -117,29 +119,36 @@ class BuffPanelState extends State<BuffPanel> {
         } else {
           widgets = [
             Text("${'Stacks'.tr()}:$stack"),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+            Wrap(
               children: [
                 for (var i = 1; i <= ee.maxStack; i++)
-                  ChoiceChip(
-                    label: Text(i.toString()),
-                    selected: stack == i,
-                    onSelected: (value) {
-                      ec.stack = i;
-                      effectConfig[effectKey] = ec;
-                      _gs.changeStats();
-                    },
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                    child: ChoiceChip(
+                      backgroundColor: _cData.elementType.color.withOpacity(0.3),
+                      selectedColor: _cData.elementType.color.withOpacity(0.5),
+                      label: Text(i.toString()),
+                      selected: stack == i,
+                      onSelected: (value) {
+                        ec.stack = i;
+                        effectConfig[effectKey] = ec;
+                        _gs.changeStats();
+                      },
+                    ),
                   ),
               ],
             ),
           ];
         }
       }
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+      return Wrap(
+        spacing: 10,
+        runSpacing: 10,
         children: [
           chip,
-          Row(
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
             children: widgets,
           ),
         ],
