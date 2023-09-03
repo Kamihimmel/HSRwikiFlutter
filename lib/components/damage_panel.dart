@@ -160,22 +160,6 @@ class DamagePanelState extends State<DamagePanel> {
     );
   }
 
-  /// 将group相同的effect放到一组，展示为一个伤害/治疗/护盾
-  Map<String, List<Effect>> _groupEffect(List<Effect> effects, String type) {
-    Map<String, List<Effect>> effectGroup = {};
-    effects.where((e) => e.entity.type == type).forEach((e) {
-      if (e.entity.group != '') {
-        List<Effect> list = effectGroup[e.entity.group] ?? [];
-        list.add(e);
-        effectGroup[e.entity.group] = list;
-      } else {
-        // key不重复就行，随便构造的
-        effectGroup["${DateTime.now().millisecondsSinceEpoch}-${e.hashCode}"] = [e];
-      }
-    });
-    return effectGroup;
-  }
-
   void _appendDamageAndTitle(
       List<Effect> effects, List<String> multiplierTitle, String type, List<DamageResult> drList, String stype, Character character, CharacterSkilldata? skilldata, int? skillLevel) {
     effects.forEach((e) {
@@ -210,7 +194,8 @@ class DamagePanelState extends State<DamagePanel> {
           int skillLevel = _gs.stats.skillLevels[skill.id] ?? 1;
           String skillName = character.getSkillNameById(skill.id, getLanguageCode(context));
           String title = "${skillName} (Lv${skillLevel})";
-          Map<String, List<Effect>> skillEffectGroup = _groupEffect(skillData.effect.map((e) => Effect.fromEntity(e, character.entity.id, skillData.id)).toList(), type);
+          List<Effect> validEffects = skillData.effect.map((e) => Effect.fromEntity(e, character.entity.id, skillData.id)).where((e) => e.entity.type == type).toList();
+          Map<String, List<Effect>> skillEffectGroup = Effect.groupEffect(validEffects);
           return ExpansionTile(
             tilePadding: EdgeInsets.only(left: 5, right: 5),
             childrenPadding: EdgeInsets.all(5),
@@ -235,7 +220,8 @@ class DamagePanelState extends State<DamagePanel> {
           CharacterTracedata traceData = character.entity.tracedata.firstWhere((s) => s.id == trace.id, orElse: () => CharacterTracedata());
           String traceName = character.getTraceNameById(trace.id, getLanguageCode(context));
           String title = "${traceName}";
-          Map<String, List<Effect>> traceEffectGroup = _groupEffect(traceData.effect.map((e) => Effect.fromEntity(e, character.entity.id, traceData.id)).toList(), type);
+          List<Effect> validEffects = traceData.effect.map((e) => Effect.fromEntity(e, character.entity.id, traceData.id)).where((e) => e.entity.type == type).toList();
+          Map<String, List<Effect>> traceEffectGroup = Effect.groupEffect(validEffects);
           return ExpansionTile(
             tilePadding: EdgeInsets.only(left: 5, right: 5),
             childrenPadding: EdgeInsets.all(5),

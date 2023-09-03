@@ -106,6 +106,9 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
       cs.skillLevels = {};
       cs.traceLevels = {};
       cs.eidolons = {};
+      cs.selfSkillEffect = {};
+      cs.selfTraceEffect = {};
+      cs.selfEidolonEffect = {};
     }
     if (cs == null) {
       cs = await loadSavedCharacterStats();
@@ -134,8 +137,8 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
       cid = _gs.stats.id;
     });
     _cData = await CharacterManager.loadFromRemoteById(_gs.stats.id);
-    _fillFields();
     await LightconeManager.loadFromRemoteById(_gs.stats.lightconeId);
+    _fillFields();
     List<String> relicSets = _gs.stats.getRelicSets();
     for (var i = 0; i < 3; i++) {
       String rid = relicSets[i];

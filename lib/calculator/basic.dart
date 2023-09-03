@@ -115,7 +115,7 @@ enum FightProp {
   dotDamageReceiveRatio(desc: 'dotdmgreceive', debuff: true, effectKey: ['dotdmgreceive']),
 
   defenceIgnoreRatio(desc: 'ignoredef', effectKey: ['ignoredef']),
-  defenceReduceRatio(desc: 'reducedef', debuff: true, effectKey: ['reducedef']),
+  defenceReduceRatio(desc: 'reducedefdebuff', debuff: true, effectKey: ['reducedef']),
 
   controlResist(desc: 'controlresist', effectKey: ['controlresist']),
 

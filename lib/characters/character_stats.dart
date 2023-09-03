@@ -355,7 +355,8 @@ class CharacterStats {
   }
 
   void _addOtherSkillValue(Map<PropSource, double> result, Character character, double base, FightProp prop) {
-    EffectManager.getEffects().values.where((e) => e.majorId != character.entity.id && e.validAllyBuffEffect(prop)).forEach((effect) {
+    Effect.groupEffect(EffectManager.getEffects().values.where((e) => e.majorId != character.entity.id && e.validAllyBuffEffect(prop)).toList()).values.forEach((effects) {
+      Effect effect = effects.first;
       String effectKey = effect.getKey();
       EffectConfig effectConfig = otherEffect[effectKey] ?? EffectConfig.defaultOff();
       if (!effectConfig.on) {
@@ -367,7 +368,10 @@ class CharacterStats {
       } else if (effect.skillData.maxlevel > 1) {
         skillLevel = 6;
       }
-      double multiplierValue = effect.getEffectMultiplierValue(effect.skillData, skillLevel, effectConfig);
+      double multiplierValue = 0;
+      effects.forEach((element) {
+        multiplierValue += element.getEffectMultiplierValue(effect.skillData, skillLevel, otherEffect[element.getKey()]);
+      });
       result[PropSource.characterSkill(effectKey, effect, self: false)] = base * multiplierValue / 100;
     });
   }

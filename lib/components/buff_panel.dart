@@ -29,8 +29,9 @@ class BuffPanelState extends State<BuffPanel> {
     super.initState();
   }
 
-  Widget _getEffectChip(Map<String, EffectConfig> effectConfig, Effect effect, {defaultOn = true}) {
+  Widget _getEffectChip(Map<String, EffectConfig> effectConfig, List<Effect> effects, {defaultOn = true}) {
     final Character _cData = CharacterManager.getCharacter(_gs.stats.id);
+    final Effect effect = effects.first;
     EffectEntity ee = effect.entity;
     String effectKey = effect.getKey();
     FightProp prop = FightProp.fromEffectKey(ee.addtarget);
@@ -47,16 +48,18 @@ class BuffPanelState extends State<BuffPanel> {
       }
     }
     String propText = '';
-    String propValue = '';
-    bool isBuffOrDebuff = ['buff', 'debuff'].contains(ee.type); // 否则是dmg、heal、shield
-    if (isBuffOrDebuff) {
+    List<String> propValue = [];
+    bool isDmg = effect.isDamageHealShield();
+    if (!isDmg) {
       propText = prop.desc.tr();
-      double multiplierValue = effect.getEffectMultiplierValue(effect.skillData, skillLevel, effectConfig[effectKey]) / 100;
-      propValue = prop.getPropText(multiplierValue, percent: prop == FightProp.lostHP ? true : null);
+      effects.forEach((element) {
+        double multiplierValue = element.getEffectMultiplierValue(effect.skillData, skillLevel, effectConfig[element.getKey()]) / 100;
+        propValue.add(prop.getPropText(multiplierValue, percent: prop == FightProp.lostHP ? true : null));
+      });
     }
-    String text = [effect.getSkillName(getLanguageCode(context)), propText, propValue].join(' ');
+    String text = [effect.getSkillName(getLanguageCode(context)), propText, propValue.join(' + ')].join(' ');
     EffectConfig ec = effectConfig[effectKey] ?? (defaultOn ? EffectConfig.defaultOn() : EffectConfig.defaultOff());
-    int stack = ec.stack == 0 ? ee.maxStack : ec.stack;
+
     FilterChip chip = FilterChip(
       backgroundColor: _cData.elementType.color.withOpacity(0.3),
       selectedColor: _cData.elementType.color.withOpacity(0.5),
@@ -65,20 +68,30 @@ class BuffPanelState extends State<BuffPanel> {
         child: Text(text),
         preferBelow: false,
       ),
-      selected: !isBuffOrDebuff || ec.on,
+      selected: isDmg || ec.on,
       onSelected: (bool value) {
         ec.on = value;
         effectConfig[effectKey] = ec;
         _gs.changeStats();
       },
     );
+
+    int stack = ec.stack == 0 ? ee.maxStack : ec.stack;
+    FightProp multiplierProp = FightProp.fromEffectKey(ee.multipliertarget);
+    String labelText = '';
+    if (multiplierProp != FightProp.unknown && effect.type == Effect.characterType) {
+      labelText = "${CharacterManager.getCharacter(effect.majorId).getName('lang'.tr())} ${multiplierProp.desc.tr()}${multiplierProp.isPercent() ? '(%)' : ''}";
+    }
     if (effect.hasBuffConfig()) {
       List<Widget> widgets = [];
-      if (effect.type == Effect.manualType) {
+      if (effect.hasValueFieldConfig()) {
         widgets = [
           Container(
             width: 150,
             child: TextFormField(
+              decoration: InputDecoration(
+                labelText: labelText,
+              ),
               initialValue: ec.value.toStringAsFixed(1),
               keyboardType: TextInputType.numberWithOptions(
                 decimal: true,
@@ -93,18 +106,19 @@ class BuffPanelState extends State<BuffPanel> {
                 FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
                 TextInputFormatter.withFunction((oldValue, newValue) {
                   final text = newValue.text;
+                  double? tryDouble = double.tryParse(text);
                   return text.isEmpty
                       ? newValue
-                      : double.tryParse(text) == null
-                          ? oldValue
-                          : newValue;
+                      : tryDouble == null
+                      ? oldValue
+                      : newValue;
                 }),
               ],
             ),
           ),
         ];
       } else {
-        if (ee.maxStack >= 5) {
+        if (effect.hasStackConfig()) {
           widgets = [
             Text("${'Stacks'.tr()}:$stack"),
             Slider(
@@ -121,7 +135,7 @@ class BuffPanelState extends State<BuffPanel> {
               },
             ),
           ];
-        } else {
+        } else if (effect.hasChoiceConfig()) {
           widgets = [
             Text("${'Stacks'.tr()}:$stack"),
             Wrap(
@@ -261,9 +275,10 @@ class BuffPanelState extends State<BuffPanel> {
                               Wrap(
                                 spacing: 10,
                                 runSpacing: 10,
-                                children: characterSkillDmg.map((effect) {
+                                children: Effect.groupEffect(characterSkillDmg).values.map((effects) {
+                                  Effect effect = effects.first;
                                   effect.skillData = CharacterManager.getCharacter(effect.majorId).getSkillById(effect.minorId);
-                                  return _getEffectChip(_gs.stats.damageEffect, effect);
+                                  return _getEffectChip(_gs.stats.damageEffect, effects);
                                 }).toList(),
                               ),
                               SizedBox(
@@ -272,9 +287,10 @@ class BuffPanelState extends State<BuffPanel> {
                               Wrap(
                                 spacing: 10,
                                 runSpacing: 10,
-                                children: characterSkillBuff.map((effect) {
+                                children: Effect.groupEffect(characterSkillBuff).values.map((effects) {
+                                  Effect effect = effects.first;
                                   effect.skillData = CharacterManager.getCharacter(effect.majorId).getSkillById(effect.minorId);
-                                  return _getEffectChip(_gs.stats.selfSkillEffect, effect);
+                                  return _getEffectChip(_gs.stats.selfSkillEffect, effects);
                                 }).toList(),
                               ),
                             ],
@@ -299,9 +315,10 @@ class BuffPanelState extends State<BuffPanel> {
                               Wrap(
                                 spacing: 10,
                                 runSpacing: 10,
-                                children: characterTraceBuff.map((effect) {
+                                children: Effect.groupEffect(characterTraceBuff).values.map((effects) {
+                                  Effect effect = effects.first;
                                   effect.skillData = CharacterManager.getCharacter(effect.majorId).getTraceById(effect.minorId);
-                                  return _getEffectChip(_gs.stats.selfTraceEffect, effect);
+                                  return _getEffectChip(_gs.stats.selfTraceEffect, effects);
                                 }).toList(),
                               ),
                             ],
@@ -326,9 +343,10 @@ class BuffPanelState extends State<BuffPanel> {
                               Wrap(
                                 spacing: 10,
                                 runSpacing: 10,
-                                children: characterEidolonBuff.map((effect) {
+                                children: Effect.groupEffect(characterEidolonBuff).values.map((effects) {
+                                  Effect effect = effects.first;
                                   effect.skillData = CharacterManager.getCharacter(effect.majorId).getEidolonById(int.tryParse(effect.minorId) ?? 0);
-                                  return _getEffectChip(_gs.stats.selfEidolonEffect, effect);
+                                  return _getEffectChip(_gs.stats.selfEidolonEffect, effects);
                                 }).toList(),
                               )
                             ],
@@ -347,9 +365,10 @@ class BuffPanelState extends State<BuffPanel> {
                           Wrap(
                             spacing: 10,
                             runSpacing: 10,
-                            children: lightconeSkillBuff.map((effect) {
+                            children: Effect.groupEffect(lightconeSkillBuff).values.map((effects) {
+                              Effect effect = effects.first;
                               effect.skillData = LightconeManager.getLightcone(effect.majorId).getSkill();
-                              return _getEffectChip(_gs.stats.lightconeEffect, effect);
+                              return _getEffectChip(_gs.stats.lightconeEffect, effects);
                             }).toList(),
                           )
                         ],
@@ -367,9 +386,10 @@ class BuffPanelState extends State<BuffPanel> {
                           Wrap(
                             spacing: 10,
                             runSpacing: 10,
-                            children: relicSkillBuff.map((effect) {
+                            children: Effect.groupEffect(relicSkillBuff).values.map((effects) {
+                              Effect effect = effects.first;
                               effect.skillData = RelicManager.getRelic(effect.majorId).getSkill(effect.minorId == '2' ? 0 : 1);
-                              return _getEffectChip(_gs.stats.relicEffect, effect);
+                              return _getEffectChip(_gs.stats.relicEffect, effects);
                             }).toList(),
                           ),
                         ],
@@ -384,11 +404,11 @@ class BuffPanelState extends State<BuffPanel> {
                       ),
                       children: [
                         Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: EffectManager.getEffects().values.where((e) => _cData.entity.id != e.majorId && e.validAllyBuffEffect(null)).map((effect) {
-                              return _getEffectChip(_gs.stats.otherEffect, effect, defaultOn: false);
-                            }).toList())
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: Effect.groupEffect(EffectManager.getEffects().values.where((e) => _cData.entity.id != e.majorId && e.validAllyBuffEffect(null)).toList()).values.map((effects) {
+                            return _getEffectChip(_gs.stats.otherEffect, effects, defaultOn: false);
+                          }).toList())
                       ],
                     ),
                     ExpansionTile(
@@ -401,11 +421,11 @@ class BuffPanelState extends State<BuffPanel> {
                       ),
                       children: [
                         Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: EffectManager.getManualEffects().map((effect) {
-                              return _getEffectChip(_gs.stats.manualEffect, effect, defaultOn: false);
-                            }).toList())
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: EffectManager.getManualEffects().map((effect) {
+                            return _getEffectChip(_gs.stats.manualEffect, [effect], defaultOn: false);
+                          }).toList())
                       ],
                     ),
                   ]),

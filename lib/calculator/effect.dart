@@ -1,11 +1,13 @@
 import 'package:math_expressions/math_expressions.dart';
 
+import '../components/global_state.dart';
 import '../relics/relic_manager.dart';
 import 'basic.dart';
 import 'effect_entity.dart';
 import 'skill_data.dart';
 
 class Effect {
+  static final GlobalState _gs = GlobalState();
   static final Parser formulaParser = Parser();
   static final ContextModel cm = ContextModel();
   static final characterType = 1;
@@ -58,7 +60,19 @@ class Effect {
   }
 
   bool hasBuffConfig() {
-    return this.entity.maxStack > 1 || this.type == manualType;
+    return hasChoiceConfig() || hasStackConfig() || hasValueFieldConfig();
+  }
+
+  bool hasChoiceConfig() {
+    return this.entity.maxStack > 1 && this.entity.maxStack < 5;
+  }
+
+  bool hasStackConfig() {
+    return this.entity.maxStack >= 5;
+  }
+
+  bool hasValueFieldConfig() {
+    return this.type == manualType || this.type == Effect.characterType && this.majorId != _gs.stats.id && this.entity.multipliertarget != '';
   }
 
   bool validSelfBuffEffect(FightProp? prop) {
@@ -109,6 +123,14 @@ class Effect {
     return this.entity.type == type;
   }
 
+  bool isBuffOrDebuff() {
+    return this.entity.type == 'buff' || this.entity.type == 'debuff';
+  }
+
+  bool isDamageHealShield() {
+    return this.entity.type == 'dmg' || this.entity.type == 'heal' || this.entity.type == 'shield';
+  }
+
   double getEffectMultiplierValue(SkillData? skillData, int? skillLevel, EffectConfig? effectConfig) {
     double multiplier = this.entity.multiplier;
     String multiplierValue = this.entity.multipliervalue;
@@ -126,12 +148,18 @@ class Effect {
       }
     }
     int stack = this.entity.maxStack;
-    if (effectConfig != null) {
-      if (effectConfig.stack > 0) {
-        stack = effectConfig.stack;
+    if ((effectConfig?.stack ?? 0) > 0) {
+      stack = effectConfig!.stack;
+    }
+    FightProp multiplierProp = FightProp.fromEffectKey(this.entity.multipliertarget);
+    if (multiplierProp != FightProp.unknown && isBuffOrDebuff()) {
+      multiplier *= effectConfig?.value ?? 0;
+      if (multiplierProp.isPercent()) {
+        multiplier /= 100;
       }
-      if (effectConfig.value > 0) {
-        multiplier = effectConfig.value;
+    } else {
+      if ((effectConfig?.value ?? 0) > 0) {
+        multiplier = effectConfig!.value;
       }
     }
     multiplier *= stack;
@@ -143,6 +171,22 @@ class Effect {
       return RelicManager.getRelic(majorId).getName(lang) + minorId;
     }
     return skillData.getName(lang);
+  }
+
+  /// 将group相同的effect放到一组，展示为一个伤害/治疗/护盾
+  static Map<String, List<Effect>> groupEffect(List<Effect> effects) {
+    Map<String, List<Effect>> effectGroup = {};
+    effects.forEach((e) {
+      if (e.entity.group != '') {
+        List<Effect> list = effectGroup[e.entity.group] ?? [];
+        list.add(e);
+        effectGroup[e.entity.group] = list;
+      } else {
+        // key不重复就行，随便构造的
+        effectGroup["${DateTime.now().millisecondsSinceEpoch}-${e.hashCode}"] = [e];
+      }
+    });
+    return effectGroup;
   }
 }
 
