@@ -225,7 +225,7 @@ class DamagePanelState extends State<DamagePanel> {
           _appendDamageAndTitle(effects, multiplierTitle, type, drList, skillData.stype, character, skillData, skillLevel);
           title += " (${multiplierTitle.join(' + ')})";
           DamageResult dr = drList.fold(DamageResult.zero(), (pre, damage) =>
-              DamageResult(pre.nonCrit + damage.nonCrit, pre.expectation + damage.expectation, pre.crit + damage.crit, details: damage.details));
+              DamageResult(pre.nonCrit + damage.nonCrit, pre.expectation + damage.expectation, pre.crit + damage.crit, details: "${pre.details == '' ? '' : pre.details + '\n'}${damage.details}"));
           return _buildDamageBar(title, character.elementType, dr);
         }).toList(),
       );
@@ -247,7 +247,7 @@ class DamagePanelState extends State<DamagePanel> {
           _appendDamageAndTitle(effects, multiplierTitle, type, drList, traceData.stype, character, null, null);
           title += " (${multiplierTitle.join(' + ')})";
           DamageResult dr = drList.fold(DamageResult.zero(), (pre, damage) =>
-              DamageResult(pre.nonCrit + damage.nonCrit, pre.expectation + damage.expectation, pre.crit + damage.crit, details: damage.details));
+              DamageResult(pre.nonCrit + damage.nonCrit, pre.expectation + damage.expectation, pre.crit + damage.crit, details: "${pre.details == '' ? '' : pre.details + '\n'}${damage.details}"));
           return _buildDamageBar(title, character.elementType, dr);
         }).toList(),
       );
