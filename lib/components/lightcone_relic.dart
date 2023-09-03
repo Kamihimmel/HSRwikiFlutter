@@ -708,30 +708,19 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                 color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
                                               ),
                                             ),
-                                            if (rs.subAttrValues.length > 0)
-                                              SizedBox(
-                                                width: 90,
-                                                height: 70,
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: rs.subAttrValues.take(2).map((record) {
-                                                    return _getSubAttrRow(record.key, record.value);
-                                                  }).toList(),
+                                            for (var cnt in [0, 2])
+                                              if (rs.subAttrValues.length > cnt)
+                                                SizedBox(
+                                                  width: 90,
+                                                  height: 70,
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: rs.subAttrValues.skip(cnt).take(2).map((record) {
+                                                      return _getSubAttrRow(record.key, record.value);
+                                                    }).toList(),
+                                                  ),
                                                 ),
-                                              ),
-                                            if (rs.subAttrValues.length > 2)
-                                              SizedBox(
-                                                width: 90,
-                                                height: 70,
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: rs.subAttrValues.skip(2).take(2).map((record) {
-                                                    return _getSubAttrRow(record.key, record.value);
-                                                  }).toList(),
-                                                ),
-                                              ),
                                           ],
                                         ),
                                       ),

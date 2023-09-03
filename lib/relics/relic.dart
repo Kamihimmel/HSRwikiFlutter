@@ -8,10 +8,11 @@ class Relic {
   late RelicEntity entity;
   bool loaded = false;
   bool spoiler = false;
-  late PathType pathType;
   late int order;
 
-  Relic();
+  Relic() {
+    this.entity = RelicEntity();
+  }
 
   static fromJson(Map<String, dynamic> json, {spoiler = false, order = 999}) {
     final entity = RelicEntity.fromJson(json);
@@ -23,43 +24,19 @@ class Relic {
   }
 
   String getName(String lang) {
-    switch (lang) {
-      case 'en':
-        return entity.eNname;
-      case 'zh':
-        return entity.cNname;
-      case 'cn':
-        return entity.cNname;
-      case 'ja':
-        return entity.jAname;
-    }
-    return '';
+    return entity.getName(lang);
+  }
+
+  RelicSkilldata getSkill(int index) {
+    return entity.skilldata[index];
   }
 
   String getSkillName(int index, String lang) {
-    switch (lang) {
-      case 'en':
-        return entity.skilldata[index].eNname;
-      case 'zh':
-        return entity.skilldata[index].cNname;
-      case 'cn':
-        return entity.skilldata[index].cNname;
-      case 'ja':
-        return entity.skilldata[index].jAname;
-    }
-    return '';
+    return entity.skilldata[index].getName(lang);
   }
 
   String getSkillDescription(int index, String lang) {
-    switch (lang) {
-      case 'en':
-        return entity.skilldata[index].descriptionEN;
-      case 'zh':
-        return entity.skilldata[index].descriptionCN;
-      case 'ja':
-        return entity.skilldata[index].descriptionJP;
-    }
-    return '';
+    return entity.skilldata[index].getDescription(lang);
   }
 
   String getPartImageUrl(RelicPart rp) {

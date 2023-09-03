@@ -10,9 +10,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import 'ad_helper.dart';
-import 'calculator/basic.dart';
-import 'calculator/calculator.dart';
-import 'calculator/effect.dart';
 import 'calculator/player_info.dart';
 import 'characters/character.dart';
 import 'characters/character_manager.dart';
@@ -251,38 +248,6 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
               ),
               child: Scaffold(
                 backgroundColor: Colors.transparent,
-                floatingActionButton: _gs.debug ? IconButton(
-                  icon: Icon(Icons.mood),
-                  onPressed: () {
-                    _cData.entity.skilldata.forEach((skillData) {
-                      skillData.effect.forEach((e) {
-                        double multiplierValue = Effect.fromEntity(e, _cData.entity.id, skillData.id).getEffectMultiplierValue(skillData, _gs.stats.skillLevels[skillData.id]!);
-                        if (e.type == 'dmg') {
-                          calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget),
-                              skillData.stype, DamageType.fromEffectTags(e.tag), _cData.elementType, debug: true);
-                        } else if (e.type == 'heal') {
-                          calculateHeal(_gs.stats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget), debug: true);
-                        } else if (e.type == 'shield') {
-                          calculateShield(_gs.stats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget), debug: true);
-                        }
-                      });
-                    });
-                    _cData.entity.tracedata.forEach((traceData) {
-                      traceData.effect.forEach((e) {
-                        double multiplierValue = Effect.fromEntity(e, _cData.entity.id, traceData.id).getEffectMultiplierValue(null, null);
-                        if (e.type == 'dmg') {
-                          calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget),
-                              traceData.stype, DamageType.fromEffectTags(e.tag), _cData.elementType, debug: true);
-                        } else if (e.type == 'heal') {
-                          calculateHeal(_gs.stats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget), debug: true);
-                        } else if (e.type == 'shield') {
-                          calculateShield(_gs.stats, multiplierValue, FightProp.fromEffectMultiplier(e.multipliertarget), debug: true);
-                        }
-                      });
-                    });
-                  },
-                ) : null,
-                floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
                 appBar: AppBar(
                   title: Text(
                     "HSR Damage Calculator".tr(),

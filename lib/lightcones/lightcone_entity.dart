@@ -3,16 +3,10 @@ import 'package:hsrwikiproject/generated/json/lightcone_entity.g.dart';
 import 'dart:convert';
 
 import '../calculator/skill_data.dart';
+import '../utils/base_entity.dart';
 
 @JsonSerializable()
-class LightconeEntity {
-	late String id = '';
-	@JSONField(name: "ENname")
-	late String eNname = '';
-	@JSONField(name: "CNname")
-	late String cNname = '';
-	@JSONField(name: "JAname")
-	late String jAname = '';
+class LightconeEntity extends BaseEntity {
 	late String imageurl = '';
 	late String wtype = '';
 	late String rarity = '';

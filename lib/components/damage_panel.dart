@@ -46,57 +46,60 @@ class DamagePanelState extends State<DamagePanel> {
                 ),
               ]),
               if (damageResult != null)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    SelectableText(
-                      'Non-Crit'.tr() + ':',
-                      style: TextStyle(
-                        fontSize: 15,
-                        height: 1.1,
-                      ),
-                    ),
-                    SelectableText(
-                      double.parse(damageResult.nonCrit.toStringAsFixed(1)).toString(),
-                      style: TextStyle(
-                        color: elementType.color[300],
-                        fontSize: 15,
-                      ),
-                    ),
-                    if (damageResult.expectation > 0)
+                Tooltip(
+                  message: _gs.debug ? damageResult.details : '',
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
                       SelectableText(
-                        'Expectation'.tr() + ':',
+                        'Non-Crit'.tr() + ':',
                         style: TextStyle(
                           fontSize: 15,
                           height: 1.1,
                         ),
                       ),
-                    if (damageResult.expectation > 0)
                       SelectableText(
-                        double.parse(damageResult.expectation.toStringAsFixed(1)).toString(),
+                        double.parse(damageResult.nonCrit.toStringAsFixed(1)).toString(),
                         style: TextStyle(
-                          color: elementType.color[500],
+                          color: elementType.color[300],
                           fontSize: 15,
                         ),
                       ),
-                    if (damageResult.crit > 0)
-                      SelectableText(
-                        'Crit'.tr() + ':',
-                        style: TextStyle(
-                          fontSize: 15,
-                          height: 1.1,
+                      if (damageResult.expectation > 0)
+                        SelectableText(
+                          'Expectation'.tr() + ':',
+                          style: TextStyle(
+                            fontSize: 15,
+                            height: 1.1,
+                          ),
                         ),
-                      ),
-                    if (damageResult.crit > 0)
-                      SelectableText(
-                        double.parse(damageResult.crit.toStringAsFixed(1)).toString(),
-                        style: TextStyle(
-                          color: elementType.color[700],
-                          fontSize: 15,
-                          height: 1.1,
+                      if (damageResult.expectation > 0)
+                        SelectableText(
+                          double.parse(damageResult.expectation.toStringAsFixed(1)).toString(),
+                          style: TextStyle(
+                            color: elementType.color[500],
+                            fontSize: 15,
+                          ),
                         ),
-                      ),
-                  ],
+                      if (damageResult.crit > 0)
+                        SelectableText(
+                          'Crit'.tr() + ':',
+                          style: TextStyle(
+                            fontSize: 15,
+                            height: 1.1,
+                          ),
+                        ),
+                      if (damageResult.crit > 0)
+                        SelectableText(
+                          double.parse(damageResult.crit.toStringAsFixed(1)).toString(),
+                          style: TextStyle(
+                            color: elementType.color[700],
+                            fontSize: 15,
+                            height: 1.1,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               if (damageResult != null)
                 Container(
@@ -175,22 +178,29 @@ class DamagePanelState extends State<DamagePanel> {
 
   void _appendDamageAndTitle(List<Effect> effects, List<String> multiplierTitle, String type, List<DamageResult> drList, String stype, Character character, CharacterSkilldata? skilldata, int? skillLevel) {
     effects.forEach((e) {
-      double multiplierValue = e.getEffectMultiplierValue(skilldata, skillLevel);
+      double multiplierValue = 0;
+      FightProp multiplierProp = FightProp.fromEffectMultiplier(e.entity.multipliertarget);
+      if (type == 'dmg') {
+        multiplierValue = e.getEffectMultiplierValue(skilldata, skillLevel, _gs.stats.damageEffect[e.getKey()]);
+        drList.add(calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, multiplierProp,
+            stype, DamageType.fromEffectTags(e.entity.tag), character.elementType));
+      } else if (type == 'break') {
+        multiplierValue = e.getEffectMultiplierValue(skilldata, skillLevel, _gs.stats.damageEffect[e.getKey()]);
+        drList.add(calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, multiplierProp,
+            stype, DamageType.breakWeakness, character.elementType));
+      } else if (type == 'heal') {
+        multiplierValue = e.getEffectMultiplierValue(skilldata, skillLevel, _gs.stats.healEffect[e.getKey()]);
+        drList.add(calculateHeal(_gs.stats, multiplierValue, multiplierProp));
+      } else if (type == 'shield') {
+        multiplierValue = e.getEffectMultiplierValue(skilldata, skillLevel, _gs.stats.shieldEffect[e.getKey()]);
+        drList.add(calculateShield(_gs.stats, multiplierValue, multiplierProp));
+      } else {
+        drList.add(DamageResult.zero());
+      }
       if (e.entity.multipliertarget == '') {
         multiplierTitle.add(multiplierValue.toString());
       } else {
         multiplierTitle.add("${multiplierValue.toStringAsFixed(1)}%");
-      }
-      FightProp multiplierProp = FightProp.fromEffectMultiplier(e.entity.multipliertarget);
-      if (type == 'dmg') {
-        drList.add(calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, multiplierProp,
-            stype, DamageType.fromEffectTags(e.entity.tag), character.elementType));
-      } else if (type == 'heal') {
-        drList.add(calculateHeal(_gs.stats, multiplierValue, multiplierProp));
-      } else if (type == 'shield') {
-        drList.add(calculateShield(_gs.stats, multiplierValue, multiplierProp));
-      } else {
-        drList.add(DamageResult.zero());
       }
     });
   }
@@ -215,7 +225,7 @@ class DamagePanelState extends State<DamagePanel> {
           _appendDamageAndTitle(effects, multiplierTitle, type, drList, skillData.stype, character, skillData, skillLevel);
           title += " (${multiplierTitle.join(' + ')})";
           DamageResult dr = drList.fold(DamageResult.zero(), (pre, damage) =>
-              DamageResult(pre.nonCrit + damage.nonCrit, pre.expectation + damage.expectation, pre.crit + damage.crit));
+              DamageResult(pre.nonCrit + damage.nonCrit, pre.expectation + damage.expectation, pre.crit + damage.crit, details: damage.details));
           return _buildDamageBar(title, character.elementType, dr);
         }).toList(),
       );
@@ -237,7 +247,7 @@ class DamagePanelState extends State<DamagePanel> {
           _appendDamageAndTitle(effects, multiplierTitle, type, drList, traceData.stype, character, null, null);
           title += " (${multiplierTitle.join(' + ')})";
           DamageResult dr = drList.fold(DamageResult.zero(), (pre, damage) =>
-              DamageResult(pre.nonCrit + damage.nonCrit, pre.expectation + damage.expectation, pre.crit + damage.crit));
+              DamageResult(pre.nonCrit + damage.nonCrit, pre.expectation + damage.expectation, pre.crit + damage.crit, details: damage.details));
           return _buildDamageBar(title, character.elementType, dr);
         }).toList(),
       );

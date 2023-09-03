@@ -15,7 +15,7 @@ class EffectEntity {
 	late double multiplier = 0;
 	late int maxStack = 1;
 	late String group = '';
-	late List<String> tag;
+	late List<String> tag = [];
 
 	EffectEntity();
 

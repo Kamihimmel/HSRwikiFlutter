@@ -1,17 +1,12 @@
 import 'package:hsrwikiproject/generated/json/base/json_field.dart';
 import 'package:hsrwikiproject/generated/json/enemy_entity.g.dart';
 import 'dart:convert';
+
+import '../utils/base_entity.dart';
 export 'package:hsrwikiproject/generated/json/enemy_entity.g.dart';
 
 @JsonSerializable()
-class EnemyEntity {
-	late String id = '';
-	@JSONField(name: "ENname")
-	late String eNname = '';
-	@JSONField(name: "CNname")
-	late String cNname = '';
-	@JSONField(name: "JAname")
-	late String jAname = '';
+class EnemyEntity extends BaseEntity {
 	late String category = '';
 	late String imageurl = '';
 	late String imagelargeurl = '';

@@ -3,15 +3,10 @@ import 'package:hsrwikiproject/generated/json/base/json_field.dart';
 import 'package:hsrwikiproject/generated/json/character_entity.g.dart';
 import 'dart:convert';
 
+import '../utils/base_entity.dart';
+
 @JsonSerializable()
-class CharacterEntity {
-	late String id = '';
-	@JSONField(name: "ENname")
-	late String eNname = '';
-	@JSONField(name: "CNname")
-	late String cNname = '';
-	@JSONField(name: "JAname")
-	late String jAname = '';
+class CharacterEntity extends BaseEntity {
 	late String imageurl = '';
 	late String imageurlalter = '';
 	late String imagelargeurl = '';

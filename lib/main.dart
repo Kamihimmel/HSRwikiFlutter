@@ -75,16 +75,17 @@ void _customEazyLocalization() {
         LevelMessages? level,
       }) {
     String message = object.toString();
-    if (_gs.debug) {
-      RegExpMatch? match = regExp.firstMatch(message);
-      if (match != null) {
-        String? key = match.group(1);
-        if (key != null) {
+    RegExpMatch? match = regExp.firstMatch(message);
+    if (match != null) {
+      String? key = match.group(1);
+      if (key != null) {
+        if (_gs.debug) {
           _gs.missingLocalizationKeys.add(key);
         }
+        return;
       }
-      return;
     }
+
     switch(level) {
       case LevelMessages.debug:
         logger.d('$name: $message');

@@ -22,4 +22,32 @@ class SkillData {
   late List<Map<String, dynamic>> levelmultiplier = [];
   late List<String> tags = [];
   late List<EffectEntity> effect = [];
+
+  String getName(String lang) {
+    switch(lang) {
+      case 'en':
+        return eNname;
+      case 'zh':
+        return cNname;
+      case 'cn':
+        return cNname;
+      case 'ja':
+        return jAname;
+    }
+    return '';
+  }
+
+  String getDescription(String lang) {
+    switch(lang) {
+      case 'en':
+        return descriptionEN;
+      case 'zh':
+        return descriptionCN;
+      case 'cn':
+        return descriptionCN;
+      case 'ja':
+        return descriptionJP;
+    }
+    return '';
+  }
 }

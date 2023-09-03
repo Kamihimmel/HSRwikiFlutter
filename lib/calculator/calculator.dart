@@ -5,7 +5,6 @@ import '../characters/character_stats.dart';
 import '../enemies/enemy.dart';
 import '../enemies/enemy_manager.dart';
 import '../utils/helper.dart';
-import '../utils/logging.dart';
 import 'basic.dart';
 
 const attackTypeBonusMapping = {
@@ -28,13 +27,17 @@ class DamageResult {
   double nonCrit = 0;
   double expectation = 0;
   double crit = 0;
+  String details = '';
 
-  DamageResult.zero();
+  DamageResult.zero({details = ''}) {
+    this.details = details;
+  }
 
-  DamageResult(double nonCrit, double expectation, double crit) {
+  DamageResult(double nonCrit, double expectation, double crit, {details = ''}) {
     this.nonCrit = nonCrit;
     this.expectation = expectation;
     this.crit = crit;
+    this.details = details;
   }
 
   bool isEmpty() {
@@ -67,20 +70,17 @@ enum DamageType {
   }
 }
 
-DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double multiplier, FightProp? baseProp, String attackType, DamageType damageType, ElementType elementType, {debug = false}) {
+DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double multiplier, FightProp? baseProp, String attackType, DamageType damageType, ElementType elementType) {
+  String details = '';
   if (multiplier == 0) {
-    if (debug) {
-      logger.d("$attackType: multiplier == 0");
-    }
-    return DamageResult.zero();
+    details = "$attackType: multiplier == 0";
+    return DamageResult.zero(details: details);
   }
   Map<FightProp, double> attrValues = stats.calculateSumStats();
   double base = baseProp == FightProp.none ? 100 : (attrValues[baseProp] ?? 0);
   if (base == 0) {
-    if (debug) {
-      logger.d("$attackType: base == 0");
-    }
-    return DamageResult.zero();
+    details = "$attackType: base == 0";
+    return DamageResult.zero(details: details);
   }
   Enemy enemy = EnemyManager.getEnemy(enemyStats.id);
 
@@ -123,8 +123,9 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
 
   // 抗性
   int res = enemy.resistence[elementType] ?? 0;
+  double allResIgnore = attrValues[FightProp.allResistanceIgnore] ?? 0;
   double resIgnore = attrValues[elementType.getElementResistanceIgnoreProp()] ?? 0;
-  double resFinal =  1 - (res / 100 - resIgnore);
+  double resFinal =  1 - (res / 100 - resIgnore - allResIgnore);
 
   // 防御力
   int characterLevel = int.tryParse(stats.level.replaceAll('+', '')) ?? 1;
@@ -134,70 +135,65 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
   double enemyDefence = (enemyStats.level + 20) * max(1 - defenceIgnore - defenceReduce, 0);
   double defenceFactor = (characterLevel + 20) / (characterLevel + 20 + enemyDefence);
 
-  double nonCrit = base * multiplier / 100 * damageBonus * vulnerable * damageReduce * resFinal * defenceFactor;
+  double multiplierValue = multiplier / 100;
+  double nonCrit = base * multiplierValue * damageBonus * vulnerable * damageReduce * resFinal * defenceFactor;
   double crit = damageType.crit ? nonCrit * (1 + critDamage) : 0;
   double exp = damageType.crit ? nonCrit * (1 + critChance * critDamage) : 0;
-  if (debug) {
-    logger.d("$attackType: ${base.toStringAsFixed(3)} * ${(multiplier / 100).toStringAsFixed(3)} "
-        "* (1 + ${critChance.toStringAsFixed(3)} * ${critDamage.toStringAsFixed(3)}) * ${damageBonus.toStringAsFixed(3)} "
-        "* ${vulnerable.toStringAsFixed(3)} * ${damageReduce.toStringAsFixed(3)} * ${resFinal.toStringAsFixed(3)} * ${defenceFactor.toStringAsFixed(3)} "
-        "= ${exp.toStringAsFixed(3)}");
-  }
-  return DamageResult(nonCrit, exp, crit);
+
+  String critStr = "* (1 + ${critChance.toStringAsFixed(3)} * ${critDamage.toStringAsFixed(3)}) ";
+  details = "$attackType: ${base.toStringAsFixed(3)} * ${multiplierValue.toStringAsFixed(3)} "
+      "${damageType.crit ? critStr : ''}* ${damageBonus.toStringAsFixed(3)} "
+      "* ${vulnerable.toStringAsFixed(3)} * ${damageReduce.toStringAsFixed(3)} * ${resFinal.toStringAsFixed(3)} * ${defenceFactor.toStringAsFixed(3)} "
+      "= ${(damageType.crit ? exp : nonCrit).toStringAsFixed(3)}";
+  return DamageResult(nonCrit, exp, crit, details: details);
 }
 
-DamageResult calculateHeal(CharacterStats stats, double multiplier, FightProp? baseProp, {debug = false}) {
+DamageResult calculateHeal(CharacterStats stats, double multiplier, FightProp? baseProp) {
+  String details = '';
   if (multiplier == 0) {
-    if (debug) {
-      logger.d("heal: multiplier == 0");
-    }
-    return DamageResult.zero();
+    details = "heal: multiplier == 0";
+    return DamageResult.zero(details: details);
   }
   Map<FightProp, double> attrValues = stats.calculateSumStats();
   double base = baseProp == FightProp.none ? 100 : (attrValues[baseProp] ?? 0);
   if (base == 0) {
-    if (debug) {
-      logger.d("heal: base == 0");
-    }
-    return DamageResult.zero();
+    details = "heal: base == 0";
+    return DamageResult.zero(details: details);
   }
 
   // 治疗加成
   double healRatio = attrValues[FightProp.healRatio] ?? 0;
   double healBonus = 1 + healRatio;
 
-  double nonCrit = base * multiplier / 100 * healBonus;
-  if (debug) {
-    logger.d("heal: ${base.toStringAsFixed(3)} * ${(multiplier / 100).toStringAsFixed(3)} "
-        "* ${healBonus.toStringAsFixed(3)} = ${nonCrit.toStringAsFixed(3)}");
-  }
-  return DamageResult(nonCrit, 0, 0);
+  double multiplierValue = multiplier / 100;
+  double nonCrit = base * multiplierValue * healBonus;
+
+  details = "heal: ${base.toStringAsFixed(3)} * ${multiplierValue.toStringAsFixed(3)} "
+      "* ${healBonus.toStringAsFixed(3)} = ${nonCrit.toStringAsFixed(3)}";
+  return DamageResult(nonCrit, 0, 0, details: details);
 }
 
-DamageResult calculateShield(CharacterStats stats, double multiplier, FightProp? baseProp, {debug = false}) {
+DamageResult calculateShield(CharacterStats stats, double multiplier, FightProp? baseProp) {
+  String details = '';
   if (multiplier == 0) {
-    if (debug) {
-      logger.d("shield: multiplier == 0");
-    }
-    return DamageResult.zero();
+    details = "shield: multiplier == 0";
+    return DamageResult.zero(details: details);
   }
   Map<FightProp, double> attrValues = stats.calculateSumStats();
   double base = baseProp == FightProp.none ? 100 : (attrValues[baseProp] ?? 0);
   if (base == 0) {
-    if (debug) {
-      logger.d("shield: base == 0");
-    }
-    return DamageResult.zero();
+    details = "shield: base == 0";
+    return DamageResult.zero(details: details);
   }
 
   // 护盾加成
   double shieldRatio = attrValues[FightProp.shieldAddRatio] ?? 0;
   double shieldBonus = 1 + shieldRatio;
 
-  double nonCrit = base * multiplier / 100 * shieldBonus;
-  if (debug) {
-    logger.d("shield: ${base.toStringAsFixed(3)} * ${(multiplier / 100).toStringAsFixed(3)} "
-        "* ${shieldBonus.toStringAsFixed(3)} = ${nonCrit.toStringAsFixed(3)}");
-  }
-  return DamageResult(nonCrit, 0, 0);
+  double multiplierValue = multiplier / 100;
+  double nonCrit = base * multiplierValue * shieldBonus;
+
+  details = "shield: ${base.toStringAsFixed(3)} * ${multiplierValue.toStringAsFixed(3)} "
+      "* ${shieldBonus.toStringAsFixed(3)} = ${nonCrit.toStringAsFixed(3)}";
+  return DamageResult(nonCrit, 0, 0, details: details);
 }

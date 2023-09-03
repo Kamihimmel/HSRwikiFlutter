@@ -3,16 +3,10 @@ import 'package:hsrwikiproject/generated/json/relic_entity.g.dart';
 import 'dart:convert';
 
 import '../calculator/skill_data.dart';
+import '../utils/base_entity.dart';
 
 @JsonSerializable()
-class RelicEntity {
-	late String id = '';
-	@JSONField(name: "ENname")
-	late String eNname = '';
-	@JSONField(name: "CNname")
-	late String cNname = '';
-	@JSONField(name: "JAname")
-	late String jAname = '';
+class RelicEntity extends BaseEntity {
 	late String imageurl = '';
 	@JSONField(name: "set")
 	late String xSet = '';

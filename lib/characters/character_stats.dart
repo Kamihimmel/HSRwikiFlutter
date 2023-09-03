@@ -24,10 +24,14 @@ class CharacterStats {
   String lightconeLevel = '1';
   int lightconeRank = 1;
   Map<RelicPart, RelicStats> relics = {};
+  Map<String, EffectConfig> damageEffect = {};
+  Map<String, EffectConfig> healEffect = {};
+  Map<String, EffectConfig> shieldEffect = {};
   Map<String, EffectConfig> selfSkillEffect = {};
   Map<String, EffectConfig> selfTraceEffect = {};
   Map<String, EffectConfig> selfEidolonEffect = {};
   Map<String, EffectConfig> lightconeEffect = {};
+  Map<String, EffectConfig> relicEffect = {};
   Map<String, EffectConfig> otherEffect = {};
 
   /// import stats
@@ -225,12 +229,13 @@ class CharacterStats {
       if (t.effect.isEmpty) {
         return;
       }
-      t.effect.map((e) => Effect.fromEntity(e, lightconeId, '')).where((e) => e.validSelfBuffEffect(prop)).take(1).forEach((effect) {
+      t.effect.map((e) => Effect.fromEntity(e, lightconeId, '', type: Effect.lightconeType)).where((e) => e.validSelfBuffEffect(prop)).take(1).forEach((effect) {
         String effectKey = effect.getKey();
-        if (lightconeEffect.containsKey(effectKey) && !lightconeEffect[effectKey]!.on) {
+        EffectConfig effectConfig = lightconeEffect[effectKey] ?? EffectConfig.defaultOn();
+        if (!effectConfig.on) {
           return;
         }
-        double multiplierValue = effect.getEffectMultiplierValue(t, lightconeRank);
+        double multiplierValue = effect.getEffectMultiplierValue(t, lightconeRank, effectConfig);
         result[PropSource.lightconeEffect(lightconeId, effect)] = base * multiplierValue / 100;
       });
     });
@@ -278,9 +283,14 @@ class CharacterStats {
         Relic relic = RelicManager.getRelic(rs);
         if (relic.entity.skilldata.length > skillIndex) {
           // TODO 非固定基础值问题，如命中2件套攻击力效果
-          relic.entity.skilldata[skillIndex].effect.map((e) => Effect.fromEntity(e, rs, setNum)).where((e) => e.validSelfBuffEffect(prop)).forEach((effect) {
-            double multiplierValue = effect.getEffectMultiplierValue(null, null);
-            result[PropSource.relicSetEffect(rs, effect)] = base * multiplierValue / 100;
+          relic.entity.skilldata[skillIndex].effect.map((e) => Effect.fromEntity(e, rs, setNum, type: Effect.relicType)).where((e) => e.validSelfBuffEffect(prop)).forEach((effect) {
+            String effectKey = effect.getKey();
+            EffectConfig effectConfig = relicEffect[effectKey] ?? EffectConfig.defaultOn();
+            if (!effectConfig.on) {
+              return;
+            }
+            double multiplierValue = effect.getEffectMultiplierValue(null, null, effectConfig);
+            result[PropSource.relicSetEffect(rs, effect, name: effect.minorId)] = base * multiplierValue / 100;
           });
         }
       }
@@ -294,11 +304,12 @@ class CharacterStats {
       }
       s.effect.map((e) => Effect.fromEntity(e, character.entity.id, s.id)).where((e) => e.validSelfBuffEffect(prop)).forEach((effect) {
         String effectKey = effect.getKey();
-        if (selfSkillEffect.containsKey(effectKey) && !selfSkillEffect[effectKey]!.on) {
+        EffectConfig effectConfig = selfSkillEffect[effectKey] ?? EffectConfig.defaultOn();
+        if (!effectConfig.on) {
           return;
         }
-        double multiplierValue = effect.getEffectMultiplierValue(s, skillLevels[s.id]);
-        result[PropSource.characterSkill(effect.getKey(), effect, self: true)] = base * multiplierValue / 100;
+        double multiplierValue = effect.getEffectMultiplierValue(s, skillLevels[s.id], effectConfig);
+        result[PropSource.characterSkill(effectKey, effect, self: true)] = base * multiplierValue / 100;
       });
     });
   }
@@ -310,11 +321,12 @@ class CharacterStats {
       }
       t.effect.map((e) => Effect.fromEntity(e, character.entity.id, t.id)).where((e) => e.validSelfBuffEffect(prop)).forEach((effect) {
         String effectKey = effect.getKey();
-        if (selfTraceEffect.containsKey(effectKey) && !selfTraceEffect[effectKey]!.on) {
+        EffectConfig effectConfig = selfTraceEffect[effectKey] ?? EffectConfig.defaultOn();
+        if (!effectConfig.on) {
           return;
         }
-        double multiplierValue = effect.getEffectMultiplierValue(null, null);
-        result[PropSource.characterTrace(t.id, effect, name: t.tiny ? 'tiny' : '', self: true)] = base * multiplierValue / 100;
+        double multiplierValue = effect.getEffectMultiplierValue(null, null, effectConfig);
+        result[PropSource.characterTrace(effectKey, effect, name: t.tiny ? 'tiny' : '', self: true)] = base * multiplierValue / 100;
       });
     });
   }
@@ -326,12 +338,12 @@ class CharacterStats {
       }
       e.effect.map((ef) => Effect.fromEntity(ef, character.entity.id, e.eidolonnum.toString())).where((ef) => ef.validSelfBuffEffect(prop)).forEach((effect) {
         String effectKey = effect.getKey();
-        if (selfEidolonEffect.containsKey(effectKey) && !selfEidolonEffect[effectKey]!.on) {
+        EffectConfig effectConfig = selfEidolonEffect[effectKey] ?? EffectConfig.defaultOn();
+        if (!effectConfig.on) {
           return;
         }
-        EffectEntity ee = effect.entity;
-        double multiplierValue = effect.getEffectMultiplierValue(null, null);
-        result[PropSource.characterEidolon(e.id, effect, self: true)] = base * multiplierValue / 100;
+        double multiplierValue = effect.getEffectMultiplierValue(null, null, effectConfig);
+        result[PropSource.characterEidolon(effectKey, effect, self: true)] = base * multiplierValue / 100;
       });
     });
   }
@@ -339,16 +351,18 @@ class CharacterStats {
   void _addOtherSkillValue(Map<PropSource, double> result, Character character, double base, FightProp prop) {
     EffectManager.getEffects().values.where((e) => e.majorId != character.entity.id && e.validAllyBuffEffect(prop)).forEach((effect) {
       String effectKey = effect.getKey();
-      if (!otherEffect.containsKey(effectKey) || !otherEffect[effectKey]!.on) {
+      EffectConfig effectConfig = otherEffect[effectKey] ?? EffectConfig.defaultOff();
+      if (!effectConfig.on) {
         return;
       }
-      double multiplierValue = effect.getEffectMultiplierValue(effect.skillData, effect.skillData.maxlevel);
-      result[PropSource.characterSkill(effect.getKey(), effect, self: false)] = base * multiplierValue / 100;
+      double multiplierValue = effect.getEffectMultiplierValue(effect.skillData, effect.skillData.maxlevel, effectConfig);
+      result[PropSource.characterSkill(effectKey, effect, self: false)] = base * multiplierValue / 100;
     });
   }
 
   CharacterStats.empty();
 
+  /// 接口数据导入
   CharacterStats.fromImportJson(Map<String, dynamic> jsonMap, {String? updateTime}) {
     this.id = jsonMap['id'];
     if (updateTime == null) {

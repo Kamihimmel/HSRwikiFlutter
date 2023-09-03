@@ -26,17 +26,7 @@ class Enemy {
   }
 
   String getName(String lang) {
-    switch (lang) {
-      case 'en':
-        return entity.eNname;
-      case 'zh':
-        return entity.cNname;
-      case 'cn':
-        return entity.cNname;
-      case 'ja':
-        return entity.jAname;
-    }
-    return '';
+    return entity.getName(lang);
   }
 }
 

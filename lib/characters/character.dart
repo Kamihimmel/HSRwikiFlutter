@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import '../components/global_state.dart';
 import '../utils/helper.dart';
 import 'character_entity.dart';
@@ -43,131 +41,51 @@ class Character {
   }
 
   String getName(String lang) {
-    switch(lang) {
-      case 'en':
-        return entity.eNname;
-      case 'zh':
-        return entity.cNname;
-      case 'cn':
-        return entity.cNname;
-      case 'ja':
-        return entity.jAname;
-    }
-    return '';
+    return entity.getName(lang);
+  }
+
+  CharacterSkilldata getSkillById(String skillId) {
+    return entity.skilldata.firstWhere((skill) => skill.id == skillId, orElse: () => CharacterSkilldata());
   }
 
   String getSkillName(int index, String lang) {
-    switch(lang) {
-      case 'en':
-        return entity.skilldata[index].eNname;
-      case 'zh':
-        return entity.skilldata[index].cNname;
-      case 'cn':
-        return entity.skilldata[index].cNname;
-      case 'ja':
-        return entity.skilldata[index].jAname;
-    }
-    return '';
+    return entity.skilldata[index].getName(lang);
   }
 
   String getSkillNameById(String skillId, String lang) {
-    CharacterSkilldata skillData = entity.skilldata.firstWhere((skill) => skill.id == skillId, orElse: () => CharacterSkilldata());
-    switch(lang) {
-      case 'en':
-        return skillData.eNname;
-      case 'zh':
-        return skillData.cNname;
-      case 'cn':
-        return skillData.cNname;
-      case 'ja':
-        return skillData.jAname;
-    }
-    return '';
+    return entity.skilldata.firstWhere((skill) => skill.id == skillId, orElse: () => CharacterSkilldata()).getName(lang);
   }
 
   String getSkillDescription(int index, String lang) {
-    switch(lang) {
-      case 'en':
-        return entity.skilldata[index].descriptionEN;
-      case 'zh':
-        return entity.skilldata[index].descriptionCN;
-      case 'cn':
-        return entity.skilldata[index].descriptionCN;
-      case 'ja':
-        return entity.skilldata[index].descriptionJP;
-    }
-    return '';
+    return entity.skilldata[index].getDescription(lang);
+  }
+
+  CharacterTracedata getTraceById(String traceId) {
+    return entity.tracedata.firstWhere((trace) => trace.id == traceId, orElse: () => CharacterTracedata());
   }
 
   String getTraceName(int index, String lang) {
-    switch(lang) {
-      case 'en':
-        return entity.tracedata[index].eNname;
-      case 'zh':
-        return entity.tracedata[index].cNname;
-      case 'cn':
-        return entity.tracedata[index].cNname;
-      case 'ja':
-        return entity.tracedata[index].jAname;
-    }
-    return '';
+    return entity.tracedata[index].getName(lang);
   }
 
   String getTraceNameById(String traceId, String lang) {
-    CharacterTracedata traceData = entity.tracedata.firstWhere((trace) => trace.id == traceId, orElse: () => CharacterTracedata());
-    switch(lang) {
-      case 'en':
-        return traceData.eNname;
-      case 'zh':
-        return traceData.cNname;
-      case 'cn':
-        return traceData.cNname;
-      case 'ja':
-        return traceData.jAname;
-    }
-    return '';
+    return entity.tracedata.firstWhere((trace) => trace.id == traceId, orElse: () => CharacterTracedata()).getName(lang);
   }
 
   String getTraceDescription(int index, String lang) {
-    switch(lang) {
-      case 'en':
-        return entity.tracedata[index].descriptionEN;
-      case 'zh':
-        return entity.tracedata[index].descriptionCN;
-      case 'cn':
-        return entity.tracedata[index].descriptionCN;
-      case 'ja':
-        return entity.tracedata[index].descriptionJP;
-    }
-    return '';
+    return entity.tracedata[index].getDescription(lang);
+  }
+
+  CharacterEidolon getEidolonById(int eidolonNum) {
+    return entity.eidolon.firstWhere((eidolon) => eidolon.eidolonnum == eidolonNum, orElse: () => CharacterEidolon());
   }
 
   String getEidolonName(int index, String lang) {
-    switch(lang) {
-      case 'en':
-        return entity.eidolon[index].eNname;
-      case 'zh':
-        return entity.eidolon[index].cNname;
-      case 'cn':
-        return entity.eidolon[index].cNname;
-      case 'ja':
-        return entity.eidolon[index].jAname;
-    }
-    return '';
+    return entity.eidolon[index].getName(lang);
   }
 
   String getEidolonDescription(int index, String lang) {
-    switch(lang) {
-      case 'en':
-        return entity.eidolon[index].descriptionEN;
-      case 'zh':
-        return entity.eidolon[index].descriptionCN;
-      case 'cn':
-        return entity.eidolon[index].descriptionCN;
-      case 'ja':
-        return entity.eidolon[index].descriptionJP;
-    }
-    return '';
+    return entity.eidolon[index].getDescription(lang);
   }
 
   String getImageLargeUrl(GlobalState _gs) {
