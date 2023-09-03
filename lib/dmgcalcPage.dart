@@ -109,6 +109,8 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
       cs.selfSkillEffect = {};
       cs.selfTraceEffect = {};
       cs.selfEidolonEffect = {};
+      cs.lightconeEffect = {};
+      cs.relicEffect = {};
     }
     if (cs == null) {
       cs = await loadSavedCharacterStats();

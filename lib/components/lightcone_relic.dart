@@ -386,10 +386,9 @@ class LightconeRelicState extends State<LightconeRelic> {
                   //ANCHOR - relics
                   Column(
                     children: RelicPart.values.where((rp) => rp != RelicPart.unknown).map((rp) {
-                      RelicStats rs = _gs.stats.relics[rp]!;
-                      List<Record<FightProp, double>> subAttrValues = rs.subAttrValues;
-                      for (var i = 0; i < 4 - subAttrValues.length; i++) {
-                        subAttrValues.add(Record.of(FightProp.unknown, 0));
+                      RelicStats relicStats = _gs.stats.relics[rp]!;
+                      for (var i = 0; i < 4 - relicStats.subAttrValues.length; i++) {
+                        relicStats.subAttrValues.add(Record.of(FightProp.unknown, 0));
                       }
                       return Padding(
                         padding: const EdgeInsets.all(10.0),
@@ -668,9 +667,9 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                 mainAxisAlignment: MainAxisAlignment.start,
                                                 crossAxisAlignment: CrossAxisAlignment.end,
                                                 children: [
-                                                  getImageComponent(rs.mainAttr.icon, placeholder: kTransparentImage, width: 25),
+                                                  getImageComponent(relicStats.mainAttr.icon, placeholder: kTransparentImage, width: 25),
                                                   Text(
-                                                    "${rs.mainAttr.getPropText(getRelicMainAttrValue(rs.mainAttr, rs.rarity, rs.level))}",
+                                                    "${relicStats.mainAttr.getPropText(getRelicMainAttrValue(relicStats.mainAttr, relicStats.rarity, relicStats.level))}",
                                                     style: const TextStyle(
                                                       //fontWeight: FontWeight.bold,
                                                       color: Colors.white,
@@ -687,7 +686,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                     child: Padding(
                                                       padding: const EdgeInsets.all(1.0),
                                                       child: Text(
-                                                        "+${rs.level}",
+                                                        "+${relicStats.level}",
                                                         style: const TextStyle(
                                                           //fontWeight: FontWeight.bold,
                                                           color: Colors.white,
@@ -709,14 +708,14 @@ class LightconeRelicState extends State<LightconeRelic> {
                                               ),
                                             ),
                                             for (var cnt in [0, 2])
-                                              if (rs.subAttrValues.length > cnt)
+                                              if (relicStats.subAttrValues.length > cnt)
                                                 SizedBox(
                                                   width: 90,
                                                   height: 70,
                                                   child: Column(
                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                     crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: rs.subAttrValues.skip(cnt).take(2).map((record) {
+                                                    children: relicStats.subAttrValues.skip(cnt).take(2).map((record) {
                                                       return _getSubAttrRow(record.key, record.value);
                                                     }).toList(),
                                                   ),
