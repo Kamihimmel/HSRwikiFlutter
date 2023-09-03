@@ -120,7 +120,7 @@ enum FightProp {
   controlResist(desc: 'controlresist', effectKey: ['controlresist']),
 
   none(desc: 'No multiplier'),
-  unknown(desc: 'Unknown');
+  unknown(desc: '');
 
   final String desc;
   final String icon;

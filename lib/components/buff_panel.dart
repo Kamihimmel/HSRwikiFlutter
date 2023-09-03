@@ -177,6 +177,36 @@ class BuffPanelState extends State<BuffPanel> {
           final Character _cData = CharacterManager.getCharacter(_gs.stats.id);
           final Lightcone _lData = LightconeManager.getLightcone(_gs.stats.lightconeId);
           final List<Relic> _rList = _gs.stats.getRelicSets().map((r) => r != '' ? RelicManager.getRelic(r) : Relic()).toList();
+          List<Effect> characterSkillDmg = _cData.entity.skilldata
+              .expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, skill.id)).where((e) => e.validDamageHealEffect('dmg') && e.hasBuffConfig())).toList();
+          List<Effect> characterSkillBuff = _cData.entity.skilldata
+              .expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, skill.id)).where((e) => e.validSelfBuffEffect(null))).toList();
+          List<Effect> characterTraceBuff = _cData.entity.tracedata
+              .expand((trace) => trace.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, trace.id)).where((e) => !trace.tiny && e.validSelfBuffEffect(null))).toList();
+          List<Effect> characterEidolonBuff = _cData.entity.eidolon
+              .expand((eidolon) => eidolon.effect
+              .map((e) => Effect.fromEntity(e, _cData.entity.id, eidolon.eidolonnum.toString()))
+              .where((e) => (_gs.stats.eidolons[eidolon.eidolonnum.toString().toString()] ?? 0) > 0 && e.validSelfBuffEffect(null))).toList();
+          List<Effect> lightconeSkillBuff = _lData.entity.skilldata
+              .expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _lData.entity.id, '', type: Effect.lightconeType)).where((e) => e.validSelfBuffEffect(null))).toList();
+          List<Effect> relicSkillBuff = List.generate(3, (index) {
+            Relic relic = _rList[index];
+            String setId = relic.entity.id;
+            SkillData skillData = SkillData();
+            int skillIndex = 0; // 0: set2; 1: set4
+            String setNum = '2';
+            if (index == 1 && setId == _rList[0].entity.id) {
+              skillIndex = 1;
+              setNum = '4';
+            }
+            if (relic.entity.skilldata.length > skillIndex) {
+              skillData = relic.getSkill(skillIndex);
+            }
+            return Record.of(skillData, Record.of(setId, setNum));
+          })
+              .expand((record) => record.key.effect.map((e) => Effect.fromEntity(e, record.value.key, record.value.value, type: Effect.relicType)))
+              .where((e) => e.validSelfBuffEffect(null))
+              .toList();
           return Padding(
             padding: const EdgeInsets.all(10.0),
             child: Container(
@@ -200,7 +230,8 @@ class BuffPanelState extends State<BuffPanel> {
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 10),
-                    ExpansionTile(
+                    if (characterSkillDmg.isNotEmpty || characterSkillBuff.isNotEmpty || characterTraceBuff.isNotEmpty || characterEidolonBuff.isNotEmpty)
+                      ExpansionTile(
                         tilePadding: EdgeInsets.only(left: 10, right: 5),
                         childrenPadding: EdgeInsets.all(5),
                         initiallyExpanded: true,
@@ -209,157 +240,140 @@ class BuffPanelState extends State<BuffPanel> {
                           style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                         ),
                         children: [
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 10,
+                          if (characterSkillDmg.isNotEmpty || characterSkillBuff.isNotEmpty)
+                            ...[
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    "Character Skill Buff".tr(),
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                "Character Skill Buff".tr(),
-                                style: TextStyle(
-                                  fontSize: 15,
-                                ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Wrap(
+                                spacing: 10,
+                                runSpacing: 10,
+                                children: characterSkillDmg.map((effect) {
+                                  effect.skillData = CharacterManager.getCharacter(effect.majorId).getSkillById(effect.minorId);
+                                  return _getEffectChip(_gs.stats.damageEffect, effect);
+                                }).toList(),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Wrap(
+                                spacing: 10,
+                                runSpacing: 10,
+                                children: characterSkillBuff.map((effect) {
+                                  effect.skillData = CharacterManager.getCharacter(effect.majorId).getSkillById(effect.minorId);
+                                  return _getEffectChip(_gs.stats.selfSkillEffect, effect);
+                                }).toList(),
                               ),
                             ],
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: _cData.entity.skilldata
-                                .expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, skill.id)).where((e) => e.validDamageHealEffect('dmg') && e.hasBuffConfig()))
-                                .map((effect) {
-                              effect.skillData = CharacterManager.getCharacter(effect.majorId).getSkillById(effect.minorId);
-                              return _getEffectChip(_gs.stats.damageEffect, effect);
-                            }).toList(),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: _cData.entity.skilldata
-                                .expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, skill.id)).where((e) => e.validSelfBuffEffect(null)))
-                                .map((effect) {
-                              effect.skillData = CharacterManager.getCharacter(effect.majorId).getSkillById(effect.minorId);
-                              return _getEffectChip(_gs.stats.selfSkillEffect, effect);
-                            }).toList(),
-                          ),
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 10,
+                          if (characterTraceBuff.isNotEmpty)
+                            ...[
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    "Character Trace Buff".tr(),
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                "Character Trace Buff".tr(),
-                                style: TextStyle(
-                                  fontSize: 15,
-                                ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Wrap(
+                                spacing: 10,
+                                runSpacing: 10,
+                                children: characterTraceBuff.map((effect) {
+                                  effect.skillData = CharacterManager.getCharacter(effect.majorId).getTraceById(effect.minorId);
+                                  return _getEffectChip(_gs.stats.selfTraceEffect, effect);
+                                }).toList(),
                               ),
                             ],
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: _cData.entity.tracedata
-                                .expand((trace) => trace.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, trace.id)).where((e) => !trace.tiny && e.validSelfBuffEffect(null)))
-                                .map((effect) {
-                              effect.skillData = CharacterManager.getCharacter(effect.majorId).getTraceById(effect.minorId);
-                              return _getEffectChip(_gs.stats.selfTraceEffect, effect);
-                            }).toList(),
-                          ),
-                          Row(
-                            children: [
+                          if (characterEidolonBuff.isNotEmpty)
+                            ...[
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    "Character Eidolon Buff".tr(),
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ],
+                              ),
                               SizedBox(
-                                width: 10,
+                                height: 5,
                               ),
-                              Text(
-                                "Character Eidolon Buff".tr(),
-                                style: TextStyle(
-                                  fontSize: 15,
-                                ),
-                              ),
+                              Wrap(
+                                spacing: 10,
+                                runSpacing: 10,
+                                children: characterEidolonBuff.map((effect) {
+                                  effect.skillData = CharacterManager.getCharacter(effect.majorId).getEidolonById(int.tryParse(effect.minorId) ?? 0);
+                                  return _getEffectChip(_gs.stats.selfEidolonEffect, effect);
+                                }).toList(),
+                              )
                             ],
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
+                        ]
+                      ),
+                    if (lightconeSkillBuff.isNotEmpty)
+                      ExpansionTile(
+                        tilePadding: EdgeInsets.only(left: 10, right: 5),
+                        childrenPadding: EdgeInsets.all(5),
+                        initiallyExpanded: true,
+                        title: Text(
+                          "Lightcone Skill Buff".tr(),
+                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                        children: [
                           Wrap(
                             spacing: 10,
                             runSpacing: 10,
-                            children: _cData.entity.eidolon
-                                .expand((eidolon) => eidolon.effect
-                                    .map((e) => Effect.fromEntity(e, _cData.entity.id, eidolon.eidolonnum.toString()))
-                                    .where((e) => (_gs.stats.eidolons[eidolon.eidolonnum.toString().toString()] ?? 0) > 0 && e.validSelfBuffEffect(null)))
-                                .map((effect) {
-                              effect.skillData = CharacterManager.getCharacter(effect.majorId).getEidolonById(int.tryParse(effect.minorId) ?? 0);
-                              return _getEffectChip(_gs.stats.selfEidolonEffect, effect);
+                            children: lightconeSkillBuff.map((effect) {
+                              effect.skillData = LightconeManager.getLightcone(effect.majorId).getSkill();
+                              return _getEffectChip(_gs.stats.lightconeEffect, effect);
                             }).toList(),
                           )
-                        ]),
-                    ExpansionTile(
-                      tilePadding: EdgeInsets.only(left: 10, right: 5),
-                      childrenPadding: EdgeInsets.all(5),
-                      initiallyExpanded: true,
-                      title: Text(
-                        "Lightcone Skill Buff".tr(),
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                        ],
                       ),
-                      children: [
-                        Wrap(
-                          spacing: 10,
-                          runSpacing: 10,
-                          children: _lData.entity.skilldata
-                              .expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _lData.entity.id, '', type: Effect.lightconeType)).where((e) => e.validSelfBuffEffect(null)))
-                              .map((effect) {
-                            effect.skillData = LightconeManager.getLightcone(effect.majorId).getSkill();
-                            return _getEffectChip(_gs.stats.lightconeEffect, effect);
-                          }).toList(),
-                        )
-                      ],
-                    ),
-                    ExpansionTile(
-                      tilePadding: EdgeInsets.only(left: 10, right: 5),
-                      childrenPadding: EdgeInsets.all(5),
-                      initiallyExpanded: true,
-                      title: Text(
-                        "Relic Skill Buff".tr(),
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                      ),
-                      children: [
-                        Wrap(
-                          spacing: 10,
-                          runSpacing: 10,
-                          children: List.generate(3, (index) {
-                            Relic relic = _rList[index];
-                            String setId = relic.entity.id;
-                            SkillData skillData = SkillData();
-                            int skillIndex = 0; // 0: set2; 1: set4
-                            String setNum = '2';
-                            if (index == 1 && setId == _rList[0].entity.id) {
-                              skillIndex = 1;
-                              setNum = '4';
-                            }
-                            if (relic.entity.skilldata.length > skillIndex) {
-                              skillData = relic.getSkill(skillIndex);
-                            }
-                            return Record.of(skillData, Record.of(setId, setNum));
-                          })
-                              .expand((record) => record.key.effect.map((e) => Effect.fromEntity(e, record.value.key, record.value.value, type: Effect.relicType)))
-                              .where((e) => e.validSelfBuffEffect(null))
-                              .map((effect) {
-                            effect.skillData = RelicManager.getRelic(effect.majorId).getSkill(effect.minorId == '2' ? 0 : 1);
-                            return _getEffectChip(_gs.stats.relicEffect, effect);
-                          }).toList(),
+                    if (relicSkillBuff.isNotEmpty)
+                      ExpansionTile(
+                        tilePadding: EdgeInsets.only(left: 10, right: 5),
+                        childrenPadding: EdgeInsets.all(5),
+                        initiallyExpanded: true,
+                        title: Text(
+                          "Relic Skill Buff".tr(),
+                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                         ),
-                      ],
-                    ),
+                        children: [
+                          Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            children: relicSkillBuff.map((effect) {
+                              effect.skillData = RelicManager.getRelic(effect.majorId).getSkill(effect.minorId == '2' ? 0 : 1);
+                              return _getEffectChip(_gs.stats.relicEffect, effect);
+                            }).toList(),
+                          ),
+                        ],
+                      ),
                     ExpansionTile(
                       tilePadding: EdgeInsets.only(left: 10, right: 5),
                       childrenPadding: EdgeInsets.all(5),
