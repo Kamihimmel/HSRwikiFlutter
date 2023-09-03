@@ -10,7 +10,6 @@ import 'platformad_stub.dart' if (dart.library.io) 'platformad_stub.dart' if (da
 import 'utils/logging.dart';
 
 class EffecthitCalcPage extends StatefulWidget {
-
   const EffecthitCalcPage({super.key});
 
   @override
@@ -125,7 +124,7 @@ class _EffecthitCalcPageState extends State<EffecthitCalcPage> {
                                   xs: 12,
                                   sm: 12,
                                   child: Container(
-                                    height: screenWidth > 905 ? screenHeight - 100 : null,
+                                    height: screenWidth > 905 ? screenHeight - 104 : null,
                                     child: Column(
                                       children: [
                                         const SizedBox(

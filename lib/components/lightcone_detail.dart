@@ -152,12 +152,8 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
       ),
       child: Stack(
         children: [
-          getImageComponent(
-              routeLightcone.entity.imagelargeurl,
-              placeholder: kTransparentImage,
-              fit: BoxFit.cover,
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width),
+          getImageComponent(routeLightcone.entity.imagelargeurl,
+              placeholder: kTransparentImage, fit: BoxFit.cover, height: MediaQuery.of(context).size.height, width: MediaQuery.of(context).size.width),
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
             child: AnimatedContainer(
@@ -205,12 +201,11 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                     gradient:
                                                         LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [lightcolor.withOpacity(0.7), Colors.black.withOpacity(0.9)]),
                                                   ),
-                                                  child: getImageComponent(
-                                                    lightconeData.entity.imagelargeurl,
-                                                    placeholder: kTransparentImage,
-                                                    fit: BoxFit.cover,
-                                                    height: MediaQuery.of(context).size.width / 867 * 1230,
-                                                    width: MediaQuery.of(context).size.width),
+                                                  child: getImageComponent(lightconeData.entity.imagelargeurl,
+                                                      placeholder: kTransparentImage,
+                                                      fit: BoxFit.cover,
+                                                      height: MediaQuery.of(context).size.width / 867 * 1230,
+                                                      width: MediaQuery.of(context).size.width),
                                                 ),
                                             ],
                                           ),
@@ -637,9 +632,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                                     child: Text(
                                                                                         ('lang'.tr() == 'en')
                                                                                             ? data.effect[index2].referencetargetEN
-                                                                                            : (('lang'.tr() == 'cn')
-                                                                                                ? data.effect[index2].referencetargetCN
-                                                                                                : data.effect[index2].referencetargetJP),
+                                                                                            : (('lang'.tr() == 'cn') ? data.effect[index2].referencetargetCN : data.effect[index2].referencetargetJP),
                                                                                         style: const TextStyle(
                                                                                           //fontWeight: FontWeight.bold,
                                                                                           color: Colors.black,

@@ -117,12 +117,8 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
       ),
       child: Stack(
         children: [
-          getImageComponent(
-              routeCharacter.getImageLargeUrl(_gs),
-              placeholder: kTransparentImage,
-              fit: BoxFit.fitHeight,
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width),
+          getImageComponent(routeCharacter.getImageLargeUrl(_gs),
+              placeholder: kTransparentImage, fit: BoxFit.fitHeight, height: MediaQuery.of(context).size.height, width: MediaQuery.of(context).size.width),
           Scaffold(
             backgroundColor: Colors.black.withOpacity(0.1),
             appBar: AppBar(
@@ -167,10 +163,10 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                         decoration: BoxDecoration(
                                                           borderRadius: const BorderRadius.all(Radius.circular(10)),
                                                           border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
-                                                            routeCharacter.elementType.color.withOpacity(0.35),
-                                                            routeCharacter.elementType.color.withOpacity(0.5)
-                                                          ]),
+                                                          gradient: LinearGradient(
+                                                              begin: Alignment.topLeft,
+                                                              end: Alignment.bottomRight,
+                                                              colors: [routeCharacter.elementType.color.withOpacity(0.35), routeCharacter.elementType.color.withOpacity(0.5)]),
                                                         ),
                                                         child: Row(
                                                           mainAxisAlignment: MainAxisAlignment.center,
@@ -207,15 +203,15 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                         decoration: BoxDecoration(
                                                           borderRadius: const BorderRadius.all(Radius.circular(10)),
                                                           border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
-                                                            routeCharacter.elementType.color.withOpacity(0.35),
-                                                            routeCharacter.elementType.color.withOpacity(0.5)
-                                                          ]),
+                                                          gradient: LinearGradient(
+                                                              begin: Alignment.topLeft,
+                                                              end: Alignment.bottomRight,
+                                                              colors: [routeCharacter.elementType.color.withOpacity(0.35), routeCharacter.elementType.color.withOpacity(0.5)]),
                                                         ),
                                                         child: Row(
                                                           mainAxisAlignment: MainAxisAlignment.center,
                                                           children: [
-                                                          getImageComponent(characterData.pathType.icon, imageWrap: true, width: 50),
+                                                            getImageComponent(characterData.pathType.icon, imageWrap: true, width: 50),
                                                             Text(
                                                               characterData.pathType.key,
                                                               style: const TextStyle(
@@ -248,10 +244,10 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                   decoration: BoxDecoration(
                                                     borderRadius: const BorderRadius.all(Radius.circular(10)),
                                                     border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                    gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
-                                                      routeCharacter.elementType.color.withOpacity(0.35),
-                                                      routeCharacter.elementType.color.withOpacity(0.5)
-                                                    ]),
+                                                    gradient: LinearGradient(
+                                                        begin: Alignment.topLeft,
+                                                        end: Alignment.bottomRight,
+                                                        colors: [routeCharacter.elementType.color.withOpacity(0.35), routeCharacter.elementType.color.withOpacity(0.5)]),
                                                   ),
                                                   child: Column(
                                                     children: [
@@ -501,10 +497,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                               ),
                                             ),
                                           ),
-                                          if (screenWidth > 905)
-                                            Expanded(
-                                              child: getImageComponent(characterData.getImageLargeUrl(_gs), imageWrap: true)
-                                            ),
+                                          if (screenWidth > 905) Expanded(child: getImageComponent(characterData.getImageLargeUrl(_gs), imageWrap: true)),
                                           if (screenWidth < 905)
                                             Container(
                                               clipBehavior: Clip.hardEdge,
@@ -518,17 +511,11 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                     decoration: BoxDecoration(
                                                       borderRadius: const BorderRadius.all(Radius.circular(15)),
                                                       border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                      gradient: LinearGradient(
-                                                          begin: Alignment.topLeft,
-                                                          end: Alignment.bottomRight,
-                                                          colors: [Colors.black.withOpacity(0.7), Colors.black.withOpacity(0.9)]),
+                                                      gradient:
+                                                          LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.black.withOpacity(0.7), Colors.black.withOpacity(0.9)]),
                                                     ),
-                                                    child: getImageComponent(
-                                                        characterData.getImageLargeUrl(_gs),
-                                                        placeholder: kTransparentImage,
-                                                        height: MediaQuery.of(context).size.height,
-                                                        width: MediaQuery.of(context).size.width)
-                                                ),
+                                                    child: getImageComponent(characterData.getImageLargeUrl(_gs),
+                                                        placeholder: kTransparentImage, height: MediaQuery.of(context).size.height, width: MediaQuery.of(context).size.width)),
                                               ),
                                             ),
                                         ],
@@ -608,10 +595,10 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                     ? const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
                                                                     : const BorderRadius.all(Radius.circular(15)),
                                                                 border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                                gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
-                                                                  routeCharacter.elementType.color.withOpacity(0.35),
-                                                                  Colors.black.withOpacity(0.5)
-                                                                ]),
+                                                                gradient: LinearGradient(
+                                                                    begin: Alignment.topLeft,
+                                                                    end: Alignment.bottomRight,
+                                                                    colors: [routeCharacter.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                                                               ),
                                                               child: Row(
                                                                 children: [
@@ -692,8 +679,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                             decoration: BoxDecoration(
                                                               color: Colors.black.withOpacity(0.8),
-                                                              borderRadius:
-                                                                  const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                                                              borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
                                                             ),
                                                             child: Column(
                                                               mainAxisAlignment: MainAxisAlignment.center,
@@ -702,8 +688,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                 String levelmulti = "";
 
                                                                 if (data.levelmultiplier.isNotEmpty) {
-                                                                  Map<String, dynamic> leveldata2 =
-                                                                      (data.levelmultiplier[data.effect[index2].multiplier.toInt() - 1]);
+                                                                  Map<String, dynamic> leveldata2 = (data.levelmultiplier[data.effect[index2].multiplier.toInt() - 1]);
                                                                   String levelnum2 = (levelnumbers[index].toStringAsFixed(0));
 
                                                                   if (leveldata2['default'] == null) {
@@ -747,9 +732,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                 child: Text(
                                                                                     ('lang'.tr() == 'en')
                                                                                         ? data.effect[index2].referencetargetEN
-                                                                                        : (('lang'.tr() == 'cn')
-                                                                                            ? data.effect[index2].referencetargetCN
-                                                                                            : data.effect[index2].referencetargetJP),
+                                                                                        : (('lang'.tr() == 'cn') ? data.effect[index2].referencetargetCN : data.effect[index2].referencetargetJP),
                                                                                     style: const TextStyle(
                                                                                       //fontWeight: FontWeight.bold,
                                                                                       color: Colors.black,
@@ -856,8 +839,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                           width: 80,
                                                           decoration: BoxDecoration(
                                                             color: routeCharacter.elementType.color.withOpacity(0.3),
-                                                            borderRadius:
-                                                                const BorderRadius.only(bottomRight: Radius.circular(15), bottomLeft: Radius.circular(15)),
+                                                            borderRadius: const BorderRadius.only(bottomRight: Radius.circular(15), bottomLeft: Radius.circular(15)),
                                                           ),
                                                           child: Center(
                                                             child: Padding(
@@ -888,8 +870,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                         width: 110,
                                                         decoration: BoxDecoration(
                                                           color: routeCharacter.elementType.color.withOpacity(0.3),
-                                                          borderRadius:
-                                                              const BorderRadius.only(topRight: Radius.circular(15), bottomLeft: Radius.circular(15)),
+                                                          borderRadius: const BorderRadius.only(topRight: Radius.circular(15), bottomLeft: Radius.circular(15)),
                                                         ),
                                                         child: Center(
                                                           child: Padding(
@@ -981,10 +962,10 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                       ? const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
                                                                       : const BorderRadius.all(Radius.circular(15)),
                                                                   border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                                  gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
-                                                                    routeCharacter.elementType.color.withOpacity(0.35),
-                                                                    Colors.black.withOpacity(0.5)
-                                                                  ]),
+                                                                  gradient: LinearGradient(
+                                                                      begin: Alignment.topLeft,
+                                                                      end: Alignment.bottomRight,
+                                                                      colors: [routeCharacter.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                                                                 ),
                                                                 child: Row(
                                                                   children: [
@@ -1028,8 +1009,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                               margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                               decoration: BoxDecoration(
                                                                 color: Colors.black.withOpacity(0.8),
-                                                                borderRadius:
-                                                                    const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                                                                borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
                                                               ),
                                                               padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                               child: Column(
@@ -1065,8 +1045,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                     color: typetocolor[(data.effect[index2].type)],
                                                                                     borderRadius: BorderRadius.circular(5),
                                                                                   ),
-                                                                                  child: Text(
-                                                                                      '${(data.effect[index2].multipliertarget).tr()}${data.effect[index2].multiplier}%',
+                                                                                  child: Text('${(data.effect[index2].multipliertarget).tr()}${data.effect[index2].multiplier}%',
                                                                                       style: const TextStyle(
                                                                                         //fontWeight: FontWeight.bold,
                                                                                         color: Colors.black,
@@ -1131,8 +1110,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                           width: 110,
                                                           decoration: BoxDecoration(
                                                             color: routeCharacter.elementType.color.withOpacity(0.3),
-                                                            borderRadius:
-                                                                const BorderRadius.only(topLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                                                            borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
                                                           ),
                                                           child: Center(
                                                             child: Padding(
@@ -1201,8 +1179,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                           margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                           decoration: BoxDecoration(
                                                             color: Colors.black.withOpacity(0.8),
-                                                            borderRadius:
-                                                                const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                                                            borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
                                                           ),
                                                           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                           child: Column(
@@ -1238,8 +1215,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                 color: Colors.redAccent,
                                                                                 borderRadius: BorderRadius.circular(5),
                                                                               ),
-                                                                              child: Text(
-                                                                                  '${(data.effect[index2].multipliertarget).tr()}${data.effect[index2].multiplier}%',
+                                                                              child: Text('${(data.effect[index2].multipliertarget).tr()}${data.effect[index2].multiplier}%',
                                                                                   style: const TextStyle(
                                                                                     //fontWeight: FontWeight.bold,
                                                                                     color: Colors.black,
@@ -1255,8 +1231,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                 color: Colors.greenAccent,
                                                                                 borderRadius: BorderRadius.circular(5),
                                                                               ),
-                                                                              child: Text(
-                                                                                  '${(data.effect[index2].addtarget).tr()}${data.effect[index2].multiplier}%',
+                                                                              child: Text('${(data.effect[index2].addtarget).tr()}${data.effect[index2].multiplier}%',
                                                                                   style: const TextStyle(
                                                                                     //fontWeight: FontWeight.bold,
                                                                                     color: Colors.black,
@@ -1350,10 +1325,10 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                     ? const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
                                                                     : const BorderRadius.all(Radius.circular(15)),
                                                                 border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                                gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
-                                                                  routeCharacter.elementType.color.withOpacity(0.35),
-                                                                  Colors.black.withOpacity(0.5)
-                                                                ]),
+                                                                gradient: LinearGradient(
+                                                                    begin: Alignment.topLeft,
+                                                                    end: Alignment.bottomRight,
+                                                                    colors: [routeCharacter.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                                                               ),
                                                               child: Row(
                                                                 children: [
@@ -1397,8 +1372,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                             margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                             decoration: BoxDecoration(
                                                               color: Colors.black.withOpacity(0.8),
-                                                              borderRadius:
-                                                                  const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                                                              borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
                                                             ),
                                                             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                             child: Column(

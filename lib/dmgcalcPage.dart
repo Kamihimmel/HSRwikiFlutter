@@ -310,6 +310,81 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
                                           bannerAd: _bannerAd,
                                         ),
                                       ),
+                                      //ANCHOR - Footer
+                                      ResponsiveGridCol(
+                                        lg: 12,
+                                        md: 12,
+                                        xs: 12,
+                                        sm: 12,
+                                        child: Container(
+                                          height: screenWidth > 905 ? 48 : null,
+                                          color: Colors.black45,
+                                          width: double.infinity,
+                                          alignment: Alignment.centerRight,
+                                          child: Column(mainAxisAlignment: MainAxisAlignment.end, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                            Wrap(runSpacing: 10, alignment: WrapAlignment.start, crossAxisAlignment: WrapCrossAlignment.center, children: [
+                                              Container(
+                                                width: 300,
+                                                child: FittedBox(
+                                                  fit: BoxFit.scaleDown,
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                        'Stat scale'.tr(),
+                                                        style: TextStyle(
+                                                            //fontWeight: FontWeight.bold,
+
+                                                            ),
+                                                      ),
+                                                      Slider(
+                                                        min: 1,
+                                                        max: 10,
+                                                        divisions: 9,
+                                                        activeColor: Colors.grey,
+                                                        inactiveColor: Colors.grey[200]!,
+                                                        label: _gs.statScale.toString(),
+                                                        value: _gs.statScale.toDouble(),
+                                                        onChanged: (value) {
+                                                          _gs.statScale = value.toInt();
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                width: 300,
+                                                child: FittedBox(
+                                                  fit: BoxFit.scaleDown,
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                        'Dmg scale'.tr(),
+                                                        style: TextStyle(
+                                                            //fontWeight: FontWeight.bold,
+
+                                                            ),
+                                                      ),
+                                                      Slider(
+                                                        min: 1,
+                                                        max: 10,
+                                                        divisions: 9,
+                                                        activeColor: Colors.grey,
+                                                        inactiveColor: Colors.grey[200]!,
+                                                        label: _gs.dmgScale.toString(),
+                                                        value: _gs.dmgScale.toDouble(),
+                                                        onChanged: (value) {
+                                                          _gs.dmgScale = value.toInt();
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ]),
+                                          ]),
+                                        ),
+                                      ),
                                     ],
                                   ),
                           ),
@@ -333,7 +408,6 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
                               ),
                               Container(
                                 alignment: Alignment(-1, 0),
-                                height: 100,
                                 width: columnwidth - 100,
                                 child: Padding(
                                   padding: const EdgeInsets.fromLTRB(25, 25, 110, 25),

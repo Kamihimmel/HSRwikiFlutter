@@ -176,18 +176,17 @@ class DamagePanelState extends State<DamagePanel> {
     return effectGroup;
   }
 
-  void _appendDamageAndTitle(List<Effect> effects, List<String> multiplierTitle, String type, List<DamageResult> drList, String stype, Character character, CharacterSkilldata? skilldata, int? skillLevel) {
+  void _appendDamageAndTitle(
+      List<Effect> effects, List<String> multiplierTitle, String type, List<DamageResult> drList, String stype, Character character, CharacterSkilldata? skilldata, int? skillLevel) {
     effects.forEach((e) {
       double multiplierValue = 0;
       FightProp multiplierProp = FightProp.fromEffectMultiplier(e.entity.multipliertarget);
       if (type == 'dmg') {
         multiplierValue = e.getEffectMultiplierValue(skilldata, skillLevel, _gs.stats.damageEffect[e.getKey()]);
-        drList.add(calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, multiplierProp,
-            stype, DamageType.fromEffectTags(e.entity.tag), character.elementType));
+        drList.add(calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, multiplierProp, stype, DamageType.fromEffectTags(e.entity.tag), character.elementType));
       } else if (type == 'break') {
         multiplierValue = e.getEffectMultiplierValue(skilldata, skillLevel, _gs.stats.damageEffect[e.getKey()]);
-        drList.add(calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, multiplierProp,
-            stype, DamageType.breakWeakness, character.elementType));
+        drList.add(calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, multiplierProp, stype, DamageType.breakWeakness, character.elementType));
       } else if (type == 'heal') {
         multiplierValue = e.getEffectMultiplierValue(skilldata, skillLevel, _gs.stats.healEffect[e.getKey()]);
         drList.add(calculateHeal(_gs.stats, multiplierValue, multiplierProp));
@@ -207,51 +206,56 @@ class DamagePanelState extends State<DamagePanel> {
 
   List<Widget> _getDamageHealPanels(Character character, String type) {
     return character.entity.skilldata.where((skill) => skill.effect.any((e) => e.type == type && e.multiplier > 0)).map((skill) {
-      CharacterSkilldata skillData = character.entity.skilldata.firstWhere((s) => s.id == skill.id, orElse: () => CharacterSkilldata());
-      int skillLevel = _gs.stats.skillLevels[skill.id] ?? 1;
-      String skillName = character.getSkillNameById(skill.id, getLanguageCode(context));
-      String title = "${skillName} (Lv${skillLevel})";
-      Map<String, List<Effect>> skillEffectGroup = _groupEffect(skillData.effect.map((e) => Effect.fromEntity(e, character.entity.id, skillData.id)).toList(), type);
-      return ExpansionTile(
-        tilePadding: EdgeInsets.only(left: 5, right: 5),
-        childrenPadding: EdgeInsets.all(5),
-        initiallyExpanded: true,
-        title: _buildDamageBar(title, character.elementType, null),
-        children: skillEffectGroup.values.map((effects) {
-          EffectEntity effect = effects.first.entity;
-          String title = "${effect.tag.map((e) => e.tr()).join(" | ")}";
-          List<DamageResult> drList = [];
-          List<String> multiplierTitle = [];
-          _appendDamageAndTitle(effects, multiplierTitle, type, drList, skillData.stype, character, skillData, skillLevel);
-          title += " (${multiplierTitle.join(' + ')})";
-          DamageResult dr = drList.fold(DamageResult.zero(), (pre, damage) =>
-              DamageResult(pre.nonCrit + damage.nonCrit, pre.expectation + damage.expectation, pre.crit + damage.crit, details: "${pre.details == '' ? '' : pre.details + '\n'}${damage.details}"));
-          return _buildDamageBar(title, character.elementType, dr);
-        }).toList(),
-      );
-    }).toList() + character.entity.tracedata.where((trace) => (_gs.stats.traceLevels[trace.id] ?? 0) > 0 && trace.effect.any((e) => e.type == type && e.multiplier > 0)).map((trace) {
-      CharacterTracedata traceData = character.entity.tracedata.firstWhere((s) => s.id == trace.id, orElse: () => CharacterTracedata());
-      String traceName = character.getTraceNameById(trace.id, getLanguageCode(context));
-      String title = "${traceName}";
-      Map<String, List<Effect>> traceEffectGroup = _groupEffect(traceData.effect.map((e) => Effect.fromEntity(e, character.entity.id, traceData.id)).toList(), type);
-      return ExpansionTile(
-        tilePadding: EdgeInsets.only(left: 5, right: 5),
-        childrenPadding: EdgeInsets.all(5),
-        initiallyExpanded: true,
-        title: _buildDamageBar(title, character.elementType, null),
-        children: traceEffectGroup.values.map((effects) {
-          EffectEntity effect = effects.first.entity;
-          String title = "${effect.tag.map((e) => e.tr()).join(" | ")}";
-          List<DamageResult> drList = [];
-          List<String> multiplierTitle = [];
-          _appendDamageAndTitle(effects, multiplierTitle, type, drList, traceData.stype, character, null, null);
-          title += " (${multiplierTitle.join(' + ')})";
-          DamageResult dr = drList.fold(DamageResult.zero(), (pre, damage) =>
-              DamageResult(pre.nonCrit + damage.nonCrit, pre.expectation + damage.expectation, pre.crit + damage.crit, details: "${pre.details == '' ? '' : pre.details + '\n'}${damage.details}"));
-          return _buildDamageBar(title, character.elementType, dr);
-        }).toList(),
-      );
-    }).toList();
+          CharacterSkilldata skillData = character.entity.skilldata.firstWhere((s) => s.id == skill.id, orElse: () => CharacterSkilldata());
+          int skillLevel = _gs.stats.skillLevels[skill.id] ?? 1;
+          String skillName = character.getSkillNameById(skill.id, getLanguageCode(context));
+          String title = "${skillName} (Lv${skillLevel})";
+          Map<String, List<Effect>> skillEffectGroup = _groupEffect(skillData.effect.map((e) => Effect.fromEntity(e, character.entity.id, skillData.id)).toList(), type);
+          return ExpansionTile(
+            tilePadding: EdgeInsets.only(left: 5, right: 5),
+            childrenPadding: EdgeInsets.all(5),
+            initiallyExpanded: true,
+            title: _buildDamageBar(title, character.elementType, null),
+            children: skillEffectGroup.values.map((effects) {
+              EffectEntity effect = effects.first.entity;
+              String title = "${effect.tag.map((e) => e.tr()).join(" | ")}";
+              List<DamageResult> drList = [];
+              List<String> multiplierTitle = [];
+              _appendDamageAndTitle(effects, multiplierTitle, type, drList, skillData.stype, character, skillData, skillLevel);
+              title += " (${multiplierTitle.join(' + ')})";
+              DamageResult dr = drList.fold(
+                  DamageResult.zero(),
+                  (pre, damage) => DamageResult(pre.nonCrit + damage.nonCrit, pre.expectation + damage.expectation, pre.crit + damage.crit,
+                      details: "${pre.details == '' ? '' : pre.details + '\n'}${damage.details}"));
+              return _buildDamageBar(title, character.elementType, dr);
+            }).toList(),
+          );
+        }).toList() +
+        character.entity.tracedata.where((trace) => (_gs.stats.traceLevels[trace.id] ?? 0) > 0 && trace.effect.any((e) => e.type == type && e.multiplier > 0)).map((trace) {
+          CharacterTracedata traceData = character.entity.tracedata.firstWhere((s) => s.id == trace.id, orElse: () => CharacterTracedata());
+          String traceName = character.getTraceNameById(trace.id, getLanguageCode(context));
+          String title = "${traceName}";
+          Map<String, List<Effect>> traceEffectGroup = _groupEffect(traceData.effect.map((e) => Effect.fromEntity(e, character.entity.id, traceData.id)).toList(), type);
+          return ExpansionTile(
+            tilePadding: EdgeInsets.only(left: 5, right: 5),
+            childrenPadding: EdgeInsets.all(5),
+            initiallyExpanded: true,
+            title: _buildDamageBar(title, character.elementType, null),
+            children: traceEffectGroup.values.map((effects) {
+              EffectEntity effect = effects.first.entity;
+              String title = "${effect.tag.map((e) => e.tr()).join(" | ")}";
+              List<DamageResult> drList = [];
+              List<String> multiplierTitle = [];
+              _appendDamageAndTitle(effects, multiplierTitle, type, drList, traceData.stype, character, null, null);
+              title += " (${multiplierTitle.join(' + ')})";
+              DamageResult dr = drList.fold(
+                  DamageResult.zero(),
+                  (pre, damage) => DamageResult(pre.nonCrit + damage.nonCrit, pre.expectation + damage.expectation, pre.crit + damage.crit,
+                      details: "${pre.details == '' ? '' : pre.details + '\n'}${damage.details}"));
+              return _buildDamageBar(title, character.elementType, dr);
+            }).toList(),
+          );
+        }).toList();
   }
 
   @override
@@ -271,7 +275,7 @@ class DamagePanelState extends State<DamagePanel> {
           List<Widget> healPanels = _getDamageHealPanels(_cData, 'heal');
           List<Widget> shieldPanels = _getDamageHealPanels(_cData, 'shield');
           return Container(
-            height: screenWidth > 905 ? screenHeight - 100 : null,
+            height: screenWidth > 905 ? screenHeight - 104 : null,
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -289,10 +293,7 @@ class DamagePanelState extends State<DamagePanel> {
                             decoration: BoxDecoration(
                               borderRadius: const BorderRadius.all(Radius.circular(15)),
                               border: Border.all(color: Colors.white.withOpacity(0.13)),
-                              gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                              gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                             ),
                             child: Column(
                               children: [
@@ -327,10 +328,7 @@ class DamagePanelState extends State<DamagePanel> {
                             decoration: BoxDecoration(
                               borderRadius: const BorderRadius.all(Radius.circular(15)),
                               border: Border.all(color: Colors.white.withOpacity(0.13)),
-                              gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                              gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                             ),
                             child: Column(
                               children: [
@@ -365,10 +363,7 @@ class DamagePanelState extends State<DamagePanel> {
                             decoration: BoxDecoration(
                               borderRadius: const BorderRadius.all(Radius.circular(15)),
                               border: Border.all(color: Colors.white.withOpacity(0.13)),
-                              gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                              gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                             ),
                             child: Column(
                               children: [

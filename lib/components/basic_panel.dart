@@ -255,7 +255,7 @@ class BasicPanelState extends State<BasicPanel> {
           }
 
           return Container(
-            height: screenWidth > 905 ? screenHeight - 100 : null,
+            height: screenWidth > 905 ? screenHeight - 104 : null,
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -418,8 +418,7 @@ class BasicPanelState extends State<BasicPanel> {
                         ),
                       ),
                     ),
-                  if (_gs.enemyLoaded)
-                    EnemyPanel(),
+                  if (_gs.enemyLoaded) EnemyPanel(),
                   BuffPanel(),
                   adsenseAdsView(columnwidth - 20),
                   if (widget.isBannerAdReady)

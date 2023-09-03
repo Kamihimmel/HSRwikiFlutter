@@ -60,7 +60,7 @@ class CharacterBasicState extends State<CharacterBasic> {
             characterList = CharacterManager.getSortedCharacters(withDiy: false, filterSupported: true).values.where((c) => _gs.spoilerMode || !c.spoiler).toList();
             characterList.sort((e1, e2) => e1.spoiler == e2.spoiler ? 0 : (e1.spoiler ? -1 : 1));
             return Container(
-              height: screenWidth > 905 ? screenHeight - 100 : null,
+              height: screenWidth > 905 ? screenHeight - 104 : null,
               child: SingleChildScrollView(
                 child: Column(
                   children: [
