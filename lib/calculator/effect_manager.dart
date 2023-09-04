@@ -74,7 +74,10 @@ class EffectManager {
     if (damageType.isNotEmpty) {
       breakExtraEffect.entity.tag.add(damageType);
     }
-    breakExtraEffect.entity.maxStack = character.elementType.getBreakExtraMaxStack();
+    int maxStack = character.elementType.getBreakExtraMaxStack();
+    if (maxStack > 0) {
+      breakExtraEffect.entity.maxStack = maxStack;
+    }
     String breakEffect = character.elementType.getBreakEffect().tr();
     breakExtraEffect.skillData.eNname = breakEffect;
     breakExtraEffect.skillData.cNname = breakEffect;
@@ -91,7 +94,6 @@ class EffectManager {
       e.entity.type = 'break';
       e.entity.multipliertarget = 'breakdmgbase';
       e.entity.tag.add("${character.elementType.name}dmg");
-      e.skillData.maxlevel = -1;
     }
     return effects;
   }
