@@ -129,6 +129,9 @@ enum FightProp {
   lostHP(desc: 'Lost HP', effectKey: ['losthp']),
   allDotDamage(desc: 'All DoT DMG', effectKey: ['alldotdmg']),
   shockedDotDamage(desc: 'Shocked DoT DMG', effectKey: ['shockeddotdmg']),
+  burnDotDamage(desc: 'Burn DoT DMG', effectKey: ['burndotdmg']),
+  windshearDotDamage(desc: 'Wind Shear DoT DMG', effectKey: ['windsheardotdmg']),
+  bleedDotDamage(desc: 'Bleed DoT DMG', effectKey: ['bleeddotdmg']),
 
   none(desc: 'No multiplier'), // effect.multipliertarget == ''
   unknown(desc: '');
