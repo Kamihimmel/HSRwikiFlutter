@@ -60,6 +60,20 @@ class Effect {
     return "$majorId-$minorId-$effectId";
   }
 
+  String getReferenceTarget(String lang) {
+    switch(lang) {
+      case 'en':
+        return this.entity.referencetargetEN;
+      case 'zh':
+        return this.entity.referencetargetCN;
+      case 'cn':
+        return this.entity.referencetargetCN;
+      case 'ja':
+        return this.entity.referencetargetJP;
+    }
+    return '';
+  }
+
   bool hasBuffConfig() {
     return hasChoiceConfig() || hasStackConfig() || hasValueFieldConfig();
   }
@@ -139,7 +153,7 @@ class Effect {
       Expression expr = formulaParser.parse(multiplierValue);
       multiplier = expr.evaluate(EvaluationType.REAL, cm);
     } else {
-      if (skillData != null && skillLevel != null && multiplier <= skillData.levelmultiplier.length && multiplier == multiplier.toInt() && skillData.maxlevel >= 0) {
+      if (skillData != null && skillLevel != null && multiplier <= skillData.levelmultiplier.length && skillData.maxlevel >= 0) {
         Map<String, dynamic> levelMultiplier = skillData.levelmultiplier[multiplier.toInt() - 1];
         if (levelMultiplier.containsKey('default')) {
           multiplier = double.tryParse(levelMultiplier['default'].toString()) ?? 0;

@@ -1,6 +1,6 @@
 import 'package:hsrwikiproject/generated/json/base/json_convert_content.dart';
 import 'package:hsrwikiproject/characters/character_entity.dart';
-import '../../calculator/effect_entity.dart';
+import '../../calculator/skill_data.dart';
 
 
 CharacterEntity $CharacterEntityFromJson(Map<String, dynamic> json) {
@@ -140,54 +140,7 @@ Map<String, dynamic> $CharacterLeveldataToJson(CharacterLeveldata entity) {
 
 CharacterSkilldata $CharacterSkilldataFromJson(Map<String, dynamic> json) {
 	final CharacterSkilldata characterSkilldata = CharacterSkilldata();
-	final String? id = jsonConvert.convert<String>(json['id']);
-	if (id != null) {
-		characterSkilldata.id = id;
-	}
-	final String? eNname = jsonConvert.convert<String>(json['ENname']);
-	if (eNname != null) {
-		characterSkilldata.eNname = eNname;
-	}
-	final String? cNname = jsonConvert.convert<String>(json['CNname']);
-	if (cNname != null) {
-		characterSkilldata.cNname = cNname;
-	}
-	final String? jAname = jsonConvert.convert<String>(json['JAname']);
-	if (jAname != null) {
-		characterSkilldata.jAname = jAname;
-	}
-	final String? imageurl = jsonConvert.convert<String>(json['imageurl']);
-	if (imageurl != null) {
-		characterSkilldata.imageurl = imageurl;
-	}
-	final String? descriptionEN = jsonConvert.convert<String>(json['DescriptionEN']);
-	if (descriptionEN != null) {
-		characterSkilldata.descriptionEN = descriptionEN;
-	}
-	final String? descriptionCN = jsonConvert.convert<String>(json['DescriptionCN']);
-	if (descriptionCN != null) {
-		characterSkilldata.descriptionCN = descriptionCN;
-	}
-	final String? descriptionJP = jsonConvert.convert<String>(json['DescriptionJP']);
-	if (descriptionJP != null) {
-		characterSkilldata.descriptionJP = descriptionJP;
-	}
-	final String? stype = jsonConvert.convert<String>(json['stype']);
-	if (stype != null) {
-		characterSkilldata.stype = stype;
-	}
-	final int? maxlevel = jsonConvert.convert<int>(json['maxlevel']);
-	if (maxlevel != null) {
-		characterSkilldata.maxlevel = maxlevel;
-	}
-	final bool? buffskill = jsonConvert.convert<bool>(json['buffskill']);
-	if (buffskill != null) {
-		characterSkilldata.buffskill = buffskill;
-	}
-	final bool? teamskill = jsonConvert.convert<bool>(json['teamskill']);
-	if (teamskill != null) {
-		characterSkilldata.teamskill = teamskill;
-	}
+	$SkilldataFromJson(json, characterSkilldata);
 	final int? weaknessbreak = jsonConvert.convert<int>(json['weaknessbreak']);
 	if (weaknessbreak != null) {
 		characterSkilldata.weaknessbreak = weaknessbreak;
@@ -195,18 +148,6 @@ CharacterSkilldata $CharacterSkilldataFromJson(Map<String, dynamic> json) {
 	final int? energyregen = jsonConvert.convert<int>(json['energyregen']);
 	if (energyregen != null) {
 		characterSkilldata.energyregen = energyregen;
-	}
-	final List<Map<String, dynamic>>? levelmultiplier = jsonConvert.convertListNotNull<Map<String, dynamic>>(json['levelmultiplier']);
-	if (levelmultiplier != null) {
-		characterSkilldata.levelmultiplier = levelmultiplier;
-	}
-	final List<String>? tags = jsonConvert.convertListNotNull<String>(json['tags']);
-	if (tags != null) {
-		characterSkilldata.tags = tags;
-	}
-	final List<EffectEntity>? effect = jsonConvert.convertListNotNull<EffectEntity>(json['effect']);
-	if (effect != null) {
-		characterSkilldata.effect = effect;
 	}
 	final int? energy = jsonConvert.convert<int>(json['energy']);
 	if (energy != null) {
@@ -217,84 +158,19 @@ CharacterSkilldata $CharacterSkilldataFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> $CharacterSkilldataToJson(CharacterSkilldata entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
-	data['id'] = entity.id;
-	data['ENname'] = entity.eNname;
-	data['CNname'] = entity.cNname;
-	data['JAname'] = entity.jAname;
-	data['imageurl'] = entity.imageurl;
-	data['DescriptionEN'] = entity.descriptionEN;
-	data['DescriptionCN'] = entity.descriptionCN;
-	data['DescriptionJP'] = entity.descriptionJP;
-	data['stype'] = entity.stype;
-	data['maxlevel'] = entity.maxlevel;
-	data['buffskill'] = entity.buffskill;
-	data['teamskill'] = entity.teamskill;
+	$SkillDataToJson(entity, data);
 	data['weaknessbreak'] = entity.weaknessbreak;
 	data['energyregen'] = entity.energyregen;
-	data['levelmultiplier'] =  entity.levelmultiplier;
-	data['tags'] =  entity.tags;
-	data['effect'] =  entity.effect.map((v) => v.toJson()).toList();
 	data['energy'] = entity.energy;
 	return data;
 }
 
 CharacterTracedata $CharacterTracedataFromJson(Map<String, dynamic> json) {
 	final CharacterTracedata characterTracedata = CharacterTracedata();
-	final String? id = jsonConvert.convert<String>(json['id']);
-	if (id != null) {
-		characterTracedata.id = id;
-	}
+	$SkilldataFromJson(json, characterTracedata);
 	final bool? tiny = jsonConvert.convert<bool>(json['tiny']);
 	if (tiny != null) {
 		characterTracedata.tiny = tiny;
-	}
-	final String? eNname = jsonConvert.convert<String>(json['ENname']);
-	if (eNname != null) {
-		characterTracedata.eNname = eNname;
-	}
-	final String? cNname = jsonConvert.convert<String>(json['CNname']);
-	if (cNname != null) {
-		characterTracedata.cNname = cNname;
-	}
-	final String? jAname = jsonConvert.convert<String>(json['JAname']);
-	if (jAname != null) {
-		characterTracedata.jAname = jAname;
-	}
-	final String? descriptionEN = jsonConvert.convert<String>(json['DescriptionEN']);
-	if (descriptionEN != null) {
-		characterTracedata.descriptionEN = descriptionEN;
-	}
-	final String? descriptionCN = jsonConvert.convert<String>(json['DescriptionCN']);
-	if (descriptionCN != null) {
-		characterTracedata.descriptionCN = descriptionCN;
-	}
-	final String? descriptionJP = jsonConvert.convert<String>(json['DescriptionJP']);
-	if (descriptionJP != null) {
-		characterTracedata.descriptionJP = descriptionJP;
-	}
-	final String? imageurl = jsonConvert.convert<String>(json['imageurl']);
-	if (imageurl != null) {
-		characterTracedata.imageurl = imageurl;
-	}
-	final String? stype = jsonConvert.convert<String>(json['stype']);
-	if (stype != null) {
-		characterTracedata.stype = stype;
-	}
-	final bool? buffskill = jsonConvert.convert<bool>(json['buffskill']);
-	if (buffskill != null) {
-		characterTracedata.buffskill = buffskill;
-	}
-	final bool? teamskill = jsonConvert.convert<bool>(json['teamskill']);
-	if (teamskill != null) {
-		characterTracedata.teamskill = teamskill;
-	}
-	final List<String>? tags = jsonConvert.convertListNotNull<String>(json['tags']);
-	if (tags != null) {
-		characterTracedata.tags = tags;
-	}
-	final List<EffectEntity>? effect = jsonConvert.convertListNotNull<EffectEntity>(json['effect']);
-	if (effect != null) {
-		characterTracedata.effect = effect;
 	}
 	final String? ttype = jsonConvert.convert<String>(json['ttype']);
 	if (ttype != null) {
@@ -305,100 +181,25 @@ CharacterTracedata $CharacterTracedataFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> $CharacterTracedataToJson(CharacterTracedata entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
-	data['id'] = entity.id;
+	$SkillDataToJson(entity, data);
 	data['tiny'] = entity.tiny;
-	data['ENname'] = entity.eNname;
-	data['CNname'] = entity.cNname;
-	data['JAname'] = entity.jAname;
-	data['DescriptionEN'] = entity.descriptionEN;
-	data['DescriptionCN'] = entity.descriptionCN;
-	data['DescriptionJP'] = entity.descriptionJP;
-	data['imageurl'] = entity.imageurl;
-	data['stype'] = entity.stype;
-	data['buffskill'] = entity.buffskill;
-	data['teamskill'] = entity.teamskill;
-	data['tags'] =  entity.tags;
-	data['effect'] =  entity.effect.map((v) => v.toJson()).toList();
 	data['ttype'] = entity.ttype;
 	return data;
 }
 
 CharacterEidolon $CharacterEidolonFromJson(Map<String, dynamic> json) {
 	final CharacterEidolon characterEidolon = CharacterEidolon();
-	final String? id = jsonConvert.convert<String>(json['id']);
-	if (id != null) {
-		characterEidolon.id = id;
-	}
+	$SkilldataFromJson(json, characterEidolon);
 	final int? eidolonnum = jsonConvert.convert<int>(json['eidolonnum']);
 	if (eidolonnum != null) {
 		characterEidolon.eidolonnum = eidolonnum;
-	}
-	final String? eNname = jsonConvert.convert<String>(json['ENname']);
-	if (eNname != null) {
-		characterEidolon.eNname = eNname;
-	}
-	final String? cNname = jsonConvert.convert<String>(json['CNname']);
-	if (cNname != null) {
-		characterEidolon.cNname = cNname;
-	}
-	final String? jAname = jsonConvert.convert<String>(json['JAname']);
-	if (jAname != null) {
-		characterEidolon.jAname = jAname;
-	}
-	final String? imageurl = jsonConvert.convert<String>(json['imageurl']);
-	if (imageurl != null) {
-		characterEidolon.imageurl = imageurl;
-	}
-	final String? descriptionEN = jsonConvert.convert<String>(json['DescriptionEN']);
-	if (descriptionEN != null) {
-		characterEidolon.descriptionEN = descriptionEN;
-	}
-	final String? descriptionCN = jsonConvert.convert<String>(json['DescriptionCN']);
-	if (descriptionCN != null) {
-		characterEidolon.descriptionCN = descriptionCN;
-	}
-	final String? descriptionJP = jsonConvert.convert<String>(json['DescriptionJP']);
-	if (descriptionJP != null) {
-		characterEidolon.descriptionJP = descriptionJP;
-	}
-	final String? stype = jsonConvert.convert<String>(json['stype']);
-	if (stype != null) {
-		characterEidolon.stype = stype;
-	}
-	final bool? buffskill = jsonConvert.convert<bool>(json['buffskill']);
-	if (buffskill != null) {
-		characterEidolon.buffskill = buffskill;
-	}
-	final bool? teamskill = jsonConvert.convert<bool>(json['teamskill']);
-	if (teamskill != null) {
-		characterEidolon.teamskill = teamskill;
-	}
-	final List<String>? tags = jsonConvert.convertListNotNull<String>(json['tags']);
-	if (tags != null) {
-		characterEidolon.tags = tags;
-	}
-	final List<EffectEntity>? effect = jsonConvert.convertListNotNull<EffectEntity>(json['effect']);
-	if (effect != null) {
-		characterEidolon.effect = effect;
 	}
 	return characterEidolon;
 }
 
 Map<String, dynamic> $CharacterEidolonToJson(CharacterEidolon entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
-	data['id'] = entity.id;
+	$SkillDataToJson(entity, data);
 	data['eidolonnum'] = entity.eidolonnum;
-	data['ENname'] = entity.eNname;
-	data['CNname'] = entity.cNname;
-	data['JAname'] = entity.jAname;
-	data['imageurl'] = entity.imageurl;
-	data['DescriptionEN'] = entity.descriptionEN;
-	data['DescriptionCN'] = entity.descriptionCN;
-	data['DescriptionJP'] = entity.descriptionJP;
-	data['stype'] = entity.stype;
-	data['buffskill'] = entity.buffskill;
-	data['teamskill'] = entity.teamskill;
-	data['tags'] =  entity.tags;
-	data['effect'] =  entity.effect.map((v) => v.toJson()).toList();
 	return data;
 }

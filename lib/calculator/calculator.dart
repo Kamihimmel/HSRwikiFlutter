@@ -49,7 +49,7 @@ enum DamageType {
   normal(crit: true, breakDmg: false),
   dot(crit: false, breakDmg: false),
   followup(crit: true, breakDmg: false),
-  additional(crit: false, breakDmg: false),
+  additional(crit: true, breakDmg: false),
   breakWeakness(crit: false, breakDmg: true),
   breakWeaknessDot(crit: false, breakDmg: true),
   breakWeaknessAdditional(crit: false, breakDmg: true);
@@ -74,6 +74,8 @@ enum DamageType {
       return DamageType.dot;
     } else if (tags.contains("followupatk")) {
       return DamageType.followup;
+    } else if (tags.contains("additionalatk")) {
+      return DamageType.additional;
     }
     return DamageType.normal;
   }

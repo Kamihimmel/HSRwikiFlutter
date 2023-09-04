@@ -218,59 +218,45 @@ class DamagePanelState extends State<DamagePanel> {
         );
       }).toList();
     }
-    return character.entity.skilldata.where((skill) => skill.effect.any((e) => e.type == type && e.multiplier > 0)).map((skill) {
-          CharacterSkilldata skillData = character.entity.skilldata.firstWhere((s) => s.id == skill.id, orElse: () => CharacterSkilldata());
-          int skillLevel = _gs.stats.skillLevels[skill.id] ?? 1;
-          String skillName = character.getSkillNameById(skill.id, getLanguageCode(context));
-          String title = "${skillName} (Lv${skillLevel})";
-          List<Effect> validEffects = skillData.effect.map((e) => Effect.fromEntity(e, character.entity.id, skillData.id)).where((e) => e.entity.type == type).toList();
-          Map<String, List<Effect>> skillEffectGroup = Effect.groupEffect(validEffects);
-          return ExpansionTile(
-            tilePadding: EdgeInsets.only(left: 5, right: 5),
-            childrenPadding: EdgeInsets.all(5),
-            initiallyExpanded: true,
-            title: _buildDamageBar(title, character.elementType, null),
-            children: skillEffectGroup.values.map((effects) {
-              EffectEntity effect = effects.first.entity;
-              String title = "${effect.tag.map((e) => e.tr()).join(" | ")}";
-              List<DamageResult> drList = [];
-              List<String> multiplierTitle = [];
-              _appendDamageAndTitle(effects, multiplierTitle, type, drList, skillData.stype, character, skillData, skillLevel);
-              title += " (${multiplierTitle.join(' + ')})";
-              DamageResult dr = drList.fold(
-                  DamageResult.zero(),
+    // 获取skill/trace/eidolon中的包含伤害治疗护盾技能
+    List<SkillData> damageHealSkills = [];
+    damageHealSkills.addAll(character.entity.skilldata.where((skill) => skill.effect.any((e) => e.type == type && e.multiplier > 0)));
+    damageHealSkills.addAll(character.entity.tracedata.where((trace) => (_gs.stats.traceLevels[trace.id] ?? 0) > 0 && trace.effect.any((e) => e.type == type && e.multiplier > 0)));
+    damageHealSkills.addAll(character.entity.eidolon.where((eidolon) => (_gs.stats.eidolons[eidolon.eidolonnum.toString()] ?? 0) > 0 && eidolon.effect.any((e) => e.type == type && e.multiplier > 0)));
+    return damageHealSkills.map((skillData) {
+      String skillName = skillData.getName(getLanguageCode(context));
+      int? skillLevel;
+      if (skillData.stype != 'trace' && skillData.stype != 'eidolon') {
+        // 是skill类型，需要获取等级数据
+        skillLevel = _gs.stats.skillLevels[skillData.id] ?? 1;
+      }
+      if (skillData.referencelevel != '') {
+        // 如果是引用其他技能的等级
+        skillLevel = _gs.stats.skillLevels[character.getSkillById(skillData.referencelevel).id] ?? 1;
+      }
+      String title = "${skillName}${skillLevel != null ? '(Lv${skillLevel})' : ''}";
+      List<Effect> validEffects = skillData.effect.map((e) => Effect.fromEntity(e, character.entity.id, skillData.id)).where((e) => e.entity.type == type).toList();
+      Map<String, List<Effect>> skillEffectGroup = Effect.groupEffect(validEffects);
+      return ExpansionTile(
+        tilePadding: EdgeInsets.only(left: 5, right: 5),
+        childrenPadding: EdgeInsets.all(5),
+        initiallyExpanded: true,
+        title: _buildDamageBar(title, character.elementType, null),
+        children: skillEffectGroup.values.map((effects) {
+          EffectEntity effect = effects.first.entity;
+          String title = "${effect.tag.map((e) => e.tr()).join(" | ")}";
+          List<DamageResult> drList = [];
+          List<String> multiplierTitle = [];
+          _appendDamageAndTitle(effects, multiplierTitle, type, drList, skillData.stype, character, skillData, skillLevel);
+          title += " (${multiplierTitle.join(' + ')})";
+          DamageResult dr = drList.fold(
+              DamageResult.zero(),
                   (pre, damage) => DamageResult(pre.nonCrit + damage.nonCrit, pre.expectation + damage.expectation, pre.crit + damage.crit,
-                      details: "${pre.details == '' ? '' : pre.details + '\n'}${damage.details}"));
-              return _buildDamageBar(title, character.elementType, dr);
-            }).toList(),
-          );
-        }).toList() +
-        character.entity.tracedata.where((trace) => (_gs.stats.traceLevels[trace.id] ?? 0) > 0 && trace.effect.any((e) => e.type == type && e.multiplier > 0)).map((trace) {
-          CharacterTracedata traceData = character.entity.tracedata.firstWhere((s) => s.id == trace.id, orElse: () => CharacterTracedata());
-          String traceName = character.getTraceNameById(trace.id, getLanguageCode(context));
-          String title = "${traceName}";
-          List<Effect> validEffects = traceData.effect.map((e) => Effect.fromEntity(e, character.entity.id, traceData.id)).where((e) => e.entity.type == type).toList();
-          Map<String, List<Effect>> traceEffectGroup = Effect.groupEffect(validEffects);
-          return ExpansionTile(
-            tilePadding: EdgeInsets.only(left: 5, right: 5),
-            childrenPadding: EdgeInsets.all(5),
-            initiallyExpanded: true,
-            title: _buildDamageBar(title, character.elementType, null),
-            children: traceEffectGroup.values.map((effects) {
-              EffectEntity effect = effects.first.entity;
-              String title = "${effect.tag.map((e) => e.tr()).join(" | ")}";
-              List<DamageResult> drList = [];
-              List<String> multiplierTitle = [];
-              _appendDamageAndTitle(effects, multiplierTitle, type, drList, traceData.stype, character, null, null);
-              title += " (${multiplierTitle.join(' + ')})";
-              DamageResult dr = drList.fold(
-                  DamageResult.zero(),
-                  (pre, damage) => DamageResult(pre.nonCrit + damage.nonCrit, pre.expectation + damage.expectation, pre.crit + damage.crit,
-                      details: "${pre.details == '' ? '' : pre.details + '\n'}${damage.details}"));
-              return _buildDamageBar(title, character.elementType, dr);
-            }).toList(),
-          );
-        }).toList();
+                  details: "${pre.details == '' ? '' : pre.details + '\n'}${damage.details}"));
+          return _buildDamageBar(title, character.elementType, dr);
+        }).toList(),
+      );
+    }).toList();
   }
 
   @override

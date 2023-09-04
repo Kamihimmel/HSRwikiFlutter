@@ -76,8 +76,12 @@ class Character {
     return entity.tracedata[index].getDescription(lang);
   }
 
-  CharacterEidolon getEidolonById(int eidolonNum) {
+  CharacterEidolon getEidolonByNum(int eidolonNum) {
     return entity.eidolon.firstWhere((eidolon) => eidolon.eidolonnum == eidolonNum, orElse: () => CharacterEidolon());
+  }
+
+  CharacterEidolon getEidolonById(String eidolonId) {
+    return entity.eidolon.firstWhere((eidolon) => eidolon.id == eidolonId, orElse: () => CharacterEidolon());
   }
 
   String getEidolonName(int index, String lang) {

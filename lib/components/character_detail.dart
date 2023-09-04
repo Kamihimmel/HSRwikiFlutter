@@ -548,7 +548,6 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                               children: List.generate(skillData.length, (index) {
                                                 final data = skillData[index];
                                                 String fixedtext = "";
-
                                                 String detailtext = characterData.getSkillDescription(index, getLanguageCode(context));
                                                 if (data.maxlevel > 0) {
                                                   List<Map<String, double>> multiplierData = data.levelmultiplier.map((e) {
@@ -558,14 +557,11 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                     }
                                                     return m;
                                                   }).toList();
-
                                                   int multicount = multiplierData.length;
                                                   fixedtext = detailtext;
-
                                                   for (var i = multicount; i >= 1; i--) {
                                                     Map<String, double> currentleveldata = multiplierData[i - 1];
                                                     String levelnum = (levelnumbers[index].toStringAsFixed(0));
-
                                                     if (currentleveldata['default'] == null) {
                                                       fixedtext = fixedtext.replaceAll("[$i]", (currentleveldata[levelnum]).toString());
                                                     } else {

@@ -360,7 +360,7 @@ class BuffPanelState extends State<BuffPanel> {
                                 crossAxisAlignment: WrapCrossAlignment.center,
                                 children: Effect.groupEffect(characterEidolonBuff).values.map((effects) {
                                   Effect effect = effects.first;
-                                  effect.skillData = CharacterManager.getCharacter(effect.majorId).getEidolonById(int.tryParse(effect.minorId) ?? 0);
+                                  effect.skillData = CharacterManager.getCharacter(effect.majorId).getEidolonByNum(int.tryParse(effect.minorId) ?? 0);
                                   return _getEffectChip(_gs.stats.selfEidolonEffect, effects);
                                 }).toList(),
                               )

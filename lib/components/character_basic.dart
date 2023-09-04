@@ -211,15 +211,18 @@ class CharacterBasicState extends State<CharacterBasic> {
                         final CharacterSkilldata skill = _cData.entity.skilldata[index];
                         String fixedText = "";
                         String detailText = _cData.getSkillDescription(index, getLanguageCode(context));
+                        int levelnum = _gs.stats.skillLevels[skill.id] ?? 1;
+                        if (skill.referencelevel != '') {
+                          levelnum = _gs.stats.skillLevels[_cData.getSkillById(skill.referencelevel).id] ?? 1;
+                        }
                         if (skill.maxlevel > 0) {
                           List<Map<String, dynamic>> multiplierData = skill.levelmultiplier;
                           int multiCount = multiplierData.length;
                           fixedText = detailText;
                           for (var i = multiCount; i >= 1; i--) {
                             Map<String, dynamic> currentLeveldata = multiplierData[i - 1];
-                            String levelnum = _gs.stats.skillLevels[skill.id]?.toStringAsFixed(0) ?? '0';
                             if (currentLeveldata['default'] == null) {
-                              fixedText = fixedText.replaceAll("[$i]", (currentLeveldata[levelnum]).toString());
+                              fixedText = fixedText.replaceAll("[$i]", (currentLeveldata[(levelnum - 1).toString()]).toString());
                             } else {
                               fixedText = fixedText.replaceAll("[$i]", (currentLeveldata['default']).toString());
                             }
@@ -264,7 +267,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                                                       fontSize: 20,
                                                     ),
                                                   ),
-                                                  if (skill.maxlevel > 0)
+                                                  if (skill.maxlevel > 0 && skill.referencelevel == '')
                                                     Padding(
                                                       padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                                                       child: Row(
@@ -272,7 +275,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                                                         children: [
                                                           SizedBox(
                                                             child: Text(
-                                                              "LV:${_gs.stats.skillLevels[skill.id]}",
+                                                              "LV:${levelnum}",
                                                               style: const TextStyle(
                                                                 //fontWeight: FontWeight.bold,
                                                                 color: Colors.white,
@@ -284,7 +287,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                                                           ),
                                                           Expanded(
                                                             child: Slider(
-                                                              value: _gs.stats.skillLevels[skill.id]!.toDouble(),
+                                                              value: levelnum.toDouble(),
                                                               min: 1,
                                                               max: skill.maxlevel.toDouble(),
                                                               divisions: skill.maxlevel - 1,

@@ -56,8 +56,6 @@ class CharacterLeveldata {
 
 @JsonSerializable()
 class CharacterSkilldata extends SkillData {
-	late String imageurl = '';
-	late String stype = '';
 	late int weaknessbreak = 0;
 	late int energyregen = 0;
 	late int energy = 0;
@@ -77,8 +75,6 @@ class CharacterSkilldata extends SkillData {
 @JsonSerializable()
 class CharacterTracedata extends SkillData {
 	late bool tiny = false;
-	late String imageurl = '';
-	late String stype = '';
 	late String ttype = '';
 
 	CharacterTracedata();
@@ -96,8 +92,6 @@ class CharacterTracedata extends SkillData {
 @JsonSerializable()
 class CharacterEidolon extends SkillData {
 	late int eidolonnum = 0;
-	late String imageurl = '';
-	late String stype = '';
 
 	CharacterEidolon();
 
