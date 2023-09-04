@@ -105,13 +105,14 @@ class BasicPanelState extends State<BasicPanel> {
 
   List<Widget> _getAttrPanel(String title, Map<String, List<dynamic>> attrValues) {
     List<Widget> list = [
-      Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: SelectableText(
-          title.tr(),
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      if (title != '')
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: SelectableText(
+            title.tr(),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
         ),
-      ),
     ];
     attrValues.forEach((key, value) {
       double base = value[0];
@@ -246,18 +247,6 @@ class BasicPanelState extends State<BasicPanel> {
             otherAttrs[FightProp.lostHP.desc] = _getBaseAttr(stats, FightProp.lostHP);
             otherAttrs[FightProp.allDotDamage.desc] = _getBaseAttr(stats, FightProp.allDotDamage);
             otherAttrs[FightProp.shockedDotDamage.desc] = _getBaseAttr(stats, FightProp.shockedDotDamage);
-          }
-
-          Map<String, List<dynamic>> debuffAttrs = {};
-          if (_gs.debug) {
-            debuffAttrs[FightProp.defenceReduceRatio.desc] = _getBaseAttr(stats, FightProp.defenceReduceRatio);
-            debuffAttrs[FightProp.allDamageReceiveRatio.desc] = _getBaseAttr(stats, FightProp.allDamageReceiveRatio);
-            debuffAttrs[FightProp.dotDamageReceiveRatio.desc] = _getBaseAttr(stats, FightProp.dotDamageReceiveRatio);
-            debuffAttrs[FightProp.additionalDamageReceiveRatio.desc] = _getBaseAttr(stats, FightProp.additionalDamageReceiveRatio);
-            for (FightProp p in ElementType.getElementDamageReceiveRatioProps()) {
-              debuffAttrs[p.desc] = _getBaseAttr(stats, p);
-            }
-            debuffAttrs[FightProp.speedReduceRatio.desc] = _getBaseAttr(stats, FightProp.speedReduceRatio);
           }
 
           return Container(
@@ -401,30 +390,8 @@ class BasicPanelState extends State<BasicPanel> {
                         ),
                       ),
                     ),
-                  if (_gs.debug && debuffAttrs.values.where((e) => e[2] > 0).isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Container(
-                        clipBehavior: Clip.hardEdge,
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                        ),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.all(Radius.circular(15)),
-                              border: Border.all(color: Colors.white.withOpacity(0.13)),
-                              gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
-                            ),
-                            child: Column(
-                              children: _getAttrPanel('Debuff Panel', debuffAttrs),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  if (_gs.enemyLoaded) EnemyPanel(),
+                  if (_gs.enemyLoaded)
+                    EnemyPanel(getBaseAttr: _getBaseAttr, getAttrPanel: _getAttrPanel),
                   BuffPanel(),
                   adsenseAdsView(columnwidth - 20),
                   if (widget.isBannerAdReady)

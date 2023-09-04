@@ -135,6 +135,7 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
   } else if (damageType == DamageType.additional || damageType == DamageType.breakWeaknessAdditional) {
     dotDamageReceive += attrValues[FightProp.additionalDamageReceiveRatio] ?? 0;
   }
+  // 范围[0, 1 + 3.5]
   double vulnerable = 1 + min(elementReceive + allDamageReceive + dotDamageReceive, 3.5);
 
   // 敌方减伤
@@ -149,14 +150,16 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
     weaknessReduce = enemyStats.weaknessBreak ? 0 : 0.1;
   }
   double otherReduce = 0;
-  double damageReduce = (1 - weaknessReduce) * (1 - otherReduce);
+  // 范围[0.01, 1]，来源为敌方自己上buff，计算器中不可能超过范围
+  double damageReduce = max(min((1 - weaknessReduce) * (1 - otherReduce), 1), 0.01);
 
   // 抗性
   int res = enemy.resistence[elementType] ?? 0;
   double allResIgnore = attrValues[FightProp.allResistanceIgnore] ?? 0;
   double resIgnore = attrValues[elementType.getElementResistanceIgnoreProp()] ?? 0;
   double specificResIgnore = attrValues[FightProp.specificResistanceIgnore] ?? 0;
-  double resFinal =  1 - (res / 100 - resIgnore - allResIgnore - specificResIgnore);
+  // 范围[0.1 , 2]
+  double resFinal =  max(min(1 - (res / 100 - resIgnore - allResIgnore - specificResIgnore), 2), 0.1);
 
   // 防御力
   int characterLevel = int.tryParse(stats.level.replaceAll('+', '')) ?? 1;
@@ -166,6 +169,7 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
   }
   double defenceReduce = attrValues[FightProp.defenceReduceRatio] ?? 0;
   defenceReduce += enemyStats.defenceReduce / 100;
+  // 最多降到0
   double enemyDefence = (enemyStats.level + 20) * max(1 - defenceIgnore - defenceReduce, 0);
   double defenceFactor = (characterLevel + 20) / (characterLevel + 20 + enemyDefence);
 

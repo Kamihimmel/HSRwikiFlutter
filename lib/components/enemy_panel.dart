@@ -39,6 +39,20 @@ class EnemyPanelState extends State<EnemyPanel> {
           Enemy enemy = EnemyManager.getEnemy(_gs.enemyStats.id);
           double defenceReduce = _gs.stats.getPropValue(FightProp.defenceReduceRatio).values.fold(0, (pre, v) => pre + v);
           double reduceFinal = min(100, defenceReduce * 100 + _gs.enemyStats.defenceReduce);
+
+          Map<FightProp, Map<PropSource, double>> stats = _gs.stats.calculateStats();
+          Map<String, List<dynamic>> debuffAttrs = {};
+          if (_gs.debug) {
+            debuffAttrs[FightProp.defenceReduceRatio.desc] = widget.getBaseAttr(stats, FightProp.defenceReduceRatio);
+            debuffAttrs[FightProp.allDamageReceiveRatio.desc] = widget.getBaseAttr(stats, FightProp.allDamageReceiveRatio);
+            debuffAttrs[FightProp.dotDamageReceiveRatio.desc] = widget.getBaseAttr(stats, FightProp.dotDamageReceiveRatio);
+            debuffAttrs[FightProp.additionalDamageReceiveRatio.desc] = widget.getBaseAttr(stats, FightProp.additionalDamageReceiveRatio);
+            for (FightProp p in ElementType.getElementDamageReceiveRatioProps()) {
+              debuffAttrs[p.desc] = widget.getBaseAttr(stats, p);
+            }
+            debuffAttrs[FightProp.speedReduceRatio.desc] = widget.getBaseAttr(stats, FightProp.speedReduceRatio);
+          }
+
           return Padding(
             padding: const EdgeInsets.all(10.0),
             child: Container(
@@ -306,6 +320,13 @@ class EnemyPanelState extends State<EnemyPanel> {
                           ],
                         ),
                       ),
+                      if (debuffAttrs.values.where((e) => e[2] > 0).isNotEmpty)
+                        ...[
+                          SizedBox(height: 10),
+                          Column(
+                            children: widget.getAttrPanel('', debuffAttrs),
+                          ),
+                        ],
                     ],
                   ),
                 ),
@@ -317,8 +338,13 @@ class EnemyPanelState extends State<EnemyPanel> {
 }
 
 class EnemyPanel extends StatefulWidget {
+  final getBaseAttr;
+  final getAttrPanel;
+  
   const EnemyPanel({
     Key? key,
+    required this.getBaseAttr,
+    required this.getAttrPanel,
   }) : super(key: key);
 
   @override
