@@ -16,7 +16,7 @@ import '../lightcones/lightcone_manager.dart';
 import '../relics/relic_manager.dart';
 
 final GlobalState _gs = GlobalState();
-final String urlEndpoint = "https://hsrwikidata.yunlu18.net/";
+final String urlEndpoint = "http://192.168.0.159/";
 final String cnUrlEndpoint = "https://hsrwikidata.kchlu.com/";
 
 String getUrlEndpoint() {

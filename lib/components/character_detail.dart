@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:transparent_image/transparent_image.dart';
 import '../ad_helper.dart';
 import '../calculator/basic.dart';
+import '../calculator/effect_entity.dart';
 import '../characters/character.dart';
 import '../characters/character_entity.dart';
 import '../characters/character_manager.dart';
@@ -571,7 +572,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                 } else {
                                                   fixedtext = detailtext;
                                                 }
-
+                                                List<EffectEntity> effects = data.effect.where((e) => !e.hide).toList();
                                                 return Stack(
                                                   children: [
                                                     Column(
@@ -587,7 +588,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                             filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                                                             child: Container(
                                                               decoration: BoxDecoration(
-                                                                borderRadius: (data.effect.isNotEmpty)
+                                                                borderRadius: (effects.isNotEmpty)
                                                                     ? const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
                                                                     : const BorderRadius.all(Radius.circular(15)),
                                                                 border: Border.all(color: Colors.white.withOpacity(0.13)),
@@ -668,7 +669,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                             ),
                                                           ),
                                                         ),
-                                                        if (data.effect.isNotEmpty)
+                                                        if (effects.isNotEmpty)
                                                           Container(
                                                             width: double.infinity,
                                                             margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -680,11 +681,11 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                             child: Column(
                                                               mainAxisAlignment: MainAxisAlignment.center,
                                                               crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: List.generate(data.effect.length, (index2) {
+                                                              children: List.generate(effects.length, (index2) {
                                                                 String levelmulti = "";
 
                                                                 if (data.levelmultiplier.isNotEmpty) {
-                                                                  Map<String, dynamic> leveldata2 = (data.levelmultiplier[data.effect[index2].multiplier.toInt() - 1]);
+                                                                  Map<String, dynamic> leveldata2 = (data.levelmultiplier[effects[index2].multiplier.toInt() - 1]);
                                                                   String levelnum2 = (levelnumbers[index].toStringAsFixed(0));
 
                                                                   if (leveldata2['default'] == null) {
@@ -693,7 +694,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                     levelmulti = leveldata2['default'].toString();
                                                                   }
                                                                 } else {
-                                                                  levelmulti = data.effect[index2].multiplier.toString();
+                                                                  levelmulti = effects[index2].multiplier.toString();
                                                                 }
 
                                                                 return SingleChildScrollView(
@@ -709,7 +710,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                 color: Colors.amber,
                                                                                 borderRadius: BorderRadius.circular(5),
                                                                               ),
-                                                                              child: Text(data.effect[index2].type,
+                                                                              child: Text(effects[index2].type,
                                                                                   style: const TextStyle(
                                                                                     //fontWeight: FontWeight.bold,
                                                                                     color: Colors.black,
@@ -717,7 +718,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                     fontWeight: FontWeight.bold,
                                                                                     height: 1.1,
                                                                                   )).tr()),
-                                                                          if (data.effect[index2].referencetarget != '')
+                                                                          if (effects[index2].referencetarget != '')
                                                                             Container(
                                                                                 margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                 padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -727,8 +728,8 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                 ),
                                                                                 child: Text(
                                                                                     ('lang'.tr() == 'en')
-                                                                                        ? data.effect[index2].referencetargetEN
-                                                                                        : (('lang'.tr() == 'cn') ? data.effect[index2].referencetargetCN : data.effect[index2].referencetargetJP),
+                                                                                        ? effects[index2].referencetargetEN
+                                                                                        : (('lang'.tr() == 'cn') ? effects[index2].referencetargetCN : effects[index2].referencetargetJP),
                                                                                     style: const TextStyle(
                                                                                       //fontWeight: FontWeight.bold,
                                                                                       color: Colors.black,
@@ -736,16 +737,16 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                       fontWeight: FontWeight.bold,
                                                                                       height: 1.1,
                                                                                     ))),
-                                                                          if (data.effect[index2].multipliertarget != '')
+                                                                          if (effects[index2].multipliertarget != '')
                                                                             Container(
                                                                                 margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                 padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                                 decoration: BoxDecoration(
-                                                                                  color: typetocolor[(data.effect[index2].type)],
+                                                                                  color: typetocolor[(effects[index2].type)],
                                                                                   borderRadius: BorderRadius.circular(5),
                                                                                 ),
                                                                                 child: Text(
-                                                                                    '${(data.effect[index2].multipliertarget).tr()}$levelmulti${((data.effect[index2].multipliertarget) != '') ? "%" : ""}',
+                                                                                    '${(effects[index2].multipliertarget).tr()}$levelmulti${((effects[index2].multipliertarget) != '') ? "%" : ""}',
                                                                                     style: const TextStyle(
                                                                                       //fontWeight: FontWeight.bold,
                                                                                       color: Colors.black,
@@ -753,7 +754,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                       fontWeight: FontWeight.bold,
                                                                                       height: 1.1,
                                                                                     ))),
-                                                                          if (data.effect[index2].addtarget != '')
+                                                                          if (effects[index2].addtarget != '')
                                                                             Container(
                                                                                 margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                 padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -762,7 +763,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                   borderRadius: BorderRadius.circular(5),
                                                                                 ),
                                                                                 child: Text(
-                                                                                    '${(data.effect[index2].addtarget).tr()}$levelmulti${((data.effect[index2].addtarget) != 'energy') && ((data.effect[index2].addtarget) != 'speedpt') ? "%" : ""}',
+                                                                                    '${(effects[index2].addtarget).tr()}$levelmulti${((effects[index2].addtarget) != 'energy') && ((effects[index2].addtarget) != 'speedpt') ? "%" : ""}',
                                                                                     style: const TextStyle(
                                                                                       //fontWeight: FontWeight.bold,
                                                                                       color: Colors.black,
@@ -773,8 +774,8 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                         ],
                                                                       ),
                                                                       Row(
-                                                                          children: List.generate(data.effect[index2].tag.length, (index3) {
-                                                                        List<dynamic> taglist = data.effect[index2].tag;
+                                                                          children: List.generate(effects[index2].tag.length, (index3) {
+                                                                        List<dynamic> taglist = effects[index2].tag;
 
                                                                         return Container(
                                                                             margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
@@ -938,6 +939,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                               children: List.generate(traceData.length, (index) {
                                                 final data = traceData[index];
                                                 String detailtext = characterData.getTraceDescription(index, getLanguageCode(context));
+                                                List<EffectEntity> effects = data.effect.where((e) => !e.hide).toList();
                                                 if (!data.tiny) {
                                                   return Stack(
                                                     children: [
@@ -954,7 +956,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                               filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                                                               child: Container(
                                                                 decoration: BoxDecoration(
-                                                                  borderRadius: (data.effect.isNotEmpty)
+                                                                  borderRadius: (effects.isNotEmpty)
                                                                       ? const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
                                                                       : const BorderRadius.all(Radius.circular(15)),
                                                                   border: Border.all(color: Colors.white.withOpacity(0.13)),
@@ -999,7 +1001,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                               ),
                                                             ),
                                                           ),
-                                                          if (data.effect.isNotEmpty)
+                                                          if (effects.isNotEmpty)
                                                             Container(
                                                               width: double.infinity,
                                                               margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -1011,7 +1013,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                               child: Column(
                                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                                                children: List.generate(data.effect.length, (index2) {
+                                                                children: List.generate(effects.length, (index2) {
                                                                   return SingleChildScrollView(
                                                                     scrollDirection: Axis.horizontal,
                                                                     child: Scrollbar(
@@ -1025,7 +1027,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                   color: Colors.amber,
                                                                                   borderRadius: BorderRadius.circular(5),
                                                                                 ),
-                                                                                child: Text(data.effect[index2].type,
+                                                                                child: Text(effects[index2].type,
                                                                                     style: const TextStyle(
                                                                                       //fontWeight: FontWeight.bold,
                                                                                       color: Colors.black,
@@ -1033,15 +1035,15 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                       fontWeight: FontWeight.bold,
                                                                                       height: 1.1,
                                                                                     )).tr()),
-                                                                            if (data.effect[index2].multipliertarget != '')
+                                                                            if (effects[index2].multipliertarget != '')
                                                                               Container(
                                                                                   margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                   padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                                   decoration: BoxDecoration(
-                                                                                    color: typetocolor[(data.effect[index2].type)],
+                                                                                    color: typetocolor[(effects[index2].type)],
                                                                                     borderRadius: BorderRadius.circular(5),
                                                                                   ),
-                                                                                  child: Text('${(data.effect[index2].multipliertarget).tr()}${data.effect[index2].multiplier}%',
+                                                                                  child: Text('${(effects[index2].multipliertarget).tr()}${effects[index2].multiplier}%',
                                                                                       style: const TextStyle(
                                                                                         //fontWeight: FontWeight.bold,
                                                                                         color: Colors.black,
@@ -1049,7 +1051,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                         fontWeight: FontWeight.bold,
                                                                                         height: 1.1,
                                                                                       ))),
-                                                                            if (data.effect[index2].addtarget != '')
+                                                                            if (effects[index2].addtarget != '')
                                                                               Container(
                                                                                   margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                   padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -1058,7 +1060,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                     borderRadius: BorderRadius.circular(5),
                                                                                   ),
                                                                                   child: Text(
-                                                                                      '${(data.effect[index2].addtarget).tr()}${data.effect[index2].multiplier}${((data.effect[index2].addtarget) != 'energy') ? "%" : ""}',
+                                                                                      '${(effects[index2].addtarget).tr()}${effects[index2].multiplier}${((effects[index2].addtarget) != 'energy') ? "%" : ""}',
                                                                                       style: const TextStyle(
                                                                                         //fontWeight: FontWeight.bold,
                                                                                         color: Colors.black,
@@ -1069,8 +1071,8 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                           ],
                                                                         ),
                                                                         Row(
-                                                                            children: List.generate(data.effect[index2].tag.length, (index3) {
-                                                                          List<dynamic> taglist = data.effect[index2].tag;
+                                                                            children: List.generate(effects[index2].tag.length, (index3) {
+                                                                          List<dynamic> taglist = effects[index2].tag;
 
                                                                           return Container(
                                                                               margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
@@ -1169,7 +1171,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                           ],
                                                         ),
                                                       ),
-                                                      if (data.effect.isNotEmpty)
+                                                      if (effects.isNotEmpty)
                                                         Container(
                                                           width: double.infinity,
                                                           margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -1181,7 +1183,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                           child: Column(
                                                             mainAxisAlignment: MainAxisAlignment.center,
                                                             crossAxisAlignment: CrossAxisAlignment.start,
-                                                            children: List.generate(data.effect.length, (index2) {
+                                                            children: List.generate(effects.length, (index2) {
                                                               return SingleChildScrollView(
                                                                 scrollDirection: Axis.horizontal,
                                                                 child: Scrollbar(
@@ -1195,7 +1197,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                               color: Colors.amber,
                                                                               borderRadius: BorderRadius.circular(5),
                                                                             ),
-                                                                            child: Text(data.effect[index2].type,
+                                                                            child: Text(effects[index2].type,
                                                                                 style: const TextStyle(
                                                                                   //fontWeight: FontWeight.bold,
                                                                                   color: Colors.black,
@@ -1203,7 +1205,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                   fontWeight: FontWeight.bold,
                                                                                   height: 1.1,
                                                                                 )).tr()),
-                                                                        if (data.effect[index2].multipliertarget != '')
+                                                                        if (effects[index2].multipliertarget != '')
                                                                           Container(
                                                                               margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                               padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -1211,7 +1213,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                 color: Colors.redAccent,
                                                                                 borderRadius: BorderRadius.circular(5),
                                                                               ),
-                                                                              child: Text('${(data.effect[index2].multipliertarget).tr()}${data.effect[index2].multiplier}%',
+                                                                              child: Text('${(effects[index2].multipliertarget).tr()}${effects[index2].multiplier}%',
                                                                                   style: const TextStyle(
                                                                                     //fontWeight: FontWeight.bold,
                                                                                     color: Colors.black,
@@ -1219,7 +1221,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                     fontWeight: FontWeight.bold,
                                                                                     height: 1.1,
                                                                                   ))),
-                                                                        if (data.effect[index2].addtarget != '')
+                                                                        if (effects[index2].addtarget != '')
                                                                           Container(
                                                                               margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                               padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -1227,7 +1229,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                 color: Colors.greenAccent,
                                                                                 borderRadius: BorderRadius.circular(5),
                                                                               ),
-                                                                              child: Text('${(data.effect[index2].addtarget).tr()}${data.effect[index2].multiplier}%',
+                                                                              child: Text('${(effects[index2].addtarget).tr()}${effects[index2].multiplier}%',
                                                                                   style: const TextStyle(
                                                                                     //fontWeight: FontWeight.bold,
                                                                                     color: Colors.black,
@@ -1238,8 +1240,8 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                       ],
                                                                     ),
                                                                     Row(
-                                                                        children: List.generate(data.effect[index2].tag.length, (index3) {
-                                                                      List<dynamic> taglist = data.effect[index2].tag;
+                                                                        children: List.generate(effects[index2].tag.length, (index3) {
+                                                                      List<dynamic> taglist = effects[index2].tag;
 
                                                                       return Container(
                                                                           margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
@@ -1302,6 +1304,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                               children: List.generate(eidolonData.length, (index) {
                                                 final data = eidolonData[index];
                                                 String fixedtext = characterData.getEidolonDescription(index, getLanguageCode(context));
+                                                List<EffectEntity> effects = data.effect.where((e) => !e.hide).toList();
                                                 return Stack(
                                                   children: [
                                                     Column(
@@ -1317,7 +1320,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                             filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                                                             child: Container(
                                                               decoration: BoxDecoration(
-                                                                borderRadius: (data.effect.isNotEmpty)
+                                                                borderRadius: (effects.isNotEmpty)
                                                                     ? const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
                                                                     : const BorderRadius.all(Radius.circular(15)),
                                                                 border: Border.all(color: Colors.white.withOpacity(0.13)),
@@ -1362,7 +1365,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                             ),
                                                           ),
                                                         ),
-                                                        if (data.effect.isNotEmpty)
+                                                        if (effects.isNotEmpty)
                                                           Container(
                                                             width: double.infinity,
                                                             margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -1374,10 +1377,10 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                             child: Column(
                                                               mainAxisAlignment: MainAxisAlignment.center,
                                                               crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: List.generate(data.effect.length, (index2) {
+                                                              children: List.generate(effects.length, (index2) {
                                                                 String levelmulti = "";
 
-                                                                levelmulti = (data.effect[index2].multiplier).toString();
+                                                                levelmulti = (effects[index2].multiplier).toString();
 
                                                                 return SingleChildScrollView(
                                                                   scrollDirection: Axis.horizontal,
@@ -1392,7 +1395,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                 color: Colors.amber,
                                                                                 borderRadius: BorderRadius.circular(5),
                                                                               ),
-                                                                              child: Text(data.effect[index2].type,
+                                                                              child: Text(effects[index2].type,
                                                                                   style: const TextStyle(
                                                                                     //fontWeight: FontWeight.bold,
                                                                                     color: Colors.black,
@@ -1400,16 +1403,16 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                     fontWeight: FontWeight.bold,
                                                                                     height: 1.1,
                                                                                   )).tr()),
-                                                                          if (data.effect[index2].multipliertarget != '')
+                                                                          if (effects[index2].multipliertarget != '')
                                                                             Container(
                                                                                 margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                 padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                                 decoration: BoxDecoration(
-                                                                                  color: typetocolor[(data.effect[index2].type)],
+                                                                                  color: typetocolor[(effects[index2].type)],
                                                                                   borderRadius: BorderRadius.circular(5),
                                                                                 ),
                                                                                 child: Text(
-                                                                                    '${(data.effect[index2].multipliertarget).tr()}$levelmulti${((data.effect[index2].multipliertarget) != '') && (data.effect[index2].multiplier != '') ? "%" : ""}',
+                                                                                    '${(effects[index2].multipliertarget).tr()}$levelmulti${((effects[index2].multipliertarget) != '') && (effects[index2].multiplier != '') ? "%" : ""}',
                                                                                     style: const TextStyle(
                                                                                       //fontWeight: FontWeight.bold,
                                                                                       color: Colors.black,
@@ -1417,7 +1420,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                       fontWeight: FontWeight.bold,
                                                                                       height: 1.1,
                                                                                     ))),
-                                                                          if (data.effect[index2].addtarget != '')
+                                                                          if (effects[index2].addtarget != '')
                                                                             Container(
                                                                                 margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                 padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -1426,7 +1429,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                   borderRadius: BorderRadius.circular(5),
                                                                                 ),
                                                                                 child: Text(
-                                                                                    '${(data.effect[index2].addtarget).tr()}$levelmulti${((data.effect[index2].addtarget) != 'energy') ? "%" : ""}',
+                                                                                    '${(effects[index2].addtarget).tr()}$levelmulti${((effects[index2].addtarget) != 'energy') ? "%" : ""}',
                                                                                     style: const TextStyle(
                                                                                       //fontWeight: FontWeight.bold,
                                                                                       color: Colors.black,
@@ -1437,8 +1440,8 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                         ],
                                                                       ),
                                                                       Row(
-                                                                          children: List.generate(data.effect[index2].tag.length, (index3) {
-                                                                        List<dynamic> taglist = data.effect[index2].tag;
+                                                                          children: List.generate(effects[index2].tag.length, (index3) {
+                                                                        List<dynamic> taglist = effects[index2].tag;
 
                                                                         return Container(
                                                                             margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),

@@ -230,11 +230,11 @@ class DamagePanelState extends State<DamagePanel> {
         // 是skill类型，需要获取等级数据
         skillLevel = _gs.stats.skillLevels[skillData.id] ?? 1;
       }
-      String title = "${skillName}${skillLevel != null ? '(Lv${skillLevel})' : ''}";
       if (skillData.referencelevel != '') {
         // 如果是引用其他技能的等级
         skillLevel = _gs.stats.skillLevels[character.getSkillById(skillData.referencelevel).id] ?? 1;
       }
+      String title = "${skillName}${skillLevel != null ? '(Lv${skillLevel})' : ''}";
       List<Effect> validEffects = skillData.effect.map((e) => Effect.fromEntity(e, character.entity.id, skillData.id)).where((e) => e.entity.type == type).toList();
       Map<String, List<Effect>> skillEffectGroup = Effect.groupEffect(validEffects);
       return ExpansionTile(

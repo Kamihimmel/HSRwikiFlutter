@@ -335,7 +335,12 @@ class CharacterStats {
         if (!effectConfig.on) {
           return;
         }
-        double multiplierValue = effect.getEffectMultiplierValue(s, skillLevels[s.id], effectConfig);
+        int? skillLevel = skillLevels[s.id];
+        if (s.referencelevel != '') {
+          // 引用技能等级
+          skillLevel = skillLevels[character.getSkillById(s.referencelevel).id];
+        }
+        double multiplierValue = effect.getEffectMultiplierValue(s, skillLevel, effectConfig);
         result[PropSource.characterSkill(effectKey, effect, self: true)] = base * multiplierValue / (prop.isPercent() ? 100 : 1);
       });
     });
@@ -352,7 +357,12 @@ class CharacterStats {
         if (!effectConfig.on) {
           return;
         }
-        double multiplierValue = effect.getEffectMultiplierValue(null, null, effectConfig);
+        int? skillLevel;
+        if (t.referencelevel != '') {
+          // 引用技能等级
+          skillLevel = skillLevels[character.getSkillById(t.referencelevel).id];
+        }
+        double multiplierValue = effect.getEffectMultiplierValue(t, skillLevel, effectConfig);
         result[PropSource.characterTrace(effectKey, effect, name: t.tiny ? 'tiny' : '', self: true)] = base * multiplierValue / (prop.isPercent() ? 100 : 1);
       });
     });
@@ -369,7 +379,12 @@ class CharacterStats {
         if (!effectConfig.on) {
           return;
         }
-        double multiplierValue = effect.getEffectMultiplierValue(null, null, effectConfig);
+        int? skillLevel;
+        if (e.referencelevel != '') {
+          // 引用技能等级
+          skillLevel = skillLevels[character.getSkillById(e.referencelevel).id];
+        }
+        double multiplierValue = effect.getEffectMultiplierValue(e, skillLevel, effectConfig);
         result[PropSource.characterEidolon(effectKey, effect, self: true)] = base * multiplierValue / (prop.isPercent() ? 100 : 1);
       });
     });

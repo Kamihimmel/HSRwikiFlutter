@@ -37,8 +37,14 @@ class BuffPanelState extends State<BuffPanel> {
     FightProp prop = FightProp.fromEffectKey(ee.addtarget);
     int skillLevel = effect.skillData.maxlevel;
     if (effect.type == Effect.characterType) {
-      if (effect.majorId == _gs.stats.id && _gs.stats.skillLevels.containsKey(effect.minorId)) {
-        skillLevel = _gs.stats.skillLevels[effect.minorId]!;
+      if (effect.majorId == _gs.stats.id) {
+        if (_gs.stats.skillLevels.containsKey(effect.minorId)) {
+          skillLevel = _gs.stats.skillLevels[effect.minorId]!;
+        }
+        if (effect.skillData.referencelevel != '') {
+          // 如果是引用其他技能的等级
+          skillLevel = _gs.stats.skillLevels[_cData.getSkillById(effect.skillData.referencelevel).id] ?? 1;
+        }
       } else if (effect.majorId != _gs.stats.id) {
         if (effect.skillData.maxlevel > 10) {
           skillLevel = 10;
