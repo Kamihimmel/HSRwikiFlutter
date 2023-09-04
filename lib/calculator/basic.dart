@@ -34,7 +34,6 @@ enum FightProp {
   baseSpeed(desc: 'SPD', icon: 'starrailres/icon/property/IconSpeed.png'),
   speedDelta(desc: 'speed', icon: 'starrailres/icon/property/IconSpeed.png', effectKey: ['speedpt']),
   speedAddedRatio(desc: 'speed', icon: 'starrailres/icon/property/IconSpeed.png', effectKey: ['speed']),
-  speedReduceRatio(desc: 'reducespeeddebuff', icon: 'starrailres/icon/property/IconSpeed.png', effectKey: ['reducespeed']),
 
   aggro(desc: 'Taunt', icon: 'starrailres/icon/property/IconTaunt.png', effectKey: ['taunt']),
   stanceBreakAddedRatio(desc: ''),
@@ -62,7 +61,6 @@ enum FightProp {
   ultimateAttackCriticalDamage(desc: 'ultcritdmg', effectKey: ['ultcritdmg']),
   followupAttackCriticalDamage(desc: 'followupcritdmg', effectKey: ['followupcritdmg']),
 
-  breakDamageBase(desc: 'Break Damage Base', icon: 'starrailres/icon/property/IconBreakUp.png'),
   breakDamageAddedRatio(desc: 'breakeffect', icon: 'starrailres/icon/property/IconBreakUp.png', effectKey: ['breakeffect', 'breakdmg']),
   breakDamageAddedRatioBase(desc: 'Break Effect', icon: 'starrailres/icon/property/IconBreakUp.png'),
 
@@ -98,6 +96,7 @@ enum FightProp {
   windResistanceIgnore(desc: 'windpen', effectKey: ['windpen']),
   quantumResistanceIgnore(desc: 'quantumpen', effectKey: ['quantumpen']),
   imaginaryResistanceIgnore(desc: 'imaginarypen', effectKey: ['imaginarypen']),
+  defenceIgnoreRatio(desc: 'ignoredef', effectKey: ['ignoredef']),
 
   physicalResistanceDelta(desc: 'Physical RES Boost', icon: 'starrailres/icon/property/IconPhysicalResistanceDelta.png'),
   fireResistanceDelta(desc: 'Fire RES Boost', icon: 'starrailres/icon/property/IconFireResistanceDelta.png'),
@@ -107,6 +106,9 @@ enum FightProp {
   quantumResistanceDelta(desc: 'Quantum RES Boost', icon: 'starrailres/icon/property/IconQuantumResistanceDelta.png'),
   imaginaryResistanceDelta(desc: 'Imaginary RES Boost', icon: 'starrailres/icon/property/IconImaginaryResistanceDelta.png'),
 
+  controlResist(desc: 'controlresist', effectKey: ['controlresist']),
+
+  /// debuff start
   allDamageReceiveRatio(desc: 'dmgreceive', debuff: true, effectKey: ['dmgreceive']),
   physicalDamageReceiveRatio(desc: 'physicaldmgreceive', debuff: true, effectKey: ['physicaldmgreceive']),
   fireDamageReceiveRatio(desc: 'firedmgreceive', debuff: true, effectKey: ['firedmgreceive']),
@@ -118,11 +120,12 @@ enum FightProp {
   dotDamageReceiveRatio(desc: 'dotdmgreceive', debuff: true, effectKey: ['dotdmgreceive']),
   additionalDamageReceiveRatio(desc: 'additionaldmgreceive', debuff: true, effectKey: ['additionaldmgreceive']),
 
-  defenceIgnoreRatio(desc: 'ignoredef', effectKey: ['ignoredef']),
   defenceReduceRatio(desc: 'reducedefdebuff', debuff: true, effectKey: ['reducedef']),
+  speedReduceRatio(desc: 'reducespeeddebuff', icon: 'starrailres/icon/property/IconSpeed.png', effectKey: ['reducespeed']),
+  /// debuff end
 
-  controlResist(desc: 'controlresist', effectKey: ['controlresist']),
-
+  // 人为构造的属性
+  breakDamageBase(desc: 'Break Damage Base', icon: 'starrailres/icon/property/IconBreakUp.png'),
   lostHP(desc: 'Lost HP', effectKey: ['losthp']),
   allDotDamage(desc: 'All DoT DMG', effectKey: ['alldotdmg']),
   shockedDotDamage(desc: 'Shocked DoT DMG', effectKey: ['shockeddotdmg']),
@@ -167,6 +170,8 @@ enum FightProp {
       return FightProp.attack;
     } else if (multiplierTarget == 'def') {
       return FightProp.defence;
+    } else if (multiplierTarget == 'breakdmgbase') {
+      return FightProp.breakDamageBase;
     } else if (multiplierTarget == '') {
       return FightProp.none;
     }
