@@ -94,8 +94,9 @@ class BuffPanelState extends State<BuffPanel> {
             width: 150,
             child: TextFormField(
               decoration: InputDecoration(
-                labelText: labelText,
-              ),
+                  labelText: labelText,
+                  enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.outline)),
+                  focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2))),
               initialValue: ec.value.toStringAsFixed(1),
               keyboardType: TextInputType.numberWithOptions(
                 decimal: true,
@@ -114,8 +115,8 @@ class BuffPanelState extends State<BuffPanel> {
                   return text.isEmpty
                       ? newValue
                       : tryDouble == null
-                      ? oldValue
-                      : newValue;
+                          ? oldValue
+                          : newValue;
                 }),
               ],
             ),
@@ -124,20 +125,22 @@ class BuffPanelState extends State<BuffPanel> {
       } else {
         if (effect.hasStackConfig()) {
           widgets = [
-            Text("${'Stacks'.tr()}:$stack"),
-            Slider(
-              inactiveColor: _cData.elementType.color.withOpacity(0.35),
-              activeColor: _cData.elementType.color,
-              min: 1,
-              max: ee.maxStack.toDouble(),
-              divisions: ee.maxStack,
-              value: stack.toDouble(),
-              onChanged: (value) {
-                ec.stack = value.toInt();
+            DropdownMenu(
+              label: Text("${'Stacks'.tr()}:$stack"),
+              initialSelection: ee.maxStack,
+              dropdownMenuEntries: [
+                for (int i = 1; i < ee.maxStack + 1; i++)
+                  DropdownMenuEntry(
+                    value: i,
+                    label: i.toString(),
+                  )
+              ],
+              onSelected: (value) {
+                ec.stack = value!;
                 effectConfig[effectKey] = ec;
                 _gs.changeStats();
               },
-            ),
+            )
           ];
         } else if (effect.hasChoiceConfig()) {
           widgets = [
@@ -167,11 +170,13 @@ class BuffPanelState extends State<BuffPanel> {
       return Wrap(
         spacing: 10,
         runSpacing: 10,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           chip,
           Wrap(
             spacing: 10,
             runSpacing: 10,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: widgets,
           ),
         ],
@@ -196,19 +201,23 @@ class BuffPanelState extends State<BuffPanel> {
           final Lightcone _lData = LightconeManager.getLightcone(_gs.stats.lightconeId);
           final List<Relic> _rList = _gs.stats.getRelicSets().map((r) => r != '' ? RelicManager.getRelic(r) : Relic()).toList();
           List<Effect> breakEffects = EffectManager.getBreakDamageEffects(_gs.stats, _gs.enemyStats);
-          List<Effect> skillEffects = _cData.entity.skilldata
-              .expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, skill.id))).toList();
-          List<Effect> characterSkillDmg = (breakEffects + skillEffects).where((e) => (e.validDamageHealEffect('break') || e.validDamageHealEffect('dmg'))  && e.hasBuffConfig()).toList();
-          List<Effect> characterSkillBuff = _cData.entity.skilldata
-              .expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, skill.id))).where((e) => e.validSelfBuffEffect(null)).toList();
+          List<Effect> skillEffects = _cData.entity.skilldata.expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, skill.id))).toList();
+          List<Effect> characterSkillDmg = (breakEffects + skillEffects).where((e) => (e.validDamageHealEffect('break') || e.validDamageHealEffect('dmg')) && e.hasBuffConfig()).toList();
+          List<Effect> characterSkillBuff =
+              _cData.entity.skilldata.expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, skill.id))).where((e) => e.validSelfBuffEffect(null)).toList();
           List<Effect> characterTraceBuff = _cData.entity.tracedata
-              .expand((trace) => trace.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, trace.id)).where((e) => !trace.tiny)).where((e) => e.validSelfBuffEffect(null)).toList();
+              .expand((trace) => trace.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, trace.id)).where((e) => !trace.tiny))
+              .where((e) => e.validSelfBuffEffect(null))
+              .toList();
           List<Effect> characterEidolonBuff = _cData.entity.eidolon
               .expand((eidolon) => eidolon.effect
-              .map((e) => Effect.fromEntity(e, _cData.entity.id, eidolon.eidolonnum.toString()))
-              .where((e) => (_gs.stats.eidolons[eidolon.eidolonnum.toString().toString()] ?? 0) > 0)).where((e) => e.validSelfBuffEffect(null)).toList();
+                  .map((e) => Effect.fromEntity(e, _cData.entity.id, eidolon.eidolonnum.toString()))
+                  .where((e) => (_gs.stats.eidolons[eidolon.eidolonnum.toString().toString()] ?? 0) > 0))
+              .where((e) => e.validSelfBuffEffect(null))
+              .toList();
           List<Effect> lightconeSkillBuff = _lData.entity.skilldata
-              .expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _lData.entity.id, '', type: Effect.lightconeType)).where((e) => e.validSelfBuffEffect(null))).toList();
+              .expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _lData.entity.id, '', type: Effect.lightconeType)).where((e) => e.validSelfBuffEffect(null)))
+              .toList();
           List<Effect> relicSkillBuff = List.generate(3, (index) {
             Relic relic = _rList[index];
             String setId = relic.entity.id;
@@ -223,10 +232,7 @@ class BuffPanelState extends State<BuffPanel> {
               skillData = relic.getSkill(skillIndex);
             }
             return Record.of(skillData, Record.of(setId, setNum));
-          })
-              .expand((record) => record.key.effect.map((e) => Effect.fromEntity(e, record.value.key, record.value.value, type: Effect.relicType)))
-              .where((e) => e.validSelfBuffEffect(null))
-              .toList();
+          }).expand((record) => record.key.effect.map((e) => Effect.fromEntity(e, record.value.key, record.value.value, type: Effect.relicType))).where((e) => e.validSelfBuffEffect(null)).toList();
           return Padding(
             padding: const EdgeInsets.all(10.0),
             child: Container(
@@ -252,16 +258,15 @@ class BuffPanelState extends State<BuffPanel> {
                     SizedBox(height: 10),
                     if (characterSkillDmg.isNotEmpty || characterSkillBuff.isNotEmpty || characterTraceBuff.isNotEmpty || characterEidolonBuff.isNotEmpty)
                       ExpansionTile(
-                        tilePadding: EdgeInsets.only(left: 10, right: 5),
-                        childrenPadding: EdgeInsets.all(5),
-                        initiallyExpanded: true,
-                        title: Text(
-                          "Character Buff".tr(),
-                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                        ),
-                        children: [
-                          if (characterSkillDmg.isNotEmpty || characterSkillBuff.isNotEmpty)
-                            ...[
+                          tilePadding: EdgeInsets.only(left: 10, right: 5),
+                          childrenPadding: EdgeInsets.all(5),
+                          initiallyExpanded: true,
+                          title: Text(
+                            "Character Buff".tr(),
+                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                          ),
+                          children: [
+                            if (characterSkillDmg.isNotEmpty || characterSkillBuff.isNotEmpty) ...[
                               Row(
                                 children: [
                                   SizedBox(
@@ -281,6 +286,7 @@ class BuffPanelState extends State<BuffPanel> {
                               Wrap(
                                 spacing: 10,
                                 runSpacing: 10,
+                                crossAxisAlignment: WrapCrossAlignment.center,
                                 children: Effect.groupEffect(characterSkillDmg).values.map((effects) {
                                   Effect effect = effects.first;
                                   if (effect.type == Effect.characterType) {
@@ -295,6 +301,7 @@ class BuffPanelState extends State<BuffPanel> {
                               Wrap(
                                 spacing: 10,
                                 runSpacing: 10,
+                                crossAxisAlignment: WrapCrossAlignment.center,
                                 children: Effect.groupEffect(characterSkillBuff).values.map((effects) {
                                   Effect effect = effects.first;
                                   effect.skillData = CharacterManager.getCharacter(effect.majorId).getSkillById(effect.minorId);
@@ -302,8 +309,7 @@ class BuffPanelState extends State<BuffPanel> {
                                 }).toList(),
                               ),
                             ],
-                          if (characterTraceBuff.isNotEmpty)
-                            ...[
+                            if (characterTraceBuff.isNotEmpty) ...[
                               Row(
                                 children: [
                                   SizedBox(
@@ -323,6 +329,7 @@ class BuffPanelState extends State<BuffPanel> {
                               Wrap(
                                 spacing: 10,
                                 runSpacing: 10,
+                                crossAxisAlignment: WrapCrossAlignment.center,
                                 children: Effect.groupEffect(characterTraceBuff).values.map((effects) {
                                   Effect effect = effects.first;
                                   effect.skillData = CharacterManager.getCharacter(effect.majorId).getTraceById(effect.minorId);
@@ -330,8 +337,7 @@ class BuffPanelState extends State<BuffPanel> {
                                 }).toList(),
                               ),
                             ],
-                          if (characterEidolonBuff.isNotEmpty)
-                            ...[
+                            if (characterEidolonBuff.isNotEmpty) ...[
                               Row(
                                 children: [
                                   SizedBox(
@@ -351,6 +357,7 @@ class BuffPanelState extends State<BuffPanel> {
                               Wrap(
                                 spacing: 10,
                                 runSpacing: 10,
+                                crossAxisAlignment: WrapCrossAlignment.center,
                                 children: Effect.groupEffect(characterEidolonBuff).values.map((effects) {
                                   Effect effect = effects.first;
                                   effect.skillData = CharacterManager.getCharacter(effect.majorId).getEidolonById(int.tryParse(effect.minorId) ?? 0);
@@ -358,8 +365,7 @@ class BuffPanelState extends State<BuffPanel> {
                                 }).toList(),
                               )
                             ],
-                        ]
-                      ),
+                          ]),
                     if (lightconeSkillBuff.isNotEmpty)
                       ExpansionTile(
                         tilePadding: EdgeInsets.only(left: 10, right: 5),
@@ -373,6 +379,7 @@ class BuffPanelState extends State<BuffPanel> {
                           Wrap(
                             spacing: 10,
                             runSpacing: 10,
+                            crossAxisAlignment: WrapCrossAlignment.center,
                             children: Effect.groupEffect(lightconeSkillBuff).values.map((effects) {
                               Effect effect = effects.first;
                               effect.skillData = LightconeManager.getLightcone(effect.majorId).getSkill();
@@ -394,6 +401,7 @@ class BuffPanelState extends State<BuffPanel> {
                           Wrap(
                             spacing: 10,
                             runSpacing: 10,
+                            crossAxisAlignment: WrapCrossAlignment.center,
                             children: Effect.groupEffect(relicSkillBuff).values.map((effects) {
                               Effect effect = effects.first;
                               effect.skillData = RelicManager.getRelic(effect.majorId).getSkill(effect.minorId == '2' ? 0 : 1);
@@ -412,11 +420,12 @@ class BuffPanelState extends State<BuffPanel> {
                       ),
                       children: [
                         Wrap(
-                          spacing: 10,
-                          runSpacing: 10,
-                          children: Effect.groupEffect(EffectManager.getEffects().values.where((e) => _cData.entity.id != e.majorId && e.validAllyBuffEffect(null)).toList()).values.map((effects) {
-                            return _getEffectChip(_gs.stats.otherEffect, effects, defaultOn: false);
-                          }).toList())
+                            spacing: 10,
+                            runSpacing: 10,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: Effect.groupEffect(EffectManager.getEffects().values.where((e) => _cData.entity.id != e.majorId && e.validAllyBuffEffect(null)).toList()).values.map((effects) {
+                              return _getEffectChip(_gs.stats.otherEffect, effects, defaultOn: false);
+                            }).toList())
                       ],
                     ),
                     ExpansionTile(
@@ -429,11 +438,12 @@ class BuffPanelState extends State<BuffPanel> {
                       ),
                       children: [
                         Wrap(
-                          spacing: 10,
-                          runSpacing: 10,
-                          children: EffectManager.getManualEffects().map((effect) {
-                            return _getEffectChip(_gs.stats.manualEffect, [effect], defaultOn: false);
-                          }).toList())
+                            spacing: 10,
+                            runSpacing: 10,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: EffectManager.getManualEffects().map((effect) {
+                              return _getEffectChip(_gs.stats.manualEffect, [effect], defaultOn: false);
+                            }).toList())
                       ],
                     ),
                   ]),

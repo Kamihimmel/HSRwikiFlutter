@@ -220,5 +220,8 @@
     "Manual Buff": "手動調整",
     "turn(s)": "回",
     "entanglement": "【もつれ】",
-    "additionaldmgreceive": "付加攻撃被ダメージ"
+    "additionaldmgreceive": "付加攻撃被ダメージ",
+    "EnemyMaxHP": "敵最大HP",
+    "EnemyToughness": "敵靭性",
+    "WeaknessBreak Panel": "弱点撃破パネル"
 }

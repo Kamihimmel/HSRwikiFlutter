@@ -219,5 +219,8 @@
     "Manual Buff": "Manual Buff",
     "turn(s)": " turns(s)",
     "entanglement": "[Entanglement]",
-    "additionaldmgreceive": "Additional Dmg Receive"
+    "additionaldmgreceive": "Additional Dmg Receive",
+    "EnemyMaxHP": "EnemyMaxHP",
+    "EnemyToughness": "EnemyToughness",
+    "WeaknessBreak Panel": "WeaknessBreak Panel"
 }

@@ -220,5 +220,8 @@
     "Manual Buff": "手动调节",
     "turn(s)": "回合",
     "entanglement": "【纠缠】",
-    "additionaldmgreceive": "受到附加伤害"
+    "additionaldmgreceive": "受到附加伤害",
+    "EnemyMaxHP": "敌方最大生命值",
+    "EnemyToughness": "敌方韧性",
+    "WeaknessBreak Panel": "弱点击破面板"
 }
