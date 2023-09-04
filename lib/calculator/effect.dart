@@ -87,7 +87,7 @@ class Effect {
   }
 
   bool hasValueFieldConfig() {
-    return this.type == manualType || this.type == Effect.characterType && this.majorId != _gs.stats.id && this.entity.multipliertarget != '';
+    return this.type == manualType || this.type == Effect.characterType && isBuffOrDebuff() && this.entity.multipliertarget != '';
   }
 
   bool validSelfBuffEffect(FightProp? prop) {

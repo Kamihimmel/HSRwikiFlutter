@@ -15,7 +15,6 @@ enum FightProp {
   baseHP(desc: 'Base HP', icon: 'starrailres/icon/property/IconMaxHP.png'),
   hPDelta(desc: 'HP', icon: 'starrailres/icon/property/IconMaxHP.png'),
   hPAddedRatio(desc: 'HP', icon: 'starrailres/icon/property/IconMaxHP.png', effectKey: ['hp']),
-  lostHP(desc: 'Lost HP', effectKey: ['losthp']),
 
   attack(desc: 'ATK', icon: 'starrailres/icon/property/IconAttack.png', effectKey: ['allatk']),
   baseAttack(desc: 'Base ATK', icon: 'starrailres/icon/property/IconAttack.png'),
@@ -124,6 +123,10 @@ enum FightProp {
 
   controlResist(desc: 'controlresist', effectKey: ['controlresist']),
 
+  lostHP(desc: 'Lost HP', effectKey: ['losthp']),
+  allDotDamage(desc: 'All DoT DMG', effectKey: ['alldotdmg']),
+  shockedDotDamage(desc: 'Shocked DoT DMG', effectKey: ['shockeddotdmg']),
+
   none(desc: 'No multiplier'), // effect.multipliertarget == ''
   unknown(desc: '');
 
@@ -162,18 +165,12 @@ enum FightProp {
   static FightProp fromEffectMultiplier(String multiplierTarget) {
     if (multiplierTarget == 'atk') {
       return FightProp.attack;
-    } else if (multiplierTarget == 'maxhp') {
-      return FightProp.maxHP;
     } else if (multiplierTarget == 'def') {
       return FightProp.defence;
-    } else if (multiplierTarget == 'losthp') {
-      return FightProp.lostHP;
-    } else if (multiplierTarget == 'breakdmgbase') {
-      return FightProp.breakDamageBase;
     } else if (multiplierTarget == '') {
       return FightProp.none;
     }
-    return FightProp.unknown;
+    return FightProp.fromEffectKey(multiplierTarget);
   }
 
   static FightProp fromImportType(String importType) {

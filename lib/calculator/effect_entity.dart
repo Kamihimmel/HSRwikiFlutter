@@ -18,6 +18,8 @@ class EffectEntity {
 	late int maxStack = 1;
 	late String group = '';
 	late List<String> tag = [];
+	late bool hide = false;
+	late bool disabled = false;
 
 	EffectEntity();
 

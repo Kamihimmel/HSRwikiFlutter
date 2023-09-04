@@ -127,6 +127,8 @@ class CharacterStats {
     map[FightProp.speedReduceRatio] = getPropValue(FightProp.speedReduceRatio);
 
     map[FightProp.lostHP] = getPropValue(FightProp.lostHP);
+    map[FightProp.allDotDamage] = getPropValue(FightProp.allDotDamage);
+    map[FightProp.shockedDotDamage] = getPropValue(FightProp.shockedDotDamage);
     return map;
   }
 

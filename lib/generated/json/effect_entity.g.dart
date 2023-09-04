@@ -59,6 +59,14 @@ EffectEntity $EffectEntityFromJson(Map<String, dynamic> json) {
 	if (tag != null) {
 		effectEntity.tag = tag;
 	}
+	final bool? hide = jsonConvert.convert<bool>(json['hide']);
+	if (hide != null) {
+		effectEntity.hide = hide;
+	}
+	final bool? disabled = jsonConvert.convert<bool>(json['disabled']);
+	if (disabled != null) {
+		effectEntity.disabled = disabled;
+	}
 	return effectEntity;
 }
 
@@ -78,5 +86,7 @@ Map<String, dynamic> $EffectEntityToJson(EffectEntity entity) {
 	data['maxstack'] = entity.maxStack;
 	data['group'] = entity.group;
 	data['tag'] =  entity.tag;
+	data['hide'] =  entity.hide;
+	data['disabled'] =  entity.disabled;
 	return data;
 }

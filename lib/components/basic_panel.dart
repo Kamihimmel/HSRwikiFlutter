@@ -244,6 +244,8 @@ class BasicPanelState extends State<BasicPanel> {
           otherAttrs[FightProp.defenceIgnoreRatio.desc] = _getBaseAttr(stats, FightProp.defenceIgnoreRatio);
           if (_gs.debug) {
             otherAttrs[FightProp.lostHP.desc] = _getBaseAttr(stats, FightProp.lostHP);
+            otherAttrs[FightProp.allDotDamage.desc] = _getBaseAttr(stats, FightProp.allDotDamage);
+            otherAttrs[FightProp.shockedDotDamage.desc] = _getBaseAttr(stats, FightProp.shockedDotDamage);
           }
 
           Map<String, List<dynamic>> debuffAttrs = {};
