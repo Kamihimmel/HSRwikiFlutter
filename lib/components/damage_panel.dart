@@ -9,6 +9,8 @@ import 'package:provider/provider.dart';
 
 import '../calculator/calculator.dart';
 import '../calculator/effect.dart';
+import '../calculator/effect_manager.dart';
+import '../calculator/skill_data.dart';
 import '../characters/character.dart';
 import '../characters/character_entity.dart';
 import '../characters/character_manager.dart';
@@ -161,21 +163,21 @@ class DamagePanelState extends State<DamagePanel> {
   }
 
   void _appendDamageAndTitle(
-      List<Effect> effects, List<String> multiplierTitle, String type, List<DamageResult> drList, String stype, Character character, CharacterSkilldata? skilldata, int? skillLevel) {
+      List<Effect> effects, List<String> multiplierTitle, String type, List<DamageResult> drList, String stype, Character character, SkillData? skillData, int? skillLevel) {
     effects.forEach((e) {
       double multiplierValue = 0;
       FightProp multiplierProp = FightProp.fromEffectMultiplier(e.entity.multipliertarget);
       if (type == 'dmg') {
-        multiplierValue = e.getEffectMultiplierValue(skilldata, skillLevel, _gs.stats.damageEffect[e.getKey()]);
+        multiplierValue = e.getEffectMultiplierValue(skillData, skillLevel, _gs.stats.damageEffect[e.getKey()]);
         drList.add(calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, multiplierProp, stype, DamageType.fromEffectTags(e.entity.tag), character.elementType));
       } else if (type == 'break') {
-        multiplierValue = e.getEffectMultiplierValue(skilldata, skillLevel, _gs.stats.damageEffect[e.getKey()]);
-        drList.add(calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, multiplierProp, stype, DamageType.breakWeakness, character.elementType));
+        multiplierValue = e.getEffectMultiplierValue(skillData, skillLevel, null);
+        drList.add(calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, multiplierProp, stype, DamageType.fromName(stype), character.elementType));
       } else if (type == 'heal') {
-        multiplierValue = e.getEffectMultiplierValue(skilldata, skillLevel, _gs.stats.healEffect[e.getKey()]);
+        multiplierValue = e.getEffectMultiplierValue(skillData, skillLevel, _gs.stats.healEffect[e.getKey()]);
         drList.add(calculateHeal(_gs.stats, multiplierValue, multiplierProp));
       } else if (type == 'shield') {
-        multiplierValue = e.getEffectMultiplierValue(skilldata, skillLevel, _gs.stats.shieldEffect[e.getKey()]);
+        multiplierValue = e.getEffectMultiplierValue(skillData, skillLevel, _gs.stats.shieldEffect[e.getKey()]);
         drList.add(calculateShield(_gs.stats, multiplierValue, multiplierProp));
       } else {
         drList.add(DamageResult.zero());
@@ -189,6 +191,28 @@ class DamagePanelState extends State<DamagePanel> {
   }
 
   List<Widget> _getDamageHealPanels(Character character, String type) {
+    if (type == 'break') {
+      return EffectManager.getBreakDamageEffects(_gs.stats, _gs.enemyStats).map((e) {
+        EffectEntity effect = e.entity;
+        String title = "${effect.tag.map((e) => e.tr()).join(" | ")}";
+        List<DamageResult> drList = [];
+        List<String> multiplierTitle = [];
+        String stype = effect.tag.contains('WeaknessBreak') ? DamageType.breakWeakness.name : DamageType.breakWeaknessDot.name;
+        _appendDamageAndTitle([e], multiplierTitle, type, drList, stype, character, null, null);
+        title += " (${multiplierTitle.join(' + ')})";
+        DamageResult dr = drList[0];
+        Widget bar = _buildDamageBar(title, character.elementType, dr);
+        return ExpansionTile(
+          tilePadding: EdgeInsets.only(left: 5, right: 5),
+          childrenPadding: EdgeInsets.all(5),
+          initiallyExpanded: true,
+          title: _buildDamageBar(e.skillData.eNname.tr(), character.elementType, null),
+          children: [
+            bar,
+          ],
+        );
+      }).toList();
+    }
     return character.entity.skilldata.where((skill) => skill.effect.any((e) => e.type == type && e.multiplier > 0)).map((skill) {
           CharacterSkilldata skillData = character.entity.skilldata.firstWhere((s) => s.id == skill.id, orElse: () => CharacterSkilldata());
           int skillLevel = _gs.stats.skillLevels[skill.id] ?? 1;
@@ -258,6 +282,7 @@ class DamagePanelState extends State<DamagePanel> {
         child: Consumer<GlobalState>(builder: (context, model, child) {
           final Character _cData = CharacterManager.getCharacter(_gs.stats.id);
           List<Widget> damagePanels = _getDamageHealPanels(_cData, 'dmg');
+          List<Widget> breakPanels = _getDamageHealPanels(_cData, 'break');
           List<Widget> healPanels = _getDamageHealPanels(_cData, 'heal');
           List<Widget> shieldPanels = _getDamageHealPanels(_cData, 'shield');
           return Container(
@@ -293,6 +318,41 @@ class DamagePanelState extends State<DamagePanel> {
                                 SizedBox(height: 10),
                                 Column(
                                   children: damagePanels,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (breakPanels.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Container(
+                        clipBehavior: Clip.hardEdge,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                        ),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.all(Radius.circular(15)),
+                              border: Border.all(color: Colors.white.withOpacity(0.13)),
+                              gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
+                            ),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: SelectableText(
+                                    'WeaknessBreak Panel'.tr(),
+                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                Column(
+                                  children: breakPanels,
                                 ),
                               ],
                             ),

@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -5,11 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../calculator/basic.dart';
-import '../calculator/effect_entity.dart';
 import '../calculator/effect_manager.dart';
-import '../characters/character_entity.dart';
 import '../characters/character_manager.dart';
+import '../characters/character_stats.dart';
 import '../components/global_state.dart';
+import '../enemies/enemy.dart';
 import '../enemies/enemy_manager.dart';
 import '../lightcones/lightcone_manager.dart';
 import '../relics/relic_manager.dart';
@@ -99,6 +100,38 @@ MaterialColor getRarityColor(int rarity) {
   return Colors.grey;
 }
 
+/// 击破倍率、击破持续伤害倍率、持续伤害/效果回合数、击破后效果:dot/冻结/禁锢
+Map<ElementType, List<dynamic>> _breakMultiplier = {
+  ElementType.fire: [2, 1, 2, 'dotatk'],
+  ElementType.ice: [1, 1, 1, 'frozen'],
+  ElementType.lightning: [1, 2, 2, 'dotatk'],
+  ElementType.imaginary: [0.5, 0, 1, 'imprison'],
+  ElementType.quantum: [0.5, 0.6, 1, 'dotatk'],
+  ElementType.wind: [1.5, 1, 2, 'dotatk'],
+  ElementType.physical: [2, 1, 2, 'dotatk'],
+  ElementType.diy: [0, 0, 0, ''],
+};
+
+Map<int, double> breakBaseMapping = {
+  1: 54,
+  5: 70.51,
+  10: 85.87,
+  15: 113.47,
+  20: 139.77,
+  25: 186.65,
+  30: 231.2,
+  35: 302.73,
+  40: 363.67,
+  45: 578.22,
+  50: 774.9,
+  55: 1233.06,
+  60: 1640.31,
+  65: 2176.8,
+  70: 2659.64,
+  75: 3239.98,
+  80: 3767.55,
+};
+
 enum ElementType {
   fire(key: 'fire', icon: 'images/icons/fire.webp', color: Colors.red),
   ice(key: 'ice', icon: 'images/icons/ice.webp', color: Colors.lightBlue),
@@ -129,6 +162,34 @@ enum ElementType {
 
   FightProp getElementAddRatioProp() {
     return FightProp.fromName("${this.name}AddedRatio");
+  }
+
+  double getBreakDamageMultiplier() {
+    return (double.tryParse(_breakMultiplier[this]![0].toString()) ?? 0) * 100;
+  }
+
+  double getBreakDotMultiplier(CharacterStats cs, EnemyStats es) {
+    if (this == ElementType.physical) {
+      Enemy enemy = EnemyManager.getEnemy(es.id);
+      double ratio;
+      if (enemy.type == EnemyType.boss || enemy.type == EnemyType.elite) {
+        ratio = 0.07;
+      } else {
+        ratio = 0.16;
+      }
+      double base = cs.getBreakDamageBase().values.first;
+      return min(base * 2 * (es.toughness + 2) / 4, ratio * es.maxhp) / base * 100;
+    } else {
+      return (double.tryParse(_breakMultiplier[this]![1].toString()) ?? 0) * 100;
+    }
+  }
+
+  int getBreakDotTurns() {
+    return int.tryParse(_breakMultiplier[this]![2].toString()) ?? 0;
+  }
+
+  String getBreakEffect() {
+    return _breakMultiplier[this]![3].toString();
   }
 
   static List<FightProp> getElementAddRatioProps() {

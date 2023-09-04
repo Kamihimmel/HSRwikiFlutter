@@ -62,6 +62,7 @@ enum FightProp {
   ultimateAttackCriticalDamage(desc: 'ultcritdmg', effectKey: ['ultcritdmg']),
   followupAttackCriticalDamage(desc: 'followupcritdmg', effectKey: ['followupcritdmg']),
 
+  breakDamageBase(desc: 'Break Damage Base', icon: 'starrailres/icon/property/IconBreakUp.png'),
   breakDamageAddedRatio(desc: 'breakeffect', icon: 'starrailres/icon/property/IconBreakUp.png', effectKey: ['breakeffect', 'breakdmg']),
   breakDamageAddedRatioBase(desc: 'Break Effect', icon: 'starrailres/icon/property/IconBreakUp.png'),
 
@@ -119,7 +120,7 @@ enum FightProp {
 
   controlResist(desc: 'controlresist', effectKey: ['controlresist']),
 
-  none(desc: 'No multiplier'),
+  none(desc: 'No multiplier'), // effect.multipliertarget == ''
   unknown(desc: '');
 
   final String desc;
@@ -163,6 +164,8 @@ enum FightProp {
       return FightProp.defence;
     } else if (multiplierTarget == 'losthp') {
       return FightProp.lostHP;
+    } else if (multiplierTarget == 'breakdmgbase') {
+      return FightProp.breakDamageBase;
     } else if (multiplierTarget == '') {
       return FightProp.none;
     }

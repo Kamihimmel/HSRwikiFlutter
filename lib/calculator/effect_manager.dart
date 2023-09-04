@@ -1,8 +1,13 @@
 import 'dart:convert';
 
+import 'package:easy_localization/easy_localization.dart';
 
+import '../characters/character.dart';
 import '../characters/character_entity.dart';
+import '../characters/character_manager.dart';
+import '../characters/character_stats.dart';
 import '../components/global_state.dart';
+import '../enemies/enemy.dart';
 import '../utils/helper.dart';
 import '../utils/logging.dart';
 import 'basic.dart';
@@ -51,6 +56,32 @@ class EffectManager {
 
   static List<Effect> getManualEffects() {
     return _manualProps.where((attr) => attr.effectKey.isNotEmpty).map((attr) => Effect.manualBuff(attr)).toList();
+  }
+
+  static List<Effect> getBreakDamageEffects(CharacterStats cs, EnemyStats es) {
+    Character character = CharacterManager.getCharacter(cs.id);
+    Effect breakDamageEffect = Effect.empty();
+    breakDamageEffect.entity.multiplier = character.elementType.getBreakDamageMultiplier();
+    breakDamageEffect.entity.tag = ['WeaknessBreak'];
+    breakDamageEffect.skillData.eNname = 'Weakness Beak Damage';
+
+    Effect breakDotEffect = Effect.empty();
+    breakDotEffect.entity.multiplier = character.elementType.getBreakDotMultiplier(cs, es);
+    breakDotEffect.entity.tag = ["${character.elementType.getBreakDotTurns()}${'turn(s)'.tr()}", character.elementType.getBreakEffect()];
+    breakDotEffect.skillData.eNname = 'Weakness Beak Dot Damage';
+
+    List<Effect> effects = [breakDamageEffect, breakDotEffect];
+    for (var i = 0; i < effects.length; i++) {
+      Effect e = effects[i];
+      e.majorId = cs.id;
+      e.effectId = "${i + 1}";
+      e.type = Effect.breakDamageType;
+      e.entity.iid = e.effectId;
+      e.entity.type = 'break';
+      e.entity.multipliertarget = 'breakdmgbase';
+      e.entity.tag.add("${character.elementType.name}dmg");
+    }
+    return effects;
   }
 }
 

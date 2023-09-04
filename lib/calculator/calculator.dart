@@ -46,16 +46,24 @@ class DamageResult {
 }
 
 enum DamageType {
-  normal(crit: true),
-  dot(crit: false),
-  followup(crit: true),
-  breakWeakness(crit: false);
+  normal(crit: true, breakDmg: false),
+  dot(crit: false, breakDmg: false),
+  followup(crit: true, breakDmg: false),
+  breakWeakness(crit: false, breakDmg: true),
+  breakWeaknessDot(crit: false, breakDmg: true),
+  additional(crit: false, breakDmg: false);
 
-  final crit;
+  final bool crit;
+  final bool breakDmg;
 
   const DamageType({
     required this.crit,
+    required this.breakDmg,
   });
+
+  static DamageType fromName(String name) {
+    return DamageType.values.firstWhere((e) => e.name == name, orElse: () => DamageType.normal);
+  }
 
   static DamageType fromEffectTags(List<String> tags) {
     if (tags.isEmpty) {
@@ -93,17 +101,23 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
   }
 
   // 增伤
-  double elementBonus = attrValues[elementType.getElementAddRatioProp()] ?? 0;
-  double allBonus = attrValues[FightProp.allDamageAddRatio] ?? 0;
-  double damageBonus = elementBonus + allBonus;
-  if (damageType == DamageType.normal) {
-    damageBonus += attrValues[attackTypeBonusMapping[attackType] ?? FightProp.unknown] ?? 0;
-  } else if (damageType == DamageType.dot) {
-    damageBonus += attrValues[FightProp.dotDamageAddRatio] ?? 0;
-  } else if (damageType == DamageType.followup) {
-    damageBonus += attrValues[FightProp.followupAttackAddRatio] ?? 0;
-  } else if (damageType == DamageType.breakWeakness) {
-    damageBonus += attrValues[FightProp.breakDamageAddedRatio] ?? 0;
+  double damageBonus;
+  if (damageType.breakDmg) {
+    damageBonus = attrValues[FightProp.breakDamageAddedRatio] ?? 0;
+    if (damageType == DamageType.breakWeaknessDot) {
+      damageBonus += attrValues[FightProp.dotDamageAddRatio] ?? 0;
+    }
+  } else {
+    double elementBonus = attrValues[elementType.getElementAddRatioProp()] ?? 0;
+    double allBonus = attrValues[FightProp.allDamageAddRatio] ?? 0;
+    damageBonus = elementBonus + allBonus;
+    if (damageType == DamageType.normal) {
+      damageBonus += attrValues[attackTypeBonusMapping[attackType] ?? FightProp.unknown] ?? 0;
+    } else if (damageType == DamageType.dot) {
+      damageBonus += attrValues[FightProp.dotDamageAddRatio] ?? 0;
+    } else if (damageType == DamageType.followup) {
+      damageBonus += attrValues[FightProp.followupAttackAddRatio] ?? 0;
+    }
   }
   damageBonus += 1;
 
@@ -111,13 +125,20 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
   double elementReceive = attrValues[elementType.getElementDamageReceiveRatioProp()] ?? 0;
   double allDamageReceive = attrValues[FightProp.allDamageReceiveRatio] ?? 0;
   double dotDamageReceive = 0;
-  if (damageType == DamageType.dot) {
+  if (damageType == DamageType.dot || damageType == DamageType.breakWeaknessDot) {
     dotDamageReceive = attrValues[FightProp.dotDamageReceiveRatio] ?? 0;
   }
   double vulnerable = 1 + min(elementReceive + allDamageReceive + dotDamageReceive, 3.5);
 
-  // 减伤
-  double weaknessReduce = enemyStats.weaknessBreak ? 0 : 0.1;
+  // 敌方减伤
+  double weaknessReduce;
+  if (damageType == DamageType.breakWeakness) {
+    weaknessReduce = 0.1;
+  } else if (damageType == DamageType.breakWeaknessDot) {
+    weaknessReduce = 0;
+  } else {
+    weaknessReduce = enemyStats.weaknessBreak ? 0 : 0.1;
+  }
   double otherReduce = 0;
   double damageReduce = (1 - weaknessReduce) * (1 - otherReduce);
 
@@ -135,8 +156,14 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
   double enemyDefence = (enemyStats.level + 20) * max(1 - defenceIgnore - defenceReduce, 0);
   double defenceFactor = (characterLevel + 20) / (characterLevel + 20 + enemyDefence);
 
+  // 韧性
+  double toughness = (enemyStats.toughness + 2) / 4;
+
   double multiplierValue = multiplier / 100;
   double nonCrit = base * multiplierValue * damageBonus * vulnerable * damageReduce * resFinal * defenceFactor;
+  if (damageType.breakDmg) {
+    nonCrit *= toughness;
+  }
   double crit = damageType.crit ? nonCrit * (1 + critDamage) : 0;
   double exp = damageType.crit ? nonCrit * (1 + critChance * critDamage) : 0;
 
@@ -144,7 +171,7 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
   details = "$attackType: ${base.toStringAsFixed(3)} * ${multiplierValue.toStringAsFixed(3)} "
       "${damageType.crit ? critStr : ''}* ${damageBonus.toStringAsFixed(3)} "
       "* ${vulnerable.toStringAsFixed(3)} * ${damageReduce.toStringAsFixed(3)} * ${resFinal.toStringAsFixed(3)} * ${defenceFactor.toStringAsFixed(3)} "
-      "= ${(damageType.crit ? exp : nonCrit).toStringAsFixed(3)}";
+      "${damageType.breakDmg ? '* $toughness ' : ''}= ${(damageType.crit ? exp : nonCrit).toStringAsFixed(3)}";
   return DamageResult(nonCrit, exp, crit, details: details);
 }
 

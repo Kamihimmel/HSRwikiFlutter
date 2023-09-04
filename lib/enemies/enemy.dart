@@ -69,6 +69,8 @@ class EnemyStats {
   int level = 72;
   int defenceReduce = 0;
   bool weaknessBreak = false;
+  int maxhp = 200000;
+  int toughness = 1;
 
   EnemyStats.empty();
 
@@ -77,6 +79,8 @@ class EnemyStats {
     this.level = jsonMap['level'];
     this.defenceReduce = jsonMap['defence_reduce'];
     this.weaknessBreak = jsonMap['weakness_break'];
+    this.maxhp = jsonMap['maxhp'];
+    this.toughness = jsonMap['toughness'];
   }
 
   Map<String, dynamic> toJson() {
@@ -85,6 +89,8 @@ class EnemyStats {
     jsonMap['level'] = this.level;
     jsonMap['defence_reduce'] = this.defenceReduce;
     jsonMap['weakness_break'] = this.weaknessBreak;
+    jsonMap['maxhp'] = this.maxhp;
+    jsonMap['toughness'] = this.toughness;
     return jsonMap;
   }
 }

@@ -96,6 +96,7 @@ class CharacterStats {
     map[FightProp.ultimateAttackCriticalDamage] = getPropValue(FightProp.ultimateAttackCriticalDamage);
     map[FightProp.followupAttackCriticalDamage] = getPropValue(FightProp.followupAttackCriticalDamage);
 
+    map[FightProp.breakDamageBase] = getPropValue(FightProp.breakDamageBase);
     map[FightProp.breakDamageAddedRatio] = getPropValue(FightProp.breakDamageAddedRatio);
     map[FightProp.statusProbability] = getPropValue(FightProp.statusProbability);
     map[FightProp.statusResistance] = getPropValue(FightProp.statusResistance);
@@ -184,6 +185,14 @@ class CharacterStats {
     return result;
   }
 
+  Map<PropSource, double> getBreakDamageBase() {
+    Map<PropSource, double> result = {};
+    int levelNum = num.tryParse(level.replaceAll('+', ''))?.toInt() ?? 0;
+    double breakBase = breakBaseMapping[levelNum] ?? 0;
+    result[PropSource.characterBasic(id)] = breakBase;
+    return result;
+  }
+
   Map<PropSource, double> getPropValue(FightProp prop) {
     if (prop == FightProp.maxHP) {
       return getHp();
@@ -191,6 +200,8 @@ class CharacterStats {
       return getAtk();
     } else if (prop == FightProp.defence) {
       return getDef();
+    } else if (prop == FightProp.breakDamageBase) {
+      return getBreakDamageBase();
     }
 
     Map<PropSource, double> result = {};

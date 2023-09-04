@@ -110,6 +110,7 @@ enum RelicPart {
     return RelicPart.values.firstWhere((r) => r.name == name, orElse: () => RelicPart.unknown);
   }
 
+  /// 导入角色使用
   static RelicPart fromOrdAndSet(int ord, String xSet) {
     return RelicPart.values.firstWhere((r) => r.ord == ord && r.xSet == xSet, orElse: () => RelicPart.unknown);
   }

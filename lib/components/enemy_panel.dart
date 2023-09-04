@@ -203,7 +203,7 @@ class EnemyPanelState extends State<EnemyPanel> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             SelectableText(
-                              '${"EnemyDefenceDebuff".tr()}%: ${_gs.enemyStats.defenceReduce}%',
+                              '${"EnemyDefenceDebuff".tr()}: ${_gs.enemyStats.defenceReduce}%',
                               style: TextStyle(
                                 fontSize: 15,
                                 height: 1.1,
@@ -218,6 +218,61 @@ class EnemyPanelState extends State<EnemyPanel> {
                               value: _gs.enemyStats.defenceReduce.toDouble(),
                               onChanged: (value) {
                                 _gs.enemyStats.defenceReduce = value.toInt();
+                                _gs.changeStats();
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            SelectableText(
+                              '${"EnemyMaxHP".tr()}: ${_gs.enemyStats.maxhp}',
+                              style: TextStyle(
+                                fontSize: 15,
+                                height: 1.1,
+                              ),
+                            ),
+                            Slider(
+                              min: 100000,
+                              max: 1000000,
+                              divisions: 50000,
+                              inactiveColor: _cData.elementType.color.withOpacity(0.35),
+                              activeColor: _cData.elementType.color,
+                              label: _gs.enemyStats.maxhp.toString(),
+                              value: _gs.enemyStats.maxhp.toDouble(),
+                              onChanged: (value) {
+                                _gs.enemyStats.maxhp = value.toInt();
+                                _gs.changeStats();
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            SelectableText(
+                              '${"EnemyToughness".tr()}: ${_gs.enemyStats.toughness}',
+                              style: TextStyle(
+                                fontSize: 15,
+                                height: 1.1,
+                              ),
+                            ),
+                            Slider(
+                              min: 1,
+                              max: 16,
+                              inactiveColor: _cData.elementType.color.withOpacity(0.35),
+                              activeColor: _cData.elementType.color,
+                              label: _gs.enemyStats.toughness.toString(),
+                              value: _gs.enemyStats.toughness.toDouble(),
+                              onChanged: (value) {
+                                _gs.enemyStats.toughness = value.toInt();
                                 _gs.changeStats();
                               },
                             ),

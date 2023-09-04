@@ -14,6 +14,7 @@ class Effect {
   static final lightconeType = 2;
   static final relicType = 3;
   static final manualType = 4;
+  static final breakDamageType = 5;
 
   /// 默认来自角色
   int type = 1;
@@ -32,7 +33,7 @@ class Effect {
   }
 
   Effect.manualBuff(FightProp prop) {
-    this.type = 4;
+    this.type = manualType;
     this.majorId = 'manual';
     this.effectId = prop.name;
     this.entity = EffectEntity();
