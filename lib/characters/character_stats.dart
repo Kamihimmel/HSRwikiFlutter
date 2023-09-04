@@ -114,6 +114,7 @@ class CharacterStats {
     for (var eri in ElementType.getElementResistanceIgnoreProps()) {
       map[eri] = getPropValue(eri);
     }
+    map[FightProp.specificResistanceIgnore] = getPropValue(FightProp.specificResistanceIgnore);
 
     map[FightProp.allDamageReceiveRatio] = getPropValue(FightProp.allDamageReceiveRatio);
     map[FightProp.dotDamageReceiveRatio] = getPropValue(FightProp.dotDamageReceiveRatio);
@@ -123,6 +124,7 @@ class CharacterStats {
 
     map[FightProp.defenceIgnoreRatio] = getPropValue(FightProp.defenceIgnoreRatio);
     map[FightProp.defenceReduceRatio] = getPropValue(FightProp.defenceReduceRatio);
+    map[FightProp.speedReduceRatio] = getPropValue(FightProp.speedReduceRatio);
 
     map[FightProp.lostHP] = getPropValue(FightProp.lostHP);
     return map;
@@ -214,8 +216,13 @@ class CharacterStats {
       result[PropSource.characterBasic(id)] = c.entity.dtaunt.toDouble();
     } else if (prop == FightProp.speed) {
       result[PropSource.characterBasic(id)] = c.entity.dspeed.toDouble();
-      base = c.entity.dspeed.toDouble();
-      props = [FightProp.speedAddedRatio, FightProp.speedDelta];
+      Map<PropSource, double> temp = {};
+      _addAttrValue(temp, c, lc, 1, [FightProp.speedDelta]);
+      _addAttrValue(result, c, lc, c.entity.dspeed.toDouble(), [FightProp.speedAddedRatio]);
+      temp.forEach((key, value) {
+        result[key] = (result[key] ?? 0) + value;
+      });
+      return result;
     } else if (prop == FightProp.criticalChance) {
       result[PropSource.characterBasic(id)] = 0.05;
     } else if (prop == FightProp.criticalDamage) {
@@ -253,7 +260,7 @@ class CharacterStats {
           return;
         }
         double multiplierValue = effect.getEffectMultiplierValue(t, lightconeRank, effectConfig);
-        result[PropSource.lightconeEffect(lightconeId, effect)] = base * multiplierValue / 100;
+        result[PropSource.lightconeEffect(lightconeId, effect)] = base * multiplierValue / (prop.isPercent() ? 100 : 1);
       });
     });
   }
@@ -307,7 +314,7 @@ class CharacterStats {
               return;
             }
             double multiplierValue = effect.getEffectMultiplierValue(null, null, effectConfig);
-            result[PropSource.relicSetEffect(rs, effect, name: effect.minorId)] = base * multiplierValue / 100;
+            result[PropSource.relicSetEffect(rs, effect, name: effect.minorId)] = base * multiplierValue / (prop.isPercent() ? 100 : 1);
           });
         }
       }
@@ -326,7 +333,7 @@ class CharacterStats {
           return;
         }
         double multiplierValue = effect.getEffectMultiplierValue(s, skillLevels[s.id], effectConfig);
-        result[PropSource.characterSkill(effectKey, effect, self: true)] = base * multiplierValue / 100;
+        result[PropSource.characterSkill(effectKey, effect, self: true)] = base * multiplierValue / (prop.isPercent() ? 100 : 1);
       });
     });
   }
@@ -343,7 +350,7 @@ class CharacterStats {
           return;
         }
         double multiplierValue = effect.getEffectMultiplierValue(null, null, effectConfig);
-        result[PropSource.characterTrace(effectKey, effect, name: t.tiny ? 'tiny' : '', self: true)] = base * multiplierValue / 100;
+        result[PropSource.characterTrace(effectKey, effect, name: t.tiny ? 'tiny' : '', self: true)] = base * multiplierValue / (prop.isPercent() ? 100 : 1);
       });
     });
   }
@@ -360,7 +367,7 @@ class CharacterStats {
           return;
         }
         double multiplierValue = effect.getEffectMultiplierValue(null, null, effectConfig);
-        result[PropSource.characterEidolon(effectKey, effect, self: true)] = base * multiplierValue / 100;
+        result[PropSource.characterEidolon(effectKey, effect, self: true)] = base * multiplierValue / (prop.isPercent() ? 100 : 1);
       });
     });
   }
@@ -383,7 +390,7 @@ class CharacterStats {
       effects.forEach((element) {
         multiplierValue += element.getEffectMultiplierValue(effect.skillData, skillLevel, otherEffect[element.getKey()]);
       });
-      result[PropSource.characterSkill(effectKey, effect, self: false)] = base * multiplierValue / 100;
+      result[PropSource.characterSkill(effectKey, effect, self: false)] = base * multiplierValue / (prop.isPercent() ? 100 : 1);
     });
   }
 
@@ -395,7 +402,7 @@ class CharacterStats {
         return;
       }
       double multiplierValue = effect.getEffectMultiplierValue(null, null, effectConfig);
-      result[PropSource.manualEffect(effectKey, effect)] = base * multiplierValue / 100;
+      result[PropSource.manualEffect(effectKey, effect)] = base * multiplierValue / (prop.isPercent() ? 100 : 1);
     });
   }
 

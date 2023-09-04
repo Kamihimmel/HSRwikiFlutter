@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
+import '../calculator/basic.dart';
 import '../characters/character.dart';
 import '../characters/character_manager.dart';
 import '../enemies/enemy.dart';
@@ -35,6 +37,8 @@ class EnemyPanelState extends State<EnemyPanel> {
         child: Consumer<GlobalState>(builder: (context, model, child) {
           final Character _cData = CharacterManager.getCharacter(_gs.stats.id);
           Enemy enemy = EnemyManager.getEnemy(_gs.enemyStats.id);
+          double defenceReduce = _gs.stats.getPropValue(FightProp.defenceReduceRatio).values.fold(0, (pre, v) => pre + v);
+          double reduceFinal = min(100, defenceReduce * 100 + _gs.enemyStats.defenceReduce);
           return Padding(
             padding: const EdgeInsets.all(10.0),
             child: Container(
@@ -203,19 +207,19 @@ class EnemyPanelState extends State<EnemyPanel> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             SelectableText(
-                              '${"EnemyDefenceDebuff".tr()}: ${_gs.enemyStats.defenceReduce}%',
+                              '${"EnemyDefenceDebuff".tr()}: ${reduceFinal.toStringAsFixed(1)}%',
                               style: TextStyle(
                                 fontSize: 15,
                                 height: 1.1,
                               ),
                             ),
                             Slider(
-                              min: 0,
+                              min: defenceReduce,
                               max: 100,
                               inactiveColor: _cData.elementType.color.withOpacity(0.35),
                               activeColor: _cData.elementType.color,
-                              label: _gs.enemyStats.defenceReduce.toString(),
-                              value: _gs.enemyStats.defenceReduce.toDouble(),
+                              label: reduceFinal.toStringAsFixed(1),
+                              value: reduceFinal.toDouble(),
                               onChanged: (value) {
                                 _gs.enemyStats.defenceReduce = value.toInt();
                                 _gs.changeStats();

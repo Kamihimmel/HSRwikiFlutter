@@ -53,8 +53,12 @@ class BuffPanelState extends State<BuffPanel> {
     if (!isDmg) {
       propText = prop.desc.tr();
       effects.forEach((element) {
-        double multiplierValue = element.getEffectMultiplierValue(effect.skillData, skillLevel, effectConfig[element.getKey()]) / 100;
-        propValue.add(prop.getPropText(multiplierValue, percent: prop == FightProp.lostHP ? true : null));
+        bool percent = prop == FightProp.lostHP ? true : prop.isPercent();
+        double multiplierValue = element.getEffectMultiplierValue(effect.skillData, skillLevel, effectConfig[element.getKey()]);
+        if (percent) {
+          multiplierValue /= 100;
+        }
+        propValue.add(prop.getPropText(multiplierValue, percent: percent));
       });
     }
     String text = [effect.getSkillName(getLanguageCode(context)), propText, propValue.join(' + ')].join(' ');

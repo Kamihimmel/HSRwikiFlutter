@@ -216,14 +216,15 @@ class BasicPanelState extends State<BasicPanel> {
 
           Map<String, List<dynamic>> damageAttrs = {};
           damageAttrs[FightProp.allDamageAddRatio.desc] = _getBaseAttr(stats, FightProp.allDamageAddRatio);
-          for (FightProp p in ElementType.getElementAddRatioProps()) {
-            damageAttrs[p.desc] = _getBaseAttr(stats, p);
-          }
           damageAttrs[FightProp.basicAttackAddRatio.desc] = _getBaseAttr(stats, FightProp.basicAttackAddRatio);
           damageAttrs[FightProp.skillAttackAddRatio.desc] = _getBaseAttr(stats, FightProp.skillAttackAddRatio);
           damageAttrs[FightProp.ultimateAttackAddRatio.desc] = _getBaseAttr(stats, FightProp.ultimateAttackAddRatio);
           damageAttrs[FightProp.followupAttackAddRatio.desc] = _getBaseAttr(stats, FightProp.followupAttackAddRatio);
           damageAttrs[FightProp.dotDamageAddRatio.desc] = _getBaseAttr(stats, FightProp.dotDamageAddRatio);
+          damageAttrs[FightProp.additionalDamageAddRatio.desc] = _getBaseAttr(stats, FightProp.additionalDamageAddRatio);
+          for (FightProp p in ElementType.getElementAddRatioProps()) {
+            damageAttrs[p.desc] = _getBaseAttr(stats, p);
+          }
 
           Map<String, List<dynamic>> healAttrs = {};
           healAttrs[FightProp.healRatio.desc] = _getBaseAttr(stats, FightProp.healRatio);
@@ -239,6 +240,7 @@ class BasicPanelState extends State<BasicPanel> {
           for (FightProp p in ElementType.getElementResistanceIgnoreProps()) {
             otherAttrs[p.desc] = _getBaseAttr(stats, p);
           }
+          otherAttrs[FightProp.specificResistanceIgnore.desc] = _getBaseAttr(stats, FightProp.specificResistanceIgnore);
           otherAttrs[FightProp.defenceIgnoreRatio.desc] = _getBaseAttr(stats, FightProp.defenceIgnoreRatio);
           if (_gs.debug) {
             otherAttrs[FightProp.lostHP.desc] = _getBaseAttr(stats, FightProp.lostHP);
@@ -249,9 +251,11 @@ class BasicPanelState extends State<BasicPanel> {
             debuffAttrs[FightProp.defenceReduceRatio.desc] = _getBaseAttr(stats, FightProp.defenceReduceRatio);
             debuffAttrs[FightProp.allDamageReceiveRatio.desc] = _getBaseAttr(stats, FightProp.allDamageReceiveRatio);
             debuffAttrs[FightProp.dotDamageReceiveRatio.desc] = _getBaseAttr(stats, FightProp.dotDamageReceiveRatio);
+            debuffAttrs[FightProp.additionalDamageReceiveRatio.desc] = _getBaseAttr(stats, FightProp.additionalDamageReceiveRatio);
             for (FightProp p in ElementType.getElementDamageReceiveRatioProps()) {
               debuffAttrs[p.desc] = _getBaseAttr(stats, p);
             }
+            debuffAttrs[FightProp.speedReduceRatio.desc] = _getBaseAttr(stats, FightProp.speedReduceRatio);
           }
 
           return Container(

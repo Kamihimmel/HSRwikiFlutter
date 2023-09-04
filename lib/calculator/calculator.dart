@@ -153,7 +153,8 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
   int res = enemy.resistence[elementType] ?? 0;
   double allResIgnore = attrValues[FightProp.allResistanceIgnore] ?? 0;
   double resIgnore = attrValues[elementType.getElementResistanceIgnoreProp()] ?? 0;
-  double resFinal =  1 - (res / 100 - resIgnore - allResIgnore);
+  double specificResIgnore = attrValues[FightProp.specificResistanceIgnore] ?? 0;
+  double resFinal =  1 - (res / 100 - resIgnore - allResIgnore - specificResIgnore);
 
   // 防御力
   int characterLevel = int.tryParse(stats.level.replaceAll('+', '')) ?? 1;

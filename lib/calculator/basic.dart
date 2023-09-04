@@ -33,8 +33,9 @@ enum FightProp {
 
   speed(desc: 'speed', icon: 'starrailres/icon/property/IconSpeed.png', effectKey: ['spd']),
   baseSpeed(desc: 'SPD', icon: 'starrailres/icon/property/IconSpeed.png'),
-  speedDelta(desc: 'speed', icon: 'starrailres/icon/property/IconSpeed.png'),
+  speedDelta(desc: 'speed', icon: 'starrailres/icon/property/IconSpeed.png', effectKey: ['speedpt']),
   speedAddedRatio(desc: 'speed', icon: 'starrailres/icon/property/IconSpeed.png', effectKey: ['speed']),
+  speedReduceRatio(desc: 'reducespeeddebuff', icon: 'starrailres/icon/property/IconSpeed.png', effectKey: ['reducespeed']),
 
   aggro(desc: 'Taunt', icon: 'starrailres/icon/property/IconTaunt.png', effectKey: ['taunt']),
   stanceBreakAddedRatio(desc: ''),
@@ -90,6 +91,7 @@ enum FightProp {
   imaginaryResistance(desc: 'Imaginary RES Boost', icon: 'starrailres/icon/property/IconImaginaryResistanceDelta.png'),
 
   allResistanceIgnore(desc: 'allresreduce', effectKey: ['allres']),
+  specificResistanceIgnore(desc: 'specificresreduce', effectKey: ['specificres']),
   physicalResistanceIgnore(desc: 'physicalpen', effectKey: ['physicalpen']),
   fireResistanceIgnore(desc: 'firepen', effectKey: ['firepen']),
   iceResistanceIgnore(desc: 'icepen', effectKey: ['icepen']),
