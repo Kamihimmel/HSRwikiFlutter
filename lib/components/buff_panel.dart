@@ -84,7 +84,14 @@ class BuffPanelState extends State<BuffPanel> {
     FightProp multiplierProp = FightProp.fromEffectKey(ee.multipliertarget);
     String labelText = '';
     if (multiplierProp != FightProp.unknown && effect.type == Effect.characterType) {
-      labelText = "${CharacterManager.getCharacter(effect.majorId).getName('lang'.tr())} ${multiplierProp.desc.tr()}${multiplierProp.isPercent() ? '(%)' : ''}";
+      List<String> label = [];
+      if (effect.type == Effect.characterType) {
+        if (_gs.stats.id != effect.majorId) {
+          label.add(CharacterManager.getCharacter(effect.majorId).getName('lang'.tr()));
+        }
+        label.add("${multiplierProp.desc.tr()}${multiplierProp.isPercent() ? '(%)' : ''}");
+      }
+      labelText = label.join(' ');
     }
     if (effect.hasBuffConfig()) {
       List<Widget> widgets = [];
