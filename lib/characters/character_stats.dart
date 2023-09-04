@@ -231,6 +231,7 @@ class CharacterStats {
       result[PropSource.characterBasic(id)] = 1;
     } else if (prop == FightProp.lostHP) {
       base = getPropValue(FightProp.maxHP).values.fold(0, (pre, v) => pre + v);
+      base /= 100;
     }
 
     _addAttrValue(result, c, lc, base, props);

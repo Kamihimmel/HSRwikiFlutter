@@ -185,7 +185,7 @@ class DamagePanelState extends State<DamagePanel> {
       if (e.entity.multipliertarget == '') {
         multiplierTitle.add(multiplierValue.toString());
       } else {
-        multiplierTitle.add("${multiplierValue.toStringAsFixed(1)}%");
+        multiplierTitle.add("${multiplierValue.toStringAsFixed(1)}%${multiplierProp.desc.tr()}");
       }
     });
   }
@@ -204,7 +204,7 @@ class DamagePanelState extends State<DamagePanel> {
           stype = DamageType.breakWeaknessAdditional.name;
         }
         _appendDamageAndTitle([e], multiplierTitle, type, drList, stype, character, null, null);
-        title += " (${multiplierTitle.join(' + ')})";
+        title += " (${multiplierTitle.join('+')})";
         DamageResult dr = drList[0];
         Widget bar = _buildDamageBar(title, character.elementType, dr);
         return ExpansionTile(
@@ -226,15 +226,15 @@ class DamagePanelState extends State<DamagePanel> {
     return damageHealSkills.map((skillData) {
       String skillName = skillData.getName(getLanguageCode(context));
       int? skillLevel;
-      if (skillData.stype != 'trace' && skillData.stype != 'eidolon') {
+      if (skillData.stype != 'trace' && skillData.stype != 'eidolon' && skillData.maxlevel > 0) {
         // 是skill类型，需要获取等级数据
         skillLevel = _gs.stats.skillLevels[skillData.id] ?? 1;
       }
+      String title = "${skillName}${skillLevel != null ? '(Lv${skillLevel})' : ''}";
       if (skillData.referencelevel != '') {
         // 如果是引用其他技能的等级
         skillLevel = _gs.stats.skillLevels[character.getSkillById(skillData.referencelevel).id] ?? 1;
       }
-      String title = "${skillName}${skillLevel != null ? '(Lv${skillLevel})' : ''}";
       List<Effect> validEffects = skillData.effect.map((e) => Effect.fromEntity(e, character.entity.id, skillData.id)).where((e) => e.entity.type == type).toList();
       Map<String, List<Effect>> skillEffectGroup = Effect.groupEffect(validEffects);
       return ExpansionTile(
@@ -248,7 +248,7 @@ class DamagePanelState extends State<DamagePanel> {
           List<DamageResult> drList = [];
           List<String> multiplierTitle = [];
           _appendDamageAndTitle(effects, multiplierTitle, type, drList, skillData.stype, character, skillData, skillLevel);
-          title += " (${multiplierTitle.join(' + ')})";
+          title += " (${multiplierTitle.join('+')})";
           DamageResult dr = drList.fold(
               DamageResult.zero(),
                   (pre, damage) => DamageResult(pre.nonCrit + damage.nonCrit, pre.expectation + damage.expectation, pre.crit + damage.crit,
