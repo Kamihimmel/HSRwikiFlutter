@@ -49,9 +49,10 @@ enum DamageType {
   normal(crit: true, breakDmg: false),
   dot(crit: false, breakDmg: false),
   followup(crit: true, breakDmg: false),
+  additional(crit: false, breakDmg: false),
   breakWeakness(crit: false, breakDmg: true),
   breakWeaknessDot(crit: false, breakDmg: true),
-  additional(crit: false, breakDmg: false);
+  breakWeaknessAdditional(crit: false, breakDmg: true);
 
   final bool crit;
   final bool breakDmg;
@@ -106,6 +107,8 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
     damageBonus = attrValues[FightProp.breakDamageAddedRatio] ?? 0;
     if (damageType == DamageType.breakWeaknessDot) {
       damageBonus += attrValues[FightProp.dotDamageAddRatio] ?? 0;
+    } else if (damageType == DamageType.breakWeaknessAdditional) {
+      damageBonus += attrValues[FightProp.additionalDamageAddRatio] ?? 0;
     }
   } else {
     double elementBonus = attrValues[elementType.getElementAddRatioProp()] ?? 0;
@@ -127,15 +130,19 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
   double dotDamageReceive = 0;
   if (damageType == DamageType.dot || damageType == DamageType.breakWeaknessDot) {
     dotDamageReceive = attrValues[FightProp.dotDamageReceiveRatio] ?? 0;
+  } else if (damageType == DamageType.additional || damageType == DamageType.breakWeaknessAdditional) {
+    dotDamageReceive += attrValues[FightProp.additionalDamageReceiveRatio] ?? 0;
   }
   double vulnerable = 1 + min(elementReceive + allDamageReceive + dotDamageReceive, 3.5);
 
   // 敌方减伤
   double weaknessReduce;
-  if (damageType == DamageType.breakWeakness) {
-    weaknessReduce = 0.1;
-  } else if (damageType == DamageType.breakWeaknessDot) {
-    weaknessReduce = 0;
+  if (damageType.breakDmg) {
+    if (damageType == DamageType.breakWeakness) {
+      weaknessReduce = 0.1;
+    } else {
+      weaknessReduce = 0;
+    }
   } else {
     weaknessReduce = enemyStats.weaknessBreak ? 0 : 0.1;
   }
@@ -150,7 +157,10 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
 
   // 防御力
   int characterLevel = int.tryParse(stats.level.replaceAll('+', '')) ?? 1;
-  double defenceIgnore = attrValues[FightProp.defenceIgnoreRatio] ?? 0;
+  double defenceIgnore = 0;
+  if (!damageType.breakDmg) {
+    defenceIgnore += attrValues[FightProp.defenceIgnoreRatio] ?? 0;
+  }
   double defenceReduce = attrValues[FightProp.defenceReduceRatio] ?? 0;
   defenceReduce += enemyStats.defenceReduce / 100;
   double enemyDefence = (enemyStats.level + 20) * max(1 - defenceIgnore - defenceReduce, 0);

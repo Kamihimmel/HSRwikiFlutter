@@ -216,5 +216,7 @@
     "Relic Skill Buff": "遺物ボーナス",
     "Other Buff": "その他バフ",
     "Manual Buff": "手動調整",
-    "turn(s)": "回"
+    "turn(s)": "回",
+    "entanglement": "【もつれ】",
+    "additionaldmgreceive": "付加攻撃被ダメージ"
 }

@@ -129,7 +129,7 @@ class Effect {
   }
 
   bool isDamageHealShield() {
-    return this.entity.type == 'dmg' || this.entity.type == 'heal' || this.entity.type == 'shield';
+    return this.entity.type == 'dmg' || this.entity.type == 'break' || this.entity.type == 'heal' || this.entity.type == 'shield';
   }
 
   double getEffectMultiplierValue(SkillData? skillData, int? skillLevel, EffectConfig? effectConfig) {

@@ -191,16 +191,18 @@ class BuffPanelState extends State<BuffPanel> {
           final Character _cData = CharacterManager.getCharacter(_gs.stats.id);
           final Lightcone _lData = LightconeManager.getLightcone(_gs.stats.lightconeId);
           final List<Relic> _rList = _gs.stats.getRelicSets().map((r) => r != '' ? RelicManager.getRelic(r) : Relic()).toList();
-          List<Effect> characterSkillDmg = _cData.entity.skilldata
-              .expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, skill.id)).where((e) => e.validDamageHealEffect('dmg') && e.hasBuffConfig())).toList();
+          List<Effect> breakEffects = EffectManager.getBreakDamageEffects(_gs.stats, _gs.enemyStats);
+          List<Effect> skillEffects = _cData.entity.skilldata
+              .expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, skill.id))).toList();
+          List<Effect> characterSkillDmg = (breakEffects + skillEffects).where((e) => (e.validDamageHealEffect('break') || e.validDamageHealEffect('dmg'))  && e.hasBuffConfig()).toList();
           List<Effect> characterSkillBuff = _cData.entity.skilldata
-              .expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, skill.id)).where((e) => e.validSelfBuffEffect(null))).toList();
+              .expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, skill.id))).where((e) => e.validSelfBuffEffect(null)).toList();
           List<Effect> characterTraceBuff = _cData.entity.tracedata
-              .expand((trace) => trace.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, trace.id)).where((e) => !trace.tiny && e.validSelfBuffEffect(null))).toList();
+              .expand((trace) => trace.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, trace.id)).where((e) => !trace.tiny)).where((e) => e.validSelfBuffEffect(null)).toList();
           List<Effect> characterEidolonBuff = _cData.entity.eidolon
               .expand((eidolon) => eidolon.effect
               .map((e) => Effect.fromEntity(e, _cData.entity.id, eidolon.eidolonnum.toString()))
-              .where((e) => (_gs.stats.eidolons[eidolon.eidolonnum.toString().toString()] ?? 0) > 0 && e.validSelfBuffEffect(null))).toList();
+              .where((e) => (_gs.stats.eidolons[eidolon.eidolonnum.toString().toString()] ?? 0) > 0)).where((e) => e.validSelfBuffEffect(null)).toList();
           List<Effect> lightconeSkillBuff = _lData.entity.skilldata
               .expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _lData.entity.id, '', type: Effect.lightconeType)).where((e) => e.validSelfBuffEffect(null))).toList();
           List<Effect> relicSkillBuff = List.generate(3, (index) {
@@ -277,7 +279,9 @@ class BuffPanelState extends State<BuffPanel> {
                                 runSpacing: 10,
                                 children: Effect.groupEffect(characterSkillDmg).values.map((effects) {
                                   Effect effect = effects.first;
-                                  effect.skillData = CharacterManager.getCharacter(effect.majorId).getSkillById(effect.minorId);
+                                  if (effect.type == Effect.characterType) {
+                                    effect.skillData = CharacterManager.getCharacter(effect.majorId).getSkillById(effect.minorId);
+                                  }
                                   return _getEffectChip(_gs.stats.damageEffect, effects);
                                 }).toList(),
                               ),

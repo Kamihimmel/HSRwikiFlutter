@@ -63,23 +63,35 @@ class EffectManager {
     Effect breakDamageEffect = Effect.empty();
     breakDamageEffect.entity.multiplier = character.elementType.getBreakDamageMultiplier();
     breakDamageEffect.entity.tag = ['WeaknessBreak'];
-    breakDamageEffect.skillData.eNname = 'Weakness Beak Damage';
+    breakDamageEffect.skillData.eNname = 'WeaknessBreak';
+    breakDamageEffect.skillData.cNname = '弱点击破';
+    breakDamageEffect.skillData.jAname = '弱点撃破';
 
-    Effect breakDotEffect = Effect.empty();
-    breakDotEffect.entity.multiplier = character.elementType.getBreakDotMultiplier(cs, es);
-    breakDotEffect.entity.tag = ["${character.elementType.getBreakDotTurns()}${'turn(s)'.tr()}", character.elementType.getBreakEffect()];
-    breakDotEffect.skillData.eNname = 'Weakness Beak Dot Damage';
+    Effect breakExtraEffect = Effect.empty();
+    breakExtraEffect.entity.multiplier = character.elementType.getBreakExtraMultiplier(cs, es);
+    breakExtraEffect.entity.tag = ["${character.elementType.getBreakExtraTurns()}${'turn(s)'.tr()}"];
+    String damageType = character.elementType.getBreakDamageType();
+    if (damageType.isNotEmpty) {
+      breakExtraEffect.entity.tag.add(damageType);
+    }
+    breakExtraEffect.entity.maxStack = character.elementType.getBreakExtraMaxStack();
+    String breakEffect = character.elementType.getBreakEffect().tr();
+    breakExtraEffect.skillData.eNname = breakEffect;
+    breakExtraEffect.skillData.cNname = breakEffect;
+    breakExtraEffect.skillData.jAname = breakEffect;
 
-    List<Effect> effects = [breakDamageEffect, breakDotEffect];
+    List<Effect> effects = [breakDamageEffect, breakExtraEffect];
     for (var i = 0; i < effects.length; i++) {
       Effect e = effects[i];
       e.majorId = cs.id;
+      e.minorId = 'break';
       e.effectId = "${i + 1}";
       e.type = Effect.breakDamageType;
       e.entity.iid = e.effectId;
       e.entity.type = 'break';
       e.entity.multipliertarget = 'breakdmgbase';
       e.entity.tag.add("${character.elementType.name}dmg");
+      e.skillData.maxlevel = -1;
     }
     return effects;
   }

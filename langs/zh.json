@@ -216,5 +216,7 @@
     "Relic Skill Buff": "遗器加成",
     "Other Buff": "其他增益",
     "Manual Buff": "手动调节",
-    "turn(s)": "回合"
+    "turn(s)": "回合",
+    "entanglement": "【纠缠】",
+    "additionaldmgreceive": "受到附加伤害"
 }

@@ -100,16 +100,16 @@ MaterialColor getRarityColor(int rarity) {
   return Colors.grey;
 }
 
-/// 击破倍率、击破持续伤害倍率、持续伤害/效果回合数、击破后效果:dot/冻结/禁锢
+/// 击破倍率、击破后额外伤害倍率、伤害/效果持续回合数、额外伤害最大层数、击破后伤害类型以及效果
 Map<ElementType, List<dynamic>> _breakMultiplier = {
-  ElementType.fire: [2, 1, 2, 'dotatk'],
-  ElementType.ice: [1, 1, 1, 'frozen'],
-  ElementType.lightning: [1, 2, 2, 'dotatk'],
-  ElementType.imaginary: [0.5, 0, 1, 'imprison'],
-  ElementType.quantum: [0.5, 0.6, 1, 'dotatk'],
-  ElementType.wind: [1.5, 1, 2, 'dotatk'],
-  ElementType.physical: [2, 1, 2, 'dotatk'],
-  ElementType.diy: [0, 0, 0, ''],
+  ElementType.fire: [2, 1, 2, 0, 'dotatk', 'burn'],
+  ElementType.ice: [1, 1, 1, 0, 'additionalatk', 'frozen'],
+  ElementType.lightning: [1, 2, 2, 0, 'dotatk', 'shocked'],
+  ElementType.imaginary: [0.5, 0, 1, 0, '', 'imprison'],
+  ElementType.quantum: [0.5, 0.6, 1, 5, 'additionalatk', 'entanglement'],
+  ElementType.wind: [1.5, 1, 2, 5, 'dotatk', 'windshear'],
+  ElementType.physical: [2, 1, 2, 0, 'dotatk', 'bleed'],
+  ElementType.diy: [0, 0, 0, 0, []],
 };
 
 Map<int, double> breakBaseMapping = {
@@ -168,7 +168,7 @@ enum ElementType {
     return (double.tryParse(_breakMultiplier[this]![0].toString()) ?? 0) * 100;
   }
 
-  double getBreakDotMultiplier(CharacterStats cs, EnemyStats es) {
+  double getBreakExtraMultiplier(CharacterStats cs, EnemyStats es) {
     if (this == ElementType.physical) {
       Enemy enemy = EnemyManager.getEnemy(es.id);
       double ratio;
@@ -184,12 +184,20 @@ enum ElementType {
     }
   }
 
-  int getBreakDotTurns() {
+  int getBreakExtraTurns() {
     return int.tryParse(_breakMultiplier[this]![2].toString()) ?? 0;
   }
 
+  int getBreakExtraMaxStack() {
+    return int.tryParse(_breakMultiplier[this]![3].toString()) ?? 0;
+  }
+
+  String getBreakDamageType() {
+    return _breakMultiplier[this]![4].toString();
+  }
+
   String getBreakEffect() {
-    return _breakMultiplier[this]![3].toString();
+    return _breakMultiplier[this]![5].toString();
   }
 
   static List<FightProp> getElementAddRatioProps() {

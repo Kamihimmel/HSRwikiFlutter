@@ -75,6 +75,7 @@ enum FightProp {
   quantumAddedRatio(desc: 'quantumdmg', icon: 'starrailres/icon/property/IconQuantumAddedRatio.png', effectKey: ['quantumdmg']),
   imaginaryAddedRatio(desc: 'imaginarydmg', icon: 'starrailres/icon/property/IconImaginaryAddedRatio.png', effectKey: ['imaginarydmg']),
   dotDamageAddRatio(desc: 'dotatk', effectKey: ['dotatk']),
+  additionalDamageAddRatio(desc: 'additionalatk', effectKey: ['additionalatk']),
   basicAttackAddRatio(desc: 'normalatk', effectKey: ['basicatk', 'normalatk']),
   skillAttackAddRatio(desc: 'skillatk', effectKey: ['skillatk']),
   ultimateAttackAddRatio(desc: 'ultatk', effectKey: ['ultatk']),
@@ -114,6 +115,7 @@ enum FightProp {
   quantumDamageReceiveRatio(desc: 'quantumdmgreceive', debuff: true, effectKey: ['quantumdmgreceive']),
   imaginaryDamageReceiveRatio(desc: 'imaginarydmgreceive', debuff: true, effectKey: ['imaginarydmgreceive']),
   dotDamageReceiveRatio(desc: 'dotdmgreceive', debuff: true, effectKey: ['dotdmgreceive']),
+  additionalDamageReceiveRatio(desc: 'additionaldmgreceive', debuff: true, effectKey: ['additionaldmgreceive']),
 
   defenceIgnoreRatio(desc: 'ignoredef', effectKey: ['ignoredef']),
   defenceReduceRatio(desc: 'reducedefdebuff', debuff: true, effectKey: ['reducedef']),

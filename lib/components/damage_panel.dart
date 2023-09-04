@@ -171,7 +171,7 @@ class DamagePanelState extends State<DamagePanel> {
         multiplierValue = e.getEffectMultiplierValue(skillData, skillLevel, _gs.stats.damageEffect[e.getKey()]);
         drList.add(calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, multiplierProp, stype, DamageType.fromEffectTags(e.entity.tag), character.elementType));
       } else if (type == 'break') {
-        multiplierValue = e.getEffectMultiplierValue(skillData, skillLevel, null);
+        multiplierValue = e.getEffectMultiplierValue(skillData, skillLevel, _gs.stats.damageEffect[e.getKey()]);
         drList.add(calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, multiplierProp, stype, DamageType.fromName(stype), character.elementType));
       } else if (type == 'heal') {
         multiplierValue = e.getEffectMultiplierValue(skillData, skillLevel, _gs.stats.healEffect[e.getKey()]);
@@ -197,7 +197,12 @@ class DamagePanelState extends State<DamagePanel> {
         String title = "${effect.tag.map((e) => e.tr()).join(" | ")}";
         List<DamageResult> drList = [];
         List<String> multiplierTitle = [];
-        String stype = effect.tag.contains('WeaknessBreak') ? DamageType.breakWeakness.name : DamageType.breakWeaknessDot.name;
+        String stype = DamageType.breakWeakness.name;
+        if (effect.tag.contains('dotatk')) {
+          stype = DamageType.breakWeaknessDot.name;
+        } else if (effect.tag.contains('additionalatk')) {
+          stype = DamageType.breakWeaknessAdditional.name;
+        }
         _appendDamageAndTitle([e], multiplierTitle, type, drList, stype, character, null, null);
         title += " (${multiplierTitle.join(' + ')})";
         DamageResult dr = drList[0];
@@ -206,7 +211,7 @@ class DamagePanelState extends State<DamagePanel> {
           tilePadding: EdgeInsets.only(left: 5, right: 5),
           childrenPadding: EdgeInsets.all(5),
           initiallyExpanded: true,
-          title: _buildDamageBar(e.skillData.eNname.tr(), character.elementType, null),
+          title: _buildDamageBar(e.skillData.getName(getLanguageCode(context)), character.elementType, null),
           children: [
             bar,
           ],

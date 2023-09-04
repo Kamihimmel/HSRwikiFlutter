@@ -215,5 +215,7 @@
     "Relic Skill Buff": "Relic Skill Buff",
     "Other Buff": "Other Buff",
     "Manual Buff": "Manual Buff",
-    "turn(s)": " turns(s)"
+    "turn(s)": " turns(s)",
+    "entanglement": "[Entanglement]",
+    "additionaldmgreceive": "Additional Dmg Receive"
 }
