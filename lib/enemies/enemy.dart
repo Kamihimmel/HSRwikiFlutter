@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../utils/helper.dart';
 import 'enemy_entity.dart';
 
@@ -92,5 +94,10 @@ class EnemyStats {
     jsonMap['maxhp'] = this.maxhp;
     jsonMap['toughness'] = this.toughness;
     return jsonMap;
+  }
+
+  @override
+  String toString() {
+    return jsonEncode(this.toJson());
   }
 }

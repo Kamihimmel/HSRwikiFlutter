@@ -67,10 +67,10 @@ class LightconeRelicState extends State<LightconeRelic> {
         child: Consumer<GlobalState>(builder: (context, model, child) {
           final Character _cData = CharacterManager.getCharacter(_gs.stats.id);
           final Lightcone _lData = LightconeManager.getLightcone(_gs.stats.lightconeId);
-          lightconeList = LightconeManager.getLightcones().values.where((lc) => _gs.spoilerMode || !lc.spoiler).where((lc) => lc.pathType == _cData.pathType).toList();
+          lightconeList = LightconeManager.getLightcones().values.where((lc) => _gs.appConfig.spoilerMode || !lc.spoiler).where((lc) => lc.pathType == _cData.pathType).toList();
           lightconeList.sort((e1, e2) => e2.entity.rarity.compareTo(e1.entity.rarity));
           lightconeList.sort((e1, e2) => e1.spoiler == e2.spoiler ? 0 : (e1.spoiler ? -1 : 1));
-          relicList = RelicManager.getRelics().values.where((r) => _gs.spoilerMode || !r.spoiler).toList();
+          relicList = RelicManager.getRelics().values.where((r) => _gs.appConfig.spoilerMode || !r.spoiler).toList();
           relicList.sort((e1, e2) => e1.spoiler == e2.spoiler ? 0 : (e1.spoiler ? -1 : 1));
           return Container(
             height: screenWidth > 905 ? screenHeight - 104 : null,

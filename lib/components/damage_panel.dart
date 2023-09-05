@@ -123,7 +123,7 @@ class DamagePanelState extends State<DamagePanel> {
                           AnimatedContainer(
                             curve: Curves.easeIn,
                             duration: Duration(milliseconds: 500),
-                            width: damageResult.crit / 50 * _gs.dmgScale / 10,
+                            width: damageResult.crit / 50 * _gs.appConfig.dmgScale / 10,
                             height: 20,
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.white, width: 0.5),
@@ -133,7 +133,7 @@ class DamagePanelState extends State<DamagePanel> {
                           AnimatedContainer(
                             curve: Curves.easeIn,
                             duration: Duration(milliseconds: 500),
-                            width: damageResult.expectation / 50 * _gs.dmgScale / 10,
+                            width: damageResult.expectation / 50 * _gs.appConfig.dmgScale / 10,
                             height: 20,
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.white, width: 0.5),
@@ -143,7 +143,7 @@ class DamagePanelState extends State<DamagePanel> {
                           AnimatedContainer(
                             curve: Curves.easeIn,
                             duration: Duration(milliseconds: 500),
-                            width: damageResult.nonCrit / 50 * _gs.dmgScale / 10,
+                            width: damageResult.nonCrit / 50 * _gs.appConfig.dmgScale / 10,
                             height: 20,
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.white, width: 0.5),
@@ -185,7 +185,7 @@ class DamagePanelState extends State<DamagePanel> {
       if (e.entity.multipliertarget == '') {
         multiplierTitle.add(multiplierValue.toString());
       } else {
-        multiplierTitle.add("${multiplierValue.toStringAsFixed(1)}%${multiplierProp.desc.tr()}");
+        multiplierTitle.add("${(multiplierValue * 100).toStringAsFixed(1)}%${multiplierProp.desc.tr()}");
       }
     });
   }

@@ -23,7 +23,7 @@ String getUrlEndpoint() {
   if (_gs.localEndpoint != '') {
     return _gs.localEndpoint;
   }
-  return _gs.cnMode ? cnUrlEndpoint : urlEndpoint;
+  return _gs.appConfig.cnMode ? cnUrlEndpoint : urlEndpoint;
 }
 
 Future<void> initData() async {

@@ -88,7 +88,7 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
     return DamageResult.zero(details: details);
   }
   Map<FightProp, double> attrValues = stats.calculateSumStats();
-  double base = baseProp == FightProp.none ? 100 : (attrValues[baseProp] ?? 0);
+  double base = baseProp == FightProp.none ? 1 : (attrValues[baseProp] ?? 0);
   if (base == 0) {
     details = "$attackType: base == 0";
     return DamageResult.zero(details: details);
@@ -176,8 +176,7 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
   // 韧性
   double toughness = (enemyStats.toughness + 2) / 4;
 
-  double multiplierValue = multiplier / 100;
-  double nonCrit = base * multiplierValue * damageBonus * vulnerable * damageReduce * resFinal * defenceFactor;
+  double nonCrit = base * multiplier * damageBonus * vulnerable * damageReduce * resFinal * defenceFactor;
   if (damageType.breakDmg) {
     nonCrit *= toughness;
   }
@@ -185,7 +184,7 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
   double exp = damageType.crit ? nonCrit * (1 + critChance * critDamage) : 0;
 
   String critStr = "* (1 + ${critChance.toStringAsFixed(3)} * ${critDamage.toStringAsFixed(3)}) ";
-  details = "$attackType: ${base.toStringAsFixed(3)} * ${multiplierValue.toStringAsFixed(3)} "
+  details = "$attackType: ${base.toStringAsFixed(3)} * ${multiplier.toStringAsFixed(3)} "
       "${damageType.crit ? critStr : ''}* ${damageBonus.toStringAsFixed(3)} "
       "* ${vulnerable.toStringAsFixed(3)} * ${damageReduce.toStringAsFixed(3)} * ${resFinal.toStringAsFixed(3)} * ${defenceFactor.toStringAsFixed(3)} "
       "${damageType.breakDmg ? '* $toughness ' : ''}= ${(damageType.crit ? exp : nonCrit).toStringAsFixed(3)}";

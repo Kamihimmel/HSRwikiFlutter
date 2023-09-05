@@ -35,7 +35,7 @@ class LightconeListState extends State<LightconeList> {
         child: Consumer<GlobalState>(
             builder: (context, model, child) {
               _filteredData = LightconeManager.getLightcones().values
-                  .where((c) => _gs.spoilerMode || !c.spoiler)
+                  .where((c) => _gs.appConfig.spoilerMode || !c.spoiler)
                   .where((c) => starFilter.isEmpty || starFilter.contains(c.entity.rarity))
                   .where((c) => pathFilter.isEmpty || pathFilter.contains(c.pathType.key))
                   .toList();

@@ -87,30 +87,27 @@ class _SidePanelState extends State<SidePanel> {
               ),
               SwitchListTile(
                   title: const Text('Trailblazer').tr(),
-                  secondary: (!_gs.male ? const Icon(Icons.female) : const Icon(Icons.male)),
-                  value: !_gs.male,
+                  secondary: (!_gs.appConfig.male ? const Icon(Icons.female) : const Icon(Icons.male)),
+                  value: !_gs.appConfig.male,
                   onChanged: (bool value) async {
-                    _gs.male = !value;
-                    final prefs = await SharedPreferences.getInstance();
-                    await prefs.setString('gender', _gs.male ? 'male' : 'female');
+                    _gs.appConfig.male = !value;
+                    _gs.changeConfig();
                   }),
-              if (_gs.test)
+              if (_gs.appConfig.test)
                 SwitchListTile(
                     title: const Text('Spoiler Mode').tr(),
-                    value: _gs.spoilerMode,
+                    value: _gs.appConfig.spoilerMode,
                     onChanged: (bool value) async {
-                      _gs.spoilerMode = value;
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.setString('spoilermode', value.toString());
+                      _gs.appConfig.spoilerMode = value;
+                      _gs.changeConfig();
                     }),
               if (!kIsWeb)
                 SwitchListTile(
-                    title: _gs.cnMode ? Text('Datasource:China').tr() : Text('Datasource:International').tr(),
-                    value: _gs.cnMode,
+                    title: _gs.appConfig.cnMode ? Text('Datasource:China').tr() : Text('Datasource:International').tr(),
+                    value: _gs.appConfig.cnMode,
                     onChanged: (bool value) async {
-                      _gs.cnMode = value;
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.setString('cnmode', value.toString());
+                      _gs.appConfig.cnMode = value;
+                      _gs.changeConfig();
                       initData();
                     }),
               if (_gs.debug)
@@ -140,8 +137,25 @@ class _SidePanelState extends State<SidePanel> {
                     leading: const Icon(Icons.adb),
                     title: const Text("Print Debug Info"),
                     onTap: () {
-                      logger.i("endpoint: ${getUrlEndpoint()}");
-                      logger.w("Missing localization keys: ${_gs.missingLocalizationKeys.toList()}");
+                      List<String> debugInfo = [];
+                      debugInfo.add("Endpoint: ${getUrlEndpoint()}");
+                      debugInfo.add("AppConfig: ${_gs.appConfig.toString()}");
+                      debugInfo.add("Missing localization keys: ${_gs.missingLocalizationKeys.toList()}");
+                      debugInfo.forEach((element) {
+                        logger.i(element);
+                      });
+                      final snackBar = SnackBar(
+                        content: Column(
+                          children: debugInfo.map((e) => Text(e)).toList(),
+                        ),
+                        action: SnackBarAction(
+                          label: "✕",
+                          onPressed: () {
+                            // Some code to undo the change.
+                          },
+                        ),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     },
                   ),
                   ListTile(

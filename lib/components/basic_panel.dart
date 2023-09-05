@@ -66,7 +66,7 @@ class BasicPanelState extends State<BasicPanel> {
         AnimatedContainer(
           curve: Curves.easeIn,
           duration: Duration(milliseconds: 500),
-          width: (value / (scale ?? (percent ? 0.4 : 12))) * _gs.statScale / 10,
+          width: (value / (scale ?? (percent ? 0.4 : 12))) * _gs.appConfig.statScale / 10,
           height: 20,
           decoration: BoxDecoration(
             border: Border.all(color: Colors.white, width: 0.5),

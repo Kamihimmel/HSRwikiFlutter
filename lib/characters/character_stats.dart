@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:easy_localization/easy_localization.dart';
 
 import '../calculator/basic.dart';
@@ -153,7 +155,8 @@ class CharacterStats {
     result[PropSource.lightconeAttr(lightconeId)] = lightconeHp;
 
     double baseHp = characterHp + lightconeHp;
-    _addAttrValue(result, c, lc, baseHp, [FightProp.hPAddedRatio, FightProp.hPDelta]);
+    Map<FightProp, double> props = {FightProp.hPAddedRatio: baseHp, FightProp.hPDelta: 1};
+    _addAttrValue(result, c, lc, props);
     return result;
   }
 
@@ -169,7 +172,8 @@ class CharacterStats {
     result[PropSource.lightconeAttr(lightconeId)] = lightconeAtk;
 
     double baseAtk = characterAtk + lightconeAtk;
-    _addAttrValue(result, c, lc, baseAtk, [FightProp.attackAddedRatio, FightProp.attackDelta]);
+    Map<FightProp, double> props = {FightProp.attackAddedRatio: baseAtk, FightProp.attackDelta: 1};
+    _addAttrValue(result, c, lc, props);
     return result;
   }
 
@@ -185,7 +189,8 @@ class CharacterStats {
     result[PropSource.lightconeAttr(lightconeId)] = lightconeDef;
 
     double baseDef = characterDef + lightconeDef;
-    _addAttrValue(result, c, lc, baseDef, [FightProp.defenceAddedRatio, FightProp.defence]);
+    Map<FightProp, double> props = {FightProp.defenceAddedRatio: baseDef, FightProp.defence: 1};
+    _addAttrValue(result, c, lc, props);
     return result;
   }
 
@@ -211,20 +216,13 @@ class CharacterStats {
     Map<PropSource, double> result = {};
     Character c = CharacterManager.getCharacter(id);
     Lightcone lc = LightconeManager.getLightcone(lightconeId);
-    double base = 1;
-    List<FightProp> props = [prop];
+    Map<FightProp, double> props = {prop: 1};
 
     if (prop == FightProp.aggro) {
       result[PropSource.characterBasic(id)] = c.entity.dtaunt.toDouble();
     } else if (prop == FightProp.speed) {
       result[PropSource.characterBasic(id)] = c.entity.dspeed.toDouble();
-      Map<PropSource, double> temp = {};
-      _addAttrValue(temp, c, lc, 1, [FightProp.speedDelta]);
-      _addAttrValue(result, c, lc, c.entity.dspeed.toDouble(), [FightProp.speedAddedRatio]);
-      temp.forEach((key, value) {
-        result[key] = (result[key] ?? 0) + value;
-      });
-      return result;
+      props = {FightProp.speedDelta: 1, FightProp.speedAddedRatio: c.entity.dspeed.toDouble()};
     } else if (prop == FightProp.criticalChance) {
       result[PropSource.characterBasic(id)] = 0.05;
     } else if (prop == FightProp.criticalDamage) {
@@ -232,23 +230,32 @@ class CharacterStats {
     } else if (prop == FightProp.sPRatio) {
       result[PropSource.characterBasic(id)] = 1;
     } else if (prop == FightProp.lostHP) {
-      base = getPropValue(FightProp.maxHP).values.fold(0, (pre, v) => pre + v);
+      double base = getPropValue(FightProp.maxHP).values.fold(0, (pre, v) => pre + v);
       base /= 100;
+      props = {prop: base};
     }
 
-    _addAttrValue(result, c, lc, base, props);
+    _addAttrValue(result, c, lc, props);
     return result;
   }
 
-  void _addAttrValue(Map<PropSource, double> result, Character character, Lightcone lightcone, double base, List<FightProp> props) {
-    _addLightconeSkillValue(result, lightcone, base, props[0]);
-    _addRelicAttrValue(result, base, props);
-    _addRelicSetEffectValue(result, base, props[0]);
-    _addCharacterSkillValue(result, character, base, props[0]);
-    _addCharacterTraceValue(result, character, base, props[0]);
-    _addCharacterEidolonValue(result, character, base, props[0]);
-    _addOtherSkillValue(result, character, base, props[0]);
-    _addManualEffectValue(result, character, base, props[0]);
+  void _addAttrValue(Map<PropSource, double> result, Character character, Lightcone lightcone, Map<FightProp, double> props) {
+    for (var e in props.entries) {
+      FightProp prop = e.key;
+      double base = e.value;
+      Map<PropSource, double> temp = {};
+      _addLightconeSkillValue(temp, lightcone, base, prop);
+      _addRelicAttrValue(temp, base, prop);
+      _addRelicSetEffectValue(temp, base, prop);
+      _addCharacterSkillValue(temp, character, base, prop);
+      _addCharacterTraceValue(temp, character, base, prop);
+      _addCharacterEidolonValue(temp, character, base, prop);
+      _addOtherSkillValue(temp, character, base, prop);
+      _addManualEffectValue(temp, character, base, prop);
+      temp.forEach((key, value) {
+        result[key] = (result[key] ?? 0) + value;
+      });
+    }
   }
 
   void _addLightconeSkillValue(Map<PropSource, double> result, Lightcone lightcone, double base, FightProp prop) {
@@ -263,31 +270,27 @@ class CharacterStats {
           return;
         }
         double multiplierValue = effect.getEffectMultiplierValue(t, lightconeRank, effectConfig);
-        result[PropSource.lightconeEffect(lightconeId, effect)] = base * multiplierValue / (prop.isPercent() ? 100 : 1);
+        result[PropSource.lightconeEffect(lightconeId, effect)] = base * multiplierValue;
       });
     });
   }
 
-  void _addRelicAttrValue(Map<PropSource, double> result, double base, List<FightProp> props) {
+  void _addRelicAttrValue(Map<PropSource, double> result, double base, FightProp prop) {
     for (var e in relics.entries) {
       double mainValue = 0;
-      for (var prop in props) {
-        double v = e.value.getMainAttrValueByProp(prop);
-        if (prop.isPercent()) {
-          mainValue += base * v;
-        } else {
-          mainValue += v;
-        }
+      double mainV = e.value.getMainAttrValueByProp(prop);
+      if (prop.isPercent()) {
+        mainValue += base * mainV;
+      } else {
+        mainValue += mainV;
       }
       result[PropSource.relicAttr(e.key, mainAttr: true)] = mainValue;
       double subValue = 0;
-      for (var prop in props) {
-        double v = e.value.getSubAttrValueByProp(prop);
-        if (prop.isPercent()) {
-          subValue += base * v;
-        } else {
-          subValue += v;
-        }
+      double subV = e.value.getSubAttrValueByProp(prop);
+      if (prop.isPercent()) {
+        subValue += base * subV;
+      } else {
+        subValue += subV;
       }
       result[PropSource.relicAttr(e.key, mainAttr: false)] = subValue;
     }
@@ -317,7 +320,7 @@ class CharacterStats {
               return;
             }
             double multiplierValue = effect.getEffectMultiplierValue(null, null, effectConfig);
-            result[PropSource.relicSetEffect(rs, effect, name: effect.minorId)] = base * multiplierValue / (prop.isPercent() ? 100 : 1);
+            result[PropSource.relicSetEffect(rs, effect, name: effect.minorId)] = base * multiplierValue;
           });
         }
       }
@@ -341,7 +344,7 @@ class CharacterStats {
           skillLevel = skillLevels[character.getSkillById(s.referencelevel).id];
         }
         double multiplierValue = effect.getEffectMultiplierValue(s, skillLevel, effectConfig);
-        result[PropSource.characterSkill(effectKey, effect, self: true)] = base * multiplierValue / (prop.isPercent() ? 100 : 1);
+        result[PropSource.characterSkill(effectKey, effect, self: true)] = base * multiplierValue;
       });
     });
   }
@@ -363,7 +366,7 @@ class CharacterStats {
           skillLevel = skillLevels[character.getSkillById(t.referencelevel).id];
         }
         double multiplierValue = effect.getEffectMultiplierValue(t, skillLevel, effectConfig);
-        result[PropSource.characterTrace(effectKey, effect, name: t.tiny ? 'tiny' : '', self: true)] = base * multiplierValue / (prop.isPercent() ? 100 : 1);
+        result[PropSource.characterTrace(effectKey, effect, name: t.tiny ? 'tiny' : '', self: true)] = base * multiplierValue;
       });
     });
   }
@@ -385,7 +388,7 @@ class CharacterStats {
           skillLevel = skillLevels[character.getSkillById(e.referencelevel).id];
         }
         double multiplierValue = effect.getEffectMultiplierValue(e, skillLevel, effectConfig);
-        result[PropSource.characterEidolon(effectKey, effect, self: true)] = base * multiplierValue / (prop.isPercent() ? 100 : 1);
+        result[PropSource.characterEidolon(effectKey, effect, self: true)] = base * multiplierValue;
       });
     });
   }
@@ -408,7 +411,7 @@ class CharacterStats {
       effects.forEach((element) {
         multiplierValue += element.getEffectMultiplierValue(effect.skillData, skillLevel, otherEffect[element.getKey()]);
       });
-      result[PropSource.characterSkill(effectKey, effect, self: false)] = base * multiplierValue / (prop.isPercent() ? 100 : 1);
+      result[PropSource.characterSkill(effectKey, effect, self: false)] = base * multiplierValue;
     });
   }
 
@@ -420,7 +423,7 @@ class CharacterStats {
         return;
       }
       double multiplierValue = effect.getEffectMultiplierValue(null, null, effectConfig);
-      result[PropSource.manualEffect(effectKey, effect)] = base * multiplierValue / (prop.isPercent() ? 100 : 1);
+      result[PropSource.manualEffect(effectKey, effect)] = base * multiplierValue;
     });
   }
 
@@ -566,5 +569,25 @@ class CharacterStats {
     }
     jsonMap['import_stats'] = importStatsMap;
     return jsonMap;
+  }
+
+  @override
+  String toString() {
+    return jsonEncode(this.toJson());
+  }
+
+  Map<String, dynamic> toSimpleJson() {
+    Map<String, dynamic> jsonMap = {};
+    jsonMap['id'] = this.id;
+    jsonMap['level'] = this.level;
+    jsonMap['rank'] = this.eidolons.keys.last;
+    jsonMap['lightcone_id'] = this.lightconeId;
+    jsonMap['lightcone_level'] = this.lightconeLevel;
+    jsonMap['lightcone_rank'] = this.lightconeRank;
+    return jsonMap;
+  }
+
+  String toSimpleString() {
+    return jsonEncode(this.toSimpleJson());
   }
 }

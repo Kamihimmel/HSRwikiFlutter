@@ -93,11 +93,11 @@ class Character {
   }
 
   String getImageLargeUrl(GlobalState _gs) {
-    return _gs.male && this.entity.imagelargeurlalter != '' ? this.entity.imagelargeurlalter : this.entity.imagelargeurl;
+    return _gs.appConfig.male && this.entity.imagelargeurlalter != '' ? this.entity.imagelargeurlalter : this.entity.imagelargeurl;
   }
 
   String getImageUrl(GlobalState _gs) {
-    return _gs.male && this.entity.imageurlalter != '' ? this.entity.imageurlalter : this.entity.imageurl;
+    return _gs.appConfig.male && this.entity.imageurlalter != '' ? this.entity.imageurlalter : this.entity.imageurl;
   }
 
   String getEffectKey(String skillId, String iid) {

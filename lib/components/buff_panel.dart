@@ -59,12 +59,11 @@ class BuffPanelState extends State<BuffPanel> {
     if (!isDmg) {
       propText = prop.desc.tr();
       effects.forEach((element) {
-        bool percent = prop == FightProp.lostHP ? true : prop.isPercent();
         double multiplierValue = element.getEffectMultiplierValue(effect.skillData, skillLevel, effectConfig[element.getKey()]);
-        if (percent) {
-          multiplierValue /= 100;
+        if (prop == FightProp.lostHP) {
+          multiplierValue *= 100;
         }
-        propValue.add(prop.getPropText(multiplierValue, percent: percent));
+        propValue.add(prop.getPropText(multiplierValue));
       });
     }
     String text = [effect.getSkillName(getLanguageCode(context)), propText, propValue.join(' + ')].join(' ');
@@ -246,12 +245,17 @@ class BuffPanelState extends State<BuffPanel> {
             }
             return Record.of(skillData, Record.of(setId, setNum));
           }).expand((record) => record.key.effect.map((e) => Effect.fromEntity(e, record.value.key, record.value.value, type: Effect.relicType))).where((e) => e.validSelfBuffEffect(null)).toList();
-          Map<String, List<Effect>> groupOther = {};
+          Map<FightProp, List<Effect>> unsortedGroupOther = {};
           EffectManager.getEffects().values.where((e) => _cData.entity.id != e.majorId && e.validAllyBuffEffect(null)).forEach((e) {
-            String fp = FightProp.fromEffectKey(e.entity.addtarget).desc;
-            List<Effect> list = groupOther[fp] ?? [];
+            FightProp fp = FightProp.fromEffectKey(e.entity.addtarget);
+            List<Effect> list = unsortedGroupOther[fp] ?? [];
             list.add(e);
-            groupOther[fp] = list;
+            unsortedGroupOther[fp] = list;
+          });
+          List<FightProp> sortedProps = FightProp.sortByBuffOrder(unsortedGroupOther.keys.toList());
+          Map<FightProp, List<Effect>> sortedGroupOther = {};
+          sortedProps.forEach((prop) {
+            sortedGroupOther[prop] = unsortedGroupOther[prop]!;
           });
           return Padding(
             padding: const EdgeInsets.all(10.0),
@@ -330,6 +334,7 @@ class BuffPanelState extends State<BuffPanel> {
                               ),
                             ],
                             if (characterTraceBuff.isNotEmpty) ...[
+                              SizedBox(height: 10),
                               Row(
                                 children: [
                                   SizedBox(
@@ -358,6 +363,7 @@ class BuffPanelState extends State<BuffPanel> {
                               ),
                             ],
                             if (characterEidolonBuff.isNotEmpty) ...[
+                              SizedBox(height: 10),
                               Row(
                                 children: [
                                   SizedBox(
@@ -438,7 +444,7 @@ class BuffPanelState extends State<BuffPanel> {
                         "Other Buff".tr(),
                         style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                       ),
-                      children: groupOther.entries.map((entry) {
+                      children: sortedGroupOther.entries.map((entry) {
                         return Column(
                           children: [
                             SizedBox(
@@ -450,7 +456,7 @@ class BuffPanelState extends State<BuffPanel> {
                                   width: 10,
                                 ),
                                 Text(
-                                  entry.key.tr(),
+                                  "${entry.key.desc.tr()}${entry.key.isPercent() ? '(%)' : ''}",
                                   style: TextStyle(
                                     fontSize: 15,
                                   ),
@@ -461,12 +467,13 @@ class BuffPanelState extends State<BuffPanel> {
                               height: 5,
                             ),
                             Wrap(
-                                spacing: 10,
-                                runSpacing: 10,
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: entry.value.map((effects) {
-                                  return _getEffectChip(_gs.stats.otherEffect, [effects], defaultOn: false);
-                                }).toList()),
+                              spacing: 10,
+                              runSpacing: 10,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: entry.value.map((effects) {
+                                return _getEffectChip(_gs.stats.otherEffect, [effects], defaultOn: false);
+                              }).toList()
+                            ),
                           ],
                         );
                       }).toList(),

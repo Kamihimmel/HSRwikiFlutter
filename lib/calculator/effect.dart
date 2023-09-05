@@ -1,6 +1,5 @@
 import 'package:math_expressions/math_expressions.dart';
 
-import '../components/global_state.dart';
 import '../relics/relic_manager.dart';
 import 'basic.dart';
 import 'effect_entity.dart';
@@ -161,20 +160,34 @@ class Effect {
         }
       }
     }
+
+    if (isBuffOrDebuff()) {
+      if (this.entity.multipliertarget != '') {
+        multiplier *= effectConfig?.value ?? 0;
+        // 如果存在multipliertarget则表示buff加成值是基于另一个属性，一律先/100
+        multiplier /= 100;
+        if (FightProp.fromEffectMultiplier(this.entity.multipliertarget).isPercent()) {
+          multiplier /= 100; // 如果基于的属性本身是百分比
+        }
+      } else {
+        if ((effectConfig?.value ?? 0) > 0) {
+          multiplier = effectConfig!.value;
+        }
+        // 如果没有multipliertarget，则通过加成的目标属性判断是否为百分比
+        if (FightProp.fromEffectKey(this.entity.addtarget).isPercent()) {
+          multiplier /= 100;
+        }
+      }
+    } else if (isDamageHealShield()) {
+      // 如果是伤害治疗类的，通过是否存在multipliertarget(倍率属性)判断
+      if (FightProp.fromEffectMultiplier(this.entity.multipliertarget) != FightProp.none) {
+        multiplier /= 100;
+      }
+    }
+
     int stack = this.entity.maxStack;
     if ((effectConfig?.stack ?? 0) > 0) {
       stack = effectConfig!.stack;
-    }
-    FightProp multiplierProp = FightProp.fromEffectKey(this.entity.multipliertarget);
-    if (multiplierProp != FightProp.unknown && isBuffOrDebuff()) {
-      multiplier *= effectConfig?.value ?? 0;
-      if (multiplierProp.isPercent()) {
-        multiplier /= 100;
-      }
-    } else {
-      if ((effectConfig?.value ?? 0) > 0) {
-        multiplier = effectConfig!.value;
-      }
     }
     multiplier *= stack;
     return multiplier;

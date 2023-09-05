@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../characters/character_stats.dart';
 import '../enemies/enemy.dart';
-import '../utils/helper.dart';
+import '../utils/app_config.dart';
 import '../utils/logging.dart';
 
 class GlobalState extends ChangeNotifier {
@@ -18,6 +19,8 @@ class GlobalState extends ChangeNotifier {
 
   Map<String, dynamic> toJson() => {
     'stats': _stats.toJson(),
+    'enemy_stats': _enemyStats.toJson(),
+    'app_config': _appConfig.toJson(),
   };
 
   /// loading state
@@ -34,19 +37,12 @@ class GlobalState extends ChangeNotifier {
   EnemyStats _enemyStats = EnemyStats.empty();
 
   /// config
-  bool _male = false;
-  bool _spoilerMode = false;
-  bool _cnMode = false;
-  bool _test = false;
+  AppConfig _appConfig = AppConfig.empty();
 
   /// debug
   bool debug = false;
   String localEndpoint = '';
   Set<String> missingLocalizationKeys = Set();
-
-  /// footer
-  int _dmgScale = 10; // footer option: damage scale
-  int _statScale = 10; // footer option: stat scale
 
   bool loaded() {
     return _characterLoaded && _lightconeLoaded && _relicLoaded;
@@ -97,39 +93,17 @@ class GlobalState extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool get male => _male;
-  set male(bool male) {
-    _male = male;
-    logger.d("change male: $male");
+  AppConfig get appConfig => _appConfig;
+  set appConfig(AppConfig appConfig) {
+    _appConfig = appConfig;
     notifyListeners();
   }
-  bool get spoilerMode => _spoilerMode;
-  set spoilerMode(bool spoilerMode) {
-    _spoilerMode = spoilerMode;
-    logger.d("change spoiler mode: $spoilerMode");
-    notifyListeners();
-  }
-  bool get cnMode => _cnMode;
-  set cnMode(bool cnMode) {
-    _cnMode = cnMode;
-    logger.d("change cn mode: $cnMode");
-    notifyListeners();
-  }
-  bool get test => _test;
-  set test(bool test) {
-    _test = test;
-    logger.d("change test: $test");
-    notifyListeners();
-  }
-
-  int get dmgScale => _dmgScale;
-  set dmgScale(int dmgScale) {
-    _dmgScale = dmgScale;
-    notifyListeners();
-  }
-  int get statScale => _statScale;
-  set statScale(int statScale) {
-    _statScale = statScale;
+  void changeConfig() {
+    SharedPreferences.getInstance().then((prefs) {
+      String configJson = _appConfig.toString();
+      prefs.setString('appconfig', configJson);
+      logger.d("Save config: ${configJson}");
+    });
     notifyListeners();
   }
 }

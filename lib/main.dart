@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
 
@@ -26,6 +27,7 @@ import 'dart:io' show Platform;
 
 import 'toolboxPage.dart';
 import 'uidimportPage.dart';
+import 'utils/app_config.dart';
 import 'utils/helper.dart';
 import 'utils/logging.dart';
 
@@ -207,11 +209,17 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             textColor: Colors.white,
             fontSize: 16.0);
 
-      if (_counter > 4 && !_gs.test) {
+      if (_counter > 4) {
         _counter = 0;
-        _gs.test = true;
+        _gs.appConfig.test = !_gs.appConfig.test;
+        String text = 'Test mode Deactivated!';
+        if (_gs.appConfig.test) {
+          text = 'Oops!Test mode activated!';
+          _gs.appConfig.spoilerMode = true;
+        }
+        _gs.changeConfig();
         final snackBar = SnackBar(
-          content: const Text('Oops!Test mode activated!'),
+          content: Text(text),
           action: SnackBarAction(
             label: "✕",
             onPressed: () {
@@ -219,27 +227,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             },
           ),
         );
-
-        // Find the ScaffoldMessenger in the widget tree
-        // and use it to show a SnackBar.
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
-
-      if (_counter > 4 && _gs.test) {
-        _counter = 0;
-        _gs.test = false;
-        final snackBar = SnackBar(
-          content: const Text('Test mode Deactivated!'),
-          action: SnackBarAction(
-            label: "✕",
-            onPressed: () {
-              // Some code to undo the change.
-            },
-          ),
-        );
-
-        // Find the ScaffoldMessenger in the widget tree
-        // and use it to show a SnackBar.
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     });
@@ -259,29 +246,41 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
   Future<void> init() async {
-    await fetchstaus();
+    await fetchStatus();
     await initData();
   }
 
-  Future<void> fetchstaus() async {
+  Future<void> fetchStatus() async {
     final prefs = await SharedPreferences.getInstance();
-    String genderN = prefs.getString('gender') ?? "999";
-    String spoilerN = prefs.getString('spoilermode') ?? "false";
-    String cnmodeN = '';
-    if (!kIsWeb) {
-      String deviceCountry = Platform.localeName.substring(Platform.localeName.length - 2);
-      String modeString = "false";
-      if (deviceCountry == "CN") {
-        modeString = "true";
+    String? appConfigJson = prefs.getString('appconfig');
+    if (appConfigJson != null) {
+      logger.d("Load config: ${appConfigJson}");
+      _gs.appConfig = AppConfig.fromJson(jsonDecode(appConfigJson));
+    } else {
+      // compatibility for old version
+      String? genderN = prefs.getString('gender');
+      if (genderN != null) {
+        _gs.appConfig.male = 'male' == genderN;
+        prefs.remove('gender');
       }
-      cnmodeN = prefs.getString('cnmode') ?? modeString;
+      String? spoilerN = prefs.getString('spoilermode');
+      if (spoilerN != null) {
+        _gs.appConfig.spoilerMode = 'true' == spoilerN;
+        prefs.remove('spoilermode');
+      }
+      String? cnmodeN = prefs.getString('cnmode');
+      if (cnmodeN != null) {
+        _gs.appConfig.cnMode = 'true' == cnmodeN;
+        prefs.remove('cnmode');
+      } else {
+        if (!kIsWeb) {
+          String deviceCountry = Platform.localeName.substring(Platform.localeName.length - 2);
+          _gs.appConfig.cnMode = deviceCountry == 'CN';
+        }
+      }
     }
-    _gs.male = 'male' == genderN;
-    _gs.spoilerMode = 'true' == spoilerN;
-    _gs.cnMode = 'true' == cnmodeN;
-    setState(() {
-      // Here you can write your code for open new view
-    });
+    _gs.changeConfig();
+    setState(() {});
   }
 
   late final TabController _tabController;

@@ -51,9 +51,10 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
     _timer = Timer.periodic(Duration(seconds: 5), (timer) async {
       if (!_loading) {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('saved_stats', jsonEncode(_gs.stats.toJson()));
-        await prefs.setString('saved_enemy_stats', jsonEncode(_gs.enemyStats.toJson()));
-        logger.d('saved: ${_gs.stats.id}');
+        await prefs.setString('saved_stats', _gs.stats.toString());
+        await prefs.setString('saved_enemy_stats', _gs.enemyStats.toString());
+        String simpleJson = _gs.stats.toSimpleString();
+        logger.d('Save character stats: ${simpleJson}');
       }
     });
 
@@ -351,10 +352,11 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
                                                             divisions: 9,
                                                             activeColor: Colors.grey,
                                                             inactiveColor: Colors.grey[200]!,
-                                                            label: _gs.statScale.toString(),
-                                                            value: _gs.statScale.toDouble(),
+                                                            label: _gs.appConfig.statScale.toString(),
+                                                            value: _gs.appConfig.statScale.toDouble(),
                                                             onChanged: (value) {
-                                                              _gs.statScale = value.toInt();
+                                                              _gs.appConfig.statScale = value.toInt();
+                                                              _gs.changeConfig();
                                                             },
                                                           ),
                                                         ],
@@ -380,10 +382,11 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
                                                             divisions: 9,
                                                             activeColor: Colors.grey,
                                                             inactiveColor: Colors.grey[200]!,
-                                                            label: _gs.dmgScale.toString(),
-                                                            value: _gs.dmgScale.toDouble(),
+                                                            label: _gs.appConfig.dmgScale.toString(),
+                                                            value: _gs.appConfig.dmgScale.toDouble(),
                                                             onChanged: (value) {
-                                                              _gs.dmgScale = value.toInt();
+                                                              _gs.appConfig.dmgScale = value.toInt();
+                                                              _gs.changeConfig();
                                                             },
                                                           ),
                                                         ],

@@ -32,7 +32,7 @@ class RelicListState extends State<RelicList> {
         child: Consumer<GlobalState>(
             builder: (context, model, child) {
               _filteredData = RelicManager.getRelics().values
-                  .where((c) => _gs.spoilerMode || !c.spoiler)
+                  .where((c) => _gs.appConfig.spoilerMode || !c.spoiler)
                   .where((c) => setFilter.isEmpty || setFilter.contains(c.entity.xSet))
                   .toList();
               _filteredData.sort((e1, e2) => e1.spoiler == e2.spoiler ? 0 : (e1.spoiler ? -1 : 1));

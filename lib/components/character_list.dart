@@ -37,7 +37,7 @@ class CharacterListState extends State<CharacterList> {
         child: Consumer<GlobalState>(
             builder: (context, model, child) {
               _filteredData = CharacterManager.getCharacters().values
-                  .where((c) => _gs.spoilerMode || !c.spoiler)
+                  .where((c) => _gs.appConfig.spoilerMode || !c.spoiler)
                   .where((c) => starFilter.isEmpty || starFilter.contains(c.entity.rarity))
                   .where((c) => elementFilter.isEmpty || elementFilter.contains(c.elementType.key))
                   .where((c) => pathFilter.isEmpty || pathFilter.contains(c.pathType.key))
