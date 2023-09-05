@@ -223,5 +223,11 @@
     "additionaldmgreceive": "受到附加伤害",
     "EnemyMaxHP": "敌方最大生命值",
     "EnemyToughness": "敌方韧性",
-    "WeaknessBreak Panel": "弱点击破面板"
+    "WeaknessBreak Panel": "弱点击破面板",
+    "Base Break DMG": "击破伤害基数",
+    "alldotdmg": "全部持续伤害",
+    "shockeddotdmg": "触电持续伤害",
+    "burndotdmg": "灼烧持续伤害",
+    "windsheardotdmg": "风化持续伤害",
+    "bleeddotdmg": "裂伤持续伤害"
 }

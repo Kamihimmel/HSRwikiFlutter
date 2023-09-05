@@ -89,7 +89,7 @@ class Effect {
   }
 
   bool validSelfBuffEffect(FightProp? prop) {
-    if (this.type != manualType && this.entity.multiplier <= 0 || this.entity.iid == '') {
+    if (this.entity.iid == '') {
       return false;
     }
     FightProp fp = FightProp.fromEffectKey(this.entity.addtarget);
@@ -108,7 +108,7 @@ class Effect {
   }
 
   bool validAllyBuffEffect(FightProp? prop) {
-    if (this.entity.multiplier <= 0 || this.entity.iid == '') {
+    if (this.entity.iid == '') {
       return false;
     }
     FightProp fp = FightProp.fromEffectKey(this.entity.addtarget);
@@ -130,10 +130,7 @@ class Effect {
   }
 
   bool validDamageHealEffect(String type) {
-    if (this.entity.multiplier <= 0 || this.entity.iid == '') {
-      return false;
-    }
-    return this.entity.type == type;
+    return this.entity.type == type && this.entity.iid != '';
   }
 
   bool isBuffOrDebuff() {
@@ -151,7 +148,7 @@ class Effect {
       Expression expr = formulaParser.parse(multiplierValue);
       multiplier = expr.evaluate(EvaluationType.REAL, cm);
     } else {
-      if (skillData != null && skillLevel != null && multiplier <= skillData.levelmultiplier.length && skillData.maxlevel >= 0) {
+      if (skillData != null && skillLevel != null && multiplier == multiplier.roundToDouble() && multiplier <= skillData.levelmultiplier.length && skillData.levelmultiplier.length > 0 && skillData.maxlevel >= 0) {
         Map<String, dynamic> levelMultiplier = skillData.levelmultiplier[multiplier.toInt() - 1];
         if (levelMultiplier.containsKey('default')) {
           multiplier = double.tryParse(levelMultiplier['default'].toString()) ?? 0;
@@ -164,19 +161,18 @@ class Effect {
     if (isBuffOrDebuff()) {
       if (this.entity.multipliertarget != '') {
         multiplier *= effectConfig?.value ?? 0;
-        // 如果存在multipliertarget则表示buff加成值是基于另一个属性，一律先/100
-        multiplier /= 100;
+        // 如果基于的属性本身是百分比
         if (FightProp.fromEffectMultiplier(this.entity.multipliertarget).isPercent()) {
-          multiplier /= 100; // 如果基于的属性本身是百分比
+          multiplier /= 100;
         }
       } else {
         if ((effectConfig?.value ?? 0) > 0) {
           multiplier = effectConfig!.value;
         }
-        // 如果没有multipliertarget，则通过加成的目标属性判断是否为百分比
-        if (FightProp.fromEffectKey(this.entity.addtarget).isPercent()) {
-          multiplier /= 100;
-        }
+      }
+      // 如果加成的目标属性为百分比
+      if (FightProp.fromEffectKey(this.entity.addtarget).isPercent()) {
+        multiplier /= 100;
       }
     } else if (isDamageHealShield()) {
       // 如果是伤害治疗类的，通过是否存在multipliertarget(倍率属性)判断

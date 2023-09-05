@@ -107,7 +107,7 @@ enum FightProp {
   imaginaryResistanceDelta(desc: 'Imaginary RES Boost', icon: 'starrailres/icon/property/IconImaginaryResistanceDelta.png'),
 
   controlResist(desc: 'controlresist', buffOrder: 9, effectKey: ['controlresist']),
-  damageReduce(desc: 'dmgreduction', buffOrder: 9, effectKey: ['dmgreduction']),
+  damageReduceRatio(desc: 'dmgreduction', buffOrder: 9, effectKey: ['dmgreduction']),
 
   /// debuff start
   allDamageReceiveRatio(desc: 'dmgreceive', buffOrder: 4, debuff: true, effectKey: ['dmgreceive']),
@@ -126,13 +126,14 @@ enum FightProp {
   /// debuff end
 
   // 人为构造的属性
-  breakDamageBase(desc: 'Break Damage Base', icon: 'starrailres/icon/property/IconBreakUp.png'),
-  lostHP(desc: 'Lost HP', effectKey: ['losthp']),
-  allDotDamage(desc: 'All DoT DMG', effectKey: ['alldotdmg']),
-  shockedDotDamage(desc: 'Shocked DoT DMG', effectKey: ['shockeddotdmg']),
-  burnDotDamage(desc: 'Burn DoT DMG', effectKey: ['burndotdmg']),
-  windshearDotDamage(desc: 'Wind Shear DoT DMG', effectKey: ['windsheardotdmg']),
-  bleedDotDamage(desc: 'Bleed DoT DMG', effectKey: ['bleeddotdmg']),
+  breakDamageBase(desc: 'Base Break DMG', icon: 'starrailres/icon/property/IconBreakUp.png', effectKey: ['breakdmgbase']),
+  lostHP(desc: 'losthp', effectKey: ['losthp']),
+  lostHPRatio(desc: 'losthp', effectKey: ['losthpratio']),
+  allDotDamage(desc: 'alldotdmg', effectKey: ['alldotdmg']),
+  shockedDotDamage(desc: 'shockeddotdmg', effectKey: ['shockeddotdmg']),
+  burnDotDamage(desc: 'burndotdmg', effectKey: ['burndotdmg']),
+  windshearDotDamage(desc: 'windsheardotdmg', effectKey: ['windsheardotdmg']),
+  bleedDotDamage(desc: 'bleeddotdmg', effectKey: ['bleeddotdmg']),
 
   none(desc: 'No multiplier'), // effect.multipliertarget == ''
   unknown(desc: '');
@@ -157,8 +158,8 @@ enum FightProp {
         || this.name == 'controlResist';
   }
 
-  String getPropText(double value, {bool? percent}) {
-    return getDisplayText(value, percent ?? isPercent());
+  String getPropText(double value) {
+    return getDisplayText(value, this.isPercent());
   }
 
   static List<FightProp> sortByBuffOrder(List<FightProp> props) {
@@ -181,8 +182,6 @@ enum FightProp {
       return FightProp.attack;
     } else if (multiplierTarget == 'def') {
       return FightProp.defence;
-    } else if (multiplierTarget == 'breakdmgbase') {
-      return FightProp.breakDamageBase;
     } else if (multiplierTarget == '') {
       return FightProp.none;
     }
@@ -303,7 +302,7 @@ class PropSource {
       case otherSkill:
         return PropSourceDisplay(effect.getSkillName('lang'.tr()), Colors.cyan);
       case manualBuff:
-        return PropSourceDisplay('manual'.tr(), Colors.brown);
+        return PropSourceDisplay('Manual Buff'.tr(), Colors.brown);
     }
     return PropSourceDisplay(id, Colors.grey);
   }

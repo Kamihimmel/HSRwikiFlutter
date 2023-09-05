@@ -198,7 +198,7 @@ DamageResult calculateHeal(CharacterStats stats, double multiplier, FightProp? b
     return DamageResult.zero(details: details);
   }
   Map<FightProp, double> attrValues = stats.calculateSumStats();
-  double base = baseProp == FightProp.none ? 100 : (attrValues[baseProp] ?? 0);
+  double base = baseProp == FightProp.none ? 1 : (attrValues[baseProp] ?? 0);
   if (base == 0) {
     details = "heal: base == 0";
     return DamageResult.zero(details: details);
@@ -208,7 +208,7 @@ DamageResult calculateHeal(CharacterStats stats, double multiplier, FightProp? b
   double healRatio = attrValues[FightProp.healRatio] ?? 0;
   double healBonus = 1 + healRatio;
 
-  double multiplierValue = multiplier / 100;
+  double multiplierValue = multiplier;
   double nonCrit = base * multiplierValue * healBonus;
 
   details = "heal: ${base.toStringAsFixed(3)} * ${multiplierValue.toStringAsFixed(3)} "
@@ -223,7 +223,7 @@ DamageResult calculateShield(CharacterStats stats, double multiplier, FightProp?
     return DamageResult.zero(details: details);
   }
   Map<FightProp, double> attrValues = stats.calculateSumStats();
-  double base = baseProp == FightProp.none ? 100 : (attrValues[baseProp] ?? 0);
+  double base = baseProp == FightProp.none ? 1 : (attrValues[baseProp] ?? 0);
   if (base == 0) {
     details = "shield: base == 0";
     return DamageResult.zero(details: details);
@@ -233,7 +233,7 @@ DamageResult calculateShield(CharacterStats stats, double multiplier, FightProp?
   double shieldRatio = attrValues[FightProp.shieldAddRatio] ?? 0;
   double shieldBonus = 1 + shieldRatio;
 
-  double multiplierValue = multiplier / 100;
+  double multiplierValue = multiplier;
   double nonCrit = base * multiplierValue * shieldBonus;
 
   details = "shield: ${base.toStringAsFixed(3)} * ${multiplierValue.toStringAsFixed(3)} "

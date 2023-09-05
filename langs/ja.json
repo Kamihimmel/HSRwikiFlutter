@@ -223,5 +223,11 @@
     "additionaldmgreceive": "付加攻撃被ダメージ",
     "EnemyMaxHP": "敵最大HP",
     "EnemyToughness": "敵靭性",
-    "WeaknessBreak Panel": "弱点撃破パネル"
+    "WeaknessBreak Panel": "弱点撃破パネル",
+    "Base Break DMG": "弱点撃破基礎ダメージ",
+    "alldotdmg": "全持続ダメージ",
+    "shockeddotdmg": "感電持続ダメージ",
+    "burndotdmg": "燃焼持続ダメージ",
+    "windsheardotdmg": "風化持続ダメージ",
+    "bleeddotdmg": "裂傷持続ダメージ"
 }

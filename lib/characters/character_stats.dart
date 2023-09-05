@@ -129,8 +129,12 @@ class CharacterStats {
     map[FightProp.speedReduceRatio] = getPropValue(FightProp.speedReduceRatio);
 
     map[FightProp.lostHP] = getPropValue(FightProp.lostHP);
+    map[FightProp.damageReduceRatio] = getPropValue(FightProp.damageReduceRatio);
     map[FightProp.allDotDamage] = getPropValue(FightProp.allDotDamage);
     map[FightProp.shockedDotDamage] = getPropValue(FightProp.shockedDotDamage);
+    map[FightProp.burnDotDamage] = getPropValue(FightProp.burnDotDamage);
+    map[FightProp.windshearDotDamage] = getPropValue(FightProp.windshearDotDamage);
+    map[FightProp.bleedDotDamage] = getPropValue(FightProp.bleedDotDamage);
     return map;
   }
 
@@ -231,8 +235,7 @@ class CharacterStats {
       result[PropSource.characterBasic(id)] = 1;
     } else if (prop == FightProp.lostHP) {
       double base = getPropValue(FightProp.maxHP).values.fold(0, (pre, v) => pre + v);
-      base /= 100;
-      props = {prop: base};
+      props = {FightProp.lostHPRatio: base};
     }
 
     _addAttrValue(result, c, lc, props);
@@ -580,7 +583,7 @@ class CharacterStats {
     Map<String, dynamic> jsonMap = {};
     jsonMap['id'] = this.id;
     jsonMap['level'] = this.level;
-    jsonMap['rank'] = this.eidolons.keys.last;
+    jsonMap['rank'] = this.eidolons.isEmpty ? '0' : this.eidolons.keys.last;
     jsonMap['lightcone_id'] = this.lightconeId;
     jsonMap['lightcone_level'] = this.lightconeLevel;
     jsonMap['lightcone_rank'] = this.lightconeRank;

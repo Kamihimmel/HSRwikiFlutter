@@ -19,7 +19,6 @@ class EffectEntity {
 	late String group = '';
 	late List<String> tag = [];
 	late bool hide = false;
-	late bool disabled = false;
 
 	EffectEntity();
 

@@ -279,6 +279,7 @@ class DamagePanelState extends State<DamagePanel> {
           return Container(
             height: screenWidth > 905 ? screenHeight - 104 : null,
             child: SingleChildScrollView(
+              primary: true,
               child: Column(
                 children: [
                   if (damagePanels.isNotEmpty)

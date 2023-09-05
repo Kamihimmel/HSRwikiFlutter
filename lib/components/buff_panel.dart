@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 
 import '../calculator/basic.dart';
 import '../calculator/effect.dart';
-import '../calculator/effect_entity.dart';
 import '../calculator/effect_manager.dart';
 import '../calculator/skill_data.dart';
 import '../characters/character.dart';
@@ -32,12 +31,12 @@ class BuffPanelState extends State<BuffPanel> {
   Widget _getEffectChip(Map<String, EffectConfig> effectConfig, List<Effect> effects, {defaultOn = true}) {
     final Character _cData = CharacterManager.getCharacter(_gs.stats.id);
     final Effect effect = effects.first;
-    EffectEntity ee = effect.entity;
     String effectKey = effect.getKey();
-    FightProp prop = FightProp.fromEffectKey(ee.addtarget);
+    FightProp prop = FightProp.fromEffectKey(effect.entity.addtarget);
     int skillLevel = effect.skillData.maxlevel;
     if (effect.type == Effect.characterType) {
       if (effect.majorId == _gs.stats.id) {
+        // 当前角色自己
         if (_gs.stats.skillLevels.containsKey(effect.minorId)) {
           skillLevel = _gs.stats.skillLevels[effect.minorId]!;
         }
@@ -45,7 +44,8 @@ class BuffPanelState extends State<BuffPanel> {
           // 如果是引用其他技能的等级
           skillLevel = _gs.stats.skillLevels[_cData.getSkillById(effect.skillData.referencelevel).id] ?? 1;
         }
-      } else if (effect.majorId != _gs.stats.id) {
+      } else {
+        // 他人buff
         if (effect.skillData.maxlevel > 10) {
           skillLevel = 10;
         } else if (effect.skillData.maxlevel > 1) {
@@ -58,17 +58,13 @@ class BuffPanelState extends State<BuffPanel> {
     bool isDmg = effect.isDamageHealShield();
     if (!isDmg) {
       propText = prop.desc.tr();
-      effects.forEach((element) {
-        double multiplierValue = element.getEffectMultiplierValue(effect.skillData, skillLevel, effectConfig[element.getKey()]);
-        if (prop == FightProp.lostHP) {
-          multiplierValue *= 100;
-        }
+      effects.forEach((e) {
+        double multiplierValue = e.getEffectMultiplierValue(effect.skillData, skillLevel, effectConfig[e.getKey()]);
         propValue.add(prop.getPropText(multiplierValue));
       });
     }
     String text = [effect.getSkillName(getLanguageCode(context)), propText, propValue.join(' + ')].join(' ');
     EffectConfig ec = effectConfig[effectKey] ?? (defaultOn ? EffectConfig.defaultOn() : EffectConfig.defaultOff());
-
     FilterChip chip = FilterChip(
       backgroundColor: _cData.elementType.color.withOpacity(0.3),
       selectedColor: _cData.elementType.color.withOpacity(0.5),
@@ -85,8 +81,7 @@ class BuffPanelState extends State<BuffPanel> {
       },
     );
 
-    int stack = ec.stack == 0 ? ee.maxStack : ec.stack;
-    FightProp multiplierProp = FightProp.fromEffectKey(ee.multipliertarget);
+    FightProp multiplierProp = FightProp.fromEffectKey(effect.entity.multipliertarget);
     String labelText = '';
     if (multiplierProp != FightProp.unknown && effect.type == Effect.characterType) {
       List<String> label = [];
@@ -135,31 +130,32 @@ class BuffPanelState extends State<BuffPanel> {
           ),
         ];
       } else {
+        int stack = ec.stack == 0 ? effect.entity.maxStack : ec.stack;
         if (effect.hasStackConfig()) {
           widgets = [
             DropdownMenu(
               label: Text("${'Stacks'.tr()}:$stack"),
-              initialSelection: ee.maxStack,
+              initialSelection: effect.entity.maxStack,
               dropdownMenuEntries: [
-                for (int i = 1; i < ee.maxStack + 1; i++)
+                for (int i = 1; i < effect.entity.maxStack + 1; i++)
                   DropdownMenuEntry(
                     value: i,
                     label: i.toString(),
-                  )
+                  ),
               ],
               onSelected: (value) {
                 ec.stack = value!;
                 effectConfig[effectKey] = ec;
                 _gs.changeStats();
               },
-            )
+            ),
           ];
         } else if (effect.hasChoiceConfig()) {
           widgets = [
             Text("${'Stacks'.tr()}:$stack"),
             Wrap(
               children: [
-                for (var i = 1; i <= ee.maxStack; i++)
+                for (var i = 1; i <= effect.entity.maxStack; i++)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                     child: ChoiceChip(
@@ -253,9 +249,9 @@ class BuffPanelState extends State<BuffPanel> {
             unsortedGroupOther[fp] = list;
           });
           List<FightProp> sortedProps = FightProp.sortByBuffOrder(unsortedGroupOther.keys.toList());
-          Map<FightProp, List<Effect>> sortedGroupOther = {};
+          Map<FightProp, List<List<Effect>>> sortedGroupOther = {};
           sortedProps.forEach((prop) {
-            sortedGroupOther[prop] = unsortedGroupOther[prop]!;
+            sortedGroupOther[prop] = Effect.groupEffect(unsortedGroupOther[prop]!).values.toList();
           });
           return Padding(
             padding: const EdgeInsets.all(10.0),
@@ -471,7 +467,7 @@ class BuffPanelState extends State<BuffPanel> {
                               runSpacing: 10,
                               crossAxisAlignment: WrapCrossAlignment.center,
                               children: entry.value.map((effects) {
-                                return _getEffectChip(_gs.stats.otherEffect, [effects], defaultOn: false);
+                                return _getEffectChip(_gs.stats.otherEffect, effects, defaultOn: false);
                               }).toList()
                             ),
                           ],

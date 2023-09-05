@@ -222,5 +222,11 @@
     "additionaldmgreceive": "Additional Dmg Receive",
     "EnemyMaxHP": "EnemyMaxHP",
     "EnemyToughness": "EnemyToughness",
-    "WeaknessBreak Panel": "WeaknessBreak Panel"
+    "WeaknessBreak Panel": "WeaknessBreak Panel",
+    "Base Break DMG": "Base Break DMG",
+    "alldotdmg": "All DoT DMG",
+    "shockeddotdmg": "Shocked DoT DMG",
+    "burndotdmg": "Burn DoT DMG",
+    "windsheardotdmg": "Wind Shear DoT DMG",
+    "bleeddotdmg": "Bleed DoT DMG"
 }
