@@ -16,10 +16,13 @@ import '../lightcones/lightcone_manager.dart';
 import '../relics/relic_manager.dart';
 
 final GlobalState _gs = GlobalState();
-final String urlEndpoint = "http://192.168.0.159/";
+final String urlEndpoint = "https://hsrwikidata.yunlu18.net/";
 final String cnUrlEndpoint = "https://hsrwikidata.kchlu.com/";
 
 String getUrlEndpoint() {
+  if (_gs.localEndpoint != '') {
+    return _gs.localEndpoint;
+  }
   return _gs.cnMode ? cnUrlEndpoint : urlEndpoint;
 }
 
@@ -45,8 +48,7 @@ getImageComponent(String path,
     if (path.startsWith('http://') || path.startsWith("https://")) {
       url = path;
     } else {
-      String endpoint = _gs.cnMode ? cnUrlEndpoint : urlEndpoint;
-      url = endpoint + path;
+      url = getUrlEndpoint() + path;
     }
     if (placeholder != null) {
       return FadeInImage.memoryNetwork(placeholder: placeholder, image: url, fit: fit, alignment: alignment, width: width, height: height ?? width);
@@ -69,14 +71,9 @@ String getLanguageCode(BuildContext context) {
   return EasyLocalization.of(context)?.currentLocale?.languageCode ?? 'en';
 }
 
-Future<String> loadLibJsonString(String path, {cnMode = false}) async {
-  if (cnMode) {
-    final response = await http.get(Uri.parse(cnUrlEndpoint + path));
-    return response.body;
-  } else {
-    final response = await http.get(Uri.parse(urlEndpoint + path));
-    return response.body;
-  }
+Future<String> loadLibJsonString(String path) async {
+  final response = await http.get(Uri.parse(getUrlEndpoint() + path));
+  return response.body;
 }
 
 String getDisplayText(double value, bool percent) {

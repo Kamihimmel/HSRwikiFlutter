@@ -1,26 +1,12 @@
 import 'package:hsrwikiproject/generated/json/base/json_convert_content.dart';
 import 'package:hsrwikiproject/characters/character_entity.dart';
 import '../../calculator/skill_data.dart';
+import '../../utils/base_entity.dart';
 
 
 CharacterEntity $CharacterEntityFromJson(Map<String, dynamic> json) {
 	final CharacterEntity characterEntity = CharacterEntity();
-	final String? id = jsonConvert.convert<String>(json['id']);
-	if (id != null) {
-		characterEntity.id = id;
-	}
-	final String? eNname = jsonConvert.convert<String>(json['ENname']);
-	if (eNname != null) {
-		characterEntity.eNname = eNname;
-	}
-	final String? cNname = jsonConvert.convert<String>(json['CNname']);
-	if (cNname != null) {
-		characterEntity.cNname = cNname;
-	}
-	final String? jAname = jsonConvert.convert<String>(json['JAname']);
-	if (jAname != null) {
-		characterEntity.jAname = jAname;
-	}
+	$BaseEntityFromJson(json, characterEntity);
 	final String? imageurl = jsonConvert.convert<String>(json['imageurl']);
 	if (imageurl != null) {
 		characterEntity.imageurl = imageurl;
@@ -86,10 +72,7 @@ CharacterEntity $CharacterEntityFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> $CharacterEntityToJson(CharacterEntity entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
-	data['id'] = entity.id;
-	data['ENname'] = entity.eNname;
-	data['CNname'] = entity.cNname;
-	data['JAname'] = entity.jAname;
+	$BaseEntityToJson(entity, data);
 	data['imageurl'] = entity.imageurl;
 	data['imageurlalter'] = entity.imageurlalter;
 	data['imagelargeurl'] = entity.imagelargeurl;
@@ -140,7 +123,7 @@ Map<String, dynamic> $CharacterLeveldataToJson(CharacterLeveldata entity) {
 
 CharacterSkilldata $CharacterSkilldataFromJson(Map<String, dynamic> json) {
 	final CharacterSkilldata characterSkilldata = CharacterSkilldata();
-	$SkilldataFromJson(json, characterSkilldata);
+	$SkillDataFromJson(json, characterSkilldata);
 	final int? weaknessbreak = jsonConvert.convert<int>(json['weaknessbreak']);
 	if (weaknessbreak != null) {
 		characterSkilldata.weaknessbreak = weaknessbreak;
@@ -167,7 +150,7 @@ Map<String, dynamic> $CharacterSkilldataToJson(CharacterSkilldata entity) {
 
 CharacterTracedata $CharacterTracedataFromJson(Map<String, dynamic> json) {
 	final CharacterTracedata characterTracedata = CharacterTracedata();
-	$SkilldataFromJson(json, characterTracedata);
+	$SkillDataFromJson(json, characterTracedata);
 	final bool? tiny = jsonConvert.convert<bool>(json['tiny']);
 	if (tiny != null) {
 		characterTracedata.tiny = tiny;
@@ -189,7 +172,7 @@ Map<String, dynamic> $CharacterTracedataToJson(CharacterTracedata entity) {
 
 CharacterEidolon $CharacterEidolonFromJson(Map<String, dynamic> json) {
 	final CharacterEidolon characterEidolon = CharacterEidolon();
-	$SkilldataFromJson(json, characterEidolon);
+	$SkillDataFromJson(json, characterEidolon);
 	final int? eidolonnum = jsonConvert.convert<int>(json['eidolonnum']);
 	if (eidolonnum != null) {
 		characterEidolon.eidolonnum = eidolonnum;

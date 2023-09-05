@@ -1,12 +1,10 @@
 import 'dart:convert';
 
-import '../components/global_state.dart';
 import '../utils/helper.dart';
 import '../utils/logging.dart';
 import 'relic.dart';
 
 class RelicManager {
-  static final GlobalState _gs = GlobalState();
   static final Map<String, Relic> _relics = {};
 
   RelicManager._();
@@ -19,7 +17,7 @@ class RelicManager {
   static Future<void> _initFromLib() async {
     try {
       _relics.clear();
-      String jsonStr = await loadLibJsonString('lib/reliclist.json', cnMode: _gs.cnMode);
+      String jsonStr = await loadLibJsonString('lib/reliclist.json');
       final Map<String, dynamic> allRelics = json.decode(jsonStr);
       // logger.d(json.encode(allRelics));
       for (var r in allRelics['data']!) {
@@ -27,7 +25,7 @@ class RelicManager {
         Relic relic = Relic.fromJson(r, spoiler: r['spoiler'], order: r['order'] ?? 999);
         _relics[r['id']] = relic;
       }
-      logger.d("loaded relics: ${_relics.length}, cnMode: ${_gs.cnMode}");
+      logger.d("loaded relics: ${_relics.length}");
     } catch (e) {
       logger.e("load relics exception: ${e.toString()}");
     }
@@ -57,7 +55,7 @@ class RelicManager {
     if (_relics.containsKey(r.entity.id) && _relics[r.entity.id]!.loaded) {
       return _relics[r.entity.id]!;
     }
-    String jsonStr = await loadLibJsonString(r.entity.infourl, cnMode: _gs.cnMode);
+    String jsonStr = await loadLibJsonString(r.entity.infourl);
     final Map<String, dynamic> lightconeMap = json.decode(jsonStr);
     // logger.d(json.encode(lightconeMap));
     Relic relic = Relic.fromJson(lightconeMap, spoiler: r.spoiler, order: r.order);

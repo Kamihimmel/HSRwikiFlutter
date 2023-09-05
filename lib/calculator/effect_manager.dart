@@ -6,7 +6,6 @@ import '../characters/character.dart';
 import '../characters/character_entity.dart';
 import '../characters/character_manager.dart';
 import '../characters/character_stats.dart';
-import '../components/global_state.dart';
 import '../enemies/enemy.dart';
 import '../utils/helper.dart';
 import '../utils/logging.dart';
@@ -15,7 +14,6 @@ import 'effect.dart';
 import 'effect_entity.dart';
 
 class EffectManager {
-  static final GlobalState _gs = GlobalState();
   static final Map<String, Effect> _effects = {};
 
   EffectManager._();
@@ -28,9 +26,9 @@ class EffectManager {
   static Future<void> _initFromLib() async {
     try {
       _effects.clear();
-      String jsonStr = await loadLibJsonString('lib/skilllist.json', cnMode: _gs.cnMode);
+      String jsonStr = await loadLibJsonString('lib/skilllist.json');
       final Map<String, dynamic> allSkills = json.decode(jsonStr);
-      logger.d(json.encode(allSkills));
+      // logger.d(json.encode(allSkills));
       for (var s in allSkills['data']!) {
         CharacterSkilldata skillData = CharacterSkilldata.fromJson(s);
         for (var i = 0; i < skillData.effect.length; i++) {
@@ -40,7 +38,7 @@ class EffectManager {
           _effects[effect.getKey()] = effect;
         }
       }
-      logger.d("loaded effects: ${_effects.length}, cnMode: ${_gs.cnMode}");
+      logger.d("loaded effects: ${_effects.length}");
     } catch (e) {
       logger.e("load effects exception: ${e.toString()}");
     }

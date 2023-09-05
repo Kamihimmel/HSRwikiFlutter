@@ -2,25 +2,12 @@ import 'package:hsrwikiproject/generated/json/base/json_convert_content.dart';
 import 'package:hsrwikiproject/lightcones/lightcone_entity.dart';
 import 'package:hsrwikiproject/calculator/effect_entity.dart';
 
+import '../../utils/base_entity.dart';
+
 
 LightconeEntity $LightconeEntityFromJson(Map<String, dynamic> json) {
 	final LightconeEntity lightconeEntity = LightconeEntity();
-	final String? id = jsonConvert.convert<String>(json['id']);
-	if (id != null) {
-		lightconeEntity.id = id;
-	}
-	final String? eNname = jsonConvert.convert<String>(json['ENname']);
-	if (eNname != null) {
-		lightconeEntity.eNname = eNname;
-	}
-	final String? cNname = jsonConvert.convert<String>(json['CNname']);
-	if (cNname != null) {
-		lightconeEntity.cNname = cNname;
-	}
-	final String? jAname = jsonConvert.convert<String>(json['JAname']);
-	if (jAname != null) {
-		lightconeEntity.jAname = jAname;
-	}
+	$BaseEntityFromJson(json, lightconeEntity);
 	final String? imageurl = jsonConvert.convert<String>(json['imageurl']);
 	if (imageurl != null) {
 		lightconeEntity.imageurl = imageurl;
@@ -54,10 +41,7 @@ LightconeEntity $LightconeEntityFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> $LightconeEntityToJson(LightconeEntity entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
-	data['id'] = entity.id;
-	data['ENname'] = entity.eNname;
-	data['CNname'] = entity.cNname;
-	data['JAname'] = entity.jAname;
+	$BaseEntityToJson(entity, data);
 	data['imageurl'] = entity.imageurl;
 	data['wtype'] = entity.wtype;
 	data['rarity'] = entity.rarity;

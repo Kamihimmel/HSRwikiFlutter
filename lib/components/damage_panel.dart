@@ -173,7 +173,7 @@ class DamagePanelState extends State<DamagePanel> {
       } else if (type == 'break') {
         multiplierValue = e.getEffectMultiplierValue(skillData, skillLevel, _gs.stats.damageEffect[e.getKey()]);
         drList.add(calculateDamage(_gs.stats, _gs.enemyStats, multiplierValue, multiplierProp, stype, DamageType.fromName(stype), character.elementType));
-      } else if (type == 'heal') {
+      } else if (type == 'heal' || type == 'revive') {
         multiplierValue = e.getEffectMultiplierValue(skillData, skillLevel, _gs.stats.healEffect[e.getKey()]);
         drList.add(calculateHeal(_gs.stats, multiplierValue, multiplierProp));
       } else if (type == 'shield') {
@@ -274,7 +274,7 @@ class DamagePanelState extends State<DamagePanel> {
           final Character _cData = CharacterManager.getCharacter(_gs.stats.id);
           List<Widget> damagePanels = _getDamageHealPanels(_cData, 'dmg');
           List<Widget> breakPanels = _getDamageHealPanels(_cData, 'break');
-          List<Widget> healPanels = _getDamageHealPanels(_cData, 'heal');
+          List<Widget> healPanels = _getDamageHealPanels(_cData, 'heal') + _getDamageHealPanels(_cData, 'revive');
           List<Widget> shieldPanels = _getDamageHealPanels(_cData, 'shield');
           return Container(
             height: screenWidth > 905 ? screenHeight - 104 : null,

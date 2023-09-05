@@ -7,7 +7,6 @@ import 'effect_entity.dart';
 import 'skill_data.dart';
 
 class Effect {
-  static final GlobalState _gs = GlobalState();
   static final Parser formulaParser = Parser();
   static final ContextModel cm = ContextModel();
   static final characterType = 1;
@@ -143,7 +142,7 @@ class Effect {
   }
 
   bool isDamageHealShield() {
-    return this.entity.type == 'dmg' || this.entity.type == 'break' || this.entity.type == 'heal' || this.entity.type == 'shield';
+    return this.entity.type == 'dmg' || this.entity.type == 'break' || this.entity.type == 'heal' || this.entity.type == 'revive' || this.entity.type == 'shield';
   }
 
   double getEffectMultiplierValue(SkillData? skillData, int? skillLevel, EffectConfig? effectConfig) {

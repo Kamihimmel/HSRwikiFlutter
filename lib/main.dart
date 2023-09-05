@@ -63,6 +63,9 @@ void _setDebug() {
     logger.d('debug mode: ${_gs.debug}');
     return true;
   }());
+  if (_gs.debug && !kIsWeb && Platform.environment.containsKey('LOCAL_ENDPOINT')) {
+    _gs.localEndpoint = Platform.environment['LOCAL_ENDPOINT']!;
+  }
 }
 
 void _customEazyLocalization() {

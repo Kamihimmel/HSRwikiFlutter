@@ -107,6 +107,7 @@ enum FightProp {
   imaginaryResistanceDelta(desc: 'Imaginary RES Boost', icon: 'starrailres/icon/property/IconImaginaryResistanceDelta.png'),
 
   controlResist(desc: 'controlresist', effectKey: ['controlresist']),
+  damageReduce(desc: 'dmgreduction', effectKey: ['dmgreduction']),
 
   /// debuff start
   allDamageReceiveRatio(desc: 'dmgreceive', debuff: true, effectKey: ['dmgreceive']),

@@ -246,6 +246,13 @@ class BuffPanelState extends State<BuffPanel> {
             }
             return Record.of(skillData, Record.of(setId, setNum));
           }).expand((record) => record.key.effect.map((e) => Effect.fromEntity(e, record.value.key, record.value.value, type: Effect.relicType))).where((e) => e.validSelfBuffEffect(null)).toList();
+          Map<String, List<Effect>> groupOther = {};
+          EffectManager.getEffects().values.where((e) => _cData.entity.id != e.majorId && e.validAllyBuffEffect(null)).forEach((e) {
+            String fp = FightProp.fromEffectKey(e.entity.addtarget).desc;
+            List<Effect> list = groupOther[fp] ?? [];
+            list.add(e);
+            groupOther[fp] = list;
+          });
           return Padding(
             padding: const EdgeInsets.all(10.0),
             child: Container(
@@ -431,15 +438,38 @@ class BuffPanelState extends State<BuffPanel> {
                         "Other Buff".tr(),
                         style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                       ),
-                      children: [
-                        Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: Effect.groupEffect(EffectManager.getEffects().values.where((e) => _cData.entity.id != e.majorId && e.validAllyBuffEffect(null)).toList()).values.map((effects) {
-                              return _getEffectChip(_gs.stats.otherEffect, effects, defaultOn: false);
-                            }).toList())
-                      ],
+                      children: groupOther.entries.map((entry) {
+                        return Column(
+                          children: [
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  entry.key.tr(),
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Wrap(
+                                spacing: 10,
+                                runSpacing: 10,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: entry.value.map((effects) {
+                                  return _getEffectChip(_gs.stats.otherEffect, [effects], defaultOn: false);
+                                }).toList()),
+                          ],
+                        );
+                      }).toList(),
                     ),
                     ExpansionTile(
                       tilePadding: EdgeInsets.only(left: 10, right: 5),

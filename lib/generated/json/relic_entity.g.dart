@@ -2,25 +2,11 @@ import 'package:hsrwikiproject/generated/json/base/json_convert_content.dart';
 import 'package:hsrwikiproject/relics/relic_entity.dart';
 
 import '../../calculator/effect_entity.dart';
+import '../../utils/base_entity.dart';
 
 RelicEntity $RelicEntityFromJson(Map<String, dynamic> json) {
 	final RelicEntity relicEntity = RelicEntity();
-	final String? id = jsonConvert.convert<String>(json['id']);
-	if (id != null) {
-		relicEntity.id = id;
-	}
-	final String? eNname = jsonConvert.convert<String>(json['ENname']);
-	if (eNname != null) {
-		relicEntity.eNname = eNname;
-	}
-	final String? cNname = jsonConvert.convert<String>(json['CNname']);
-	if (cNname != null) {
-		relicEntity.cNname = cNname;
-	}
-	final String? jAname = jsonConvert.convert<String>(json['JAname']);
-	if (jAname != null) {
-		relicEntity.jAname = jAname;
-	}
+	$BaseEntityFromJson(json, relicEntity);
 	final String? imageurl = jsonConvert.convert<String>(json['imageurl']);
 	if (imageurl != null) {
 		relicEntity.imageurl = imageurl;
@@ -66,10 +52,7 @@ RelicEntity $RelicEntityFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> $RelicEntityToJson(RelicEntity entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
-	data['id'] = entity.id;
-	data['ENname'] = entity.eNname;
-	data['CNname'] = entity.cNname;
-	data['JAname'] = entity.jAname;
+	$BaseEntityToJson(entity, data);
 	data['imageurl'] = entity.imageurl;
 	data['set'] = entity.xSet;
 	data['head'] = entity.head;

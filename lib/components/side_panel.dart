@@ -114,42 +114,49 @@ class _SidePanelState extends State<SidePanel> {
                       initData();
                     }),
               if (_gs.debug)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
-                  child: Divider(
-                    thickness: 1,
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                ...[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
+                    child: Divider(
+                      thickness: 1,
+                      color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                    ),
                   ),
-                ),
-              if (_gs.debug)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(22, 0, 22, 5),
-                  child: Text(
-                    "Debug",
-                    style: Theme.of(context).textTheme.titleSmall,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(22, 0, 22, 5),
+                    child: Text(
+                      "Debug",
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
                   ),
-                ),
-              if (_gs.debug)
-                ListTile(
-                  leading: const Icon(Icons.adb),
-                  title: const Text("Print Debug Info"),
-                  onTap: () {
-                    logger.w("Missing localization keys: ${_gs.missingLocalizationKeys.toList()}");
-                  },
-                ),
-              if (_gs.debug)
-                ListTile(
-                  leading: const Icon(Icons.cleaning_services),
-                  title: const Text("Clean Store"),
-                  onTap: () async {
-                    List<String> keys = ['saved_stats', 'saved_enemy_stats', 'playerinfo'];
-                    final prefs = await SharedPreferences.getInstance();
-                    for (var k in keys) {
-                      await prefs.remove(k);
-                    }
-                    logger.w("Removed keys: ${keys}");
-                  },
-                ),
+                  ListTile(
+                    leading: const Icon(Icons.refresh),
+                    title: const Text("Reload Data"),
+                    onTap: () {
+                      initData();
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.adb),
+                    title: const Text("Print Debug Info"),
+                    onTap: () {
+                      logger.i("endpoint: ${getUrlEndpoint()}");
+                      logger.w("Missing localization keys: ${_gs.missingLocalizationKeys.toList()}");
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.cleaning_services),
+                    title: const Text("Clean Store"),
+                    onTap: () async {
+                      List<String> keys = ['saved_stats', 'saved_enemy_stats', 'playerinfo', 'uid', 'nickname', 'avatarimage'];
+                      final prefs = await SharedPreferences.getInstance();
+                      for (var k in keys) {
+                        await prefs.remove(k);
+                      }
+                      logger.w("Removed keys: ${keys}");
+                    },
+                  ),
+                ],
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
                 child: Divider(

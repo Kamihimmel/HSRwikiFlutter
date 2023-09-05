@@ -1,16 +1,10 @@
 import '../generated/json/base/json_convert_content.dart';
 import '../generated/json/base/json_field.dart';
+import '../utils/base_entity.dart';
 import 'effect_entity.dart';
 
 @JsonSerializable()
-class SkillData {
-  late String id = '';
-  @JSONField(name: "ENname")
-  late String eNname = '';
-  @JSONField(name: "CNname")
-  late String cNname = '';
-  @JSONField(name: "JAname")
-  late String jAname = '';
+class SkillData extends BaseEntity {
   late String imageurl = '';
   @JSONField(name: "DescriptionEN")
   late String descriptionEN = '';
@@ -27,20 +21,6 @@ class SkillData {
   late List<String> tags = [];
   late List<EffectEntity> effect = [];
 
-  String getName(String lang) {
-    switch(lang) {
-      case 'en':
-        return eNname;
-      case 'zh':
-        return cNname;
-      case 'cn':
-        return cNname;
-      case 'ja':
-        return jAname;
-    }
-    return '';
-  }
-
   String getDescription(String lang) {
     switch(lang) {
       case 'en':
@@ -56,23 +36,8 @@ class SkillData {
   }
 }
 
-void $SkilldataFromJson(Map<String, dynamic> json, SkillData skillData) {
-  final String? id = jsonConvert.convert<String>(json['id']);
-  if (id != null) {
-    skillData.id = id;
-  }
-  final String? eNname = jsonConvert.convert<String>(json['ENname']);
-  if (eNname != null) {
-    skillData.eNname = eNname;
-  }
-  final String? cNname = jsonConvert.convert<String>(json['CNname']);
-  if (cNname != null) {
-    skillData.cNname = cNname;
-  }
-  final String? jAname = jsonConvert.convert<String>(json['JAname']);
-  if (jAname != null) {
-    skillData.jAname = jAname;
-  }
+void $SkillDataFromJson(Map<String, dynamic> json, SkillData skillData) {
+  $BaseEntityFromJson(json, skillData);
   final String? imageurl = jsonConvert.convert<String>(json['imageurl']);
   if (imageurl != null) {
     skillData.imageurl = imageurl;
@@ -124,10 +89,7 @@ void $SkilldataFromJson(Map<String, dynamic> json, SkillData skillData) {
 }
 
 void $SkillDataToJson(SkillData skillData, Map<String, dynamic> data) {
-  data['id'] = skillData.id;
-  data['ENname'] = skillData.eNname;
-  data['CNname'] = skillData.cNname;
-  data['JAname'] = skillData.jAname;
+  $BaseEntityToJson(skillData, data);
   data['imageurl'] = skillData.imageurl;
   data['DescriptionEN'] = skillData.descriptionEN;
   data['DescriptionCN'] = skillData.descriptionCN;

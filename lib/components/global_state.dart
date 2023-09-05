@@ -41,6 +41,7 @@ class GlobalState extends ChangeNotifier {
 
   /// debug
   bool debug = false;
+  String localEndpoint = '';
   Set<String> missingLocalizationKeys = Set();
 
   /// footer

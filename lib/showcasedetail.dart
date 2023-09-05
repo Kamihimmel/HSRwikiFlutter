@@ -193,73 +193,75 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
                                                                   ),
                                                                 ),
                                                                 if (cs.lightconeId != '')
-                                                                  Positioned(
-                                                                    right: 0,
-                                                                    bottom: 0,
-                                                                    child: Column(
-                                                                      children: [
-                                                                        Padding(
-                                                                          padding: const EdgeInsets.all(10.0),
-                                                                          child: Text(
-                                                                            "S${cs.lightconeRank}",
-                                                                            style: const TextStyle(
-                                                                              //fontWeight: FontWeight.bold,
-                                                                              color: Colors.white,
-                                                                              fontSize: 25,
-                                                                              fontWeight: FontWeight.bold,
-                                                                              height: 1,
+                                                                  ...[
+                                                                    Positioned(
+                                                                      right: 0,
+                                                                      bottom: 0,
+                                                                      child: Column(
+                                                                        children: [
+                                                                          Padding(
+                                                                            padding: const EdgeInsets.all(10.0),
+                                                                            child: Text(
+                                                                              "S${cs.lightconeRank}",
+                                                                              style: const TextStyle(
+                                                                                //fontWeight: FontWeight.bold,
+                                                                                color: Colors.white,
+                                                                                fontSize: 25,
+                                                                                fontWeight: FontWeight.bold,
+                                                                                height: 1,
+                                                                              ),
                                                                             ),
                                                                           ),
-                                                                        ),
-                                                                      ],
+                                                                        ],
+                                                                      ),
                                                                     ),
-                                                                  ),
-                                                                if (cs.lightconeId != '')
-                                                                  Positioned(
-                                                                    left: 0,
-                                                                    top: 0,
-                                                                    child: Column(
-                                                                      children: [
-                                                                        Padding(
-                                                                          padding: const EdgeInsets.all(10.0),
-                                                                          child: Text(
-                                                                            "LV${cs.lightconeLevel}",
-                                                                            style: const TextStyle(
-                                                                              //fontWeight: FontWeight.bold,
-                                                                              color: Colors.white,
-                                                                              fontSize: 18,
-                                                                              fontWeight: FontWeight.bold,
-                                                                              height: 1,
+                                                                    Positioned(
+                                                                      left: 0,
+                                                                      top: 0,
+                                                                      child: Column(
+                                                                        children: [
+                                                                          Padding(
+                                                                            padding: const EdgeInsets.all(10.0),
+                                                                            child: Text(
+                                                                              "LV${cs.lightconeLevel}",
+                                                                              style: const TextStyle(
+                                                                                //fontWeight: FontWeight.bold,
+                                                                                color: Colors.white,
+                                                                                fontSize: 18,
+                                                                                fontWeight: FontWeight.bold,
+                                                                                height: 1,
+                                                                              ),
                                                                             ),
                                                                           ),
-                                                                        ),
-                                                                      ],
+                                                                        ],
+                                                                      ),
                                                                     ),
-                                                                  ),
+                                                                  ],
                                                               ],
                                                             ),
                                                             if (relicSets[0] != '')
-                                                              SizedBox(
-                                                                width: 5,
-                                                              ),
-                                                            if (relicSets[0] != '')
-                                                              Container(
-                                                                width: 83,
-                                                                height: 83,
-                                                                decoration: BoxDecoration(
-                                                                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                                                                    border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                                    gradient: LinearGradient(
-                                                                      begin: Alignment.topLeft,
-                                                                      end: Alignment.bottomRight,
-                                                                      colors: [Colors.white.withOpacity(0.01), Colors.white.withOpacity(0.1)],
-                                                                    )),
-                                                                child: Padding(
-                                                                  padding: const EdgeInsets.all(8.0),
-                                                                  child: getImageComponent(RelicManager.getRelic(relicSets[0]).entity.imageurl,
-                                                                      placeholder: kTransparentImage),
+                                                              ...[
+                                                                SizedBox(
+                                                                  width: 5,
                                                                 ),
-                                                              ),
+                                                                Container(
+                                                                  width: 83,
+                                                                  height: 83,
+                                                                  decoration: BoxDecoration(
+                                                                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                                                      border: Border.all(color: Colors.white.withOpacity(0.13)),
+                                                                      gradient: LinearGradient(
+                                                                        begin: Alignment.topLeft,
+                                                                        end: Alignment.bottomRight,
+                                                                        colors: [Colors.white.withOpacity(0.01), Colors.white.withOpacity(0.1)],
+                                                                      )),
+                                                                  child: Padding(
+                                                                    padding: const EdgeInsets.all(8.0),
+                                                                    child: getImageComponent(RelicManager.getRelic(relicSets[0]).entity.imageurl,
+                                                                        placeholder: kTransparentImage),
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             SizedBox(
                                                               width: 5,
                                                             ),
@@ -284,27 +286,28 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
                                                                     ),
                                                                   ),
                                                                 if (relicSets[1] != '')
-                                                                  SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                if (relicSets[1] != '')
-                                                                  Container(
-                                                                    width: 83,
-                                                                    height: 83,
-                                                                    decoration: BoxDecoration(
-                                                                        borderRadius: const BorderRadius.all(Radius.circular(10)),
-                                                                        border: Border.all(color: Colors.white.withOpacity(0.13)),
-                                                                        gradient: LinearGradient(
-                                                                          begin: Alignment.topLeft,
-                                                                          end: Alignment.bottomRight,
-                                                                          colors: [Colors.white.withOpacity(0.01), Colors.white.withOpacity(0.1)],
-                                                                        )),
-                                                                    child: Padding(
-                                                                      padding: const EdgeInsets.all(8.0),
-                                                                      child: getImageComponent(RelicManager.getRelic(relicSets[1]).entity.imageurl,
-                                                                          placeholder: kTransparentImage),
+                                                                  ...[
+                                                                    SizedBox(
+                                                                      height: 5,
                                                                     ),
-                                                                  ),
+                                                                    Container(
+                                                                      width: 83,
+                                                                      height: 83,
+                                                                      decoration: BoxDecoration(
+                                                                          borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                                                          border: Border.all(color: Colors.white.withOpacity(0.13)),
+                                                                          gradient: LinearGradient(
+                                                                            begin: Alignment.topLeft,
+                                                                            end: Alignment.bottomRight,
+                                                                            colors: [Colors.white.withOpacity(0.01), Colors.white.withOpacity(0.1)],
+                                                                          )),
+                                                                      child: Padding(
+                                                                        padding: const EdgeInsets.all(8.0),
+                                                                        child: getImageComponent(RelicManager.getRelic(relicSets[1]).entity.imageurl,
+                                                                            placeholder: kTransparentImage),
+                                                                      ),
+                                                                    ),
+                                                                  ],
                                                               ],
                                                             ),
                                                           ],
@@ -338,9 +341,9 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
                                                           ),
                                                         ),
                                                       ),
-                                                      for (int x = 0; x <= 5; x++) ...[
-                                                        Opacity(
-                                                          opacity: rank > x ? 1 : 0.5,
+                                                      ...c.entity.eidolon.map((eidolon) {
+                                                        return Opacity(
+                                                          opacity: rank >= eidolon.eidolonnum ? 1 : 0.5,
                                                           child: Padding(
                                                             padding: const EdgeInsets.all(2.0),
                                                             child: Container(
@@ -350,13 +353,13 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
                                                               ),
                                                               child: Padding(
                                                                 padding: const EdgeInsets.all(1.0),
-                                                                child: getImageComponent(c.entity.eidolon[x].imageurl,
+                                                                child: getImageComponent(eidolon.imageurl,
                                                                     imageWrap: true, placeholder: kTransparentImage, width: 30),
                                                               ),
                                                             ),
                                                           ),
-                                                        ),
-                                                      ],
+                                                        );
+                                                      }).toList(),
                                                     ],
                                                   ),
                                                 ),
@@ -367,42 +370,40 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
                                                   width: 374,
                                                   child: Row(
                                                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                    children: [
-                                                      for (int x = 0; x <= 3; x++) ...[
-                                                        Column(
-                                                          children: [
-                                                            Padding(
-                                                              padding: const EdgeInsets.all(2.0),
-                                                              child: Container(
-                                                                decoration: BoxDecoration(
-                                                                  borderRadius: const BorderRadius.all(Radius.circular(21)),
-                                                                  border: Border.all(color: Colors.white.withOpacity(1)),
-                                                                ),
-                                                                child: Padding(
-                                                                  padding: const EdgeInsets.all(1.0),
-                                                                  child: getImageComponent(
-                                                                    c.entity.skilldata[x].imageurl,
-                                                                    imageWrap: true,
-                                                                    placeholder: kTransparentImage,
-                                                                    width: 40,
-                                                                  ),
+                                                    children: c.entity.skilldata.where((skill) => skill.referencelevel == '').take(4).map((skill) {
+                                                      return Column(
+                                                        children: [
+                                                          Padding(
+                                                            padding: const EdgeInsets.all(2.0),
+                                                            child: Container(
+                                                              decoration: BoxDecoration(
+                                                                borderRadius: const BorderRadius.all(Radius.circular(21)),
+                                                                border: Border.all(color: Colors.white.withOpacity(1)),
+                                                              ),
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.all(1.0),
+                                                                child: getImageComponent(
+                                                                  skill.imageurl,
+                                                                  imageWrap: true,
+                                                                  placeholder: kTransparentImage,
+                                                                  width: 40,
                                                                 ),
                                                               ),
                                                             ),
-                                                            Text(
-                                                              "LV${cs.skillLevels[c.entity.skilldata[x].id]}",
-                                                              style: const TextStyle(
-                                                                //fontWeight: FontWeight.bold,
-                                                                color: Colors.white,
-                                                                fontSize: 15,
-                                                                fontWeight: FontWeight.bold,
-                                                                height: 1,
-                                                              ),
+                                                          ),
+                                                          Text(
+                                                            "LV${cs.skillLevels[skill.id]}",
+                                                            style: const TextStyle(
+                                                              //fontWeight: FontWeight.bold,
+                                                              color: Colors.white,
+                                                              fontSize: 15,
+                                                              fontWeight: FontWeight.bold,
+                                                              height: 1,
                                                             ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ],
+                                                          ),
+                                                        ],
+                                                      );
+                                                    }).toList(),
                                                   ),
                                                 ),
                                                 //ANCHOR - Characterelements

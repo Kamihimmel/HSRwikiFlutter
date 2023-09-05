@@ -1,15 +1,12 @@
 import 'dart:convert';
 
-import 'package:hsrwikiproject/lightcones/lightcone.dart';
-
-import '../components/global_state.dart';
+import '../lightcones/lightcone.dart';
 import '../lightcones/lightcone_manager.dart';
 import '../utils/helper.dart';
 import '../utils/logging.dart';
 import 'character.dart';
 
 class CharacterManager {
-  static final GlobalState _gs = GlobalState();
   static final Map<String, Character> _characters = {};
   static final String defaultCharacter = "1005";
   static final Map<String, String> _defaultLightconeMapping = {
@@ -35,7 +32,7 @@ class CharacterManager {
   static Future<void> _initFromLib() async {
     try {
       _characters.clear();
-      String jsonStr = await loadLibJsonString('lib/characterlist.json', cnMode: _gs.cnMode);
+      String jsonStr = await loadLibJsonString('lib/characterlist.json');
       final Map<String, dynamic> allCharacters = json.decode(jsonStr);
       // logger.d(json.encode(allCharacters));
       for (var c in allCharacters['data']!) {
@@ -43,7 +40,7 @@ class CharacterManager {
         Character character = Character.fromJson(c, spoiler: c['spoiler'], supported: c['supported'] ?? true, order: c['order'] ?? 999);
         _characters[c['id']] = character;
       }
-      logger.d("loaded characters: ${_characters.length}, cnMode: ${_gs.cnMode}");
+      logger.d("loaded characters: ${_characters.length}");
     } catch (e) {
       logger.e("load characters exception: ${e.toString()}");
     }
@@ -105,7 +102,7 @@ class CharacterManager {
     if (_characters.containsKey(c.entity.id) && _characters[c.entity.id]!.loaded) {
       return _characters[c.entity.id]!;
     }
-    String jsonStr = await loadLibJsonString(c.entity.infourl, cnMode: _gs.cnMode);
+    String jsonStr = await loadLibJsonString(c.entity.infourl);
     final Map<String, dynamic> characterMap = json.decode(jsonStr);
     // logger.d(json.encode(characterMap));
     Character character = Character.fromJson(characterMap, spoiler: c.spoiler, supported: c.supported, order: c.order);

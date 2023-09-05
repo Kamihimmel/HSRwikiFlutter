@@ -1,12 +1,10 @@
 import 'dart:convert';
 
-import '../components/global_state.dart';
 import '../utils/helper.dart';
 import '../utils/logging.dart';
 import 'enemy.dart';
 
 class EnemyManager {
-  static final GlobalState _gs = GlobalState();
   static final Map<String, Enemy> _enemies = {};
 
   EnemyManager._();
@@ -19,7 +17,7 @@ class EnemyManager {
   static Future<void> _initFromLib() async {
     try {
       _enemies.clear();
-      String jsonStr = await loadLibJsonString('lib/enemylist.json', cnMode: _gs.cnMode);
+      String jsonStr = await loadLibJsonString('lib/enemylist.json');
       final Map<String, dynamic> allEnemies = json.decode(jsonStr);
       // logger.d(json.encode(allEnemies));
       for (var c in allEnemies['data']!) {
@@ -27,7 +25,7 @@ class EnemyManager {
         Enemy enemy = Enemy.fromJson(c, spoiler: c['spoiler'] ?? false, order: c['order'] ?? 999);
         _enemies[c['id']] = enemy;
       }
-      logger.d("loaded enemies: ${_enemies.length}, cnMode: ${_gs.cnMode}");
+      logger.d("loaded enemies: ${_enemies.length}");
     } catch (e) {
       logger.e("load enemies exception: ${e.toString()}");
     }

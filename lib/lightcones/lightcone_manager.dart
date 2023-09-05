@@ -1,12 +1,10 @@
 import 'dart:convert';
 
-import '../components/global_state.dart';
 import '../utils/helper.dart';
 import '../utils/logging.dart';
 import 'lightcone.dart';
 
 class LightconeManager {
-  static final GlobalState _gs = GlobalState();
   static final Map<String, Lightcone> _lightcones = {};
 
   LightconeManager._();
@@ -19,7 +17,7 @@ class LightconeManager {
   static Future<void> _initFromLib() async {
     try {
       _lightcones.clear();
-      String jsonStr = await loadLibJsonString('lib/lightconelist.json', cnMode: _gs.cnMode);
+      String jsonStr = await loadLibJsonString('lib/lightconelist.json');
       final Map<String, dynamic> allLightcones = json.decode(jsonStr);
       // logger.d(json.encode(allLightcones));
       for (var d in allLightcones['data']!) {
@@ -27,7 +25,7 @@ class LightconeManager {
         Lightcone lightcone = Lightcone.fromJson(d, spoiler: d['spoiler'], order: d['order'] ?? 999);
         _lightcones[d['id']] = lightcone;
       }
-      logger.d("loaded lightcones: ${_lightcones.length}, cnMode: ${_gs.cnMode}");
+      logger.d("loaded lightcones: ${_lightcones.length}");
     } catch (e) {
       logger.e("load lightcones exception: ${e.toString()}");
     }
@@ -58,7 +56,7 @@ class LightconeManager {
     if (_lightcones.containsKey(d.entity.id) && _lightcones[d.entity.id]!.loaded) {
       return _lightcones[d.entity.id]!;
     }
-    String jsonStr = await loadLibJsonString(d.entity.infourl, cnMode: _gs.cnMode);
+    String jsonStr = await loadLibJsonString(d.entity.infourl);
     final Map<String, dynamic> lightconeMap = json.decode(jsonStr);
     // logger.d(json.encode(lightconeMap));
     Lightcone lightcone = Lightcone.fromJson(lightconeMap, spoiler: d.spoiler, order: d.order);
