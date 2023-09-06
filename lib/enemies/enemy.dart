@@ -9,6 +9,7 @@ class Enemy {
   late EnemyType type;
   List<ElementType> weakness = [];
   Map<ElementType, int> resistence = {};
+  Map<DebuffType, int> effectResistence = {};
   bool spoiler = false;
   late int order;
 
@@ -22,6 +23,9 @@ class Enemy {
     entity.resistence.forEach((key, value) {
       enemy.resistence[ElementType.fromName(key)] = value;
     });
+    entity.effectres.forEach((key, value) {
+      enemy.effectResistence[DebuffType.fromKey(key)] = value;
+    });
     enemy.spoiler = spoiler;
     enemy.order = order;
     return enemy;
@@ -33,14 +37,14 @@ class Enemy {
 }
 
 enum EnemyCategory {
-  antimatterLegion(desc: 'Antimatter Legion', icon: ''),
-  jariloVI(desc: 'Jarilo-VI', icon: ''),
-  theXianzhouLuofu(desc: 'The Xianzhou Luofu', icon: ''),
-  fragmentumMonsters(desc: 'Fragmentum Monsters', icon: ''),
-  simulatedUniverse(desc: 'Simulated Universe', icon: ''),
-  stellaronHunters(desc: 'Stellaron Hunters', icon: ''),
-  cosmos(desc: 'Cosmos', icon: ''),
-  other(desc: 'Other', icon: '');
+  antimatterLegion(desc: 'Antimatter Legion', icon: 'images/antimatter-legion-monster_faction_icon.webp'),
+  jariloVI(desc: 'Jarilo-VI', icon: 'images/jarilo-vi-monster_faction_icon.webp'),
+  theXianzhouLuofu(desc: 'The Xianzhou Luofu', icon: 'images/the-xianzhou-luofu-monster_faction_icon.webp'),
+  fragmentumMonsters(desc: 'Fragmentum Monsters', icon: 'images/fragmentum-monsters-monster_faction_icon.webp'),
+  simulatedUniverse(desc: 'Simulated Universe', icon: 'images/simulated-universe-monster_faction_icon.webp'),
+  stellaronHunters(desc: 'Stellaron Hunters', icon: 'images/stellaron-hunters-monster_faction_icon.webp'),
+  cosmos(desc: 'Cosmos', icon: 'images/cosmos-monster_faction_icon.webp'),
+  other(desc: 'Other', icon: 'images/other-monster_faction_icon.webp');
 
   final String desc;
   final String icon;

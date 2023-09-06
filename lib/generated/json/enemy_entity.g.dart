@@ -1,24 +1,11 @@
 import 'package:hsrwikiproject/generated/json/base/json_convert_content.dart';
 import 'package:hsrwikiproject/enemies/enemy_entity.dart';
 
+import '../../utils/base_entity.dart';
+
 EnemyEntity $EnemyEntityFromJson(Map<String, dynamic> json) {
   final EnemyEntity enemyEntity = EnemyEntity();
-  final String? id = jsonConvert.convert<String>(json['id']);
-  if (id != null) {
-    enemyEntity.id = id;
-  }
-  final String? eNname = jsonConvert.convert<String>(json['ENname']);
-  if (eNname != null) {
-    enemyEntity.eNname = eNname;
-  }
-  final String? cNname = jsonConvert.convert<String>(json['CNname']);
-  if (cNname != null) {
-    enemyEntity.cNname = cNname;
-  }
-  final String? jAname = jsonConvert.convert<String>(json['JAname']);
-  if (jAname != null) {
-    enemyEntity.jAname = jAname;
-  }
+  $BaseEntityFromJson(json, enemyEntity);
   final String? category = jsonConvert.convert<String>(json['category']);
   if (category != null) {
     enemyEntity.category = category;
@@ -44,21 +31,23 @@ EnemyEntity $EnemyEntityFromJson(Map<String, dynamic> json) {
   if (resistence != null) {
     enemyEntity.resistence = resistence;
   }
+  final Map<String, dynamic>? effectres = jsonConvert.convert<Map<String, dynamic>>(json['effectres']);
+  if (effectres != null) {
+    enemyEntity.effectres = effectres;
+  }
   return enemyEntity;
 }
 
 Map<String, dynamic> $EnemyEntityToJson(EnemyEntity entity) {
   final Map<String, dynamic> data = <String, dynamic>{};
-  data['id'] = entity.id;
-  data['ENname'] = entity.eNname;
-  data['CNname'] = entity.cNname;
-  data['JAname'] = entity.jAname;
+  $BaseEntityToJson(entity, data);
   data['category'] = entity.category;
   data['imageurl'] = entity.imageurl;
   data['imagelargeurl'] = entity.imagelargeurl;
   data['etype'] = entity.etype;
   data['weakness'] = entity.weakness;
   data['resistence'] = entity.resistence;
+  data['effectres'] = entity.effectres;
   return data;
 }
 
@@ -74,6 +63,7 @@ extension EnemyEntityExtension on EnemyEntity {
     String? etype,
     List<String>? weakness,
     Map<String, dynamic>? resistence,
+    Map<String, dynamic>? effectres,
   }) {
     return EnemyEntity()
       ..id = id ?? this.id
@@ -85,6 +75,7 @@ extension EnemyEntityExtension on EnemyEntity {
       ..imagelargeurl = imagelargeurl ?? this.imagelargeurl
       ..etype = etype ?? this.etype
       ..weakness = weakness ?? this.weakness
-      ..resistence = resistence ?? this.resistence;
+      ..resistence = resistence ?? this.resistence
+      ..effectres = effectres ?? this.effectres;
   }
 }

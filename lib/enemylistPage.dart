@@ -157,41 +157,22 @@ class _EnemyListPageState extends State<EnemyListPage> {
                                                         ),
                                                       ),
                                                     ),
-                                                    DataColumn(
-                                                      label: Expanded(
-                                                        child: getImageComponent(ElementType.fire.icon, imageWrap: true, height: 25, fit: BoxFit.contain),
+                                                    for (ElementType et in ElementType.validValues())
+                                                      DataColumn(
+                                                        label: Expanded(
+                                                          child: getImageComponent(et.icon, imageWrap: true, height: 25, fit: BoxFit.contain),
+                                                        ),
                                                       ),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Expanded(
-                                                        child: getImageComponent(ElementType.ice.icon, imageWrap: true, height: 25, fit: BoxFit.contain),
+                                                    for (DebuffType dt in DebuffType.validValues())
+                                                      DataColumn(
+                                                        label: Row(
+                                                          children: [
+                                                            getImageComponent(dt.icon, remote: false, imageWrap: true, height: 25, fit: BoxFit.contain),
+                                                            SizedBox(width: 5),
+                                                            Text(dt.desc.tr()),
+                                                          ],
+                                                        ),
                                                       ),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Expanded(
-                                                        child: getImageComponent(ElementType.lightning.icon, imageWrap: true, height: 25, fit: BoxFit.contain),
-                                                      ),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Expanded(
-                                                        child: getImageComponent(ElementType.imaginary.icon, imageWrap: true, height: 25, fit: BoxFit.contain),
-                                                      ),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Expanded(
-                                                        child: getImageComponent(ElementType.quantum.icon, imageWrap: true, height: 25, fit: BoxFit.contain),
-                                                      ),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Expanded(
-                                                        child: getImageComponent(ElementType.wind.icon, imageWrap: true, height: 25, fit: BoxFit.contain),
-                                                      ),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Expanded(
-                                                        child: getImageComponent(ElementType.physical.icon, imageWrap: true, height: 25, fit: BoxFit.contain),
-                                                      ),
-                                                    ),
                                                   ],
                                                   rows: <DataRow>[
                                                     for (var e in EnemyManager.getEnemies().entries)
@@ -207,14 +188,20 @@ class _EnemyListPageState extends State<EnemyListPage> {
                                                               ],
                                                             ),
                                                           ),
-                                                          DataCell(Text(e.value.category.desc)),
-                                                          DataCell(Text(e.value.resistence[ElementType.fire].toString())),
-                                                          DataCell(Text(e.value.resistence[ElementType.ice].toString())),
-                                                          DataCell(Text(e.value.resistence[ElementType.lightning].toString())),
-                                                          DataCell(Text(e.value.resistence[ElementType.imaginary].toString())),
-                                                          DataCell(Text(e.value.resistence[ElementType.quantum].toString())),
-                                                          DataCell(Text(e.value.resistence[ElementType.wind].toString())),
-                                                          DataCell(Text(e.value.resistence[ElementType.physical].toString())),
+                                                          DataCell(
+                                                            Row(
+                                                              mainAxisSize: MainAxisSize.min,
+                                                              children: [
+                                                                getImageComponent(e.value.category.icon, remote: false, imageWrap: true, width: 25),
+                                                                SizedBox(width: 5),
+                                                                Text(e.value.category.desc.tr())
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          for (ElementType et in ElementType.validValues())
+                                                            DataCell(Text((e.value.resistence[et] ?? 0).toString())),
+                                                          for (DebuffType dt in DebuffType.validValues())
+                                                            DataCell(Text((e.value.effectResistence[dt] ?? 0).toString())),
                                                         ],
                                                       ),
                                                   ],

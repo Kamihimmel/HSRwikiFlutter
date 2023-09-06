@@ -157,6 +157,10 @@ enum ElementType {
     return ElementType.values.firstWhere((e) => e.key == key, orElse: () => ElementType.diy);
   }
 
+  static List<ElementType> validValues() {
+    return ElementType.values.where((e) => e != ElementType.diy).toList();
+  }
+
   FightProp getElementAddRatioProp() {
     return FightProp.fromName("${this.name}AddedRatio");
   }
@@ -258,6 +262,42 @@ enum PathType {
 
   static PathType fromKey(String key) {
     return PathType.values.firstWhere((p) => p.key == key, orElse: () => PathType.diy);
+  }
+}
+
+enum DebuffType {
+  burn(key: 'burn', desc: 'burn', icon: 'images/stat_dot_burn-mstatdef_icon.webp'),
+  imprisonment(key: 'imprisonment', desc: 'imprison', icon: 'images/stat_confine-mstatdef_icon.webp'),
+  defReduction(key: 'def-reduction', desc: 'reducedefdebuff', icon: 'images/stat_defencedown-mstatdef_icon.webp'),
+  shock(key: 'shock', desc: 'shocked', icon: 'images/stat_dot_electric-mstatdef_icon.webp'),
+  frozen(key: 'frozen', desc: 'frozen', icon: 'images/stat_ctrl_frozen-mstatdef_icon.webp'),
+  bleed(key: 'bleed', desc: 'bleed', icon: 'images/stat_dot_bleed-mstatdef_icon.webp'),
+  speedReduction(key: 'speed-reduction', desc: 'reducespeeddebuff', icon: 'images/stat_speeddown-mstatdef_icon.webp'),
+  allTypeResReduction(key: 'all-type-res-reduction', desc: 'allresreduce', icon: 'images/stat_fatigue-mstatdef_icon.webp'),
+  windShear(key: 'wind-shear', desc: 'windshear', icon: 'images/stat_dot_poison-mstatdef_icon.webp'),
+  entanglement(key: 'entanglement', desc: 'entanglement', icon: 'images/stat_entangle-mstatdef_icon.webp'),
+  unknown(key: 'unknown', desc: '', icon: '');
+
+  final String key;
+  final String desc;
+  final String icon;
+
+  const DebuffType({
+    required this.key,
+    required this.desc,
+    required this.icon,
+  });
+
+  static List<DebuffType> validValues() {
+    return DebuffType.values.where((d) => d != DebuffType.unknown).toList();
+  }
+
+  static DebuffType fromName(String name) {
+    return DebuffType.values.firstWhere((d) => d.name == name, orElse: () => DebuffType.unknown);
+  }
+
+  static DebuffType fromKey(String key) {
+    return DebuffType.values.firstWhere((d) => d.key == key, orElse: () => DebuffType.unknown);
   }
 }
 
