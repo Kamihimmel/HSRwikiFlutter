@@ -266,14 +266,14 @@ enum PathType {
 }
 
 enum DebuffType {
-  burn(key: 'burn', desc: 'burn', icon: 'images/stat_dot_burn-mstatdef_icon.webp'),
-  imprisonment(key: 'imprisonment', desc: 'imprison', icon: 'images/stat_confine-mstatdef_icon.webp'),
-  defReduction(key: 'def-reduction', desc: 'reducedefdebuff', icon: 'images/stat_defencedown-mstatdef_icon.webp'),
-  shock(key: 'shock', desc: 'shocked', icon: 'images/stat_dot_electric-mstatdef_icon.webp'),
-  frozen(key: 'frozen', desc: 'frozen', icon: 'images/stat_ctrl_frozen-mstatdef_icon.webp'),
-  bleed(key: 'bleed', desc: 'bleed', icon: 'images/stat_dot_bleed-mstatdef_icon.webp'),
   speedReduction(key: 'speed-reduction', desc: 'reducespeeddebuff', icon: 'images/stat_speeddown-mstatdef_icon.webp'),
   allTypeResReduction(key: 'all-type-res-reduction', desc: 'allresreduce', icon: 'images/stat_fatigue-mstatdef_icon.webp'),
+  defReduction(key: 'def-reduction', desc: 'reducedefdebuff', icon: 'images/stat_defencedown-mstatdef_icon.webp'),
+  frozen(key: 'frozen', desc: 'frozen', icon: 'images/stat_ctrl_frozen-mstatdef_icon.webp'),
+  imprisonment(key: 'imprisonment', desc: 'imprison', icon: 'images/stat_confine-mstatdef_icon.webp'),
+  shock(key: 'shock', desc: 'shocked', icon: 'images/stat_dot_electric-mstatdef_icon.webp'),
+  burn(key: 'burn', desc: 'burn', icon: 'images/stat_dot_burn-mstatdef_icon.webp'),
+  bleed(key: 'bleed', desc: 'bleed', icon: 'images/stat_dot_bleed-mstatdef_icon.webp'),
   windShear(key: 'wind-shear', desc: 'windshear', icon: 'images/stat_dot_poison-mstatdef_icon.webp'),
   entanglement(key: 'entanglement', desc: 'entanglement', icon: 'images/stat_entangle-mstatdef_icon.webp'),
   unknown(key: 'unknown', desc: '', icon: '');
