@@ -31,6 +31,10 @@ EnemyEntity $EnemyEntityFromJson(Map<String, dynamic> json) {
   if (resistence != null) {
     enemyEntity.resistence = resistence;
   }
+  final int? effectdef = jsonConvert.convert<int>(json['effectdef']);
+  if (effectdef != null) {
+    enemyEntity.effectdef = effectdef;
+  }
   final Map<String, dynamic>? effectres = jsonConvert.convert<Map<String, dynamic>>(json['effectres']);
   if (effectres != null) {
     enemyEntity.effectres = effectres;
@@ -47,6 +51,7 @@ Map<String, dynamic> $EnemyEntityToJson(EnemyEntity entity) {
   data['etype'] = entity.etype;
   data['weakness'] = entity.weakness;
   data['resistence'] = entity.resistence;
+  data['effectdef'] = entity.effectdef;
   data['effectres'] = entity.effectres;
   return data;
 }
@@ -63,6 +68,7 @@ extension EnemyEntityExtension on EnemyEntity {
     String? etype,
     List<String>? weakness,
     Map<String, dynamic>? resistence,
+    int? effectdef,
     Map<String, dynamic>? effectres,
   }) {
     return EnemyEntity()
@@ -76,6 +82,7 @@ extension EnemyEntityExtension on EnemyEntity {
       ..etype = etype ?? this.etype
       ..weakness = weakness ?? this.weakness
       ..resistence = resistence ?? this.resistence
+      ..effectdef = effectdef ?? this.effectdef
       ..effectres = effectres ?? this.effectres;
   }
 }

@@ -13,6 +13,7 @@ class EnemyEntity extends BaseEntity {
 	late String etype = '';
 	late List<String> weakness = [];
 	late Map<String, dynamic> resistence = {};
+	late int effectdef = 0;
 	late Map<String, dynamic> effectres = {};
 
 	EnemyEntity();
