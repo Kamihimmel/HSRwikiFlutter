@@ -118,93 +118,95 @@ class _EnemyListPageState extends State<EnemyListPage> {
                                         Container(
                                           width: screenWidth,
                                           height: screenHeight - 170,
-                                          child: SingleChildScrollView(
-                                            scrollDirection: Axis.vertical,
+                                          child: Scrollbar(
+                                            isAlwaysShown: true,
                                             child: SingleChildScrollView(
                                               scrollDirection: Axis.horizontal,
-                                              child: Center(
-                                                child: DataTable(
-                                                  columns: <DataColumn>[
-                                                    DataColumn(
-                                                      label: Expanded(
-                                                        child: Text(
-                                                          'Icon',
-                                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                              child: Scrollbar(
+                                                child: SingleChildScrollView(
+                                                  scrollDirection: Axis.vertical,
+                                                  child: Center(
+                                                    child: DataTable(
+                                                      columns: <DataColumn>[
+                                                        DataColumn(
+                                                          label: Expanded(
+                                                            child: Text(
+                                                              'Icon'.tr(),
+                                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Expanded(
-                                                        child: Text(
-                                                          'Name',
-                                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                                        DataColumn(
+                                                          label: Expanded(
+                                                            child: Text(
+                                                              'Name'.tr(),
+                                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Expanded(
-                                                        child: Text(
-                                                          'Weakness',
-                                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                                        DataColumn(
+                                                          label: Expanded(
+                                                            child: Text(
+                                                              'Weakness'.tr(),
+                                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Expanded(
-                                                        child: Text(
-                                                          'Category',
-                                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                                        DataColumn(
+                                                          label: Expanded(
+                                                            child: Text(
+                                                              'Category'.tr(),
+                                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ),
-                                                    for (ElementType et in ElementType.validValues())
-                                                      DataColumn(
-                                                        label: Expanded(
-                                                          child: getImageComponent(et.icon, imageWrap: true, height: 25, fit: BoxFit.contain),
-                                                        ),
-                                                      ),
-                                                    for (DebuffType dt in DebuffType.validValues())
-                                                      DataColumn(
-                                                        label: Row(
-                                                          children: [
-                                                            getImageComponent(dt.icon, remote: false, imageWrap: true, height: 25, fit: BoxFit.contain),
-                                                            SizedBox(width: 5),
-                                                            Text(dt.desc.tr()),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                  ],
-                                                  rows: <DataRow>[
-                                                    for (var e in EnemyManager.getEnemies().entries)
-                                                      DataRow(
-                                                        cells: <DataCell>[
-                                                          DataCell(getImageComponent(e.value.entity.imageurl, imageWrap: true, width: 50)),
-                                                          DataCell(Text(e.value.getName(getLanguageCode(context)))),
-                                                          DataCell(
-                                                            Row(
-                                                              mainAxisSize: MainAxisSize.min,
+                                                        for (ElementType et in ElementType.validValues())
+                                                          DataColumn(
+                                                            label: Expanded(
+                                                              child: getImageComponent(et.icon, imageWrap: true, height: 25, fit: BoxFit.contain),
+                                                            ),
+                                                          ),
+                                                        for (DebuffType dt in DebuffType.validValues())
+                                                          DataColumn(
+                                                            label: Column(
                                                               children: [
-                                                                for (var weak in e.value.weakness) getImageComponent(weak.icon, imageWrap: true, width: 30),
+                                                                getImageComponent(dt.icon, remote: false, imageWrap: true, height: 25, fit: BoxFit.contain),
+                                                                Text(dt.desc.tr(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                                                               ],
                                                             ),
                                                           ),
-                                                          DataCell(
-                                                            Row(
-                                                              mainAxisSize: MainAxisSize.min,
-                                                              children: [
-                                                                getImageComponent(e.value.category.icon, remote: false, imageWrap: true, width: 25),
-                                                                SizedBox(width: 5),
-                                                                Text(e.value.category.desc.tr())
-                                                              ],
-                                                            ),
+                                                      ],
+                                                      rows: <DataRow>[
+                                                        for (var e in EnemyManager.getEnemies().entries)
+                                                          DataRow(
+                                                            cells: <DataCell>[
+                                                              DataCell(getImageComponent(e.value.entity.imageurl, imageWrap: true, width: 50)),
+                                                              DataCell(Text(e.value.getName(getLanguageCode(context)))),
+                                                              DataCell(
+                                                                Row(
+                                                                  mainAxisSize: MainAxisSize.min,
+                                                                  children: [
+                                                                    for (var weak in e.value.weakness) getImageComponent(weak.icon, imageWrap: true, width: 30),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              DataCell(
+                                                                Row(
+                                                                  mainAxisSize: MainAxisSize.min,
+                                                                  children: [
+                                                                    getImageComponent(e.value.category.icon, remote: false, imageWrap: true, width: 25),
+                                                                    SizedBox(width: 5),
+                                                                    Text(e.value.category.desc.tr())
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              for (ElementType et in ElementType.validValues()) DataCell(Text((e.value.resistence[et] ?? 0).toString())),
+                                                              for (DebuffType dt in DebuffType.validValues()) DataCell(Text((e.value.effectResistence[dt] ?? 0).toString())),
+                                                            ],
                                                           ),
-                                                          for (ElementType et in ElementType.validValues())
-                                                            DataCell(Text((e.value.resistence[et] ?? 0).toString())),
-                                                          for (DebuffType dt in DebuffType.validValues())
-                                                            DataCell(Text((e.value.effectResistence[dt] ?? 0).toString())),
-                                                        ],
-                                                      ),
-                                                  ],
+                                                      ],
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                             ),

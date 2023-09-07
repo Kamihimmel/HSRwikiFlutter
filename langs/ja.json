@@ -237,5 +237,9 @@
     "Simulated Universe": "模擬宇宙",
     "Stellaron Hunters": "星核ハンター",
     "Cosmos": "銀河",
-    "Other": "その他"
+    "Other": "その他",
+    "Icon": "アイコン",
+    "Name": "名前",
+    "Category": "種類",
+    "Weakness": "弱点"
 }

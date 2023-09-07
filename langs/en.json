@@ -236,5 +236,9 @@
     "Simulated Universe": "Simulated Universe",
     "Stellaron Hunters": "Stellaron Hunters",
     "Cosmos": "Cosmos",
-    "Other": "Other"
+    "Other": "Other",
+    "Icon": "Icon",
+    "Name": "Name",
+    "Category": "Category",
+    "Weakness": "Weakness"
 }
