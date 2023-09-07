@@ -240,5 +240,6 @@
     "Icon": "Icon",
     "Name": "Name",
     "Category": "Category",
-    "Weakness": "Weakness"
+    "Weakness": "Weakness",
+    "Status Effect": "Status Effect"
 }

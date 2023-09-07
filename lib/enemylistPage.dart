@@ -154,16 +154,6 @@ class _EnemyListPageState extends State<EnemyListPage> {
                                                         ),
                                                         DataColumn(
                                                           label: Expanded(
-                                                            child: Column(
-                                                              children: [
-                                                                getImageComponent('images/stat_ctrl-mstatdef_icon.webp', remote: false, imageWrap: true, height: 25, fit: BoxFit.contain),
-                                                                Text('Effect Defense'.tr(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        DataColumn(
-                                                          label: Expanded(
                                                             child: Text(
                                                               'Category'.tr(),
                                                               style: TextStyle(fontWeight: FontWeight.bold),
@@ -176,6 +166,16 @@ class _EnemyListPageState extends State<EnemyListPage> {
                                                               child: getImageComponent(et.icon, imageWrap: true, height: 25, fit: BoxFit.contain),
                                                             ),
                                                           ),
+                                                        DataColumn(
+                                                          label: Expanded(
+                                                            child: Column(
+                                                              children: [
+                                                                getImageComponent('images/stat_ctrl-mstatdef_icon.webp', remote: false, imageWrap: true, height: 25, fit: BoxFit.contain),
+                                                                Text('Status Effect'.tr(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
                                                         for (DebuffType dt in DebuffType.validValues())
                                                           DataColumn(
                                                             label: Column(
@@ -200,7 +200,6 @@ class _EnemyListPageState extends State<EnemyListPage> {
                                                                   ],
                                                                 ),
                                                               ),
-                                                              DataCell(Text(e.value.entity.effectdef.toString())),
                                                               DataCell(
                                                                 Row(
                                                                   mainAxisSize: MainAxisSize.min,
@@ -212,6 +211,7 @@ class _EnemyListPageState extends State<EnemyListPage> {
                                                                 ),
                                                               ),
                                                               for (ElementType et in ElementType.validValues()) DataCell(Text((e.value.resistence[et] ?? 0).toString())),
+                                                              DataCell(Text(e.value.entity.effectdef.toString())),
                                                               for (DebuffType dt in DebuffType.validValues()) DataCell(Text((e.value.effectResistence[dt] ?? 0).toString())),
                                                             ],
                                                           ),

@@ -241,5 +241,6 @@
     "Icon": "图标",
     "Name": "名字",
     "Category": "类型",
-    "Weakness": "弱点"
+    "Weakness": "弱点",
+    "Status Effect": "状态效果"
 }

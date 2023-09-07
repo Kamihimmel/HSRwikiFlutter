@@ -81,7 +81,7 @@ flutter_launcher_icons:
     image_path: "windows/runner/resources/app_icon.ico"
     icon_size: 256 # min:48, max:256, default: 48
   macos:
-    generate: true
+    generate: false
     image_path: "images/icon.png"
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
