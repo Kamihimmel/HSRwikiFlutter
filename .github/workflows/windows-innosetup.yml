@@ -35,5 +35,6 @@ jobs:
           draft: true
           prerelease: true
           generate_release_notes: false
+          fail_on_unmatched_files: true
           files: |
-            ./build/hsrwikiproject-${{ env.VERSION }}.exe
+            .\windows\setup\hsrwikiproject-${{ env.VERSION }}.exe
