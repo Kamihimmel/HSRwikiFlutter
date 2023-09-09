@@ -387,7 +387,8 @@ class LightconeRelicState extends State<LightconeRelic> {
                   Column(
                     children: RelicPart.values.where((rp) => rp != RelicPart.unknown).map((rp) {
                       RelicStats relicStats = _gs.stats.relics[rp]!;
-                      for (var i = 0; i < 4 - relicStats.subAttrValues.length; i++) {
+                      int len = relicStats.subAttrValues.length;
+                      for (var i = 0; i < 4 - len; i++) {
                         relicStats.subAttrValues.add(Record.of(FightProp.unknown, 0));
                       }
                       return Padding(

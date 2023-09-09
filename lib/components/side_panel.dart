@@ -162,7 +162,7 @@ class _SidePanelState extends State<SidePanel> {
                     leading: const Icon(Icons.cleaning_services),
                     title: const Text("Clean Store"),
                     onTap: () async {
-                      List<String> keys = ['saved_stats', 'saved_enemy_stats', 'playerinfo', 'uid', 'nickname', 'avatarimage'];
+                      List<String> keys = ['saved_stats', 'saved_enemy_stats', 'playerinfo', 'uid', 'nickname', 'avatarimage', 'characters'];
                       final prefs = await SharedPreferences.getInstance();
                       for (var k in keys) {
                         await prefs.remove(k);
