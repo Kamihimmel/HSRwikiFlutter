@@ -28,7 +28,7 @@ enum FightProp {
 
   maxSP(desc: 'Max Energy', icon: 'starrailres/icon/property/IconEnergyLimit.png'),
   sPRatio(desc: 'energyregenrate', icon: 'starrailres/icon/property/IconEnergyRecovery.png', buffOrder: 9, effectKey: ['sprate', 'energyregenrate']),
-  sPDelta(desc: 'energyregenrate', icon: 'starrailres/icon/property/IconEnergyRecovery.png', buffOrder: 9, effectKey: ['energy']),
+  sPDelta(desc: 'energy', icon: 'starrailres/icon/property/IconEnergyRecovery.png', buffOrder: 9, effectKey: ['energy']),
   sPRatioBase(desc: 'Energy Regeneration Rate', icon: 'starrailres/icon/property/IconEnergyRecovery.png'),
 
   speed(desc: 'speed', icon: 'starrailres/icon/property/IconSpeed.png', effectKey: ['spd']),
@@ -37,13 +37,13 @@ enum FightProp {
   speedAddedRatio(desc: 'speed', icon: 'starrailres/icon/property/IconSpeed.png', buffOrder: 6, effectKey: ['speed']),
   actionForwardRatio(desc: 'speed', icon: 'starrailres/icon/property/IconSpeed.png', buffOrder: 6, effectKey: ['actionf']),
 
-  aggro(desc: 'Taunt', icon: 'starrailres/icon/property/IconTaunt.png', buffOrder: 10, effectKey: ['taunt']),
+  aggro(desc: 'taunt', icon: 'starrailres/icon/property/IconTaunt.png', buffOrder: 10, effectKey: ['taunt']),
   stanceBreakAddedRatio(desc: ''),
 
-  healRatio(desc: 'healrate', icon: 'starrailres/icon/property/IconHealRatio.png', buffOrder: 9, effectKey: ['healrate']),
+  healRatio(desc: 'healingbonus', icon: 'starrailres/icon/property/IconHealRatio.png', buffOrder: 9, effectKey: ['healrate']),
   healRatioBase(desc: 'Outgoing Healing Boost', icon: 'starrailres/icon/property/IconHealRatio.png'),
   healTakenRatio(desc: 'Incoming Healing Boost', icon: 'starrailres/icon/property/IconHealRatio.png'),
-  shieldAddRatio(desc: 'Shield Boost', buffOrder: 9, effectKey: ['shielddmgabsorb']),
+  shieldAddRatio(desc: 'shielddmgabsorb', buffOrder: 9, effectKey: ['shielddmgabsorb']),
 
   effectHitRate(desc: 'effecthit', icon: 'starrailres/icon/property/IconStatusProbability.png', buffOrder: 8, effectKey: ['effecthit']),
   effectHitRateBase(desc: 'Effect Hit', icon: 'starrailres/icon/property/IconStatusProbability.png'),
@@ -148,7 +148,7 @@ enum FightProp {
   windshearDotDamage(desc: 'windsheardotdmg', effectKey: ['windsheardotdmg']),
   bleedDotDamage(desc: 'bleeddotdmg', effectKey: ['bleeddotdmg']),
 
-  none(desc: 'No multiplier'), // effect.multipliertarget == ''
+  none(desc: ''), // 对于伤害治疗护盾，effect.multipliertarget == ''
   unknown(desc: '');
 
   final String desc;
