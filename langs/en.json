@@ -241,5 +241,7 @@
     "Name": "Name",
     "Category": "Category",
     "Weakness": "Weakness",
-    "Status Effect": "Status Effect"
+    "Status Effect": "Status Effect",
+    "Clean Data": "Clean Data",
+    "Cleaned": "Cleaned"
 }

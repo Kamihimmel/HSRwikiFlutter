@@ -89,6 +89,11 @@ class GlobalState extends ChangeNotifier {
     _enemyStats = enemyStats;
     notifyListeners();
   }
+  void cleanStats() {
+    _stats = CharacterStats.empty();
+    _enemyStats = EnemyStats.empty();
+    notifyListeners();
+  }
   void changeStats() {
     notifyListeners();
   }

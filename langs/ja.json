@@ -242,5 +242,7 @@
     "Name": "名前",
     "Category": "種類",
     "Weakness": "弱点",
-    "Status Effect": "状態/効果"
+    "Status Effect": "状態/効果",
+    "Clean Data": "クリアデータ",
+    "Cleaned": "クリアしました"
 }

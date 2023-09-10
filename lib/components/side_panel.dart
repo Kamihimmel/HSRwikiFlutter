@@ -86,30 +86,61 @@ class _SidePanelState extends State<SidePanel> {
                 ),
               ),
               SwitchListTile(
-                  title: const Text('Trailblazer').tr(),
-                  secondary: (!_gs.appConfig.male ? const Icon(Icons.female) : const Icon(Icons.male)),
-                  value: !_gs.appConfig.male,
-                  onChanged: (bool value) async {
-                    _gs.appConfig.male = !value;
-                    _gs.changeConfig();
-                  }),
+                title: const Text('Trailblazer').tr(),
+                secondary: (!_gs.appConfig.male ? const Icon(Icons.female) : const Icon(Icons.male)),
+                value: !_gs.appConfig.male,
+                onChanged: (bool value) async {
+                  _gs.appConfig.male = !value;
+                  _gs.changeConfig();
+                },
+              ),
               if (_gs.appConfig.test)
-                SwitchListTile(
+                ...[
+                  SwitchListTile(
                     title: const Text('Spoiler Mode').tr(),
+                    secondary: const Icon(Icons.tag_faces),
                     value: _gs.appConfig.spoilerMode,
                     onChanged: (bool value) async {
                       _gs.appConfig.spoilerMode = value;
                       _gs.changeConfig();
-                    }),
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.cleaning_services),
+                    title: const Text("Clean Data").tr(),
+                    onTap: () async {
+                      List<String> keys = ['saved_stats', 'saved_enemy_stats', 'playerinfo', 'uid', 'nickname', 'avatarimage', 'characters'];
+                      final prefs = await SharedPreferences.getInstance();
+                      for (var k in keys) {
+                        await prefs.remove(k);
+                      }
+                      _gs.cleanStats();
+                      final snackBar = SnackBar(
+                        content: Center(
+                          child: Text('Cleaned').tr(),
+                        ),
+                        action: SnackBarAction(
+                          label: "✕",
+                          onPressed: () {
+                            // Some code to undo the change.
+                          },
+                        ),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    },
+                  ),
+                ],
               if (!kIsWeb)
                 SwitchListTile(
-                    title: _gs.appConfig.cnMode ? Text('Datasource:China').tr() : Text('Datasource:International').tr(),
-                    value: _gs.appConfig.cnMode,
-                    onChanged: (bool value) async {
-                      _gs.appConfig.cnMode = value;
-                      _gs.changeConfig();
-                      initData();
-                    }),
+                  title: _gs.appConfig.cnMode ? Text('Datasource:China').tr() : Text('Datasource:International').tr(),
+                  secondary: const Icon(Icons.source),
+                  value: _gs.appConfig.cnMode,
+                  onChanged: (bool value) async {
+                    _gs.appConfig.cnMode = value;
+                    _gs.changeConfig();
+                    initData();
+                  },
+                ),
               if (_gs.debug)
                 ...[
                   Padding(
@@ -156,18 +187,6 @@ class _SidePanelState extends State<SidePanel> {
                         ),
                       );
                       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.cleaning_services),
-                    title: const Text("Clean Store"),
-                    onTap: () async {
-                      List<String> keys = ['saved_stats', 'saved_enemy_stats', 'playerinfo', 'uid', 'nickname', 'avatarimage', 'characters'];
-                      final prefs = await SharedPreferences.getInstance();
-                      for (var k in keys) {
-                        await prefs.remove(k);
-                      }
-                      logger.w("Removed keys: ${keys}");
                     },
                   ),
                 ],
