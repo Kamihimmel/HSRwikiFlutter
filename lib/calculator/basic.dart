@@ -208,6 +208,10 @@ enum FightProp {
   static FightProp fromImportType(String importType) {
     if (importType == 'ThunderAddedRatio') {
       return FightProp.lightningAddedRatio;
+    } else if (importType == 'StatusProbabilityBase') {
+      return FightProp.effectHitRate;
+    } else if (importType == 'StatusResistanceBase') {
+      return FightProp.effectResistenceRate;
     }
     String type = importType.replaceFirst('Base', '').toLowerCase();
     return FightProp.values.firstWhere((p) => p.name.toLowerCase() == type, orElse: () => FightProp.unknown);
