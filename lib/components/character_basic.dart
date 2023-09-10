@@ -348,6 +348,10 @@ class CharacterBasicState extends State<CharacterBasic> {
                       children: List.generate(_cData.entity.tracedata.length, (index) {
                         final CharacterTracedata trace = _cData.entity.tracedata[index];
                         String detailText = _cData.getTraceDescription(index, getLanguageCode(context));
+                        int levelnum = _gs.stats.skillLevels[trace.id] ?? 1;
+                        if (trace.referencelevel != '') {
+                          levelnum = _gs.stats.skillLevels[_cData.getSkillById(trace.referencelevel).id] ?? 1;
+                        }
                         if (trace.tiny == false) {
                           return Stack(
                             children: [
@@ -386,6 +390,41 @@ class CharacterBasicState extends State<CharacterBasic> {
                                                         fontSize: 20,
                                                       ),
                                                     ),
+                                                    if (trace.maxlevel > 0 && trace.referencelevel == '')
+                                                      Padding(
+                                                        padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            SizedBox(
+                                                              child: Text(
+                                                                "LV:${levelnum}",
+                                                                style: const TextStyle(
+                                                                  //fontWeight: FontWeight.bold,
+                                                                  color: Colors.white,
+                                                                  fontSize: 20,
+                                                                  fontWeight: FontWeight.bold,
+                                                                  height: 1.1,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Expanded(
+                                                              child: Slider(
+                                                                value: levelnum.toDouble(),
+                                                                min: 1,
+                                                                max: trace.maxlevel.toDouble(),
+                                                                divisions: trace.maxlevel - 1,
+                                                                activeColor: _cData.elementType.color,
+                                                                inactiveColor: _cData.elementType.color.withOpacity(0.5),
+                                                                onChanged: (double value) {
+                                                                  _gs.stats.skillLevels[trace.id] = value.toInt();
+                                                                  _gs.changeStats();
+                                                                },
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
                                                   ],
                                                 ),
                                               ),
@@ -480,6 +519,10 @@ class CharacterBasicState extends State<CharacterBasic> {
                     Column(
                       children: List.generate(_cData.entity.eidolon.length, (index) {
                         final eidolon = _cData.entity.eidolon[index];
+                        int levelnum = _gs.stats.skillLevels[eidolon.id] ?? 1;
+                        if (eidolon.referencelevel != '') {
+                          levelnum = _gs.stats.skillLevels[_cData.getSkillById(eidolon.referencelevel).id] ?? 1;
+                        }
                         return Stack(
                           children: [
                             Column(
@@ -525,6 +568,41 @@ class CharacterBasicState extends State<CharacterBasic> {
                                                           _gs.stats.eidolons[eidolon.eidolonnum.toString()] = value ? 1 : 0;
                                                           _gs.changeStats();
                                                         }),
+                                                    if (eidolon.maxlevel > 0 && eidolon.referencelevel == '')
+                                                      Padding(
+                                                        padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            SizedBox(
+                                                              child: Text(
+                                                                "LV:${levelnum}",
+                                                                style: const TextStyle(
+                                                                  //fontWeight: FontWeight.bold,
+                                                                  color: Colors.white,
+                                                                  fontSize: 20,
+                                                                  fontWeight: FontWeight.bold,
+                                                                  height: 1.1,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Expanded(
+                                                              child: Slider(
+                                                                value: levelnum.toDouble(),
+                                                                min: 1,
+                                                                max: eidolon.maxlevel.toDouble(),
+                                                                divisions: eidolon.maxlevel - 1,
+                                                                activeColor: _cData.elementType.color,
+                                                                inactiveColor: _cData.elementType.color.withOpacity(0.5),
+                                                                onChanged: (double value) {
+                                                                  _gs.stats.skillLevels[eidolon.id] = value.toInt();
+                                                                  _gs.changeStats();
+                                                                },
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
                                                   ],
                                                 ),
                                               ),

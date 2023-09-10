@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:transparent_image/transparent_image.dart';
 import '../ad_helper.dart';
 import '../calculator/basic.dart';
+import '../calculator/effect.dart';
 import '../calculator/effect_entity.dart';
 import '../characters/character.dart';
 import '../characters/character_entity.dart';
@@ -74,7 +75,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
   late List<CharacterEidolon> eidolonData;
   late int attributeCount;
   late double _currentSliderValue;
-  late List<double> levelnumbers;
+  late Map<String, int> skillLevels;
 
   Future<void> _getData() async {
     characterData = await CharacterManager.loadFromRemote(widget.characterBasic);
@@ -83,7 +84,28 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
     traceData = characterData.entity.tracedata;
     eidolonData = characterData.entity.eidolon;
     _currentSliderValue = levelData.length - 1.0;
-    levelnumbers = List.generate(skillData.length, (index) => 8);
+    skillLevels = {};
+    for (var s in characterData.entity.skilldata) {
+      if (s.maxlevel == 0) {
+        skillLevels[s.id] = 0;
+      } else {
+        skillLevels[s.id] = s.maxlevel > 10 ? 8 : 5;
+      }
+    }
+    for (var t in characterData.entity.tracedata) {
+      if (t.maxlevel == 0) {
+        skillLevels[t.id] = 1;
+      } else {
+        skillLevels[t.id] = t.maxlevel > 10 ? 8 : 5;
+      }
+    }
+    for (var e in characterData.entity.eidolon) {
+      if (e.maxlevel == 0) {
+        skillLevels[e.id] = 1;
+      } else {
+        skillLevels[e.id] = e.maxlevel > 10 ? 8 : 5;
+      }
+    }
     attributeCount = levelData.length;
     setState(() {
       isLoading = false;
@@ -546,12 +568,11 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                               ),
                                             ),
                                             Column(
-                                              children: List.generate(skillData.length, (index) {
-                                                final data = skillData[index];
+                                              children: skillData.map((skill) {
                                                 String fixedtext = "";
-                                                String detailtext = characterData.getSkillDescription(index, getLanguageCode(context));
-                                                if (data.maxlevel > 0) {
-                                                  List<Map<String, double>> multiplierData = data.levelmultiplier.map((e) {
+                                                String detailtext = characterData.getSkillDescriptionById(skill.id, getLanguageCode(context));
+                                                if (skill.maxlevel > 0) {
+                                                  List<Map<String, double>> multiplierData = skill.levelmultiplier.map((e) {
                                                     Map<String, double> m = {};
                                                     for (var entry in e.entries) {
                                                       m[entry.key] = num.tryParse(entry.value.toString())?.toDouble() ?? 0;
@@ -562,7 +583,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                   fixedtext = detailtext;
                                                   for (var i = multicount; i >= 1; i--) {
                                                     Map<String, double> currentleveldata = multiplierData[i - 1];
-                                                    String levelnum = (levelnumbers[index].toStringAsFixed(0));
+                                                    String levelnum = skillLevels[skill.id]!.toStringAsFixed(0);
                                                     if (currentleveldata['default'] == null) {
                                                       fixedtext = fixedtext.replaceAll("[$i]", (currentleveldata[levelnum]).toString());
                                                     } else {
@@ -572,7 +593,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                 } else {
                                                   fixedtext = detailtext;
                                                 }
-                                                List<EffectEntity> effects = data.effect.where((e) => !e.hide).toList();
+                                                List<EffectEntity> effects = skill.effect.where((e) => !e.hide).toList();
                                                 return Stack(
                                                   children: [
                                                     Column(
@@ -601,7 +622,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                 children: [
                                                                   Container(
                                                                     margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                                                                    child: getImageComponent(data.imageurl, imageWrap: true, width: 100),
+                                                                    child: getImageComponent(skill.imageurl, imageWrap: true, width: 100),
                                                                   ),
                                                                   Expanded(
                                                                     child: Padding(
@@ -609,7 +630,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                       child: Column(
                                                                         children: [
                                                                           Text(
-                                                                            characterData.getSkillName(index, getLanguageCode(context)),
+                                                                            characterData.getSkillNameById(skill.id, getLanguageCode(context)),
                                                                             style: const TextStyle(
                                                                               color: Colors.white,
                                                                               fontWeight: FontWeight.bold,
@@ -624,7 +645,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                             ),
                                                                             maxLines: 10,
                                                                           ),
-                                                                          if (data.maxlevel > 0)
+                                                                          if (skill.maxlevel > 0)
                                                                             Padding(
                                                                               padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                                                                               child: Row(
@@ -632,7 +653,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                 children: [
                                                                                   SizedBox(
                                                                                     child: Text(
-                                                                                      "LV:${levelnumbers[index].toInt()}",
+                                                                                      "LV:${skillLevels[skill.id]}",
                                                                                       style: const TextStyle(
                                                                                         //fontWeight: FontWeight.bold,
                                                                                         color: Colors.white,
@@ -644,15 +665,15 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                   ),
                                                                                   Expanded(
                                                                                     child: Slider(
-                                                                                      value: levelnumbers[index],
+                                                                                      value: skillLevels[skill.id]!.toDouble(),
                                                                                       min: 1,
-                                                                                      max: (data.maxlevel).toDouble(),
-                                                                                      divisions: data.maxlevel - 1,
+                                                                                      max: (skill.maxlevel).toDouble(),
+                                                                                      divisions: skill.maxlevel - 1,
                                                                                       activeColor: routeCharacter.elementType.color,
                                                                                       inactiveColor: routeCharacter.elementType.color.withOpacity(0.5),
                                                                                       onChanged: (double value) {
                                                                                         setState(() {
-                                                                                          levelnumbers[index] = value;
+                                                                                          skillLevels[skill.id] = value.toInt();
                                                                                         });
                                                                                       },
                                                                                     ),
@@ -681,22 +702,11 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                             child: Column(
                                                               mainAxisAlignment: MainAxisAlignment.center,
                                                               crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: List.generate(effects.length, (index2) {
-                                                                String levelmulti = "";
-
-                                                                if (data.levelmultiplier.isNotEmpty) {
-                                                                  Map<String, dynamic> leveldata2 = (data.levelmultiplier[effects[index2].multiplier.toInt() - 1]);
-                                                                  String levelnum2 = (levelnumbers[index].toStringAsFixed(0));
-
-                                                                  if (leveldata2['default'] == null) {
-                                                                    levelmulti = leveldata2[levelnum2].toString();
-                                                                  } else {
-                                                                    levelmulti = leveldata2['default'].toString();
-                                                                  }
-                                                                } else {
-                                                                  levelmulti = effects[index2].multiplier.toString();
-                                                                }
-
+                                                              children: effects.map((e) => Effect.fromEntity(e, characterData.entity.id, skill.id)).map((effect) {
+                                                                EffectEntity ee = effect.entity;
+                                                                double multiplierValue = effect.getEffectMultiplierValue(skill, skillLevels[skill.id]!.toInt(), null);
+                                                                FightProp addProp = FightProp.fromEffectKey(ee.addtarget);
+                                                                FightProp multiProp = FightProp.fromEffectKey(ee.multipliertarget);
                                                                 return SingleChildScrollView(
                                                                   scrollDirection: Axis.horizontal,
                                                                   child: Scrollbar(
@@ -710,7 +720,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                 color: Colors.amber,
                                                                                 borderRadius: BorderRadius.circular(5),
                                                                               ),
-                                                                              child: Text(effects[index2].type,
+                                                                              child: Text(ee.type,
                                                                                   style: const TextStyle(
                                                                                     //fontWeight: FontWeight.bold,
                                                                                     color: Colors.black,
@@ -718,7 +728,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                     fontWeight: FontWeight.bold,
                                                                                     height: 1.1,
                                                                                   )).tr()),
-                                                                          if (effects[index2].referencetarget != '')
+                                                                          if (ee.referencetarget != '')
                                                                             Container(
                                                                                 margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                 padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -728,8 +738,8 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                 ),
                                                                                 child: Text(
                                                                                     ('lang'.tr() == 'en')
-                                                                                        ? effects[index2].referencetargetEN
-                                                                                        : (('lang'.tr() == 'cn') ? effects[index2].referencetargetCN : effects[index2].referencetargetJP),
+                                                                                        ? ee.referencetargetEN
+                                                                                        : (('lang'.tr() == 'cn') ? ee.referencetargetCN : ee.referencetargetJP),
                                                                                     style: const TextStyle(
                                                                                       //fontWeight: FontWeight.bold,
                                                                                       color: Colors.black,
@@ -737,16 +747,16 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                       fontWeight: FontWeight.bold,
                                                                                       height: 1.1,
                                                                                     ))),
-                                                                          if (effects[index2].multipliertarget != '')
+                                                                          if (effect.isDamageHealShield() || ee.multipliertarget != '')
                                                                             Container(
                                                                                 margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                 padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                                 decoration: BoxDecoration(
-                                                                                  color: typetocolor[(effects[index2].type)],
+                                                                                  color: typetocolor[(ee.type)],
                                                                                   borderRadius: BorderRadius.circular(5),
                                                                                 ),
                                                                                 child: Text(
-                                                                                    '${(effects[index2].multipliertarget).tr()}$levelmulti${((effects[index2].multipliertarget) != '') ? "%" : ""}',
+                                                                                    '${(ee.multipliertarget).tr()}${multiProp.getPropText(multiplierValue, percent: multiProp != FightProp.none && multiProp != FightProp.unknown)}',
                                                                                     style: const TextStyle(
                                                                                       //fontWeight: FontWeight.bold,
                                                                                       color: Colors.black,
@@ -754,7 +764,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                       fontWeight: FontWeight.bold,
                                                                                       height: 1.1,
                                                                                     ))),
-                                                                          if (effects[index2].addtarget != '')
+                                                                          if (ee.addtarget != '')
                                                                             Container(
                                                                                 margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                 padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -763,7 +773,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                   borderRadius: BorderRadius.circular(5),
                                                                                 ),
                                                                                 child: Text(
-                                                                                    '${(effects[index2].addtarget).tr()}$levelmulti${((effects[index2].addtarget) != 'energy') && ((effects[index2].addtarget) != 'speedpt') ? "%" : ""}',
+                                                                                    '${(ee.addtarget).tr()}${addProp.getPropText(multiplierValue)}',
                                                                                     style: const TextStyle(
                                                                                       //fontWeight: FontWeight.bold,
                                                                                       color: Colors.black,
@@ -774,29 +784,30 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                         ],
                                                                       ),
                                                                       Row(
-                                                                          children: List.generate(effects[index2].tag.length, (index3) {
-                                                                        List<dynamic> taglist = effects[index2].tag;
-
-                                                                        return Container(
+                                                                        children: ee.tag.map((tag) {
+                                                                          return Container(
                                                                             margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                             padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                             decoration: BoxDecoration(
                                                                               color: Colors.white,
                                                                               borderRadius: BorderRadius.circular(5),
                                                                             ),
-                                                                            child: Text(taglist[index3],
-                                                                                style: const TextStyle(
-                                                                                  //fontWeight: FontWeight.bold,
-                                                                                  color: Colors.black,
-                                                                                  fontSize: 15,
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  height: 1.1,
-                                                                                )).tr());
-                                                                      })),
+                                                                            child: Text(tag,
+                                                                              style: const TextStyle(
+                                                                                //fontWeight: FontWeight.bold,
+                                                                                color: Colors.black,
+                                                                                fontSize: 15,
+                                                                                fontWeight: FontWeight.bold,
+                                                                                height: 1.1,
+                                                                              ),
+                                                                            ).tr(),
+                                                                          );
+                                                                        }).toList(),
+                                                                      ),
                                                                     ]),
                                                                   ),
                                                                 );
-                                                              }),
+                                                              }).toList(),
                                                             ),
                                                           ),
                                                         const SizedBox(
@@ -816,7 +827,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                         child: Center(
                                                           child: Padding(
                                                             padding: const EdgeInsets.all(2.0),
-                                                            child: Text(data.stype,
+                                                            child: Text(skill.stype,
                                                                 style: const TextStyle(
                                                                   //fontWeight: FontWeight.bold,
                                                                   color: Colors.white,
@@ -828,7 +839,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                         ),
                                                       ),
                                                     ),
-                                                    if (data.energy > 0)
+                                                    if (skill.energy > 0)
                                                       Positioned(
                                                         top: 10,
                                                         right: 130,
@@ -845,7 +856,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                                 children: [
                                                                   ImageIcon(getImageComponent(FightProp.maxSP.icon), size: 15),
-                                                                  Text('${data.energy}',
+                                                                  Text('${skill.energy}',
                                                                       style: const TextStyle(
                                                                         //fontWeight: FontWeight.bold,
                                                                         color: Colors.white,
@@ -876,7 +887,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                               mainAxisAlignment: MainAxisAlignment.center,
                                                               children: [
                                                                 ImageIcon(getImageComponent(FightProp.breakDamageAddedRatio.icon), size: 15),
-                                                                Text('${data.weaknessbreak}',
+                                                                Text('${skill.weaknessbreak}',
                                                                     style: const TextStyle(
                                                                       //fontWeight: FontWeight.bold,
                                                                       color: Colors.white,
@@ -889,7 +900,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                   width: 10,
                                                                 ),
                                                                 ImageIcon(getImageComponent(FightProp.sPRatio.icon), size: 15),
-                                                                Text('${data.energyregen}',
+                                                                Text('${skill.energyregen}',
                                                                     style: const TextStyle(
                                                                       //fontWeight: FontWeight.bold,
                                                                       color: Colors.white,
@@ -906,7 +917,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                     ),
                                                   ],
                                                 );
-                                              }),
+                                              }).toList(),
                                             )
                                           ]),
                                         ),
@@ -936,11 +947,10 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                               ),
                                             ),
                                             Column(
-                                              children: List.generate(traceData.length, (index) {
-                                                final data = traceData[index];
-                                                String detailtext = characterData.getTraceDescription(index, getLanguageCode(context));
-                                                List<EffectEntity> effects = data.effect.where((e) => !e.hide).toList();
-                                                if (!data.tiny) {
+                                              children: traceData.map((trace) {
+                                                String detailtext = characterData.getTraceDescriptionById(trace.id, getLanguageCode(context));
+                                                List<EffectEntity> effects = trace.effect.where((e) => !e.hide).toList();
+                                                if (!trace.tiny) {
                                                   return Stack(
                                                     children: [
                                                       Column(
@@ -969,7 +979,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                   children: [
                                                                     Container(
                                                                       margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                                                                      child: getImageComponent(data.imageurl, imageWrap: true, width: 100),
+                                                                      child: getImageComponent(trace.imageurl, imageWrap: true, width: 100),
                                                                     ),
                                                                     Expanded(
                                                                       child: Padding(
@@ -977,7 +987,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                         child: Column(
                                                                           children: [
                                                                             Text(
-                                                                              characterData.getTraceName(index, getLanguageCode(context)),
+                                                                              characterData.getTraceNameById(trace.id, getLanguageCode(context)),
                                                                               style: const TextStyle(
                                                                                 color: Colors.white,
                                                                                 fontWeight: FontWeight.bold,
@@ -1013,7 +1023,11 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                               child: Column(
                                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                                                children: List.generate(effects.length, (index2) {
+                                                                children: effects.map((e) => Effect.fromEntity(e, characterData.entity.id, trace.id)).map((effect) {
+                                                                  EffectEntity ee = effect.entity;
+                                                                  double multiplierValue = effect.getEffectMultiplierValue(trace, skillLevels[trace.id], null);
+                                                                  FightProp addProp = FightProp.fromEffectKey(ee.addtarget);
+                                                                  FightProp multiProp = FightProp.fromEffectKey(ee.multipliertarget);
                                                                   return SingleChildScrollView(
                                                                     scrollDirection: Axis.horizontal,
                                                                     child: Scrollbar(
@@ -1027,7 +1041,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                   color: Colors.amber,
                                                                                   borderRadius: BorderRadius.circular(5),
                                                                                 ),
-                                                                                child: Text(effects[index2].type,
+                                                                                child: Text(ee.type,
                                                                                     style: const TextStyle(
                                                                                       //fontWeight: FontWeight.bold,
                                                                                       color: Colors.black,
@@ -1035,15 +1049,15 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                       fontWeight: FontWeight.bold,
                                                                                       height: 1.1,
                                                                                     )).tr()),
-                                                                            if (effects[index2].multipliertarget != '')
+                                                                            if (effect.isDamageHealShield() || ee.multipliertarget != '')
                                                                               Container(
                                                                                   margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                   padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                                   decoration: BoxDecoration(
-                                                                                    color: typetocolor[(effects[index2].type)],
+                                                                                    color: typetocolor[(ee.type)],
                                                                                     borderRadius: BorderRadius.circular(5),
                                                                                   ),
-                                                                                  child: Text('${(effects[index2].multipliertarget).tr()}${effects[index2].multiplier}%',
+                                                                                  child: Text('${(ee.multipliertarget).tr()}${multiProp.getPropText(multiplierValue, percent: multiProp != FightProp.none && multiProp != FightProp.unknown)}',
                                                                                       style: const TextStyle(
                                                                                         //fontWeight: FontWeight.bold,
                                                                                         color: Colors.black,
@@ -1051,7 +1065,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                         fontWeight: FontWeight.bold,
                                                                                         height: 1.1,
                                                                                       ))),
-                                                                            if (effects[index2].addtarget != '')
+                                                                            if (ee.addtarget != '')
                                                                               Container(
                                                                                   margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                   padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -1060,7 +1074,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                     borderRadius: BorderRadius.circular(5),
                                                                                   ),
                                                                                   child: Text(
-                                                                                      '${(effects[index2].addtarget).tr()}${effects[index2].multiplier}${((effects[index2].addtarget) != 'energy') ? "%" : ""}',
+                                                                                      '${(ee.addtarget).tr()}${addProp.getPropText(multiplierValue)}',
                                                                                       style: const TextStyle(
                                                                                         //fontWeight: FontWeight.bold,
                                                                                         color: Colors.black,
@@ -1071,29 +1085,30 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                           ],
                                                                         ),
                                                                         Row(
-                                                                            children: List.generate(effects[index2].tag.length, (index3) {
-                                                                          List<dynamic> taglist = effects[index2].tag;
-
-                                                                          return Container(
+                                                                          children: ee.tag.map((tag) {
+                                                                            return Container(
                                                                               margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                               padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                               decoration: BoxDecoration(
                                                                                 color: Colors.white,
                                                                                 borderRadius: BorderRadius.circular(5),
                                                                               ),
-                                                                              child: Text(taglist[index3],
-                                                                                  style: const TextStyle(
-                                                                                    //fontWeight: FontWeight.bold,
-                                                                                    color: Colors.black,
-                                                                                    fontSize: 15,
-                                                                                    fontWeight: FontWeight.bold,
-                                                                                    height: 1.1,
-                                                                                  )).tr());
-                                                                        })),
+                                                                              child: Text(tag,
+                                                                                style: const TextStyle(
+                                                                                  //fontWeight: FontWeight.bold,
+                                                                                  color: Colors.black,
+                                                                                  fontSize: 15,
+                                                                                  fontWeight: FontWeight.bold,
+                                                                                  height: 1.1,
+                                                                                ),
+                                                                              ).tr(),
+                                                                            );
+                                                                          }).toList(),
+                                                                        ),
                                                                       ]),
                                                                     ),
                                                                   );
-                                                                }),
+                                                                }).toList(),
                                                               ),
                                                             ),
                                                           const SizedBox(
@@ -1113,7 +1128,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                           child: Center(
                                                             child: Padding(
                                                               padding: const EdgeInsets.all(2.0),
-                                                              child: Text(data.stype,
+                                                              child: Text(trace.stype,
                                                                   style: const TextStyle(
                                                                     //fontWeight: FontWeight.bold,
                                                                     color: Colors.white,
@@ -1141,7 +1156,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                           children: [
                                                             Padding(
                                                               padding: const EdgeInsets.all(8.0),
-                                                              child: ImageIcon(getImageComponent(FightProp.fromEffectKey(data.ttype).icon), size: 40),
+                                                              child: ImageIcon(getImageComponent(FightProp.fromEffectKey(trace.ttype).icon), size: 40),
                                                             ),
                                                             Expanded(
                                                               child: Padding(
@@ -1149,7 +1164,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                 child: Column(
                                                                   children: [
                                                                     Text(
-                                                                      characterData.getTraceName(index, getLanguageCode(context)),
+                                                                      characterData.getTraceNameById(trace.id, getLanguageCode(context)),
                                                                       style: const TextStyle(
                                                                         color: Colors.white,
                                                                         fontWeight: FontWeight.bold,
@@ -1183,7 +1198,11 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                           child: Column(
                                                             mainAxisAlignment: MainAxisAlignment.center,
                                                             crossAxisAlignment: CrossAxisAlignment.start,
-                                                            children: List.generate(effects.length, (index2) {
+                                                            children: effects.map((e) => Effect.fromEntity(e, characterData.entity.id, trace.id)).map((effect) {
+                                                              EffectEntity ee = effect.entity;
+                                                              double multiplierValue = effect.getEffectMultiplierValue(trace, skillLevels[trace.id], null);
+                                                              FightProp addProp = FightProp.fromEffectKey(ee.addtarget);
+                                                              FightProp multiProp = FightProp.fromEffectKey(ee.multipliertarget);
                                                               return SingleChildScrollView(
                                                                 scrollDirection: Axis.horizontal,
                                                                 child: Scrollbar(
@@ -1197,7 +1216,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                               color: Colors.amber,
                                                                               borderRadius: BorderRadius.circular(5),
                                                                             ),
-                                                                            child: Text(effects[index2].type,
+                                                                            child: Text(ee.type,
                                                                                 style: const TextStyle(
                                                                                   //fontWeight: FontWeight.bold,
                                                                                   color: Colors.black,
@@ -1205,7 +1224,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                   fontWeight: FontWeight.bold,
                                                                                   height: 1.1,
                                                                                 )).tr()),
-                                                                        if (effects[index2].multipliertarget != '')
+                                                                        if (effect.isDamageHealShield() || ee.multipliertarget != '')
                                                                           Container(
                                                                               margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                               padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -1213,7 +1232,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                 color: Colors.redAccent,
                                                                                 borderRadius: BorderRadius.circular(5),
                                                                               ),
-                                                                              child: Text('${(effects[index2].multipliertarget).tr()}${effects[index2].multiplier}%',
+                                                                              child: Text('${(ee.multipliertarget).tr()}${multiProp.getPropText(multiplierValue, percent: multiProp != FightProp.none && multiProp != FightProp.unknown)}',
                                                                                   style: const TextStyle(
                                                                                     //fontWeight: FontWeight.bold,
                                                                                     color: Colors.black,
@@ -1221,7 +1240,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                     fontWeight: FontWeight.bold,
                                                                                     height: 1.1,
                                                                                   ))),
-                                                                        if (effects[index2].addtarget != '')
+                                                                        if (ee.addtarget != '')
                                                                           Container(
                                                                               margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                               padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -1229,7 +1248,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                 color: Colors.greenAccent,
                                                                                 borderRadius: BorderRadius.circular(5),
                                                                               ),
-                                                                              child: Text('${(effects[index2].addtarget).tr()}${effects[index2].multiplier}%',
+                                                                              child: Text('${(ee.addtarget).tr()}${addProp.getPropText(multiplierValue)}',
                                                                                   style: const TextStyle(
                                                                                     //fontWeight: FontWeight.bold,
                                                                                     color: Colors.black,
@@ -1240,29 +1259,30 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                       ],
                                                                     ),
                                                                     Row(
-                                                                        children: List.generate(effects[index2].tag.length, (index3) {
-                                                                      List<dynamic> taglist = effects[index2].tag;
-
-                                                                      return Container(
+                                                                      children: ee.tag.map((tag) {
+                                                                        return Container(
                                                                           margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                           padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                           decoration: BoxDecoration(
                                                                             color: Colors.white,
                                                                             borderRadius: BorderRadius.circular(5),
                                                                           ),
-                                                                          child: Text(taglist[index3],
-                                                                              style: const TextStyle(
-                                                                                //fontWeight: FontWeight.bold,
-                                                                                color: Colors.black,
-                                                                                fontSize: 15,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                height: 1.1,
-                                                                              )).tr());
-                                                                    })),
+                                                                          child: Text(tag,
+                                                                            style: const TextStyle(
+                                                                              //fontWeight: FontWeight.bold,
+                                                                              color: Colors.black,
+                                                                              fontSize: 15,
+                                                                              fontWeight: FontWeight.bold,
+                                                                              height: 1.1,
+                                                                            ),
+                                                                          ).tr(),
+                                                                        );
+                                                                      }).toList(),
+                                                                    ),
                                                                   ]),
                                                                 ),
                                                               );
-                                                            }),
+                                                            }).toList(),
                                                           ),
                                                         ),
                                                       const SizedBox(
@@ -1271,7 +1291,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                     ],
                                                   );
                                                 }
-                                              }),
+                                              }).toList(),
                                             )
                                           ]),
                                         ),
@@ -1301,10 +1321,9 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                               ),
                                             ),
                                             Column(
-                                              children: List.generate(eidolonData.length, (index) {
-                                                final data = eidolonData[index];
-                                                String fixedtext = characterData.getEidolonDescription(index, getLanguageCode(context));
-                                                List<EffectEntity> effects = data.effect.where((e) => !e.hide).toList();
+                                              children: eidolonData.map((eidolon) {
+                                                String fixedtext = characterData.getEidolonDescriptionByNum(eidolon.eidolonnum, getLanguageCode(context));
+                                                List<EffectEntity> effects = eidolon.effect.where((e) => !e.hide).toList();
                                                 return Stack(
                                                   children: [
                                                     Column(
@@ -1333,7 +1352,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                 children: [
                                                                   Container(
                                                                     margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                                                                    child: getImageComponent(data.imageurl, imageWrap: true, width: 100),
+                                                                    child: getImageComponent(eidolon.imageurl, imageWrap: true, width: 100),
                                                                   ),
                                                                   Expanded(
                                                                     child: Padding(
@@ -1341,7 +1360,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                       child: Column(
                                                                         children: [
                                                                           Text(
-                                                                            characterData.getEidolonName(index, getLanguageCode(context)),
+                                                                            characterData.getEidolonNameByNum(eidolon.eidolonnum, getLanguageCode(context)),
                                                                             style: const TextStyle(
                                                                               color: Colors.white,
                                                                               fontWeight: FontWeight.bold,
@@ -1356,6 +1375,42 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                             ),
                                                                             maxLines: 10,
                                                                           ),
+                                                                          if (eidolon.maxlevel > 0)
+                                                                            Padding(
+                                                                              padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                                              child: Row(
+                                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                children: [
+                                                                                  SizedBox(
+                                                                                    child: Text(
+                                                                                      "LV:${skillLevels[eidolon.id]}",
+                                                                                      style: const TextStyle(
+                                                                                        //fontWeight: FontWeight.bold,
+                                                                                        color: Colors.white,
+                                                                                        fontSize: 20,
+                                                                                        fontWeight: FontWeight.bold,
+                                                                                        height: 1.1,
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                  Expanded(
+                                                                                    child: Slider(
+                                                                                      value: skillLevels[eidolon.id]!.toDouble(),
+                                                                                      min: 1,
+                                                                                      max: (eidolon.maxlevel).toDouble(),
+                                                                                      divisions: eidolon.maxlevel - 1,
+                                                                                      activeColor: routeCharacter.elementType.color,
+                                                                                      inactiveColor: routeCharacter.elementType.color.withOpacity(0.5),
+                                                                                      onChanged: (double value) {
+                                                                                        setState(() {
+                                                                                          skillLevels[eidolon.id] = value.toInt();
+                                                                                        });
+                                                                                      },
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
                                                                         ],
                                                                       ),
                                                                     ),
@@ -1377,11 +1432,11 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                             child: Column(
                                                               mainAxisAlignment: MainAxisAlignment.center,
                                                               crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: List.generate(effects.length, (index2) {
-                                                                String levelmulti = "";
-
-                                                                levelmulti = (effects[index2].multiplier).toString();
-
+                                                              children: effects.map((e) => Effect.fromEntity(e, characterData.entity.id, eidolon.id)).map((effect) {
+                                                                EffectEntity ee = effect.entity;
+                                                                double multiplierValue = effect.getEffectMultiplierValue(eidolon, skillLevels[eidolon.id], null);
+                                                                FightProp addProp = FightProp.fromEffectKey(ee.addtarget);
+                                                                FightProp multiProp = FightProp.fromEffectKey(ee.multipliertarget);
                                                                 return SingleChildScrollView(
                                                                   scrollDirection: Axis.horizontal,
                                                                   child: Scrollbar(
@@ -1395,7 +1450,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                 color: Colors.amber,
                                                                                 borderRadius: BorderRadius.circular(5),
                                                                               ),
-                                                                              child: Text(effects[index2].type,
+                                                                              child: Text(ee.type,
                                                                                   style: const TextStyle(
                                                                                     //fontWeight: FontWeight.bold,
                                                                                     color: Colors.black,
@@ -1403,16 +1458,16 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                     fontWeight: FontWeight.bold,
                                                                                     height: 1.1,
                                                                                   )).tr()),
-                                                                          if (effects[index2].multipliertarget != '')
+                                                                          if (effect.isDamageHealShield() || ee.multipliertarget != '')
                                                                             Container(
                                                                                 margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                 padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                                 decoration: BoxDecoration(
-                                                                                  color: typetocolor[(effects[index2].type)],
+                                                                                  color: typetocolor[(ee.type)],
                                                                                   borderRadius: BorderRadius.circular(5),
                                                                                 ),
                                                                                 child: Text(
-                                                                                    '${(effects[index2].multipliertarget).tr()}$levelmulti${((effects[index2].multipliertarget) != '') && (effects[index2].multiplier != '') ? "%" : ""}',
+                                                                                    '${(ee.multipliertarget).tr()}${multiProp.getPropText(multiplierValue, percent: multiProp != FightProp.none && multiProp != FightProp.unknown)}',
                                                                                     style: const TextStyle(
                                                                                       //fontWeight: FontWeight.bold,
                                                                                       color: Colors.black,
@@ -1420,7 +1475,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                       fontWeight: FontWeight.bold,
                                                                                       height: 1.1,
                                                                                     ))),
-                                                                          if (effects[index2].addtarget != '')
+                                                                          if (ee.addtarget != '')
                                                                             Container(
                                                                                 margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                 padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -1429,7 +1484,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                                   borderRadius: BorderRadius.circular(5),
                                                                                 ),
                                                                                 child: Text(
-                                                                                    '${(effects[index2].addtarget).tr()}$levelmulti${((effects[index2].addtarget) != 'energy') ? "%" : ""}',
+                                                                                    '${(ee.addtarget).tr()}${addProp.getPropText(multiplierValue)}',
                                                                                     style: const TextStyle(
                                                                                       //fontWeight: FontWeight.bold,
                                                                                       color: Colors.black,
@@ -1440,29 +1495,30 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                                         ],
                                                                       ),
                                                                       Row(
-                                                                          children: List.generate(effects[index2].tag.length, (index3) {
-                                                                        List<dynamic> taglist = effects[index2].tag;
-
-                                                                        return Container(
+                                                                        children: ee.tag.map((tag) {
+                                                                          return Container(
                                                                             margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                             padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                             decoration: BoxDecoration(
                                                                               color: Colors.white,
                                                                               borderRadius: BorderRadius.circular(5),
                                                                             ),
-                                                                            child: Text(taglist[index3],
-                                                                                style: const TextStyle(
-                                                                                  //fontWeight: FontWeight.bold,
-                                                                                  color: Colors.black,
-                                                                                  fontSize: 15,
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  height: 1.1,
-                                                                                )).tr());
-                                                                      })),
+                                                                            child: Text(tag,
+                                                                              style: const TextStyle(
+                                                                                //fontWeight: FontWeight.bold,
+                                                                                color: Colors.black,
+                                                                                fontSize: 15,
+                                                                                fontWeight: FontWeight.bold,
+                                                                                height: 1.1,
+                                                                              ),
+                                                                            ).tr(),
+                                                                          );
+                                                                        }).toList(),
+                                                                      ),
                                                                     ]),
                                                                   ),
                                                                 );
-                                                              }),
+                                                              }).toList(),
                                                             ),
                                                           ),
                                                         const SizedBox(
@@ -1482,7 +1538,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                         child: Center(
                                                           child: Padding(
                                                             padding: const EdgeInsets.all(2.0),
-                                                            child: Text(data.stype.tr() + data.eidolonnum.toString(),
+                                                            child: Text(eidolon.stype.tr() + eidolon.eidolonnum.toString(),
                                                                 style: const TextStyle(
                                                                   //fontWeight: FontWeight.bold,
                                                                   color: Colors.white,
@@ -1496,7 +1552,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                                                     ),
                                                   ],
                                                 );
-                                              }),
+                                              }).toList(),
                                             ),
                                             adsenseAdsView(columnwidth - 20),
                                             if (_isBannerAdReady)

@@ -8,6 +8,9 @@ import 'package:transparent_image/transparent_image.dart';
 import 'dart:async';
 
 import '../ad_helper.dart';
+import '../calculator/basic.dart';
+import '../calculator/effect.dart';
+import '../calculator/effect_entity.dart';
 import '../info.dart';
 import '../platformad_stub.dart' if (dart.library.io) '../platformad_stub.dart' if (dart.library.html) '../platformad.dart';
 import '../relics/relic.dart';
@@ -311,8 +314,9 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                           ),
                                         Column(
                                           children: List.generate(skillData.length, (index) {
-                                            final data = skillData[index];
+                                            final skill = skillData[index];
                                             String fixedtext = relicData.getSkillDescription(index, getLanguageCode(context));
+                                            List<EffectEntity> effects = skill.effect.where((e) => !e.hide).toList();
                                             return Stack(
                                               children: [
                                                 Column(
@@ -328,7 +332,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                         filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                                                         child: Container(
                                                           decoration: BoxDecoration(
-                                                            borderRadius: (data.effect.isNotEmpty)
+                                                            borderRadius: (effects.isNotEmpty)
                                                                 ? const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
                                                                 : const BorderRadius.all(Radius.circular(15)),
                                                             border: Border.all(color: Colors.white.withOpacity(0.13)),
@@ -369,7 +373,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                         ),
                                                       ),
                                                     ),
-                                                    if (data.effect.isNotEmpty)
+                                                    if (effects.isNotEmpty)
                                                       Container(
                                                         width: double.infinity,
                                                         margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -382,8 +386,11 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                         child: Column(
                                                           mainAxisAlignment: MainAxisAlignment.center,
                                                           crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: List.generate(data.effect.length, (index2) {
-                                                            String levelmulti = data.effect[index2].multiplier.toString();
+                                                          children: effects.map((e) => Effect.fromEntity(e, relicData.entity.id, '', type: Effect.relicType)).map((effect) {
+                                                            EffectEntity ee = effect.entity;
+                                                            double multiplierValue = effect.getEffectMultiplierValue(skill, null, null);
+                                                            FightProp addProp = FightProp.fromEffectKey(ee.addtarget);
+                                                            FightProp multiProp = FightProp.fromEffectKey(ee.multipliertarget);
                                                             return SingleChildScrollView(
                                                               scrollDirection: Axis.horizontal,
                                                               child: Scrollbar(
@@ -397,7 +404,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                                             color: Colors.amber,
                                                                             borderRadius: BorderRadius.circular(5),
                                                                           ),
-                                                                          child: Text(data.effect[index2].type,
+                                                                          child: Text(ee.type,
                                                                               style: const TextStyle(
                                                                                 //fontWeight: FontWeight.bold,
                                                                                 color: Colors.black,
@@ -405,7 +412,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                                                 fontWeight: FontWeight.bold,
                                                                                 height: 1.1,
                                                                               )).tr()),
-                                                                      if (data.effect[index2].referencetarget != '')
+                                                                      if (ee.referencetarget != '')
                                                                         Container(
                                                                             margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                             padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -415,10 +422,10 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                                             ),
                                                                             child: Text(
                                                                                 ('lang'.tr() == 'en')
-                                                                                    ? data.effect[index2].referencetargetEN
+                                                                                    ? ee.referencetargetEN
                                                                                     : (('lang'.tr() == 'cn')
-                                                                                        ? data.effect[index2].referencetargetCN
-                                                                                        : data.effect[index2].referencetargetJP),
+                                                                                        ? ee.referencetargetCN
+                                                                                        : ee.referencetargetJP),
                                                                                 style: const TextStyle(
                                                                                   //fontWeight: FontWeight.bold,
                                                                                   color: Colors.black,
@@ -426,16 +433,16 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                                                   fontWeight: FontWeight.bold,
                                                                                   height: 1.1,
                                                                                 ))),
-                                                                      if (data.effect[index2].multipliertarget != '')
+                                                                      if (effect.isDamageHealShield() || ee.multipliertarget != '')
                                                                         Container(
                                                                             margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                             padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                             decoration: BoxDecoration(
-                                                                              color: typetocolor[(data.effect[index2].type)],
+                                                                              color: typetocolor[(ee.type)],
                                                                               borderRadius: BorderRadius.circular(5),
                                                                             ),
                                                                             child: Text(
-                                                                                '${(data.effect[index2].multipliertarget).tr()}$levelmulti${((data.effect[index2].multipliertarget) != '') ? "%" : ""}',
+                                                                                '${(ee.multipliertarget).tr()}${multiProp.getPropText(multiplierValue, percent: multiProp != FightProp.none && multiProp != FightProp.unknown)}',
                                                                                 style: const TextStyle(
                                                                                   //fontWeight: FontWeight.bold,
                                                                                   color: Colors.black,
@@ -443,7 +450,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                                                   fontWeight: FontWeight.bold,
                                                                                   height: 1.1,
                                                                                 ))),
-                                                                      if (data.effect[index2].addtarget != '')
+                                                                      if (ee.addtarget != '')
                                                                         Container(
                                                                             margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                             padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -452,7 +459,7 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                                               borderRadius: BorderRadius.circular(5),
                                                                             ),
                                                                             child: Text(
-                                                                                '${(data.effect[index2].addtarget).tr()}$levelmulti${((data.effect[index2].addtarget) != 'energy') ? "%" : ""}',
+                                                                                '${(ee.addtarget).tr()}${addProp.getPropText(multiplierValue)}',
                                                                                 style: const TextStyle(
                                                                                   //fontWeight: FontWeight.bold,
                                                                                   color: Colors.black,
@@ -463,29 +470,30 @@ class _RelicDetailPageState extends State<RelicDetailPage> {
                                                                     ],
                                                                   ),
                                                                   Row(
-                                                                      children: List.generate(data.effect[index2].tag.length, (index3) {
-                                                                    List<dynamic> taglist = data.effect[index2].tag;
-
-                                                                    return Container(
+                                                                    children: ee.tag.map((tag) {
+                                                                      return Container(
                                                                         margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                         padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                         decoration: BoxDecoration(
                                                                           color: Colors.white,
                                                                           borderRadius: BorderRadius.circular(5),
                                                                         ),
-                                                                        child: Text(taglist[index3],
-                                                                            style: const TextStyle(
-                                                                              //fontWeight: FontWeight.bold,
-                                                                              color: Colors.black,
-                                                                              fontSize: 15,
-                                                                              fontWeight: FontWeight.bold,
-                                                                              height: 1.1,
-                                                                            )).tr());
-                                                                  })),
+                                                                        child: Text(tag,
+                                                                          style: const TextStyle(
+                                                                            //fontWeight: FontWeight.bold,
+                                                                            color: Colors.black,
+                                                                            fontSize: 15,
+                                                                            fontWeight: FontWeight.bold,
+                                                                            height: 1.1,
+                                                                          ),
+                                                                        ).tr(),
+                                                                      );
+                                                                    }).toList(),
+                                                                  ),
                                                                 ]),
                                                               ),
                                                             );
-                                                          }),
+                                                          }).toList(),
                                                         ),
                                                       ),
                                                     const SizedBox(

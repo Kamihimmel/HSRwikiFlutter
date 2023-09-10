@@ -60,6 +60,10 @@ class Character {
     return entity.skilldata[index].getDescription(lang);
   }
 
+  String getSkillDescriptionById(String skillId, String lang) {
+    return entity.skilldata.firstWhere((skill) => skill.id == skillId, orElse: () => CharacterSkilldata()).getDescription(lang);
+  }
+
   CharacterTracedata getTraceById(String traceId) {
     return entity.tracedata.firstWhere((trace) => trace.id == traceId, orElse: () => CharacterTracedata());
   }
@@ -76,6 +80,10 @@ class Character {
     return entity.tracedata[index].getDescription(lang);
   }
 
+  String getTraceDescriptionById(String traceId, String lang) {
+    return entity.tracedata.firstWhere((trace) => trace.id == traceId, orElse: () => CharacterTracedata()).getDescription(lang);
+  }
+
   CharacterEidolon getEidolonByNum(int eidolonNum) {
     return entity.eidolon.firstWhere((eidolon) => eidolon.eidolonnum == eidolonNum, orElse: () => CharacterEidolon());
   }
@@ -88,8 +96,16 @@ class Character {
     return entity.eidolon[index].getName(lang);
   }
 
+  String getEidolonNameByNum(int eidolonNum, String lang) {
+    return entity.eidolon.firstWhere((eidolon) => eidolon.eidolonnum == eidolonNum, orElse: () => CharacterEidolon()).getName(lang);
+  }
+
   String getEidolonDescription(int index, String lang) {
     return entity.eidolon[index].getDescription(lang);
+  }
+
+  String getEidolonDescriptionByNum(int eidolonNum, String lang) {
+    return entity.eidolon.firstWhere((eidolon) => eidolon.eidolonnum == eidolonNum, orElse: () => CharacterEidolon()).getDescription(lang);
   }
 
   String getImageLargeUrl(GlobalState _gs) {

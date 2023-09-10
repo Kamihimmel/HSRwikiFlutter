@@ -187,10 +187,22 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
       }
     }
     for (var t in _cData.entity.tracedata) {
+      if (t.maxlevel == 0) {
+        _gs.stats.skillLevels[t.id] = 0;
+      } else {
+        _gs.stats.skillLevels[t.id] = t.maxlevel > 10 ? 8 : 5;
+      }
       if (_gs.stats.traceLevels.containsKey(t.id)) {
         continue;
       }
       _gs.stats.traceLevels[t.id] = 1;
+    }
+    for (var e in _cData.entity.eidolon) {
+      if (e.maxlevel == 0) {
+        _gs.stats.skillLevels[e.id] = 0;
+      } else {
+        _gs.stats.skillLevels[e.id] = e.maxlevel > 10 ? 8 : 5;
+      }
     }
     for (RelicPart rp in RelicPart.values) {
       if (!_gs.stats.relics.containsKey(rp) && rp != RelicPart.unknown) {

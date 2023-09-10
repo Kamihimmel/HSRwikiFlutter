@@ -105,6 +105,6 @@ List<FightProp> _manualProps = [
   FightProp.criticalDamage,
   FightProp.allDamageAddRatio,
   FightProp.allResistanceIgnore,
-  FightProp.statusProbability,
-  FightProp.statusResistance,
+  FightProp.effectHitRate,
+  FightProp.effectResistenceRate,
 ];

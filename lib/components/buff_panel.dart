@@ -52,6 +52,8 @@ class BuffPanelState extends State<BuffPanel> {
           skillLevel = 6;
         }
       }
+    } else if (effect.type == Effect.lightconeType) {
+      skillLevel = _gs.stats.lightconeRank;
     }
     String propText = '';
     List<String> propValue = [];

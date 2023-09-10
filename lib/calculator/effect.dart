@@ -158,11 +158,16 @@ class Effect {
       }
     }
 
+    FightProp multiProp = FightProp.fromEffectMultiplier(this.entity.multipliertarget);
+    FightProp addProp = FightProp.fromEffectKey(this.entity.addtarget);
     if (isBuffOrDebuff()) {
       if (this.entity.multipliertarget != '') {
-        multiplier *= effectConfig?.value ?? 0;
+        // 概率类的不使用config
+        if (!multiProp.isProbability() && multiProp != FightProp.unknown) {
+          multiplier *= effectConfig?.value ?? 0;
+        }
         // 如果基于的属性本身是百分比
-        if (FightProp.fromEffectMultiplier(this.entity.multipliertarget).isPercent()) {
+        if (multiProp.isPercent()) {
           multiplier /= 100;
         }
       } else {
@@ -171,12 +176,12 @@ class Effect {
         }
       }
       // 如果加成的目标属性为百分比
-      if (FightProp.fromEffectKey(this.entity.addtarget).isPercent()) {
+      if (addProp.isPercent()) {
         multiplier /= 100;
       }
     } else if (isDamageHealShield()) {
       // 如果是伤害治疗类的，通过是否存在multipliertarget(倍率属性)判断
-      if (FightProp.fromEffectMultiplier(this.entity.multipliertarget) != FightProp.none) {
+      if (multiProp != FightProp.none) {
         multiplier /= 100;
       }
     }

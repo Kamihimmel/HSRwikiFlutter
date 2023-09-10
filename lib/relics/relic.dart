@@ -70,7 +70,7 @@ enum RelicPart {
     FightProp.hPAddedRatio,
     FightProp.attackAddedRatio,
     FightProp.defenceAddedRatio,
-    FightProp.statusProbability,
+    FightProp.effectHitRate,
     FightProp.healRatio,
     FightProp.criticalDamage,
     FightProp.criticalChance
@@ -126,8 +126,8 @@ List<FightProp> relicSubAttrs = [
   FightProp.defenceAddedRatio,
   FightProp.criticalChance,
   FightProp.criticalDamage,
-  FightProp.statusResistance,
-  FightProp.statusProbability,
+  FightProp.effectHitRate,
+  FightProp.effectResistenceRate,
   FightProp.breakDamageAddedRatio,
   FightProp.speedDelta,
 ];
@@ -235,7 +235,7 @@ const relicMainAttrLevelCurve = {
     4: {"base": 0.04424, "add": 0.01548},
     5: {"base": 0.0553, "add": 0.01935}
   },
-  FightProp.statusProbability: {
+  FightProp.effectHitRate: {
     2: {"base": 0.02765, "add": 0.00968},
     3: {"base": 0.04147, "add": 0.01452},
     4: {"base": 0.0553, "add": 0.01935},

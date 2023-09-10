@@ -28,12 +28,14 @@ enum FightProp {
 
   maxSP(desc: 'Max Energy', icon: 'starrailres/icon/property/IconEnergyLimit.png'),
   sPRatio(desc: 'energyregenrate', icon: 'starrailres/icon/property/IconEnergyRecovery.png', buffOrder: 9, effectKey: ['sprate', 'energyregenrate']),
+  sPDelta(desc: 'energyregenrate', icon: 'starrailres/icon/property/IconEnergyRecovery.png', buffOrder: 9, effectKey: ['energy']),
   sPRatioBase(desc: 'Energy Regeneration Rate', icon: 'starrailres/icon/property/IconEnergyRecovery.png'),
 
   speed(desc: 'speed', icon: 'starrailres/icon/property/IconSpeed.png', effectKey: ['spd']),
   baseSpeed(desc: 'SPD', icon: 'starrailres/icon/property/IconSpeed.png'),
   speedDelta(desc: 'speed', icon: 'starrailres/icon/property/IconSpeed.png', buffOrder: 6, effectKey: ['speedpt']),
   speedAddedRatio(desc: 'speed', icon: 'starrailres/icon/property/IconSpeed.png', buffOrder: 6, effectKey: ['speed']),
+  actionForwardRatio(desc: 'speed', icon: 'starrailres/icon/property/IconSpeed.png', buffOrder: 6, effectKey: ['actionf']),
 
   aggro(desc: 'Taunt', icon: 'starrailres/icon/property/IconTaunt.png', buffOrder: 10, effectKey: ['taunt']),
   stanceBreakAddedRatio(desc: ''),
@@ -43,10 +45,10 @@ enum FightProp {
   healTakenRatio(desc: 'Incoming Healing Boost', icon: 'starrailres/icon/property/IconHealRatio.png'),
   shieldAddRatio(desc: 'Shield Boost', buffOrder: 9, effectKey: ['shielddmgabsorb']),
 
-  statusProbability(desc: 'effecthit', icon: 'starrailres/icon/property/IconStatusProbability.png', buffOrder: 8, effectKey: ['effecthit']),
-  statusProbabilityBase(desc: 'Effect Hit Rate', icon: 'starrailres/icon/property/IconStatusProbability.png'),
-  statusResistance(desc: 'effectres', icon: 'starrailres/icon/property/IconStatusResistance.png', buffOrder: 8, effectKey: ['effectres']),
-  statusResistanceBase(desc: 'Effect RES', icon: 'starrailres/icon/property/IconStatusResistance.png'),
+  effectHitRate(desc: 'effecthit', icon: 'starrailres/icon/property/IconStatusProbability.png', buffOrder: 8, effectKey: ['effecthit']),
+  effectHitRateBase(desc: 'Effect Hit', icon: 'starrailres/icon/property/IconStatusProbability.png'),
+  effectResistenceRate(desc: 'effectres', icon: 'starrailres/icon/property/IconStatusResistance.png', buffOrder: 8, effectKey: ['effectres']),
+  effectResistenceRateBase(desc: 'Effect RES', icon: 'starrailres/icon/property/IconStatusResistance.png'),
 
   criticalChance(desc: 'critrate', icon: 'starrailres/icon/property/IconCriticalChance.png', buffOrder: 2, effectKey: ['critrate']),
   criticalChanceBase(desc: 'CRIT Rate', icon: 'starrailres/icon/property/IconCriticalChance.png'),
@@ -109,6 +111,8 @@ enum FightProp {
   controlResist(desc: 'controlresist', buffOrder: 9, effectKey: ['controlresist']),
   damageReduceRatio(desc: 'dmgreduction', buffOrder: 9, effectKey: ['dmgreduction']),
 
+  skillpointreProbability(desc: 'skillpointre', buffOrder: 10, effectKey: ['skillpointre']),
+
   /// debuff start
   allDamageReceiveRatio(desc: 'dmgreceive', buffOrder: 4, debuff: true, effectKey: ['dmgreceive']),
   physicalDamageReceiveRatio(desc: 'physicaldmgreceive', buffOrder: 4, debuff: true, effectKey: ['physicaldmgreceive']),
@@ -122,7 +126,16 @@ enum FightProp {
   additionalDamageReceiveRatio(desc: 'additionaldmgreceive', buffOrder: 4, debuff: true, effectKey: ['additionaldmgreceive']),
 
   defenceReduceRatio(desc: 'reducedefdebuff', buffOrder: 4, debuff: true, effectKey: ['reducedef']),
-  speedReduceRatio(desc: 'reducespeeddebuff', buffOrder: 9, icon: 'starrailres/icon/property/IconSpeed.png', effectKey: ['reducespeed']),
+  speedReduceRatio(desc: 'reducespeeddebuff', buffOrder: 9, debuff: true, icon: 'starrailres/icon/property/IconSpeed.png', effectKey: ['reducespeed']),
+
+  addWeaknessProbability(desc: 'addweakness', debuff: true, buffOrder: 10, effectKey: ['addweakness']),
+  frozenProbability(desc: 'frozen', debuff: true, buffOrder: 10, effectKey: ['frozen']),
+  burnProbability(desc: 'burn', debuff: true, buffOrder: 10, effectKey: ['burn']),
+  bleedProbability(desc: 'bleed', debuff: true, buffOrder: 10, effectKey: ['bleed']),
+  shockedProbability(desc: 'shocked', debuff: true, buffOrder: 10, effectKey: ['shocked']),
+  windShearProbability(desc: 'windshear', debuff: true, buffOrder: 10, effectKey: ['windshear']),
+  imprisonProbability(desc: 'imprison', debuff: true, buffOrder: 10, effectKey: ['imprison']),
+  entanglementProbability(desc: 'entanglement', debuff: true, buffOrder: 10, effectKey: ['entanglement']),
   /// debuff end
 
   // 人为构造的属性
@@ -155,11 +168,15 @@ enum FightProp {
   bool isPercent() {
     return this.name.contains("Ratio") || this.name.endsWith("ResistanceIgnore") || this.name.endsWith("Resistance")
         || this.name.contains("Probability") || this.name.toLowerCase().contains("critical")
-        || this.name == 'controlResist';
+        || this.name.contains("Rate") || this.name == 'controlResist';
   }
 
-  String getPropText(double value) {
-    return getDisplayText(value, this.isPercent());
+  bool isProbability() {
+    return this.name.endsWith("Probability");
+  }
+
+  String getPropText(double value, {bool? percent}) {
+    return getDisplayText(value, percent ?? this.isPercent());
   }
 
   static List<FightProp> sortByBuffOrder(List<FightProp> props) {

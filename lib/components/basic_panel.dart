@@ -232,8 +232,8 @@ class BasicPanelState extends State<BasicPanel> {
           shieldAttrs[FightProp.shieldAddRatio.desc] = _getBaseAttr(stats, FightProp.shieldAddRatio);
 
           Map<String, List<dynamic>> otherAttrs = {};
-          otherAttrs[FightProp.statusResistance.desc] = _getBaseAttr(stats, FightProp.statusResistance);
-          otherAttrs[FightProp.statusProbability.desc] = _getBaseAttr(stats, FightProp.statusProbability);
+          otherAttrs[FightProp.effectHitRate.desc] = _getBaseAttr(stats, FightProp.effectHitRate);
+          otherAttrs[FightProp.effectResistenceRate.desc] = _getBaseAttr(stats, FightProp.effectResistenceRate);
           otherAttrs[FightProp.breakDamageAddedRatio.desc] = _getBaseAttr(stats, FightProp.breakDamageAddedRatio);
           otherAttrs[FightProp.allResistanceIgnore.desc] = _getBaseAttr(stats, FightProp.allResistanceIgnore);
           for (FightProp p in ElementType.getElementResistanceIgnoreProps()) {

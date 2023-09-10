@@ -9,6 +9,8 @@ import 'dart:async';
 
 import '../ad_helper.dart';
 import '../calculator/basic.dart';
+import '../calculator/effect.dart';
+import '../calculator/effect_entity.dart';
 import '../info.dart';
 import '../lightcones/lightcone.dart';
 import '../lightcones/lightcone_entity.dart';
@@ -458,20 +460,16 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                 ),
                                                 Column(
                                                   children: List.generate(skillData.length, (index) {
-                                                    final data = skillData[index];
+                                                    final skill = skillData[index];
                                                     String fixedtext = "";
-
                                                     String detailtext = lightconeData.getSkillDescription(index, getLanguageCode(context));
-                                                    if (data.maxlevel > 0) {
-                                                      List<Map<String, dynamic>> multiplierData = data.levelmultiplier;
-
+                                                    if (skill.maxlevel > 0) {
+                                                      List<Map<String, dynamic>> multiplierData = skill.levelmultiplier;
                                                       int multicount = multiplierData.length;
                                                       fixedtext = detailtext;
-
                                                       for (var i = multicount; i >= 1; i--) {
                                                         Map<String, dynamic> currentleveldata = multiplierData[i - 1];
                                                         String levelnum = (levelnumbers[index].toStringAsFixed(0));
-
                                                         if (currentleveldata['default'] == null) {
                                                           fixedtext = fixedtext.replaceAll("[$i]", (currentleveldata[levelnum]).toString());
                                                         } else {
@@ -481,7 +479,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                     } else {
                                                       fixedtext = detailtext;
                                                     }
-
+                                                    List<EffectEntity> effects = skill.effect.where((e) => !e.hide).toList();
                                                     return Stack(
                                                       children: [
                                                         Column(
@@ -497,7 +495,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                 filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                                                                 child: Container(
                                                                   decoration: BoxDecoration(
-                                                                    borderRadius: (data.effect.isNotEmpty)
+                                                                    borderRadius: (effects.isNotEmpty)
                                                                         ? const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
                                                                         : const BorderRadius.all(Radius.circular(15)),
                                                                     border: Border.all(color: Colors.white.withOpacity(0.13)),
@@ -527,7 +525,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                                 ),
                                                                                 maxLines: 10,
                                                                               ),
-                                                                              if (data.maxlevel > 0)
+                                                                              if (skill.maxlevel > 0)
                                                                                 Padding(
                                                                                   padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                                                                                   child: Row(
@@ -549,8 +547,8 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                                         child: Slider(
                                                                                           value: levelnumbers[index],
                                                                                           min: 1,
-                                                                                          max: data.maxlevel.toDouble(),
-                                                                                          divisions: data.maxlevel - 1,
+                                                                                          max: skill.maxlevel.toDouble(),
+                                                                                          divisions: skill.maxlevel - 1,
                                                                                           activeColor: raritytocolor[lightconeData.entity.rarity],
                                                                                           inactiveColor: raritytocolor[lightconeData.entity.rarity]?.withOpacity(0.5),
                                                                                           onChanged: (double value) {
@@ -572,7 +570,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                 ),
                                                               ),
                                                             ),
-                                                            if (data.effect.isNotEmpty)
+                                                            if (effects.isNotEmpty)
                                                               Container(
                                                                 width: double.infinity,
                                                                 margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -584,22 +582,11 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                 child: Column(
                                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                                                  children: List.generate(data.effect.length, (index2) {
-                                                                    String levelmulti = "";
-
-                                                                    if (data.levelmultiplier.isNotEmpty) {
-                                                                      Map<String, dynamic> leveldata2 = (data.levelmultiplier[data.effect[index2].multiplier.toInt() - 1]);
-                                                                      String levelnum2 = (levelnumbers[index].toStringAsFixed(0));
-
-                                                                      if (leveldata2['default'] == null) {
-                                                                        levelmulti = leveldata2[levelnum2].toString();
-                                                                      } else {
-                                                                        levelmulti = leveldata2['default'].toString();
-                                                                      }
-                                                                    } else {
-                                                                      levelmulti = data.effect[index2].multiplier.toString();
-                                                                    }
-
+                                                                  children: effects.map((e) => Effect.fromEntity(e, lightconeData.entity.id, '', type: Effect.lightconeType)).map((effect) {
+                                                                    EffectEntity ee = effect.entity;
+                                                                    double multiplierValue = effect.getEffectMultiplierValue(skill, levelnumbers[index].toInt(), null);
+                                                                    FightProp addProp = FightProp.fromEffectKey(ee.addtarget);
+                                                                    FightProp multiProp = FightProp.fromEffectKey(ee.multipliertarget);
                                                                     return SingleChildScrollView(
                                                                       scrollDirection: Axis.horizontal,
                                                                       child: Scrollbar(
@@ -613,7 +600,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                                     color: Colors.amber,
                                                                                     borderRadius: BorderRadius.circular(5),
                                                                                   ),
-                                                                                  child: Text(data.effect[index2].type,
+                                                                                  child: Text(ee.type,
                                                                                       style: const TextStyle(
                                                                                         //fontWeight: FontWeight.bold,
                                                                                         color: Colors.black,
@@ -621,7 +608,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                                         fontWeight: FontWeight.bold,
                                                                                         height: 1.1,
                                                                                       )).tr()),
-                                                                              if (data.effect[index2].referencetarget != '')
+                                                                              if (ee.referencetarget != '')
                                                                                 Container(
                                                                                     margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                     padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -631,8 +618,8 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                                     ),
                                                                                     child: Text(
                                                                                         ('lang'.tr() == 'en')
-                                                                                            ? data.effect[index2].referencetargetEN
-                                                                                            : (('lang'.tr() == 'cn') ? data.effect[index2].referencetargetCN : data.effect[index2].referencetargetJP),
+                                                                                            ? ee.referencetargetEN
+                                                                                            : (('lang'.tr() == 'cn') ? ee.referencetargetCN : ee.referencetargetJP),
                                                                                         style: const TextStyle(
                                                                                           //fontWeight: FontWeight.bold,
                                                                                           color: Colors.black,
@@ -640,16 +627,16 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                                           fontWeight: FontWeight.bold,
                                                                                           height: 1.1,
                                                                                         ))),
-                                                                              if (data.effect[index2].multipliertarget != '')
+                                                                              if (effect.isDamageHealShield() || ee.multipliertarget != '')
                                                                                 Container(
                                                                                     margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                     padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                                     decoration: BoxDecoration(
-                                                                                      color: typetocolor[(data.effect[index2].type)],
+                                                                                      color: typetocolor[(ee.type)],
                                                                                       borderRadius: BorderRadius.circular(5),
                                                                                     ),
                                                                                     child: Text(
-                                                                                        '${(data.effect[index2].multipliertarget).tr()}$levelmulti${((data.effect[index2].multipliertarget) != '') ? "%" : ""}',
+                                                                                        '${(ee.multipliertarget).tr()}${multiProp.getPropText(multiplierValue, percent: multiProp != FightProp.none && multiProp != FightProp.unknown)}',
                                                                                         style: const TextStyle(
                                                                                           //fontWeight: FontWeight.bold,
                                                                                           color: Colors.black,
@@ -657,7 +644,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                                           fontWeight: FontWeight.bold,
                                                                                           height: 1.1,
                                                                                         ))),
-                                                                              if (data.effect[index2].addtarget != '')
+                                                                              if (ee.addtarget != '')
                                                                                 Container(
                                                                                     margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                     padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -666,7 +653,7 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                                       borderRadius: BorderRadius.circular(5),
                                                                                     ),
                                                                                     child: Text(
-                                                                                        '${(data.effect[index2].addtarget).tr()}$levelmulti${((data.effect[index2].addtarget) != 'energy') && ((data.effect[index2].addtarget) != 'speedpt') ? "%" : ""}',
+                                                                                        '${(ee.addtarget).tr()}${addProp.getPropText(multiplierValue)}',
                                                                                         style: const TextStyle(
                                                                                           //fontWeight: FontWeight.bold,
                                                                                           color: Colors.black,
@@ -677,29 +664,30 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                                                                             ],
                                                                           ),
                                                                           Row(
-                                                                              children: List.generate(data.effect[index2].tag.length, (index3) {
-                                                                            List<dynamic> taglist = data.effect[index2].tag;
-
-                                                                            return Container(
+                                                                            children: ee.tag.map((tag) {
+                                                                              return Container(
                                                                                 margin: const EdgeInsets.fromLTRB(0, 5, 10, 5),
                                                                                 padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
                                                                                 decoration: BoxDecoration(
                                                                                   color: Colors.white,
                                                                                   borderRadius: BorderRadius.circular(5),
                                                                                 ),
-                                                                                child: Text(taglist[index3],
-                                                                                    style: const TextStyle(
-                                                                                      //fontWeight: FontWeight.bold,
-                                                                                      color: Colors.black,
-                                                                                      fontSize: 15,
-                                                                                      fontWeight: FontWeight.bold,
-                                                                                      height: 1.1,
-                                                                                    )).tr());
-                                                                          })),
+                                                                                child: Text(tag,
+                                                                                  style: const TextStyle(
+                                                                                    //fontWeight: FontWeight.bold,
+                                                                                    color: Colors.black,
+                                                                                    fontSize: 15,
+                                                                                    fontWeight: FontWeight.bold,
+                                                                                    height: 1.1,
+                                                                                  ),
+                                                                                ).tr(),
+                                                                              );
+                                                                            }).toList(),
+                                                                          ),
                                                                         ]),
                                                                       ),
                                                                     );
-                                                                  }),
+                                                                  }).toList(),
                                                                 ),
                                                               ),
                                                             const SizedBox(

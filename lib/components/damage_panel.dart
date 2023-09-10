@@ -12,7 +12,6 @@ import '../calculator/effect.dart';
 import '../calculator/effect_manager.dart';
 import '../calculator/skill_data.dart';
 import '../characters/character.dart';
-import '../characters/character_entity.dart';
 import '../characters/character_manager.dart';
 import '../utils/helper.dart';
 import 'global_state.dart';
@@ -226,8 +225,8 @@ class DamagePanelState extends State<DamagePanel> {
     return damageHealSkills.map((skillData) {
       String skillName = skillData.getName(getLanguageCode(context));
       int? skillLevel;
-      if (skillData.stype != 'trace' && skillData.stype != 'eidolon' && skillData.maxlevel > 0) {
-        // 是skill类型，需要获取等级数据
+      if (skillData.maxlevel > 0) {
+        // 需要获取等级数据
         skillLevel = _gs.stats.skillLevels[skillData.id] ?? 1;
       }
       if (skillData.referencelevel != '') {

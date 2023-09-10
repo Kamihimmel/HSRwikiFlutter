@@ -100,8 +100,8 @@ class CharacterStats {
 
     map[FightProp.breakDamageBase] = getPropValue(FightProp.breakDamageBase);
     map[FightProp.breakDamageAddedRatio] = getPropValue(FightProp.breakDamageAddedRatio);
-    map[FightProp.statusProbability] = getPropValue(FightProp.statusProbability);
-    map[FightProp.statusResistance] = getPropValue(FightProp.statusResistance);
+    map[FightProp.effectHitRate] = getPropValue(FightProp.effectHitRate);
+    map[FightProp.effectResistenceRate] = getPropValue(FightProp.effectResistenceRate);
     map[FightProp.allDamageAddRatio] = getPropValue(FightProp.allDamageAddRatio);
     for (var ed in ElementType.getElementAddRatioProps()) {
       map[ed] = getPropValue(ed);

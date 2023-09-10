@@ -92,8 +92,8 @@ class _ShowcaseDetailPageState extends State<ShowcaseDetailPage> {
     }
     final List<FightProp> additionProps = [
       FightProp.breakDamageAddedRatio,
-      FightProp.statusProbability,
-      FightProp.statusResistance,
+      FightProp.effectHitRate,
+      FightProp.effectResistenceRate,
       elementAddProp,
       FightProp.sPRatio,
       FightProp.aggro,
