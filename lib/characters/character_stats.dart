@@ -363,7 +363,7 @@ class CharacterStats {
         if (!effectConfig.on) {
           return;
         }
-        int? skillLevel;
+        int? skillLevel = skillLevels[t.id];
         if (t.referencelevel != '') {
           // 引用技能等级
           skillLevel = skillLevels[character.getSkillById(t.referencelevel).id];
@@ -379,13 +379,13 @@ class CharacterStats {
       if (e.effect.isEmpty || (eidolons[e.eidolonnum.toString()] ?? 0) == 0) {
         return;
       }
-      e.effect.map((ef) => Effect.fromEntity(ef, character.entity.id, e.eidolonnum.toString())).where((ef) => ef.validSelfBuffEffect(prop)).forEach((effect) {
+      e.effect.map((ef) => Effect.fromEntity(ef, character.entity.id, e.id)).where((ef) => ef.validSelfBuffEffect(prop)).forEach((effect) {
         String effectKey = effect.getKey();
         EffectConfig effectConfig = selfEidolonEffect[effectKey] ?? EffectConfig.defaultOn();
         if (!effectConfig.on) {
           return;
         }
-        int? skillLevel;
+        int? skillLevel = skillLevels[e.id];
         if (e.referencelevel != '') {
           // 引用技能等级
           skillLevel = skillLevels[character.getSkillById(e.referencelevel).id];

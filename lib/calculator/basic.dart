@@ -309,7 +309,7 @@ class PropSource {
       case selfTrace:
         return PropSourceDisplay(name == 'tiny' ? 'trace'.tr() : CharacterManager.getCharacter(effect.majorId).getTraceNameById(effect.minorId, 'lang'.tr()), Colors.amber);
       case selfEidolon:
-        return PropSourceDisplay('eidolon'.tr() + effect.minorId, Colors.indigo);
+        return PropSourceDisplay('eidolon'.tr() + "${effect.minorId.contains('-') ? effect.minorId.split('-')[1] : effect.minorId}", Colors.indigo);
       case relicSet:
         return PropSourceDisplay(RelicManager.getRelic(effect.majorId).getName('lang'.tr()) + effect.minorId, Colors.purple);
       case relicMain:

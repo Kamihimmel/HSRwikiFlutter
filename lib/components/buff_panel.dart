@@ -221,8 +221,8 @@ class BuffPanelState extends State<BuffPanel> {
               .toList();
           List<Effect> characterEidolonBuff = _cData.entity.eidolon
               .expand((eidolon) => eidolon.effect
-                  .map((e) => Effect.fromEntity(e, _cData.entity.id, eidolon.eidolonnum.toString()))
-                  .where((e) => (_gs.stats.eidolons[eidolon.eidolonnum.toString().toString()] ?? 0) > 0))
+                  .map((e) => Effect.fromEntity(e, _cData.entity.id, eidolon.id))
+                  .where((e) => (_gs.stats.eidolons[eidolon.eidolonnum.toString()] ?? 0) > 0))
               .where((e) => e.validSelfBuffEffect(null))
               .toList();
           List<Effect> lightconeSkillBuff = _lData.entity.skilldata
