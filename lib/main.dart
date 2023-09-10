@@ -61,7 +61,7 @@ void _setDebug() {
   GlobalState _gs = GlobalState();
   assert(() {
     // development env
-    _gs.debug = true;
+    _gs.debug = kIsWeb || (Platform.environment['DEBUG'] ?? '') != '0';
     logger.d('debug mode: ${_gs.debug}');
     return true;
   }());
