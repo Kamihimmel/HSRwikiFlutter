@@ -215,7 +215,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                         if (skill.referencelevel != '') {
                           levelnum = _gs.stats.skillLevels[_cData.getSkillById(skill.referencelevel).id] ?? 1;
                         }
-                        if (skill.maxlevel > 0) {
+                        if (skill.maxlevel > 0 && skill.levelmultiplier.length > 0) {
                           List<Map<String, dynamic>> multiplierData = skill.levelmultiplier;
                           int multiCount = multiplierData.length;
                           fixedText = detailText;
@@ -390,7 +390,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                                                         fontSize: 20,
                                                       ),
                                                     ),
-                                                    if (trace.maxlevel > 0 && trace.referencelevel == '')
+                                                    if (trace.maxlevel > 0 && trace.levelmultiplier.length > 0 && trace.referencelevel == '')
                                                       Padding(
                                                         padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                                                         child: Row(
@@ -568,7 +568,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                                                           _gs.stats.eidolons[eidolon.eidolonnum.toString()] = value ? 1 : 0;
                                                           _gs.changeStats();
                                                         }),
-                                                    if (eidolon.maxlevel > 0 && eidolon.referencelevel == '')
+                                                    if (eidolon.maxlevel > 0 && eidolon.levelmultiplier.length > 0 && eidolon.referencelevel == '')
                                                       Padding(
                                                         padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                                                         child: Row(
