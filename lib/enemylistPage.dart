@@ -119,7 +119,7 @@ class _EnemyListPageState extends State<EnemyListPage> {
                                           width: screenWidth,
                                           height: screenHeight - 170,
                                           child: Scrollbar(
-                                            isAlwaysShown: true,
+                                            thumbVisibility: true,
                                             child: SingleChildScrollView(
                                               scrollDirection: Axis.horizontal,
                                               child: Scrollbar(
