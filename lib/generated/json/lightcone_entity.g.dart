@@ -1,7 +1,7 @@
 import 'package:hsrwikiproject/generated/json/base/json_convert_content.dart';
 import 'package:hsrwikiproject/lightcones/lightcone_entity.dart';
-import 'package:hsrwikiproject/calculator/effect_entity.dart';
 
+import '../../calculator/skill_data.dart';
 import '../../utils/base_entity.dart';
 
 
@@ -84,75 +84,12 @@ Map<String, dynamic> $LightconeLeveldataToJson(LightconeLeveldata entity) {
 
 LightconeSkilldata $LightconeSkilldataFromJson(Map<String, dynamic> json) {
 	final LightconeSkilldata lightconeSkilldata = LightconeSkilldata();
-	final String? id = jsonConvert.convert<String>(json['id']);
-	if (id != null) {
-		lightconeSkilldata.eNname = id;
-	}
-	final String? eNname = jsonConvert.convert<String>(json['ENname']);
-	if (eNname != null) {
-		lightconeSkilldata.eNname = eNname;
-	}
-	final String? cNname = jsonConvert.convert<String>(json['CNname']);
-	if (cNname != null) {
-		lightconeSkilldata.cNname = cNname;
-	}
-	final String? jAname = jsonConvert.convert<String>(json['JAname']);
-	if (jAname != null) {
-		lightconeSkilldata.jAname = jAname;
-	}
-	final String? descriptionEN = jsonConvert.convert<String>(json['DescriptionEN']);
-	if (descriptionEN != null) {
-		lightconeSkilldata.descriptionEN = descriptionEN;
-	}
-	final String? descriptionCN = jsonConvert.convert<String>(json['DescriptionCN']);
-	if (descriptionCN != null) {
-		lightconeSkilldata.descriptionCN = descriptionCN;
-	}
-	final String? descriptionJP = jsonConvert.convert<String>(json['DescriptionJP']);
-	if (descriptionJP != null) {
-		lightconeSkilldata.descriptionJP = descriptionJP;
-	}
-	final int? maxlevel = jsonConvert.convert<int>(json['maxlevel']);
-	if (maxlevel != null) {
-		lightconeSkilldata.maxlevel = maxlevel;
-	}
-	final bool? buffskill = jsonConvert.convert<bool>(json['buffskill']);
-	if (buffskill != null) {
-		lightconeSkilldata.buffskill = buffskill;
-	}
-	final bool? teamskill = jsonConvert.convert<bool>(json['teamskill']);
-	if (teamskill != null) {
-		lightconeSkilldata.teamskill = teamskill;
-	}
-	final List<Map<String, dynamic>>? levelmultiplier = jsonConvert.convertListNotNull<Map<String, dynamic>>(json['levelmultiplier']);
-	if (levelmultiplier != null) {
-		lightconeSkilldata.levelmultiplier = levelmultiplier;
-	}
-	final List<String>? tags = jsonConvert.convertListNotNull<String>(json['tags']);
-	if (tags != null) {
-		lightconeSkilldata.tags = tags;
-	}
-	final List<EffectEntity>? effect = jsonConvert.convertListNotNull<EffectEntity>(json['effect']);
-	if (effect != null) {
-		lightconeSkilldata.effect = effect;
-	}
+	$SkillDataFromJson(json, lightconeSkilldata);
 	return lightconeSkilldata;
 }
 
 Map<String, dynamic> $LightconeSkilldataToJson(LightconeSkilldata entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
-	data['id'] = entity.id;
-	data['ENname'] = entity.eNname;
-	data['CNname'] = entity.cNname;
-	data['JAname'] = entity.jAname;
-	data['DescriptionEN'] = entity.descriptionEN;
-	data['DescriptionCN'] = entity.descriptionCN;
-	data['DescriptionJP'] = entity.descriptionJP;
-	data['maxlevel'] = entity.maxlevel;
-	data['buffskill'] = entity.buffskill;
-	data['teamskill'] = entity.teamskill;
-	data['levelmultiplier'] =  entity.levelmultiplier;
-	data['tags'] =  entity.tags;
-	data['effect'] =  entity.effect.map((v) => v.toJson()).toList();
+	$SkillDataToJson(entity, data);
 	return data;
 }

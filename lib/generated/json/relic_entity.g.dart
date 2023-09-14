@@ -1,7 +1,7 @@
 import 'package:hsrwikiproject/generated/json/base/json_convert_content.dart';
 import 'package:hsrwikiproject/relics/relic_entity.dart';
 
-import '../../calculator/effect_entity.dart';
+import '../../calculator/skill_data.dart';
 import '../../utils/base_entity.dart';
 
 RelicEntity $RelicEntityFromJson(Map<String, dynamic> json) {
@@ -68,60 +68,12 @@ Map<String, dynamic> $RelicEntityToJson(RelicEntity entity) {
 
 RelicSkilldata $RelicSkilldataFromJson(Map<String, dynamic> json) {
 	final RelicSkilldata relicSkilldata = RelicSkilldata();
-	final String? eNname = jsonConvert.convert<String>(json['ENname']);
-	if (eNname != null) {
-		relicSkilldata.eNname = eNname;
-	}
-	final String? cNname = jsonConvert.convert<String>(json['CNname']);
-	if (cNname != null) {
-		relicSkilldata.cNname = cNname;
-	}
-	final String? jAname = jsonConvert.convert<String>(json['JAname']);
-	if (jAname != null) {
-		relicSkilldata.jAname = jAname;
-	}
-	final String? descriptionEN = jsonConvert.convert<String>(json['DescriptionEN']);
-	if (descriptionEN != null) {
-		relicSkilldata.descriptionEN = descriptionEN;
-	}
-	final String? descriptionCN = jsonConvert.convert<String>(json['DescriptionCN']);
-	if (descriptionCN != null) {
-		relicSkilldata.descriptionCN = descriptionCN;
-	}
-	final String? descriptionJP = jsonConvert.convert<String>(json['DescriptionJP']);
-	if (descriptionJP != null) {
-		relicSkilldata.descriptionJP = descriptionJP;
-	}
-	final bool? buffskill = jsonConvert.convert<bool>(json['buffskill']);
-	if (buffskill != null) {
-		relicSkilldata.buffskill = buffskill;
-	}
-	final bool? teamskill = jsonConvert.convert<bool>(json['teamskill']);
-	if (teamskill != null) {
-		relicSkilldata.teamskill = teamskill;
-	}
-	final List<String>? tags = jsonConvert.convertListNotNull<String>(json['tags']);
-	if (tags != null) {
-		relicSkilldata.tags = tags;
-	}
-	final List<EffectEntity>? effect = jsonConvert.convertListNotNull<EffectEntity>(json['effect']);
-	if (effect != null) {
-		relicSkilldata.effect = effect;
-	}
+	$SkillDataFromJson(json, relicSkilldata);
 	return relicSkilldata;
 }
 
 Map<String, dynamic> $RelicSkilldataToJson(RelicSkilldata entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
-	data['ENname'] = entity.eNname;
-	data['CNname'] = entity.cNname;
-	data['JAname'] = entity.jAname;
-	data['DescriptionEN'] = entity.descriptionEN;
-	data['DescriptionCN'] = entity.descriptionCN;
-	data['DescriptionJP'] = entity.descriptionJP;
-	data['buffskill'] = entity.buffskill;
-	data['teamskill'] = entity.teamskill;
-	data['tags'] =  entity.tags;
-	data['effect'] =  entity.effect.map((v) => v.toJson()).toList();
+	$SkillDataToJson(entity, data);
 	return data;
 }
