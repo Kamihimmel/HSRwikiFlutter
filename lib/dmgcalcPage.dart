@@ -39,7 +39,10 @@ class DmgCalcPage extends StatefulWidget {
 class _DmgCalcPageState extends State<DmgCalcPage> {
   final GlobalState _gs = GlobalState();
   bool _loading = true;
-  BannerAd? _bannerAd;
+  BannerAd? _bannerAd1;
+  BannerAd? _bannerAd2;
+  BannerAd? _bannerAd3;
+  BannerAd? _bannerAd4;
   bool _isBannerAdReady = false;
   late String cid;
   Timer? _timer;
@@ -58,6 +61,9 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
       }
     });
 
+    cid = widget.characterId;
+    _initData(widget.characterId);
+
     BannerAd(
       adUnitId: AdHelper.bannerAdUnitId,
       request: AdRequest(),
@@ -66,7 +72,7 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
         onAdLoaded: (ad) {
           setState(() {
             _isBannerAdReady = true;
-            _bannerAd = ad as BannerAd;
+            _bannerAd1 = ad as BannerAd;
           });
         },
         onAdFailedToLoad: (ad, err) {
@@ -77,14 +83,71 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
       ),
     ).load();
 
-    cid = widget.characterId;
-    _initData(widget.characterId);
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _isBannerAdReady = true;
+            _bannerAd2 = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          _isBannerAdReady = false;
+          ad.dispose();
+        },
+      ),
+    ).load();
+
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _isBannerAdReady = true;
+            _bannerAd3 = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          _isBannerAdReady = false;
+          ad.dispose();
+        },
+      ),
+    ).load();
+
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _isBannerAdReady = true;
+            _bannerAd4 = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          _isBannerAdReady = false;
+          ad.dispose();
+        },
+      ),
+    ).load();
   }
 
   @override
   void dispose() {
     super.dispose();
-    _bannerAd?.dispose();
+    _bannerAd1?.dispose();
+    _bannerAd2?.dispose();
+    _bannerAd3?.dispose();
+    _bannerAd4?.dispose();
     _timer?.cancel();
   }
 
@@ -293,7 +356,7 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
                                           sm: 12,
                                           child: CharacterBasic(
                                             isBannerAdReady: _isBannerAdReady,
-                                            bannerAd: _bannerAd,
+                                            bannerAd: _bannerAd1,
                                             switchCharacter: _initData,
                                           )),
                                       //ANCHOR - Lightcones and Relics
@@ -304,7 +367,7 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
                                         sm: 12,
                                         child: LightconeRelic(
                                           isBannerAdReady: _isBannerAdReady,
-                                          bannerAd: _bannerAd,
+                                          bannerAd: _bannerAd2,
                                         ),
                                       ),
                                       //ANCHOR - Character Basic Panel
@@ -315,7 +378,7 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
                                         sm: 12,
                                         child: BasicPanel(
                                           isBannerAdReady: _isBannerAdReady,
-                                          bannerAd: _bannerAd,
+                                          bannerAd: _bannerAd3,
                                         ),
                                       ),
                                       //ANCHOR - Damage Panel
@@ -326,7 +389,7 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
                                         sm: 12,
                                         child: DamagePanel(
                                           isBannerAdReady: _isBannerAdReady,
-                                          bannerAd: _bannerAd,
+                                          bannerAd: _bannerAd4,
                                         ),
                                       ),
                                       //ANCHOR - Footer
@@ -336,80 +399,79 @@ class _DmgCalcPageState extends State<DmgCalcPage> {
                                         xs: 12,
                                         sm: 12,
                                         child: ChangeNotifierProvider.value(
-                                          value: _gs,
-                                          child: Consumer<GlobalState>(
-                                            builder: (context, model, child) => Container(
-                                              height: screenWidth > 905 ? 48 : null,
-                                              color: Colors.black45,
-                                              width: double.infinity,
-                                              alignment: Alignment.centerRight,
-                                              child: Column(mainAxisAlignment: MainAxisAlignment.end, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                                Wrap(runSpacing: 10, alignment: WrapAlignment.start, crossAxisAlignment: WrapCrossAlignment.center, children: [
-                                                  Container(
-                                                    width: 300,
-                                                    child: FittedBox(
-                                                      fit: BoxFit.scaleDown,
-                                                      child: Row(
-                                                        children: [
-                                                          Text(
-                                                            'Stat scale'.tr(),
-                                                            style: TextStyle(
-                                                                //fontWeight: FontWeight.bold,
+                                            value: _gs,
+                                            child: Consumer<GlobalState>(
+                                              builder: (context, model, child) => Container(
+                                                height: screenWidth > 905 ? 48 : null,
+                                                color: Colors.black45,
+                                                width: double.infinity,
+                                                alignment: Alignment.centerRight,
+                                                child: Column(mainAxisAlignment: MainAxisAlignment.end, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                                  Wrap(runSpacing: 10, alignment: WrapAlignment.start, crossAxisAlignment: WrapCrossAlignment.center, children: [
+                                                    Container(
+                                                      width: 300,
+                                                      child: FittedBox(
+                                                        fit: BoxFit.scaleDown,
+                                                        child: Row(
+                                                          children: [
+                                                            Text(
+                                                              'Stat scale'.tr(),
+                                                              style: TextStyle(
+                                                                  //fontWeight: FontWeight.bold,
 
-                                                                ),
-                                                          ),
-                                                          Slider(
-                                                            min: 1,
-                                                            max: 10,
-                                                            divisions: 9,
-                                                            activeColor: Colors.grey,
-                                                            inactiveColor: Colors.grey[200]!,
-                                                            label: _gs.appConfig.statScale.toString(),
-                                                            value: _gs.appConfig.statScale.toDouble(),
-                                                            onChanged: (value) {
-                                                              _gs.appConfig.statScale = value.toInt();
-                                                              _gs.changeConfig();
-                                                            },
-                                                          ),
-                                                        ],
+                                                                  ),
+                                                            ),
+                                                            Slider(
+                                                              min: 1,
+                                                              max: 10,
+                                                              divisions: 9,
+                                                              activeColor: Colors.grey,
+                                                              inactiveColor: Colors.grey[200]!,
+                                                              label: _gs.appConfig.statScale.toString(),
+                                                              value: _gs.appConfig.statScale.toDouble(),
+                                                              onChanged: (value) {
+                                                                _gs.appConfig.statScale = value.toInt();
+                                                                _gs.changeConfig();
+                                                              },
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                  Container(
-                                                    width: 300,
-                                                    child: FittedBox(
-                                                      fit: BoxFit.scaleDown,
-                                                      child: Row(
-                                                        children: [
-                                                          Text(
-                                                            'Dmg scale'.tr(),
-                                                            style: TextStyle(
-                                                                //fontWeight: FontWeight.bold,
+                                                    Container(
+                                                      width: 300,
+                                                      child: FittedBox(
+                                                        fit: BoxFit.scaleDown,
+                                                        child: Row(
+                                                          children: [
+                                                            Text(
+                                                              'Dmg scale'.tr(),
+                                                              style: TextStyle(
+                                                                  //fontWeight: FontWeight.bold,
 
-                                                                ),
-                                                          ),
-                                                          Slider(
-                                                            min: 1,
-                                                            max: 10,
-                                                            divisions: 9,
-                                                            activeColor: Colors.grey,
-                                                            inactiveColor: Colors.grey[200]!,
-                                                            label: _gs.appConfig.dmgScale.toString(),
-                                                            value: _gs.appConfig.dmgScale.toDouble(),
-                                                            onChanged: (value) {
-                                                              _gs.appConfig.dmgScale = value.toInt();
-                                                              _gs.changeConfig();
-                                                            },
-                                                          ),
-                                                        ],
+                                                                  ),
+                                                            ),
+                                                            Slider(
+                                                              min: 1,
+                                                              max: 10,
+                                                              divisions: 9,
+                                                              activeColor: Colors.grey,
+                                                              inactiveColor: Colors.grey[200]!,
+                                                              label: _gs.appConfig.dmgScale.toString(),
+                                                              value: _gs.appConfig.dmgScale.toDouble(),
+                                                              onChanged: (value) {
+                                                                _gs.appConfig.dmgScale = value.toInt();
+                                                                _gs.changeConfig();
+                                                              },
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
+                                                  ]),
                                                 ]),
-                                              ]),
-                                            ),
-                                          )
-                                        ),
+                                              ),
+                                            )),
                                       ),
                                     ],
                                   ),
