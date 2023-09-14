@@ -89,8 +89,18 @@ jobs:
         run: flutter pub get
       - name: Android Apk
         env:
+          ENV_ANDROID_STORE_PASS: ${{ secrets.ANDROID_STORE_PASS }}
+          ENV_ANDROID_KEY_PASS: ${{ secrets.ANDROID_KEY_PASS }}
+          ENV_ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ENV_ANDROID_UPLOAD_KEY: ${{ secrets.ANDROID_UPLOAD_KEY }}
           ENV_VERSION: ${{ needs.version.outputs.version }}
         run: |
+          echo "storeFile=../upload-keystore.jks" > android/key.properties
+          echo "storePassword=${ENV_ANDROID_STORE_PASS}" >> android/key.properties
+          echo "keyPassword=${ENV_ANDROID_KEY_PASS}" >> android/key.properties
+          echo "keyAlias=${ENV_ANDROID_KEY_ALIAS}" >> android/key.properties
+          echo ${ENV_ANDROID_UPLOAD_KEY} | base64 -d > android/upload-keystore.jks
+          ls -l android/upload-keystore.jks
           flutter build apk --release
       - uses: actions/upload-artifact@v3
         with:
