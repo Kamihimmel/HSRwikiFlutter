@@ -1,6 +1,8 @@
+import 'dart:io' show Platform;
 import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -735,7 +737,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                     }).toList(),
                   ),
                   adsenseAdsView(columnwidth - 20),
-                  if (widget.isBannerAdReady)
+                  if (widget.isBannerAdReady && !kIsWeb && Platform.isAndroid) 
                     Container(
                       width: widget.bannerAd!.size.width.toDouble(),
                       height: widget.bannerAd!.size.height.toDouble(),

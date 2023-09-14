@@ -1,7 +1,9 @@
+import 'dart:io' show Platform;
 import 'dart:convert';
 import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
@@ -646,7 +648,7 @@ class CharacterBasicState extends State<CharacterBasic> {
                       }),
                     ),
                     adsenseAdsView(columnwidth - 20),
-                    if (widget.isBannerAdReady)
+                    if (widget.isBannerAdReady && !kIsWeb && Platform.isAndroid)
                       Container(
                         width: widget.bannerAd!.size.width.toDouble(),
                         height: widget.bannerAd!.size.height.toDouble(),
