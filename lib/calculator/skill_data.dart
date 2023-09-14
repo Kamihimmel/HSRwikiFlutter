@@ -70,9 +70,9 @@ void $SkillDataFromJson(Map<String, dynamic> json, SkillData skillData) {
   if (teamskill != null) {
     skillData.teamskill = teamskill;
   }
-  final List<Map<String, dynamic>>? levelmultiplier = jsonConvert.convertListNotNull<Map<String, dynamic>>(json['levelmultiplier']);
+  final List<dynamic>? levelmultiplier = json['levelmultiplier'];
   if (levelmultiplier != null) {
-    skillData.levelmultiplier = levelmultiplier;
+    skillData.levelmultiplier = levelmultiplier.map((e) => e as Map<String, dynamic>).toList();
   }
   final String? referencelevel = jsonConvert.convert<String>(json['referencelevel']);
   if (referencelevel != null) {
