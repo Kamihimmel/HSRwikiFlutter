@@ -99,7 +99,7 @@ jobs:
           echo "storePassword=${ENV_ANDROID_STORE_PASS}" >> android/key.properties
           echo "keyPassword=${ENV_ANDROID_KEY_PASS}" >> android/key.properties
           echo "keyAlias=${ENV_ANDROID_KEY_ALIAS}" >> android/key.properties
-          echo ${ENV_ANDROID_UPLOAD_KEY} | base64 -d > android/upload-keystore.jks
+          echo "${ENV_ANDROID_UPLOAD_KEY}" | base64 -d > android/upload-keystore.jks
           ls -l android/upload-keystore.jks
           flutter build apk --release
       - uses: actions/upload-artifact@v3
