@@ -55,6 +55,9 @@ jobs:
           flutter-version: '3.13.4'
       - name: Install project dependencies
         run: flutter pub get
+      - name: Build
+        run: |
+          flutter build windows --obfuscate --split-debug-info=.\build\windows\runner\Debug
       - name: Build Windows InnoSetup
         env:
           ENV_VERSION: ${{ needs.version.outputs.version }}
