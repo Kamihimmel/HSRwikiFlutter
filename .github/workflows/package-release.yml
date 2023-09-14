@@ -63,7 +63,11 @@ jobs:
           ENV_VERSION: ${{ needs.version.outputs.version }}
         run: |
           tar zxvf tool\IS6.tar
-          IS6\iscc .\windows\setup\hsrwikiproject.iss /DMyAppVersion=$env:ENV_VERSION
+          $ARR = $env:ENV_VERSION.split(".")
+          $VERSION_ARR = ($ARR[0], $ARR[1], $ARR[2], "0")
+          $VERSION = $VERSION_ARR -join "."
+          echo $VERSION
+          IS6\iscc .\windows\setup\hsrwikiproject.iss /DMyAppVersion=$VERSION
       - uses: actions/upload-artifact@v3
         env:
           ENV_VERSION: ${{ needs.version.outputs.version }}
