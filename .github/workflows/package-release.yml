@@ -37,7 +37,11 @@ jobs:
           ENV_MS_STORE_PUBLISHER: ${{ secrets.MS_STORE_PUBLISHER }}
           ENV_VERSION: ${{ needs.version.outputs.version }}
         run: |
-          dart run msix:create --publisher-display-name "$env:ENV_MS_STORE_PUBLISHER_NAME" --identity-name "$env:ENV_MS_STORE_IDENTITY_NAME" --publisher "$env:ENV_MS_STORE_PUBLISHER" --version "$env:ENV_VERSION"
+          $ARR = $env:ENV_VERSION.split(".")
+          $VERSION_ARR = ($ARR[0], $ARR[1], $ARR[2], "0")
+          $VERSION = $VERSION_ARR -join "."
+          echo $VERSION
+          dart run msix:create --publisher-display-name "$env:ENV_MS_STORE_PUBLISHER_NAME" --identity-name "$env:ENV_MS_STORE_IDENTITY_NAME" --publisher "$env:ENV_MS_STORE_PUBLISHER" --version "$VERSION"
       - uses: actions/upload-artifact@v3
         with:
           name: windows-msix
@@ -63,11 +67,7 @@ jobs:
           ENV_VERSION: ${{ needs.version.outputs.version }}
         run: |
           tar zxvf tool\IS6.tar
-          $ARR = $env:ENV_VERSION.split(".")
-          $VERSION_ARR = ($ARR[0], $ARR[1], $ARR[2], "0")
-          $VERSION = $VERSION_ARR -join "."
-          echo $VERSION
-          IS6\iscc .\windows\setup\hsrwikiproject.iss /DMyAppVersion=$VERSION
+          IS6\iscc .\windows\setup\hsrwikiproject.iss /DMyAppVersion=$env:ENV_VERSION
       - uses: actions/upload-artifact@v3
         env:
           ENV_VERSION: ${{ needs.version.outputs.version }}
