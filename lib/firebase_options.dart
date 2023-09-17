@@ -25,10 +25,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -70,7 +67,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '895109510915',
     projectId: 'aliceworkshop4honkaistarrail',
     storageBucket: 'aliceworkshop4honkaistarrail.appspot.com',
-    iosClientId: '895109510915-4o9mnfktu4jd6132ldbehnoh2p5q5rpl.apps.googleusercontent.com',
+    iosClientId:
+        '895109510915-4o9mnfktu4jd6132ldbehnoh2p5q5rpl.apps.googleusercontent.com',
     iosBundleId: 'net.yunlu18.hsrwikiproject',
   );
 }

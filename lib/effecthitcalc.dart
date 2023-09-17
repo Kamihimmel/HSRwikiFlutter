@@ -7,10 +7,10 @@ import 'package:flutter/services.dart';
 
 import 'ad_helper.dart';
 import 'platformad_stub.dart' if (dart.library.io) 'platformad_stub.dart' if (dart.library.html) 'platformad.dart';
+import 'utils/logging.dart';
 
 class EffecthitCalcPage extends StatefulWidget {
-  final String jsonUrl;
-  const EffecthitCalcPage({super.key, required this.jsonUrl});
+  const EffecthitCalcPage({super.key});
 
   @override
   State<EffecthitCalcPage> createState() => _EffecthitCalcPageState();
@@ -35,7 +35,7 @@ class _EffecthitCalcPageState extends State<EffecthitCalcPage> {
           });
         },
         onAdFailedToLoad: (ad, err) {
-          print('Failed to load a banner ad: ${err.message}');
+          logger.e('Failed to load a banner ad: ${err.message}');
           _isBannerAdReady = false;
           ad.dispose();
         },
@@ -124,7 +124,7 @@ class _EffecthitCalcPageState extends State<EffecthitCalcPage> {
                                   xs: 12,
                                   sm: 12,
                                   child: Container(
-                                    height: screenWidth > 905 ? screenHeight - 100 : null,
+                                    height: screenWidth > 905 ? screenHeight - 104 : null,
                                     child: Column(
                                       children: [
                                         const SizedBox(

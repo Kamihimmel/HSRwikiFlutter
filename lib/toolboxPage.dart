@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:hsrwikiproject/effecthitcalc.dart';
 import 'package:easy_localization/easy_localization.dart';
+
+import 'dmgcalcPage.dart';
+import 'effecthitcalc.dart';
+import 'enemylistPage.dart';
 
 class Toolboxpage extends StatelessWidget {
   const Toolboxpage({
     super.key,
-    required this.screenWidth,
-    required this.crossAxisCount3,
     required this.footer,
   });
 
-  final double screenWidth;
-  final int crossAxisCount3;
   final Padding footer;
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final crossAxisCount = screenWidth < 600
+        ? 1
+        : screenWidth < 1000
+            ? 1
+            : 2;
     return Center(
       // Center is a layout widget. It takes a single child and positions it
       // in the middle of the parent.
@@ -27,7 +32,7 @@ class Toolboxpage extends StatelessWidget {
         children: <Widget>[
           Expanded(
             child: GridView.count(
-              crossAxisCount: crossAxisCount3,
+              crossAxisCount: crossAxisCount,
               childAspectRatio: (4 / 1),
               children: <Widget>[
                 Material(
@@ -36,7 +41,56 @@ class Toolboxpage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => EffecthitCalcPage(jsonUrl: ""),
+                          builder: (context) => DmgCalcPage(characterId: "1102"),
+                        ),
+                      );
+                    },
+                    onHover: (value) {},
+                    hoverColor: Colors.grey,
+                    child: Card(
+                      color: Colors.grey.withOpacity(0.1),
+                      clipBehavior: Clip.hardEdge,
+                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))),
+                      child: Stack(
+                        children: [
+                          Hero(
+                            tag: "damagecalc",
+                            child: Image(
+                              image: AssetImage('images/damagecalc.jpeg'),
+                              width: double.infinity,
+                              height: double.infinity,
+                              alignment: Alignment(0.5, -0.6),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                              color: Colors.black54,
+                              child: Text(
+                                "HSR Damage Calculator".tr(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Material(
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EffecthitCalcPage(),
                         ),
                       );
                     },
@@ -66,6 +120,54 @@ class Toolboxpage extends StatelessWidget {
                               color: Colors.black54,
                               child: Text(
                                 "Effect Hit & Effect Res Calculator".tr(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Material(
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EnemyListPage(),
+                        ),
+                      );
+                    },
+                    onHover: (value) {},
+                    hoverColor: Colors.grey,
+                    child: Card(
+                      color: Colors.grey.withOpacity(0.1),
+                      clipBehavior: Clip.hardEdge,
+                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))),
+                      child: Stack(
+                        children: [
+                          Hero(
+                            tag: "enemylist",
+                            child: Image(
+                              image: AssetImage('images/monster.jpg'),
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                              color: Colors.black54,
+                              child: Text(
+                                "Enemy List".tr(),
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
