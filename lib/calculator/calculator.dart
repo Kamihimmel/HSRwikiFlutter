@@ -96,12 +96,14 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
   Enemy enemy = EnemyManager.getEnemy(enemyStats.id);
 
   // 暴击爆伤
-  double critChance = attrValues[FightProp.criticalChance] ?? 0;
+  double critical = attrValues[FightProp.criticalChance] ?? 0;
   double critDamage = attrValues[FightProp.criticalDamage] ?? 0;
   if (damageType == DamageType.normal) {
-    critChance += attrValues[attackTypeCritMapping[attackType] ?? FightProp.unknown] ?? 0;
+    critical += attrValues[attackTypeCritMapping[attackType] ?? FightProp.unknown] ?? 0;
     critDamage += attrValues[attackTypeCritDamageMapping[attackType] ?? FightProp.unknown] ?? 0;
   }
+  // 范围[0, 1]
+  double critChance = max(min(critical, 1), 0);
 
   // 增伤
   double damageBonus;

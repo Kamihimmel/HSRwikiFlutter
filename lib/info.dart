@@ -8,4 +8,4 @@ const bannericon = {
 
 var typetocolor = {'dmg': Colors.redAccent, 'debuff': Colors.grey[400], 'shield': Colors.blueAccent, 'heal': Colors.lime, 'revive': Colors.green};
 
-String versionstring = "1.0.1.21";
+String versionstring = "2.0.1.48";
