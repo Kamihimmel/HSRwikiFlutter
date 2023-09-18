@@ -94,42 +94,41 @@ class _SidePanelState extends State<SidePanel> {
                   _gs.changeConfig();
                 },
               ),
-              if (_gs.appConfig.test)
-                ...[
-                  SwitchListTile(
-                    title: const Text('Spoiler Mode').tr(),
-                    secondary: const Icon(Icons.tag_faces),
-                    value: _gs.appConfig.spoilerMode,
-                    onChanged: (bool value) async {
-                      _gs.appConfig.spoilerMode = value;
-                      _gs.changeConfig();
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.cleaning_services),
-                    title: const Text("Clean Data").tr(),
-                    onTap: () async {
-                      List<String> keys = ['saved_stats', 'saved_enemy_stats', 'playerinfo', 'uid', 'nickname', 'avatarimage', 'characters'];
-                      final prefs = await SharedPreferences.getInstance();
-                      for (var k in keys) {
-                        await prefs.remove(k);
-                      }
-                      _gs.cleanStats();
-                      final snackBar = SnackBar(
-                        content: Center(
-                          child: Text('Cleaned').tr(),
-                        ),
-                        action: SnackBarAction(
-                          label: "✕",
-                          onPressed: () {
-                            // Some code to undo the change.
-                          },
-                        ),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    },
-                  ),
-                ],
+              if (_gs.appConfig.test) ...[
+                SwitchListTile(
+                  title: const Text('Spoiler Mode').tr(),
+                  secondary: const Icon(Icons.tag_faces),
+                  value: _gs.appConfig.spoilerMode,
+                  onChanged: (bool value) async {
+                    _gs.appConfig.spoilerMode = value;
+                    _gs.changeConfig();
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.cleaning_services),
+                  title: const Text("Clean Data").tr(),
+                  onTap: () async {
+                    List<String> keys = ['saved_stats', 'saved_enemy_stats', 'playerinfo', 'uid', 'nickname', 'avatarimage', 'characters'];
+                    final prefs = await SharedPreferences.getInstance();
+                    for (var k in keys) {
+                      await prefs.remove(k);
+                    }
+                    _gs.cleanStats();
+                    final snackBar = SnackBar(
+                      content: Center(
+                        child: Text('Cleaned').tr(),
+                      ),
+                      action: SnackBarAction(
+                        label: "✕",
+                        onPressed: () {
+                          // Some code to undo the change.
+                        },
+                      ),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  },
+                ),
+              ],
               if (!kIsWeb)
                 SwitchListTile(
                   title: _gs.appConfig.cnMode ? Text('Datasource:China').tr() : Text('Datasource:International').tr(),
@@ -141,55 +140,54 @@ class _SidePanelState extends State<SidePanel> {
                     initData();
                   },
                 ),
-              if (_gs.debug)
-                ...[
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
-                    child: Divider(
-                      thickness: 1,
-                      color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
-                    ),
+              if (_gs.debug) ...[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
+                  child: Divider(
+                    thickness: 1,
+                    color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(22, 0, 22, 5),
-                    child: Text(
-                      "Debug",
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(22, 0, 22, 5),
+                  child: Text(
+                    "Debug",
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
-                  ListTile(
-                    leading: const Icon(Icons.refresh),
-                    title: const Text("Reload Data"),
-                    onTap: () {
-                      initData();
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.adb),
-                    title: const Text("Print Debug Info"),
-                    onTap: () {
-                      List<String> debugInfo = [];
-                      debugInfo.add("Endpoint: ${getUrlEndpoint()}");
-                      debugInfo.add("AppConfig: ${_gs.appConfig.toString()}");
-                      debugInfo.add("Missing localization keys: ${_gs.missingLocalizationKeys.toList()}");
-                      debugInfo.forEach((element) {
-                        logger.i(element);
-                      });
-                      final snackBar = SnackBar(
-                        content: Column(
-                          children: debugInfo.map((e) => Text(e)).toList(),
-                        ),
-                        action: SnackBarAction(
-                          label: "✕",
-                          onPressed: () {
-                            // Some code to undo the change.
-                          },
-                        ),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    },
-                  ),
-                ],
+                ),
+                ListTile(
+                  leading: const Icon(Icons.refresh),
+                  title: const Text("Reload Data"),
+                  onTap: () {
+                    initData();
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.adb),
+                  title: const Text("Print Debug Info"),
+                  onTap: () {
+                    List<String> debugInfo = [];
+                    debugInfo.add("Endpoint: ${getUrlEndpoint()}");
+                    debugInfo.add("AppConfig: ${_gs.appConfig.toString()}");
+                    debugInfo.add("Missing localization keys: ${_gs.missingLocalizationKeys.toList()}");
+                    debugInfo.forEach((element) {
+                      logger.i(element);
+                    });
+                    final snackBar = SnackBar(
+                      content: Column(
+                        children: debugInfo.map((e) => Text(e)).toList(),
+                      ),
+                      action: SnackBarAction(
+                        label: "✕",
+                        onPressed: () {
+                          // Some code to undo the change.
+                        },
+                      ),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  },
+                ),
+              ],
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 5, 20, 2),
                 child: Divider(
@@ -209,7 +207,10 @@ class _SidePanelState extends State<SidePanel> {
                 title: const Text('Alice Workshop for Genshin').tr(),
                 onTap: () {
                   // Update the state of the app.
-                  launchUrlString("https://genshincalc.yunlu18.net/".tr());
+                  if (!kIsWeb && Platform.isIOS)
+                    launchUrlString("https://apps.apple.com/app/genshin-damage-visualizer/id1620751192");
+                  else
+                    launchUrlString("https://genshincalc.yunlu18.net/".tr());
 
                   // ...
                 },
@@ -244,10 +245,7 @@ class _SidePanelState extends State<SidePanel> {
 }
 
 class SidePanel extends StatefulWidget {
-
-  const SidePanel({
-    Key? key
-  }) : super(key: key);
+  const SidePanel({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
