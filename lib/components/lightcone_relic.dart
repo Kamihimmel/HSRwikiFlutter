@@ -42,7 +42,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                 child: getImageComponent(prop.icon, placeholder: kTransparentImage, width: 28),
               ),
               Text(
-                "${prop.getPropText(value)}",
+                "${prop.getPropText(value, round: true)}",
                 style: const TextStyle(
                   //fontWeight: FontWeight.bold,
                   color: Colors.white,

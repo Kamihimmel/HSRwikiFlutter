@@ -76,9 +76,15 @@ Future<String> loadLibJsonString(String path) async {
   return response.body;
 }
 
-String getDisplayText(double value, bool percent) {
+String getDisplayText(double value, bool percent, {round = false}) {
   if (percent) {
-    return ((value * 1000).floor() / 10).toStringAsFixed(1) + '%';
+    double v;
+    if (round) {
+      v = (value * 1000).round() / 10;
+    } else {
+      v = (value * 1000).floor() / 10;
+    }
+    return v.toStringAsFixed(1) + '%';
   } else {
     return value.toStringAsFixed(1);
   }

@@ -175,8 +175,8 @@ enum FightProp {
     return this.name.endsWith("Probability");
   }
 
-  String getPropText(double value, {bool? percent}) {
-    return getDisplayText(value, percent ?? this.isPercent());
+  String getPropText(double value, {bool? percent, bool? round}) {
+    return getDisplayText(value, percent ?? this.isPercent(), round: round ?? false);
   }
 
   static List<FightProp> sortByBuffOrder(List<FightProp> props) {
