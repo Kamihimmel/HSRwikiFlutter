@@ -245,5 +245,6 @@
     "Weakness": "弱点",
     "Status Effect": "状態/効果",
     "Clean Data": "クリアデータ",
-    "Cleaned": "クリアしました"
+    "Cleaned": "クリアしました",
+    "effectresreduce": "効果抵抗ダウン"
 }

@@ -245,5 +245,6 @@
     "Weakness": "弱点",
     "Status Effect": "状态效果",
     "Clean Data": "清除数据",
-    "Cleaned": "已清除"
+    "Cleaned": "已清除",
+    "effectresreduce": "降低效果抵抗"
 }
