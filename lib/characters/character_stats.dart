@@ -266,7 +266,7 @@ class CharacterStats {
       if (t.effect.isEmpty) {
         return;
       }
-      t.effect.map((e) => Effect.fromEntity(e, lightconeId, '', type: Effect.lightconeType)).where((e) => e.validSelfBuffEffect(prop)).take(1).forEach((effect) {
+      t.effect.map((e) => Effect.fromEntity(e, lightconeId, '', type: Effect.lightconeType)).where((e) => e.validSelfBuffEffect(prop)).forEach((effect) {
         String effectKey = effect.getKey();
         EffectConfig effectConfig = lightconeEffect[effectKey] ?? EffectConfig.defaultOn();
         if (!effectConfig.on) {

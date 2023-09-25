@@ -343,7 +343,7 @@ class BasicPanelState extends State<BasicPanel> {
                               gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_cData.elementType.color.withOpacity(0.35), Colors.black.withOpacity(0.5)]),
                             ),
                             child: Column(
-                              children: _getAttrPanel('Heal Bonus Panel', healAttrs),
+                              children: _getAttrPanel('Heal Panel', healAttrs),
                             ),
                           ),
                         ),

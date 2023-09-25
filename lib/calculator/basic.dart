@@ -127,6 +127,7 @@ enum FightProp {
 
   defenceReduceRatio(desc: 'reducedefdebuff', buffOrder: 4, debuff: true, effectKey: ['reducedef']),
   speedReduceRatio(desc: 'reducespeeddebuff', buffOrder: 9, debuff: true, icon: 'starrailres/icon/property/IconSpeed.png', effectKey: ['reducespeed']),
+  effectResReduceRatio(desc: 'effectresreduce', buffOrder: 9, debuff: true, icon: 'starrailres/icon/property/IconStatusResistance.png', effectKey: ['effectresreduce']),
 
   addWeaknessProbability(desc: 'addweakness', debuff: true, buffOrder: 10, effectKey: ['addweakness']),
   frozenProbability(desc: 'frozen', debuff: true, buffOrder: 10, effectKey: ['frozen']),
