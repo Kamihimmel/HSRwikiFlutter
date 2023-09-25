@@ -203,7 +203,7 @@ class _SidePanelState extends State<SidePanel> {
                 ),
               ),
               ListTile(
-                leading: const Icon(Icons.open_in_new),
+                leading: const Icon(Icons.app_shortcut),
                 title: const Text('Alice Workshop for Genshin').tr(),
                 onTap: () {
                   // Update the state of the app.
