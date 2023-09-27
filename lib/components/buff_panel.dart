@@ -34,7 +34,7 @@ class BuffPanelState extends State<BuffPanel> {
     String effectKey = effect.getKey();
     FightProp prop = FightProp.fromEffectKey(effect.entity.addtarget);
     int skillLevel = effect.skillData.maxlevel;
-    if (effect.type == Effect.characterType) {
+    if (effect.isCharacterType()) {
       if (effect.majorId == _gs.stats.id) {
         // 当前角色自己
         if (_gs.stats.skillLevels.containsKey(effect.minorId)) {
@@ -52,7 +52,7 @@ class BuffPanelState extends State<BuffPanel> {
           skillLevel = 6;
         }
       }
-    } else if (effect.type == Effect.lightconeType) {
+    } else if (effect.isLightconeType()) {
       skillLevel = _gs.stats.lightconeRank;
     }
     String propText = '';
@@ -61,7 +61,19 @@ class BuffPanelState extends State<BuffPanel> {
     if (!isDmg) {
       propText = prop.desc.tr();
       effects.forEach((e) {
-        double multiplierValue = e.getEffectMultiplierValue(effect.skillData, skillLevel, effectConfig[e.getKey()]);
+        EffectConfig? effectConf = effectConfig[e.getKey()];
+        // 如果有依赖的属性但是又不需要填写，那么说明是依赖自身已计算的属性
+        if (e.hasDependProp() && !e.showDependPropValueConfig(_gs.stats.id)) {
+          bool on = effectConf?.on ?? defaultOn;
+          effectConf = EffectConfig.defaultOn();
+          effectConf.on = on;
+          FightProp dependProp = FightProp.fromEffectKey(e.entity.multipliertarget);
+          Map<PropSource, double> statsResult = _gs.stats.getPropValue(dependProp);
+          // 排除所有依赖此属性的值
+          double ecValue = statsResult.entries.where((entry) => !entry.key.effect.hasDependProp() || entry.key.effect.showDependPropValueConfig(_gs.stats.id)).map((entry) => entry.value).fold(0, (pre, v) => pre + v);
+          effectConf.value = dependProp.isPercent() ? ecValue * 100 : ecValue;
+        }
+        double multiplierValue = e.getEffectMultiplierValue(effect.skillData, skillLevel, effectConf);
         propValue.add(prop.getPropText(multiplierValue));
       });
     }
@@ -85,9 +97,9 @@ class BuffPanelState extends State<BuffPanel> {
 
     FightProp multiplierProp = FightProp.fromEffectKey(effect.entity.multipliertarget);
     String labelText = '';
-    if (multiplierProp != FightProp.unknown && effect.type == Effect.characterType) {
+    if (multiplierProp != FightProp.unknown && effect.isCharacterType()) {
       List<String> label = [];
-      if (effect.type == Effect.characterType) {
+      if (effect.isCharacterType()) {
         if (_gs.stats.id != effect.majorId) {
           label.add(CharacterManager.getCharacter(effect.majorId).getName('lang'.tr()));
         }
@@ -95,9 +107,9 @@ class BuffPanelState extends State<BuffPanel> {
       }
       labelText = label.join(' ');
     }
-    if (effect.hasBuffConfig()) {
+    if (effect.hasBuffConfig(_gs.stats.id)) {
       List<Widget> widgets = [];
-      if (effect.hasValueFieldConfig()) {
+      if (effect.hasValueFieldConfig(_gs.stats.id)) {
         widgets = [
           Container(
             width: 150,
@@ -212,7 +224,7 @@ class BuffPanelState extends State<BuffPanel> {
           final List<Relic> _rList = _gs.stats.getRelicSets().map((r) => r != '' ? RelicManager.getRelic(r) : Relic()).toList();
           List<Effect> breakEffects = EffectManager.getBreakDamageEffects(_gs.stats, _gs.enemyStats);
           List<Effect> skillEffects = _cData.entity.skilldata.expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, skill.id))).toList();
-          List<Effect> characterSkillDmg = (breakEffects + skillEffects).where((e) => (e.validDamageHealEffect('break') || e.validDamageHealEffect('dmg')) && e.hasBuffConfig()).toList();
+          List<Effect> characterSkillDmg = (breakEffects + skillEffects).where((e) => (e.validDamageHealEffect('break') || e.validDamageHealEffect('dmg')) && e.hasBuffConfig(_cData.entity.id)).toList();
           List<Effect> characterSkillBuff =
               _cData.entity.skilldata.expand((skill) => skill.effect.map((e) => Effect.fromEntity(e, _cData.entity.id, skill.id))).where((e) => e.validSelfBuffEffect(null)).toList();
           List<Effect> characterTraceBuff = _cData.entity.tracedata
@@ -311,7 +323,7 @@ class BuffPanelState extends State<BuffPanel> {
                                 crossAxisAlignment: WrapCrossAlignment.center,
                                 children: Effect.groupEffect(characterSkillDmg).values.map((effects) {
                                   Effect effect = effects.first;
-                                  if (effect.type == Effect.characterType) {
+                                  if (effect.isCharacterType()) {
                                     effect.skillData = CharacterManager.getCharacter(effect.majorId).getSkillById(effect.minorId);
                                   }
                                   return _getEffectChip(_gs.stats.damageEffect, effects);

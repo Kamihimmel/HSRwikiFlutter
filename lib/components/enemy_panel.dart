@@ -12,6 +12,7 @@ import '../characters/character_manager.dart';
 import '../enemies/enemy.dart';
 import '../enemies/enemy_manager.dart';
 import '../utils/helper.dart';
+import '../utils/logging.dart';
 import 'global_state.dart';
 
 /// 敌人面板
@@ -37,8 +38,19 @@ class EnemyPanelState extends State<EnemyPanel> {
         child: Consumer<GlobalState>(builder: (context, model, child) {
           final Character _cData = CharacterManager.getCharacter(_gs.stats.id);
           Enemy enemy = EnemyManager.getEnemy(_gs.enemyStats.id);
+          Map<ElementType, double> reduceResMap = {};
+          double reduceAllRes = _gs.stats.getPropValue(FightProp.allResistanceIgnore).values.fold(0, (pre, v) => pre + v);
+          double reduceSpecRes = _gs.stats.getPropValue(FightProp.specificResistanceIgnore).values.fold(0, (pre, v) => pre + v);
+          ElementType.values.where((et) => et != ElementType.diy).forEach((et) {
+            reduceResMap[et] = _gs.stats.getPropValue(et.getElementResistanceProp()).values.fold(reduceAllRes + (_cData.elementType == et ? reduceSpecRes : 0), (pre, v) => pre + v);
+          });
+          logger.d(reduceResMap);
           double defenceReduce = _gs.stats.getPropValue(FightProp.defenceReduceRatio).values.fold(0, (pre, v) => pre + v);
-          double reduceFinal = min(100, defenceReduce * 100 + _gs.enemyStats.defenceReduce);
+          double maxReduce = 100;
+          double reduceFinal = min(maxReduce, defenceReduce * 100 + _gs.enemyStats.defenceReduce);
+          double damageReceive = _gs.stats.getPropValue(FightProp.allDamageReceiveRatio).values.fold(0, (pre, v) => pre + v);
+          double maxReceive = 1000;
+          double receiveFinal = min(maxReceive, (damageReceive + _gs.enemyStats.damageReceive) * 100);
 
           Map<FightProp, Map<PropSource, double>> stats = _gs.stats.calculateStats();
           Map<String, List<dynamic>> debuffAttrs = {};
@@ -159,6 +171,9 @@ class EnemyPanelState extends State<EnemyPanel> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: List.generate(ElementType.values.where((e) => e != ElementType.diy).length, (index) {
                                 ElementType et = ElementType.values.where((e) => e != ElementType.diy).toList()[index];
+                                double enemyRes = (enemy.resistence[et] ?? 0).toDouble();
+                                double reduceRes = (reduceResMap[et] ?? 0) * 100;
+                                int finalReduceRes = max(-100, (enemyRes - reduceRes).toInt());
                                 return Column(
                                   children: [
                                     if (index != 0) SizedBox(width: 15),
@@ -174,7 +189,7 @@ class EnemyPanelState extends State<EnemyPanel> {
                                           child: getImageComponent(et.icon, imageWrap: true, width: 30),
                                         ),
                                         SelectableText(
-                                          '${enemy.resistence[et] ?? 0}',
+                                          '${finalReduceRes}',
                                           style: TextStyle(
                                             fontSize: 24,
                                           ),
@@ -229,13 +244,40 @@ class EnemyPanelState extends State<EnemyPanel> {
                             ),
                             Slider(
                               min: defenceReduce,
-                              max: 100,
+                              max: maxReduce,
                               inactiveColor: _cData.elementType.color.withOpacity(0.35),
                               activeColor: _cData.elementType.color,
                               label: reduceFinal.toStringAsFixed(1),
                               value: reduceFinal.toDouble(),
                               onChanged: (value) {
-                                _gs.enemyStats.defenceReduce = value.toInt();
+                                _gs.enemyStats.defenceReduce = value.toInt() - defenceReduce.toInt();
+                                _gs.changeStats();
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            SelectableText(
+                              '${"EnemyDamageReceive".tr()}: ${receiveFinal.toStringAsFixed(1)}%',
+                              style: TextStyle(
+                                fontSize: 15,
+                                height: 1.1,
+                              ),
+                            ),
+                            Slider(
+                              min: damageReceive * 100,
+                              max: maxReceive,
+                              inactiveColor: _cData.elementType.color.withOpacity(0.35),
+                              activeColor: _cData.elementType.color,
+                              label: receiveFinal.toStringAsFixed(1),
+                              value: receiveFinal.toDouble(),
+                              onChanged: (value) {
+                                _gs.enemyStats.damageReceive = value / 100 - damageReceive;
                                 _gs.changeStats();
                               },
                             ),

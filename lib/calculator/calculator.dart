@@ -137,8 +137,9 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
   } else if (damageType == DamageType.additional || damageType == DamageType.breakWeaknessAdditional) {
     dotDamageReceive += attrValues[FightProp.additionalDamageReceiveRatio] ?? 0;
   }
-  // 范围[0, 1 + 3.5]
-  double vulnerable = 1 + min(elementReceive + allDamageReceive + dotDamageReceive, 3.5);
+  double enemyDamageReceive = enemyStats.damageReceive;
+  // 正常范围[0, 1 + 3.5]，但是此处为便于自定义调整敌人易伤所以没限制
+  double vulnerable = 1 + elementReceive + allDamageReceive + dotDamageReceive + enemyDamageReceive;
 
   // 敌方减伤
   double weaknessReduce;
@@ -160,8 +161,9 @@ DamageResult calculateDamage(CharacterStats stats, EnemyStats enemyStats, double
   double allResIgnore = attrValues[FightProp.allResistanceIgnore] ?? 0;
   double resIgnore = attrValues[elementType.getElementResistanceIgnoreProp()] ?? 0;
   double specificResIgnore = attrValues[FightProp.specificResistanceIgnore] ?? 0;
+  double resReduce = attrValues[elementType.getElementResistanceProp()] ?? 0;
   // 范围[0.1 , 2]
-  double resFinal =  max(min(1 - (res / 100 - resIgnore - allResIgnore - specificResIgnore), 2), 0.1);
+  double resFinal =  max(min(1 - (res / 100 - resIgnore - allResIgnore - specificResIgnore - resReduce), 2), 0.1);
 
   // 防御力
   int characterLevel = int.tryParse(stats.level.replaceAll('+', '')) ?? 1;

@@ -72,8 +72,8 @@ class Effect {
     return '';
   }
 
-  bool hasBuffConfig() {
-    return hasChoiceConfig() || hasStackConfig() || hasValueFieldConfig();
+  bool hasBuffConfig(String currentCid) {
+    return hasChoiceConfig() || hasStackConfig() || hasValueFieldConfig(currentCid);
   }
 
   bool hasChoiceConfig() {
@@ -84,17 +84,32 @@ class Effect {
     return this.entity.maxStack >= 5;
   }
 
-  bool hasValueFieldConfig() {
-    return this.type == manualType || this.type == Effect.characterType && isBuffOrDebuff() && this.entity.multipliertarget != '';
+  bool hasValueFieldConfig(String currentCid) {
+    return this.type == manualType || showDependPropValueConfig(currentCid);
   }
 
-  bool validSelfBuffEffect(FightProp? prop) {
+  bool hasDependProp() {
+    return this.isCharacterType() && isBuffOrDebuff() && this.entity.multipliertarget != '';
+  }
+
+  bool showDependPropValueConfig(String currentCid) {
+    FightProp multiplierProp = FightProp.fromEffectKey(this.entity.multipliertarget);
+    return hasDependProp() && (currentCid != majorId || multiplierProp.fake);
+  }
+
+  bool validSelfBuffEffect(FightProp? prop, {FightProp? dependProp, String currentCid = ''}) {
     if (this.entity.iid == '') {
       return false;
     }
     FightProp fp = FightProp.fromEffectKey(this.entity.addtarget);
     if (fp == FightProp.unknown || prop != null && fp != prop) {
       return false;
+    }
+    if (dependProp != null) {
+      FightProp dp = FightProp.fromEffectKey(this.entity.multipliertarget);
+      if (dp != dependProp || showDependPropValueConfig(currentCid)) {
+        return false;
+      }
     }
     if (this.entity.type == 'buff') {
       return this.entity.tag.contains('allally') || this.entity.tag.contains('self');
@@ -141,6 +156,34 @@ class Effect {
     return this.entity.type == 'dmg' || this.entity.type == 'break' || this.entity.type == 'heal' || this.entity.type == 'revive' || this.entity.type == 'shield';
   }
 
+  bool isCharacterType() {
+    return this.type == characterType;
+  }
+
+  bool isLightconeType() {
+    return this.type == lightconeType;
+  }
+
+  bool isRelicType() {
+    return this.type == relicType;
+  }
+
+  bool isManualType() {
+    return this.type == manualType;
+  }
+
+  bool isBreakDamageType() {
+    return this.type == breakDamageType;
+  }
+
+  bool isCharacterSelf() {
+    return this.type == characterType && this.entity.tag.contains('self');
+  }
+
+  bool isCharacterAlly() {
+    return this.type == characterType && (this.entity.tag.contains('allally') || this.entity.tag.contains('singleally'));
+  }
+
   double getEffectMultiplierValue(SkillData? skillData, int? skillLevel, EffectConfig? effectConfig) {
     double multiplier = this.entity.multiplier;
     String multiplierValue = this.entity.multipliervalue;
@@ -166,8 +209,9 @@ class Effect {
         if (!multiProp.isProbability() && multiProp != FightProp.unknown) {
           multiplier *= effectConfig?.value ?? 0;
         }
-        // 如果基于的属性本身是百分比
-        if (multiProp.isPercent()) {
+        // 如果是基于某属性加成，认为一定是按百分比加成
+        // TODO 发版后修正符玄战技、卡芙卡战技和终结技数据
+        if (multiProp != FightProp.unknown) {
           multiplier /= 100;
         }
       } else {

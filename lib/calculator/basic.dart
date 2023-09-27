@@ -81,13 +81,13 @@ enum FightProp {
   ultimateAttackAddRatio(desc: 'ultatk', buffOrder: 3, effectKey: ['ultatk']),
   followupAttackAddRatio(desc: 'followupatk', buffOrder: 3, effectKey: ['followupatk']),
 
-  physicalResistance(desc: 'Physical RES Boost', icon: 'starrailres/icon/property/IconPhysicalResistanceDelta.png'),
-  fireResistance(desc: 'Fire RES Boost', icon: 'starrailres/icon/property/IconFireResistanceDelta.png'),
-  iceResistance(desc: 'Ice RES Boost', icon: 'starrailres/icon/property/IconIceResistanceDelta.png'),
-  lightningResistance(desc: 'Lightning RES Boost', icon: 'starrailres/icon/property/IconThunderResistanceDelta.png'),
-  windResistance(desc: 'Wind RES Boost', icon: 'starrailres/icon/property/IconWindResistanceDelta.png'),
-  quantumResistance(desc: 'Quantum RES Boost', icon: 'starrailres/icon/property/IconQuantumResistanceDelta.png'),
-  imaginaryResistance(desc: 'Imaginary RES Boost', icon: 'starrailres/icon/property/IconImaginaryResistanceDelta.png'),
+  physicalResistance(desc: 'physicalres', icon: 'starrailres/icon/property/IconPhysicalResistanceDelta.png', effectKey: ['physicalres']),
+  fireResistance(desc: 'fireres', icon: 'starrailres/icon/property/IconFireResistanceDelta.png', effectKey: ['fireres']),
+  iceResistance(desc: 'iceres', icon: 'starrailres/icon/property/IconIceResistanceDelta.png', effectKey: ['iceres']),
+  lightningResistance(desc: 'lightningres', icon: 'starrailres/icon/property/IconThunderResistanceDelta.png', effectKey: ['lightningres']),
+  windResistance(desc: 'windres', icon: 'starrailres/icon/property/IconWindResistanceDelta.png', effectKey: ['windres']),
+  quantumResistance(desc: 'quantumres', icon: 'starrailres/icon/property/IconQuantumResistanceDelta.png', effectKey: ['quantumres']),
+  imaginaryResistance(desc: 'imaginaryres', icon: 'starrailres/icon/property/IconImaginaryResistanceDelta.png', effectKey: ['imaginaryres']),
 
   allResistanceIgnore(desc: 'allresreduce', buffOrder: 5, effectKey: ['allres']),
   specificResistanceIgnore(desc: 'specificresreduce', buffOrder: 5, effectKey: ['specificres']),
@@ -140,14 +140,14 @@ enum FightProp {
   /// debuff end
 
   // 人为构造的属性
-  breakDamageBase(desc: 'Base Break DMG', icon: 'starrailres/icon/property/IconBreakUp.png', effectKey: ['breakdmgbase']),
-  lostHP(desc: 'losthp', effectKey: ['losthp']),
-  lostHPRatio(desc: 'losthp', effectKey: ['losthpratio']),
-  allDotDamage(desc: 'alldotdmg', effectKey: ['alldotdmg']),
-  shockedDotDamage(desc: 'shockeddotdmg', effectKey: ['shockeddotdmg']),
-  burnDotDamage(desc: 'burndotdmg', effectKey: ['burndotdmg']),
-  windshearDotDamage(desc: 'windsheardotdmg', effectKey: ['windsheardotdmg']),
-  bleedDotDamage(desc: 'bleeddotdmg', effectKey: ['bleeddotdmg']),
+  breakDamageBase(desc: 'Base Break DMG', fake:true, icon: 'starrailres/icon/property/IconBreakUp.png', effectKey: ['breakdmgbase']),
+  lostHP(desc: 'losthp', fake:true, effectKey: ['losthp']),
+  lostHPRatio(desc: 'losthp', fake:true, effectKey: ['losthpratio']),
+  allDotDamage(desc: 'alldotdmg', fake:true, effectKey: ['alldotdmg']),
+  shockedDotDamage(desc: 'shockeddotdmg', fake:true, effectKey: ['shockeddotdmg']),
+  burnDotDamage(desc: 'burndotdmg', fake:true, effectKey: ['burndotdmg']),
+  windshearDotDamage(desc: 'windsheardotdmg', fake:true, effectKey: ['windsheardotdmg']),
+  bleedDotDamage(desc: 'bleeddotdmg', fake:true, effectKey: ['bleeddotdmg']),
 
   none(desc: ''), // 对于伤害治疗护盾，effect.multipliertarget == ''
   unknown(desc: '');
@@ -155,6 +155,7 @@ enum FightProp {
   final String desc;
   final String icon;
   final bool debuff;
+  final bool fake;
   final int buffOrder;
   final List<String> effectKey;
 
@@ -162,6 +163,7 @@ enum FightProp {
     required this.desc,
     this.icon = '',
     this.debuff = false,
+    this.fake = false,
     this.buffOrder = 999,
     this.effectKey = const [],
   });
