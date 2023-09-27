@@ -237,11 +237,9 @@ class BasicPanelState extends State<BasicPanel> {
           otherAttrs[FightProp.effectHitRate.desc] = _getBaseAttr(stats, FightProp.effectHitRate);
           otherAttrs[FightProp.effectResistenceRate.desc] = _getBaseAttr(stats, FightProp.effectResistenceRate);
           otherAttrs[FightProp.breakDamageAddedRatio.desc] = _getBaseAttr(stats, FightProp.breakDamageAddedRatio);
-          otherAttrs[FightProp.allResistanceIgnore.desc] = _getBaseAttr(stats, FightProp.allResistanceIgnore);
           for (FightProp p in ElementType.getElementResistanceIgnoreProps()) {
             otherAttrs[p.desc] = _getBaseAttr(stats, p);
           }
-          otherAttrs[FightProp.specificResistanceIgnore.desc] = _getBaseAttr(stats, FightProp.specificResistanceIgnore);
           otherAttrs[FightProp.defenceIgnoreRatio.desc] = _getBaseAttr(stats, FightProp.defenceIgnoreRatio);
           otherAttrs[FightProp.damageReduceRatio.desc] = _getBaseAttr(stats, FightProp.damageReduceRatio);
 

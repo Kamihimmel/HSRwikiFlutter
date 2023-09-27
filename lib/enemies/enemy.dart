@@ -74,6 +74,7 @@ class EnemyStats {
   String id = '';
   int level = 72;
   int defenceReduce = 0;
+  double damageReceive = 0;
   bool weaknessBreak = false;
   int maxhp = 200000;
   int toughness = 1;
@@ -84,6 +85,7 @@ class EnemyStats {
     this.id = jsonMap['id'] ?? '';
     this.level = jsonMap['level'];
     this.defenceReduce = jsonMap['defence_reduce'];
+    this.damageReceive = jsonMap['damage_receive'];
     this.weaknessBreak = jsonMap['weakness_break'];
     this.maxhp = jsonMap['maxhp'];
     this.toughness = jsonMap['toughness'];
@@ -94,6 +96,7 @@ class EnemyStats {
     jsonMap['id'] = this.id;
     jsonMap['level'] = this.level;
     jsonMap['defence_reduce'] = this.defenceReduce;
+    jsonMap['damage_receive'] = this.damageReceive;
     jsonMap['weakness_break'] = this.weaknessBreak;
     jsonMap['maxhp'] = this.maxhp;
     jsonMap['toughness'] = this.toughness;

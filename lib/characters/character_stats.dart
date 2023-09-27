@@ -118,9 +118,7 @@ class CharacterStats {
     props.add(FightProp.followupAttackAddRatio);
     props.add(FightProp.dotDamageAddRatio);
 
-    // 降低抗性、穿透
-    props.add(FightProp.allResistanceIgnore);
-    props.add(FightProp.specificResistanceIgnore);
+    // 抗性穿透
     props.addAll(ElementType.getElementResistanceIgnoreProps());
 
     // 增加受到伤害
@@ -132,6 +130,9 @@ class CharacterStats {
     props.add(FightProp.defenceIgnoreRatio);
     props.add(FightProp.defenceReduceRatio);
     props.add(FightProp.speedReduceRatio);
+    props.add(FightProp.allResistanceIgnore);
+    props.add(FightProp.specificResistanceIgnore);
+    props.addAll(ElementType.getElementResistanceProps());
 
     // 其他
     props.add(FightProp.lostHP);
