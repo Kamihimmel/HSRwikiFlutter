@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:hsrwikiproject/calculator/effect_entity.dart';
 
 import '../calculator/basic.dart';
 import '../calculator/effect.dart';
@@ -75,66 +76,80 @@ class CharacterStats {
     return sets;
   }
 
+  static List<FightProp> getCalculatedFightProps() {
+    List<FightProp> props = [];
+
+    // 基础
+    props.add(FightProp.maxHP);
+    props.add(FightProp.attack);
+    props.add(FightProp.defence);
+    props.add(FightProp.speed);
+    props.add(FightProp.sPRatio);
+    props.add(FightProp.aggro);
+
+    // 治疗护盾
+    props.add(FightProp.healRatio);
+    props.add(FightProp.shieldAddRatio);
+
+    // 暴击爆伤
+    props.add(FightProp.criticalChance);
+    props.add(FightProp.criticalDamage);
+    props.add(FightProp.basicAttackCriticalChange);
+    props.add(FightProp.skillAttackCriticalChange);
+    props.add(FightProp.ultimateAttackCriticalChange);
+    props.add(FightProp.followupAttackCriticalChange);
+    props.add(FightProp.basicAttackCriticalDamage);
+    props.add(FightProp.skillAttackCriticalDamage);
+    props.add(FightProp.ultimateAttackCriticalDamage);
+    props.add(FightProp.followupAttackCriticalDamage);
+
+    // 击破特攻、效果相关
+    props.add(FightProp.breakDamageBase);
+    props.add(FightProp.breakDamageAddedRatio);
+    props.add(FightProp.effectHitRate);
+    props.add(FightProp.effectResistenceRate);
+
+    // 伤害加成
+    props.add(FightProp.allDamageAddRatio);
+    props.addAll(ElementType.getElementAddRatioProps());
+    props.add(FightProp.basicAttackAddRatio);
+    props.add(FightProp.skillAttackAddRatio);
+    props.add(FightProp.ultimateAttackAddRatio);
+    props.add(FightProp.followupAttackAddRatio);
+    props.add(FightProp.dotDamageAddRatio);
+
+    // 降低抗性、穿透
+    props.add(FightProp.allResistanceIgnore);
+    props.add(FightProp.specificResistanceIgnore);
+    props.addAll(ElementType.getElementResistanceIgnoreProps());
+
+    // 增加受到伤害
+    props.add(FightProp.allDamageReceiveRatio);
+    props.add(FightProp.dotDamageReceiveRatio);
+    props.addAll(ElementType.getElementDamageReceiveRatioProps());
+
+    // 敌人debuff
+    props.add(FightProp.defenceIgnoreRatio);
+    props.add(FightProp.defenceReduceRatio);
+    props.add(FightProp.speedReduceRatio);
+
+    // 其他
+    props.add(FightProp.lostHP);
+    props.add(FightProp.damageReduceRatio);
+    props.add(FightProp.allDotDamage);
+    props.add(FightProp.shockedDotDamage);
+    props.add(FightProp.burnDotDamage);
+    props.add(FightProp.windshearDotDamage);
+    props.add(FightProp.bleedDotDamage);
+
+    return props;
+  }
+
   Map<FightProp, Map<PropSource, double>> calculateStats() {
     Map<FightProp, Map<PropSource, double>> map = {};
-    map[FightProp.maxHP] = getPropValue(FightProp.maxHP);
-    map[FightProp.attack] = getPropValue(FightProp.attack);
-    map[FightProp.defence] = getPropValue(FightProp.defence);
-    map[FightProp.speed] = getPropValue(FightProp.speed);
-    map[FightProp.sPRatio] = getPropValue(FightProp.sPRatio);
-    map[FightProp.aggro] = getPropValue(FightProp.aggro);
-
-    map[FightProp.healRatio] = getPropValue(FightProp.healRatio);
-    map[FightProp.shieldAddRatio] = getPropValue(FightProp.shieldAddRatio);
-
-    map[FightProp.criticalChance] = getPropValue(FightProp.criticalChance);
-    map[FightProp.criticalDamage] = getPropValue(FightProp.criticalDamage);
-    map[FightProp.basicAttackCriticalChange] = getPropValue(FightProp.basicAttackCriticalChange);
-    map[FightProp.skillAttackCriticalChange] = getPropValue(FightProp.skillAttackCriticalChange);
-    map[FightProp.ultimateAttackCriticalChange] = getPropValue(FightProp.ultimateAttackCriticalChange);
-    map[FightProp.followupAttackCriticalChange] = getPropValue(FightProp.followupAttackCriticalChange);
-    map[FightProp.basicAttackCriticalDamage] = getPropValue(FightProp.basicAttackCriticalDamage);
-    map[FightProp.skillAttackCriticalDamage] = getPropValue(FightProp.skillAttackCriticalDamage);
-    map[FightProp.ultimateAttackCriticalDamage] = getPropValue(FightProp.ultimateAttackCriticalDamage);
-    map[FightProp.followupAttackCriticalDamage] = getPropValue(FightProp.followupAttackCriticalDamage);
-
-    map[FightProp.breakDamageBase] = getPropValue(FightProp.breakDamageBase);
-    map[FightProp.breakDamageAddedRatio] = getPropValue(FightProp.breakDamageAddedRatio);
-    map[FightProp.effectHitRate] = getPropValue(FightProp.effectHitRate);
-    map[FightProp.effectResistenceRate] = getPropValue(FightProp.effectResistenceRate);
-    map[FightProp.allDamageAddRatio] = getPropValue(FightProp.allDamageAddRatio);
-    for (var ed in ElementType.getElementAddRatioProps()) {
-      map[ed] = getPropValue(ed);
+    for (FightProp prop in getCalculatedFightProps()) {
+      map[prop] = getPropValue(prop);
     }
-    map[FightProp.basicAttackAddRatio] = getPropValue(FightProp.basicAttackAddRatio);
-    map[FightProp.skillAttackAddRatio] = getPropValue(FightProp.skillAttackAddRatio);
-    map[FightProp.ultimateAttackAddRatio] = getPropValue(FightProp.ultimateAttackAddRatio);
-    map[FightProp.followupAttackAddRatio] = getPropValue(FightProp.followupAttackAddRatio);
-    map[FightProp.dotDamageAddRatio] = getPropValue(FightProp.dotDamageAddRatio);
-
-    map[FightProp.allResistanceIgnore] = getPropValue(FightProp.allResistanceIgnore);
-    for (var eri in ElementType.getElementResistanceIgnoreProps()) {
-      map[eri] = getPropValue(eri);
-    }
-    map[FightProp.specificResistanceIgnore] = getPropValue(FightProp.specificResistanceIgnore);
-
-    map[FightProp.allDamageReceiveRatio] = getPropValue(FightProp.allDamageReceiveRatio);
-    map[FightProp.dotDamageReceiveRatio] = getPropValue(FightProp.dotDamageReceiveRatio);
-    for (var edr in ElementType.getElementDamageReceiveRatioProps()) {
-      map[edr] = getPropValue(edr);
-    }
-
-    map[FightProp.defenceIgnoreRatio] = getPropValue(FightProp.defenceIgnoreRatio);
-    map[FightProp.defenceReduceRatio] = getPropValue(FightProp.defenceReduceRatio);
-    map[FightProp.speedReduceRatio] = getPropValue(FightProp.speedReduceRatio);
-
-    map[FightProp.lostHP] = getPropValue(FightProp.lostHP);
-    map[FightProp.damageReduceRatio] = getPropValue(FightProp.damageReduceRatio);
-    map[FightProp.allDotDamage] = getPropValue(FightProp.allDotDamage);
-    map[FightProp.shockedDotDamage] = getPropValue(FightProp.shockedDotDamage);
-    map[FightProp.burnDotDamage] = getPropValue(FightProp.burnDotDamage);
-    map[FightProp.windshearDotDamage] = getPropValue(FightProp.windshearDotDamage);
-    map[FightProp.bleedDotDamage] = getPropValue(FightProp.bleedDotDamage);
     return map;
   }
 
@@ -161,6 +176,7 @@ class CharacterStats {
     double baseHp = characterHp + lightconeHp;
     Map<FightProp, double> props = {FightProp.hPAddedRatio: baseHp, FightProp.hPDelta: 1};
     _addAttrValue(result, c, lc, props);
+    _addAttrValue(result, c, lc, props, dependProp: FightProp.maxHP, dependValue: result.values.fold(0, (pre, v) => pre! + v));
     return result;
   }
 
@@ -178,6 +194,7 @@ class CharacterStats {
     double baseAtk = characterAtk + lightconeAtk;
     Map<FightProp, double> props = {FightProp.attackAddedRatio: baseAtk, FightProp.attackDelta: 1};
     _addAttrValue(result, c, lc, props);
+    _addAttrValue(result, c, lc, props, dependProp: FightProp.attack, dependValue: result.values.fold(0, (pre, v) => pre! + v));
     return result;
   }
 
@@ -195,6 +212,7 @@ class CharacterStats {
     double baseDef = characterDef + lightconeDef;
     Map<FightProp, double> props = {FightProp.defenceAddedRatio: baseDef, FightProp.defence: 1};
     _addAttrValue(result, c, lc, props);
+    _addAttrValue(result, c, lc, props, dependProp: FightProp.defence, dependValue: result.values.fold(0, (pre, v) => pre! + v));
     return result;
   }
 
@@ -221,6 +239,7 @@ class CharacterStats {
     Character c = CharacterManager.getCharacter(id);
     Lightcone lc = LightconeManager.getLightcone(lightconeId);
     Map<FightProp, double> props = {prop: 1};
+    FightProp dependProp = prop;
 
     if (prop == FightProp.aggro) {
       result[PropSource.characterBasic(id)] = c.entity.dtaunt.toDouble();
@@ -239,22 +258,30 @@ class CharacterStats {
     }
 
     _addAttrValue(result, c, lc, props);
+    _addAttrValue(result, c, lc, props, dependProp: dependProp, dependValue: result.values.fold(0, (pre, v) => pre! + v));
     return result;
   }
 
-  void _addAttrValue(Map<PropSource, double> result, Character character, Lightcone lightcone, Map<FightProp, double> props) {
+  void _addAttrValue(Map<PropSource, double> result, Character character, Lightcone lightcone, Map<FightProp, double> props, {FightProp? dependProp, double? dependValue}) {
     for (var e in props.entries) {
       FightProp prop = e.key;
       double base = e.value;
       Map<PropSource, double> temp = {};
-      _addLightconeSkillValue(temp, lightcone, base, prop);
-      _addRelicAttrValue(temp, base, prop);
-      _addRelicSetEffectValue(temp, base, prop);
-      _addCharacterSkillValue(temp, character, base, prop);
-      _addCharacterTraceValue(temp, character, base, prop);
-      _addCharacterEidolonValue(temp, character, base, prop);
-      _addOtherSkillValue(temp, character, base, prop);
-      _addManualEffectValue(temp, character, base, prop);
+      if (dependProp == null) {
+        _addLightconeSkillValue(temp, lightcone, base, prop);
+        _addRelicAttrValue(temp, base, prop);
+        _addRelicSetEffectValue(temp, base, prop);
+        _addCharacterSkillValue(temp, character, base, prop);
+        _addCharacterTraceValue(temp, character, base, prop);
+        _addCharacterEidolonValue(temp, character, base, prop);
+        _addOtherSkillValue(temp, character, base, prop);
+        _addManualEffectValue(temp, character, base, prop);
+      } else {
+        // 只有角色的effect支持根据依赖的属性计算
+        _addCharacterSkillValue(temp, character, 1, prop, dependProp: dependProp, dependValue: dependValue);
+        _addCharacterTraceValue(temp, character, 1, prop, dependProp: dependProp, dependValue: dependValue);
+        _addCharacterEidolonValue(temp, character, 1, prop, dependProp: dependProp, dependValue: dependValue);
+      }
       temp.forEach((key, value) {
         result[key] = (result[key] ?? 0) + value;
       });
@@ -330,21 +357,38 @@ class CharacterStats {
     }
   }
 
-  void _addCharacterSkillValue(Map<PropSource, double> result, Character character, double base, FightProp prop) {
+  void _addCharacterSkillValue(Map<PropSource, double> result, Character character, double base, FightProp prop, {FightProp? dependProp, double? dependValue}) {
     character.entity.skilldata.forEach((s) {
       if (s.effect.isEmpty || s.maxlevel > 0 && (skillLevels[s.id] ?? 0) == 0) {
         return;
       }
-      s.effect.map((e) => Effect.fromEntity(e, character.entity.id, s.id)).where((e) => e.validSelfBuffEffect(prop)).forEach((effect) {
+      s.effect.map((e) => Effect.fromEntity(e, character.entity.id, s.id)).where((e) => e.validSelfBuffEffect(prop, dependProp: dependProp, currentCid: id)).forEach((effect) {
         String effectKey = effect.getKey();
         EffectConfig effectConfig = selfSkillEffect[effectKey] ?? EffectConfig.defaultOn();
         if (!effectConfig.on) {
           return;
         }
+        if (effect.entity.group != '') {
+          for (EffectEntity skillEffectEntity in s.effect) {
+            Effect skillEffect = Effect.fromEntity(skillEffectEntity, character.entity.id, s.id);
+            if (skillEffectEntity.group == effect.entity.group && !(selfSkillEffect[skillEffect.getKey()] ?? EffectConfig.defaultOn()).on) {
+              // 同group的effect如果关闭了，此effect也认为关闭
+              return;
+            }
+          }
+        }
         int? skillLevel = skillLevels[s.id];
         if (s.referencelevel != '') {
           // 引用技能等级
           skillLevel = skillLevels[character.getSkillById(s.referencelevel).id];
+        }
+        if (dependProp != null) {
+          effectConfig = EffectConfig.defaultOn();
+          double v = dependValue ?? 0;
+          if (dependProp.isPercent()) {
+            v *= 100;
+          }
+          effectConfig.value = v;
         }
         double multiplierValue = effect.getEffectMultiplierValue(s, skillLevel, effectConfig);
         result[PropSource.characterSkill(effectKey, effect, self: true)] = base * multiplierValue;
@@ -352,21 +396,38 @@ class CharacterStats {
     });
   }
 
-  void _addCharacterTraceValue(Map<PropSource, double> result, Character character, double base, FightProp prop) {
+  void _addCharacterTraceValue(Map<PropSource, double> result, Character character, double base, FightProp prop, {FightProp? dependProp, double? dependValue}) {
     character.entity.tracedata.forEach((t) {
       if (t.effect.isEmpty || (traceLevels[t.id] ?? 0) == 0) {
         return;
       }
-      t.effect.map((e) => Effect.fromEntity(e, character.entity.id, t.id)).where((e) => e.validSelfBuffEffect(prop)).forEach((effect) {
+      t.effect.map((e) => Effect.fromEntity(e, character.entity.id, t.id)).where((e) => e.validSelfBuffEffect(prop, dependProp: dependProp, currentCid: id)).forEach((effect) {
         String effectKey = effect.getKey();
         EffectConfig effectConfig = selfTraceEffect[effectKey] ?? EffectConfig.defaultOn();
         if (!effectConfig.on) {
           return;
         }
+        if (effect.entity.group != '') {
+          for (EffectEntity skillEffectEntity in t.effect) {
+            Effect skillEffect = Effect.fromEntity(skillEffectEntity, character.entity.id, t.id);
+            if (skillEffectEntity.group == effect.entity.group && !(selfTraceEffect[skillEffect.getKey()] ?? EffectConfig.defaultOn()).on) {
+              // 同group的effect如果关闭了，此effect也认为关闭
+              return;
+            }
+          }
+        }
         int? skillLevel = skillLevels[t.id];
         if (t.referencelevel != '') {
           // 引用技能等级
           skillLevel = skillLevels[character.getSkillById(t.referencelevel).id];
+        }
+        if (dependProp != null) {
+          effectConfig = EffectConfig.defaultOn();
+          double v = dependValue ?? 0;
+          if (dependProp.isPercent()) {
+            v *= 100;
+          }
+          effectConfig.value = v;
         }
         double multiplierValue = effect.getEffectMultiplierValue(t, skillLevel, effectConfig);
         result[PropSource.characterTrace(effectKey, effect, name: t.tiny ? 'tiny' : '', self: true)] = base * multiplierValue;
@@ -374,21 +435,38 @@ class CharacterStats {
     });
   }
 
-  void _addCharacterEidolonValue(Map<PropSource, double> result, Character character, double base, FightProp prop) {
+  void _addCharacterEidolonValue(Map<PropSource, double> result, Character character, double base, FightProp prop, {FightProp? dependProp, double? dependValue}) {
     character.entity.eidolon.forEach((e) {
       if (e.effect.isEmpty || (eidolons[e.eidolonnum.toString()] ?? 0) == 0) {
         return;
       }
-      e.effect.map((ef) => Effect.fromEntity(ef, character.entity.id, e.id)).where((ef) => ef.validSelfBuffEffect(prop)).forEach((effect) {
+      e.effect.map((ef) => Effect.fromEntity(ef, character.entity.id, e.id)).where((ef) => ef.validSelfBuffEffect(prop, dependProp: dependProp, currentCid: id)).forEach((effect) {
         String effectKey = effect.getKey();
         EffectConfig effectConfig = selfEidolonEffect[effectKey] ?? EffectConfig.defaultOn();
         if (!effectConfig.on) {
           return;
         }
+        if (effect.entity.group != '') {
+          for (EffectEntity skillEffectEntity in e.effect) {
+            Effect skillEffect = Effect.fromEntity(skillEffectEntity, character.entity.id, e.id);
+            if (skillEffectEntity.group == effect.entity.group && !(selfEidolonEffect[skillEffect.getKey()] ?? EffectConfig.defaultOn()).on) {
+              // 同group的effect如果关闭了，此effect也认为关闭
+              return;
+            }
+          }
+        }
         int? skillLevel = skillLevels[e.id];
         if (e.referencelevel != '') {
           // 引用技能等级
           skillLevel = skillLevels[character.getSkillById(e.referencelevel).id];
+        }
+        if (dependProp != null) {
+          effectConfig = EffectConfig.defaultOn();
+          double v = dependValue ?? 0;
+          if (dependProp.isPercent()) {
+            v *= 100;
+          }
+          effectConfig.value = v;
         }
         double multiplierValue = effect.getEffectMultiplierValue(e, skillLevel, effectConfig);
         result[PropSource.characterEidolon(effectKey, effect, self: true)] = base * multiplierValue;
