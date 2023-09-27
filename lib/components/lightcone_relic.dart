@@ -241,7 +241,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                                                                   SizedBox(
                                                                     width: 100,
                                                                     child: Text(
-                                                                      "E${_gs.stats.lightconeRank}",
+                                                                      "S${_gs.stats.lightconeRank}",
                                                                       style: const TextStyle(
                                                                         //fontWeight: FontWeight.bold,
                                                                         color: Colors.white,
@@ -737,7 +737,7 @@ class LightconeRelicState extends State<LightconeRelic> {
                     }).toList(),
                   ),
                   adsenseAdsView(columnwidth - 20),
-                  if (widget.isBannerAdReady && !kIsWeb && Platform.isAndroid) 
+                  if (widget.isBannerAdReady && !kIsWeb && Platform.isAndroid)
                     Container(
                       width: widget.bannerAd!.size.width.toDouble(),
                       height: widget.bannerAd!.size.height.toDouble(),
