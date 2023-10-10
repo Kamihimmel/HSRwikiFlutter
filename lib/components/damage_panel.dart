@@ -47,113 +47,133 @@ class DamagePanelState extends State<DamagePanel> {
                 ),
               ]),
               if (damageResult != null)
-                Tooltip(
-                  message: _gs.debug ? damageResult.details : '',
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      SelectableText(
-                        'Non-Crit'.tr() + ':',
-                        style: TextStyle(
-                          fontSize: 15,
-                          height: 1.1,
-                        ),
-                      ),
-                      SelectableText(
-                        double.parse(damageResult.nonCrit.toStringAsFixed(1)).toString(),
-                        style: TextStyle(
-                          color: elementType.color[300],
-                          fontSize: 15,
-                        ),
-                      ),
-                      if (damageResult.expectation > 0)
+                ...[
+                  Tooltip(
+                    message: _gs.debug ? damageResult.details : '',
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
                         SelectableText(
-                          'Expectation'.tr() + ':',
+                          'Non-Crit'.tr() + ':',
                           style: TextStyle(
                             fontSize: 15,
                             height: 1.1,
                           ),
                         ),
-                      if (damageResult.expectation > 0)
                         SelectableText(
-                          double.parse(damageResult.expectation.toStringAsFixed(1)).toString(),
+                          double.parse(damageResult.nonCrit.toStringAsFixed(1)).toString(),
                           style: TextStyle(
-                            color: elementType.color[500],
+                            color: elementType.color[300],
                             fontSize: 15,
                           ),
                         ),
-                      if (damageResult.crit > 0)
-                        SelectableText(
-                          'Crit'.tr() + ':',
-                          style: TextStyle(
-                            fontSize: 15,
-                            height: 1.1,
-                          ),
-                        ),
-                      if (damageResult.crit > 0)
-                        SelectableText(
-                          double.parse(damageResult.crit.toStringAsFixed(1)).toString(),
-                          style: TextStyle(
-                            color: elementType.color[700],
-                            fontSize: 15,
-                            height: 1.1,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              if (damageResult != null)
-                Container(
-                  clipBehavior: Clip.hardEdge,
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  ),
-                  foregroundDecoration: BoxDecoration(
-                    border: Border.all(color: Colors.white, width: 1),
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  ),
-                  padding: const EdgeInsets.all(0.5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Stack(
-                        alignment: Alignment.topLeft,
-                        children: [
-                          AnimatedContainer(
-                            curve: Curves.easeIn,
-                            duration: Duration(milliseconds: 500),
-                            width: damageResult.crit / 50 * _gs.appConfig.dmgScale / 10,
-                            height: 20,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.white, width: 0.5),
-                              color: elementType.color[700],
+                        if (damageResult.expectation > 0)
+                          SelectableText(
+                            'Expectation'.tr() + ':',
+                            style: TextStyle(
+                              fontSize: 15,
+                              height: 1.1,
                             ),
                           ),
-                          AnimatedContainer(
-                            curve: Curves.easeIn,
-                            duration: Duration(milliseconds: 500),
-                            width: damageResult.expectation / 50 * _gs.appConfig.dmgScale / 10,
-                            height: 20,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.white, width: 0.5),
+                        if (damageResult.expectation > 0)
+                          SelectableText(
+                            double.parse(damageResult.expectation.toStringAsFixed(1)).toString(),
+                            style: TextStyle(
                               color: elementType.color[500],
+                              fontSize: 15,
                             ),
                           ),
-                          AnimatedContainer(
-                            curve: Curves.easeIn,
-                            duration: Duration(milliseconds: 500),
-                            width: damageResult.nonCrit / 50 * _gs.appConfig.dmgScale / 10,
-                            height: 20,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.white, width: 0.5),
-                              color: elementType.color[300],
+                        if (damageResult.crit > 0)
+                          SelectableText(
+                            'Crit'.tr() + ':',
+                            style: TextStyle(
+                              fontSize: 15,
+                              height: 1.1,
                             ),
+                          ),
+                        if (damageResult.crit > 0)
+                          SelectableText(
+                            double.parse(damageResult.crit.toStringAsFixed(1)).toString(),
+                            style: TextStyle(
+                              color: elementType.color[700],
+                              fontSize: 15,
+                              height: 1.1,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  InkWell(
+                    borderRadius: BorderRadius.circular(15),
+                    onTap: () {
+                      showModalBottomSheet<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return SizedBox(
+                            child: Center(
+                              child: Column(
+                                children: [
+
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: Container(
+                      clipBehavior: Clip.hardEdge,
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      ),
+                      foregroundDecoration: BoxDecoration(
+                        border: Border.all(color: Colors.white, width: 1),
+                        borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      ),
+                      padding: const EdgeInsets.all(0.5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Stack(
+                            alignment: Alignment.topLeft,
+                            children: [
+                              AnimatedContainer(
+                                curve: Curves.easeIn,
+                                duration: Duration(milliseconds: 500),
+                                width: damageResult.crit / 50 * _gs.appConfig.dmgScale / 10,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.white, width: 0.5),
+                                  color: elementType.color[700],
+                                ),
+                              ),
+                              AnimatedContainer(
+                                curve: Curves.easeIn,
+                                duration: Duration(milliseconds: 500),
+                                width: damageResult.expectation / 50 * _gs.appConfig.dmgScale / 10,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.white, width: 0.5),
+                                  color: elementType.color[500],
+                                ),
+                              ),
+                              AnimatedContainer(
+                                curve: Curves.easeIn,
+                                duration: Duration(milliseconds: 500),
+                                width: damageResult.nonCrit / 50 * _gs.appConfig.dmgScale / 10,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.white, width: 0.5),
+                                  color: elementType.color[300],
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
-                )
+                ],
             ],
           ),
         ),
