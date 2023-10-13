@@ -255,5 +255,9 @@
     "Status Effect": "Status Effect",
     "Clean Data": "Clean Data",
     "Cleaned": "Cleaned",
-    "effectresreduce": "Reduce Effect Hit"
+    "effectresreduce": "Reduce Effect Hit",
+    "Panel Analysis": "Panel Analysis",
+    "Analysis Target:": "Analysis Target:",
+    "DMG EXP plus when getting following bonus": "DMG EXP plus when getting following bonus",
+    "(One max substat roll for relics)": "(One max substat roll for relics)"
 }

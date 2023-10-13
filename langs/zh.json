@@ -256,5 +256,9 @@
     "Status Effect": "状态效果",
     "Clean Data": "清除数据",
     "Cleaned": "已清除",
-    "effectresreduce": "降低效果抵抗"
+    "effectresreduce": "降低效果抵抗",
+    "Panel Analysis": "面板分析",
+    "Analysis Target:": "分析目标:",
+    "DMG EXP plus when getting following bonus": "获得以下加成后的伤害期望提高",
+    "(One max substat roll for relics)": "(遗物副属性最大词条时)"
 }

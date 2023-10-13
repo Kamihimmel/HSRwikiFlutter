@@ -256,5 +256,9 @@
     "Status Effect": "状態/効果",
     "Clean Data": "クリアデータ",
     "Cleaned": "クリアしました",
-    "effectresreduce": "効果抵抗ダウン"
+    "effectresreduce": "効果抵抗ダウン",
+    "Panel Analysis": "パネル分析",
+    "Analysis Target:": "分析ターゲット:",
+    "DMG EXP plus when getting following bonus": "以下ボーナスの場合のダメージ期待値",
+    "(One max substat roll for relics)": "(遺物サブ属性最大ロール)"
 }

@@ -26,7 +26,7 @@ class DamagePanelState extends State<DamagePanel> {
     super.initState();
   }
 
-  FractionallySizedBox _buildDamageBar(String title, ElementType elementType, DamageResult? damageResult) {
+  FractionallySizedBox _buildDamageBar(String skillName, String title, ElementType elementType, DamageResult? damageResult) {
     return FractionallySizedBox(
       widthFactor: 1.0,
       child: Scrollbar(
@@ -46,9 +46,109 @@ class DamagePanelState extends State<DamagePanel> {
                   ),
                 ),
               ]),
-              if (damageResult != null)
-                ...[
-                  Tooltip(
+              if (damageResult != null) ...[
+                InkWell(
+                  onTap: () {
+                    showDialog<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return SimpleDialog(title: Text('Panel Analysis').tr(), children: [
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: SimpleDialogOption(
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'Analysis Target:'.tr() + skillName,
+                                    style: TextStyle(
+                                      color: elementType.color[300],
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      height: 1.1,
+                                    ),
+                                  ),
+                                  Text(title),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Container(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'DMG EXP plus when getting following bonus',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            height: 1.1,
+                                          ),
+                                        ).tr(),
+                                        Text(
+                                          '(One max substat roll for relics)',
+                                          style: TextStyle(
+                                            color: elementType.color[300],
+                                            fontSize: 12,
+                                            height: 1.1,
+                                          ),
+                                        ).tr(),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            "ATK".tr() + "+10%",
+                                            style: TextStyle(
+                                              //fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            "DMG".tr() + "+" + "%",
+                                            style: TextStyle(
+                                              //fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            "ATK".tr() + "+4.3%",
+                                            style: TextStyle(
+                                              //fontWeight: FontWeight.bold,
+                                              color: elementType.color[300],
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            "DMG".tr() + "+" + "%",
+                                            style: TextStyle(
+                                              //fontWeight: FontWeight.bold,
+                                              color: elementType.color[300],
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ]);
+                      },
+                    );
+                  },
+                  child: Tooltip(
                     message: _gs.debug ? damageResult.details : '',
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -100,80 +200,63 @@ class DamagePanelState extends State<DamagePanel> {
                               height: 1.1,
                             ),
                           ),
+                        Icon(Icons.analytics),
                       ],
                     ),
                   ),
-                  InkWell(
-                    borderRadius: BorderRadius.circular(15),
-                    onTap: () {
-                      showModalBottomSheet<void>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return SizedBox(
-                            child: Center(
-                              child: Column(
-                                children: [
-
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    child: Container(
-                      clipBehavior: Clip.hardEdge,
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.all(Radius.circular(10)),
-                      ),
-                      foregroundDecoration: BoxDecoration(
-                        border: Border.all(color: Colors.white, width: 1),
-                        borderRadius: const BorderRadius.all(Radius.circular(10)),
-                      ),
-                      padding: const EdgeInsets.all(0.5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                ),
+                Container(
+                  clipBehavior: Clip.hardEdge,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  ),
+                  foregroundDecoration: BoxDecoration(
+                    border: Border.all(color: Colors.white, width: 1),
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  ),
+                  padding: const EdgeInsets.all(0.5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Stack(
+                        alignment: Alignment.topLeft,
                         children: [
-                          Stack(
-                            alignment: Alignment.topLeft,
-                            children: [
-                              AnimatedContainer(
-                                curve: Curves.easeIn,
-                                duration: Duration(milliseconds: 500),
-                                width: damageResult.crit / 50 * _gs.appConfig.dmgScale / 10,
-                                height: 20,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.white, width: 0.5),
-                                  color: elementType.color[700],
-                                ),
-                              ),
-                              AnimatedContainer(
-                                curve: Curves.easeIn,
-                                duration: Duration(milliseconds: 500),
-                                width: damageResult.expectation / 50 * _gs.appConfig.dmgScale / 10,
-                                height: 20,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.white, width: 0.5),
-                                  color: elementType.color[500],
-                                ),
-                              ),
-                              AnimatedContainer(
-                                curve: Curves.easeIn,
-                                duration: Duration(milliseconds: 500),
-                                width: damageResult.nonCrit / 50 * _gs.appConfig.dmgScale / 10,
-                                height: 20,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.white, width: 0.5),
-                                  color: elementType.color[300],
-                                ),
-                              ),
-                            ],
+                          AnimatedContainer(
+                            curve: Curves.easeIn,
+                            duration: Duration(milliseconds: 500),
+                            width: damageResult.crit / 50 * _gs.appConfig.dmgScale / 10,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.white, width: 0.5),
+                              color: elementType.color[700],
+                            ),
+                          ),
+                          AnimatedContainer(
+                            curve: Curves.easeIn,
+                            duration: Duration(milliseconds: 500),
+                            width: damageResult.expectation / 50 * _gs.appConfig.dmgScale / 10,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.white, width: 0.5),
+                              color: elementType.color[500],
+                            ),
+                          ),
+                          AnimatedContainer(
+                            curve: Curves.easeIn,
+                            duration: Duration(milliseconds: 500),
+                            width: damageResult.nonCrit / 50 * _gs.appConfig.dmgScale / 10,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.white, width: 0.5),
+                              color: elementType.color[300],
+                            ),
                           ),
                         ],
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
+              ],
             ],
           ),
         ),
@@ -181,8 +264,7 @@ class DamagePanelState extends State<DamagePanel> {
     );
   }
 
-  void _appendDamageAndTitle(
-      List<Effect> effects, List<String> multiplierTitle, String type, List<DamageResult> drList, String stype, Character character, SkillData? skillData, int? skillLevel) {
+  void _appendDamageAndTitle(List<Effect> effects, List<String> multiplierTitle, String type, List<DamageResult> drList, String stype, Character character, SkillData? skillData, int? skillLevel) {
     effects.forEach((e) {
       double multiplierValue = 0;
       FightProp multiplierProp = FightProp.fromEffectMultiplier(e.entity.multipliertarget);
@@ -225,12 +307,12 @@ class DamagePanelState extends State<DamagePanel> {
         _appendDamageAndTitle([e], multiplierTitle, type, drList, stype, character, null, null);
         title += " (${multiplierTitle.join('+')})";
         DamageResult dr = drList[0];
-        Widget bar = _buildDamageBar(title, character.elementType, dr);
+        Widget bar = _buildDamageBar(e.skillData.getName(getLanguageCode(context)), title, character.elementType, dr);
         return ExpansionTile(
           tilePadding: EdgeInsets.only(left: 5, right: 5),
           childrenPadding: EdgeInsets.all(5),
           initiallyExpanded: true,
-          title: _buildDamageBar(e.skillData.getName(getLanguageCode(context)), character.elementType, null),
+          title: _buildDamageBar(e.skillData.getName(getLanguageCode(context)), e.skillData.getName(getLanguageCode(context)), character.elementType, null),
           children: [
             bar,
           ],
@@ -260,7 +342,7 @@ class DamagePanelState extends State<DamagePanel> {
         tilePadding: EdgeInsets.only(left: 5, right: 5),
         childrenPadding: EdgeInsets.all(5),
         initiallyExpanded: true,
-        title: _buildDamageBar(title, character.elementType, null),
+        title: _buildDamageBar(skillName, title, character.elementType, null),
         children: skillEffectGroup.values.map((effects) {
           EffectEntity effect = effects.first.entity;
           String title = "${effect.tag.map((e) => e.tr()).join(" | ")}";
@@ -270,9 +352,9 @@ class DamagePanelState extends State<DamagePanel> {
           title += " (${multiplierTitle.join('+')})";
           DamageResult dr = drList.fold(
               DamageResult.zero(),
-                  (pre, damage) => DamageResult(pre.nonCrit + damage.nonCrit, pre.expectation + damage.expectation, pre.crit + damage.crit,
-                  details: "${pre.details == '' ? '' : pre.details + '\n'}${damage.details}"));
-          return _buildDamageBar(title, character.elementType, dr);
+              (pre, damage) =>
+                  DamageResult(pre.nonCrit + damage.nonCrit, pre.expectation + damage.expectation, pre.crit + damage.crit, details: "${pre.details == '' ? '' : pre.details + '\n'}${damage.details}"));
+          return _buildDamageBar(skillName, title, character.elementType, dr);
         }).toList(),
       );
     }).toList();
