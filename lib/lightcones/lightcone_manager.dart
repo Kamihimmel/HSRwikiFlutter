@@ -50,12 +50,12 @@ class LightconeManager {
   }
 
   static Future<Lightcone> loadFromRemote(Lightcone d) async {
-    if (d.loaded) {
-      return d;
-    }
-    if (_lightcones.containsKey(d.entity.id) && _lightcones[d.entity.id]!.loaded) {
-      return _lightcones[d.entity.id]!;
-    }
+    // if (d.loaded) {
+    //   return d;
+    // }
+    // if (_lightcones.containsKey(d.entity.id) && _lightcones[d.entity.id]!.loaded) {
+    //   return _lightcones[d.entity.id]!;
+    // }
     String jsonStr = await loadLibJsonString(d.entity.infourl);
     final Map<String, dynamic> lightconeMap = json.decode(jsonStr);
     // logger.d(json.encode(lightconeMap));

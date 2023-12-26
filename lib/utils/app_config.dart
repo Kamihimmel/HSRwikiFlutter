@@ -2,7 +2,7 @@ import 'dart:convert';
 
 class AppConfig {
   bool male = false;
-  bool spoilerMode = false;
+  bool spoilerMode = true;
   bool cnMode = false;
   bool test = false; // 不存储
   int dmgScale = 10; // footer option: damage scale

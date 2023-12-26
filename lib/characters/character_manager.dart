@@ -96,12 +96,12 @@ class CharacterManager {
   }
 
   static Future<Character> loadFromRemote(Character c) async {
-    if (c.loaded) {
-      return c;
-    }
-    if (_characters.containsKey(c.entity.id) && _characters[c.entity.id]!.loaded) {
-      return _characters[c.entity.id]!;
-    }
+    // if (c.loaded) {
+    //   return c;
+    // }
+    // if (_characters.containsKey(c.entity.id) && _characters[c.entity.id]!.loaded) {
+    //   return _characters[c.entity.id]!;
+    // }
     String jsonStr = await loadLibJsonString(c.entity.infourl);
     final Map<String, dynamic> characterMap = json.decode(jsonStr);
     // logger.d(json.encode(characterMap));

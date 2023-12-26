@@ -146,6 +146,16 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
             backgroundColor: Colors.black.withOpacity(0.1),
             appBar: AppBar(
               title: Text(routeCharacter.getName(getLanguageCode(context))),
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.refresh),
+                  onPressed: () {
+                    setState(() {
+                      _getData();
+                    });
+                  },
+                ),
+              ],
             ),
             body: SingleChildScrollView(
               child: Column(

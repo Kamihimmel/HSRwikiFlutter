@@ -65,6 +65,7 @@ enum FightProp {
 
   breakDamageAddedRatio(desc: 'breakeffect', buffOrder: 3, icon: 'starrailres/icon/property/IconBreakUp.png', effectKey: ['breakeffect', 'breakdmg']),
   breakDamageAddedRatioBase(desc: 'Break Effect', icon: 'starrailres/icon/property/IconBreakUp.png'),
+  weaknessbreakefficiency(desc: 'weaknessbreakefficiency', buffOrder: 3, icon: 'starrailres/icon/property/IconBreakUp.png', effectKey: ['weaknessbreakefficiency']),
 
   allDamageAddRatio(desc: 'alldmg', buffOrder: 3, effectKey: ['alldmg']),
   physicalAddedRatio(desc: 'physicaldmg', buffOrder: 3, icon: 'starrailres/icon/property/IconPhysicalAddedRatio.png', effectKey: ['physicaldmg']),
@@ -99,6 +100,7 @@ enum FightProp {
   quantumResistanceIgnore(desc: 'quantumpen', buffOrder: 5, effectKey: ['quantumpen']),
   imaginaryResistanceIgnore(desc: 'imaginarypen', buffOrder: 5, effectKey: ['imaginarypen']),
   defenceIgnoreRatio(desc: 'ignoredef', buffOrder: 5, effectKey: ['ignoredef']),
+  allpenResistanceIgnore(desc: 'allpen', buffOrder: 5, effectKey: ['allpen']),
 
   physicalResistanceDelta(desc: 'Physical RES Boost', icon: 'starrailres/icon/property/IconPhysicalResistanceDelta.png'),
   fireResistanceDelta(desc: 'Fire RES Boost', icon: 'starrailres/icon/property/IconFireResistanceDelta.png'),
@@ -171,7 +173,7 @@ enum FightProp {
   bool isPercent() {
     return this.name.contains("Ratio") || this.name.endsWith("ResistanceIgnore") || this.name.endsWith("Resistance")
         || this.name.contains("Probability") || this.name.toLowerCase().contains("critical")
-        || this.name.contains("Rate") || this.name == 'controlResist';
+        || this.name.contains("Rate") || this.name == 'controlResist' || this.name == 'weaknessbreakefficiency';
   }
 
   bool isProbability() {

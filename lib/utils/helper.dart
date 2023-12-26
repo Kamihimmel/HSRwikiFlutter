@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 import '../calculator/basic.dart';
@@ -72,8 +74,9 @@ String getLanguageCode(BuildContext context) {
 }
 
 Future<String> loadLibJsonString(String path) async {
-  final response = await http.get(Uri.parse(getUrlEndpoint() + path));
-  return response.body;
+  final response = await http.get(Uri.parse('http://localhost:8888/' + path));
+  print(response.body);
+  return utf8.decode(response.bodyBytes);
 }
 
 String getDisplayText(double value, bool percent, {round = false}) {

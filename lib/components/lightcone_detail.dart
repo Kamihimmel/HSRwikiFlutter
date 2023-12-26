@@ -167,6 +167,16 @@ class _LightconeDetailPageState extends State<LightconeDetailPage> {
                 backgroundColor: Colors.transparent,
                 appBar: AppBar(
                   title: Text(routeLightcone.getName(getLanguageCode(context))),
+                  actions: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.refresh),
+                      onPressed: () {
+                        setState(() {
+                          _getData();
+                        });
+                      },
+                    ),
+                  ],
                 ),
                 body: SingleChildScrollView(
                   child: Column(
